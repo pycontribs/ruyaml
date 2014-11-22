@@ -1,0 +1,11 @@
+syntax: glob
+
+*.pyc
+*~
+*.bak
+*.o
+*.orig
+dist
+build
+*.egg-info
+.tox
