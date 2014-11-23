@@ -118,7 +118,18 @@ def main():
     #     install_requires.append("")
     packages = [full_package_name] + [
         (full_package_name + '.' + x)
-        for x in find_packages('py', exclude=['tests'])]
+        for x in find_packages('py', exclude=['test'])]
+    ext_modules = [
+        # Extension('_yaml', ['ext/_yaml.pyx'],
+        #          'libyaml', "LibYAML bindings", LIBYAML_CHECK,
+        #          libraries=['yaml']),
+        Extension(
+            '_yaml',
+            sources=['ext/_yaml.c'],
+            libraries=['yaml'],
+            ),
+    ]
+    ext_modules = []
     setup(
         name=full_package_name,
         version=version_str,
@@ -133,6 +144,7 @@ def main():
         package_dir={full_package_name: 'py'},
         namespace_packages=[name_space],
         packages=packages,
+        ext_modules=ext_modules,
         entry_points=mk_entry_points(full_package_name),
         cmdclass={'install_lib': MyInstallLib},
         classifiers=[
@@ -141,6 +153,12 @@ def main():
             'License :: OSI Approved :: MIT License',
             'Operating System :: OS Independent',
             'Programming Language :: Python',
+            "Programming Language :: Python :: 2.6",
+            "Programming Language :: Python :: 2.7",
+            "Programming Language :: Python :: 3.3",
+            "Programming Language :: Python :: 3.4",
+            "Topic :: Software Development :: Libraries :: Python Modules",
+            "Topic :: Text Processing :: Markup",
         ]
     )
 

@@ -16,7 +16,10 @@ Major differences with PyYAML 3.11:
 - some YAML 1.2 enhancements (``0o`` octal prefix, ``\/`` escape)
 - pep8 compliance
 - tox and py.test based testing
-
+- currently assumes that the C yaml library is installed. That library
+  doesn't generate CommentTokens, so it cannot be used to do
+  round trip editing on comments. It can be used for normal
+  processing (no need to install ``ruamel.yaml`` and ``PyYaml``)
 
 Round trip including comments
 =============================
