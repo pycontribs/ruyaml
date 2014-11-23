@@ -3,14 +3,14 @@ from __future__ import print_function
 
 import ruamel.yaml
 import pprint
-from ruamel.yaml.py.compat import PY2, PY3
+from ruamel.yaml.compat import PY2, PY3
 
 import datetime
 try:
     set
 except NameError:
     from sets import Set as set
-import ruamel.yaml.py.tokens
+import ruamel.yaml.tokens
 
 def execute(code):
     global value

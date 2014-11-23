@@ -4,8 +4,8 @@ from __future__ import print_function
 import codecs
 import io
 
-from ruamel.yaml.py.compat import PY2
-import ruamel.yaml.py.reader
+from ruamel.yaml.compat import PY2
+import ruamel.yaml.reader
 
 def _run_reader(data, verbose):
     try:

@@ -2,7 +2,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 import ruamel.yaml as yaml
-from ruamel.yaml.py.compat import text_type, PY3
+from ruamel.yaml.compat import text_type, PY3
 
 def test_marks(marks_filename, verbose=False):
     inputs = open(marks_filename, 'r' if PY3 else 'rb').read(

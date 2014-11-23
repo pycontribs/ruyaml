@@ -4,7 +4,7 @@ ruamel.yaml
 
 ``ruamel.yaml`` is a YAML package for Python. It is a derivative
 of Kirill Simonov's `PyYAML 3.11 <https://bitbucket.org/xi/pyyaml>`_
-which is a YAML1.1 
+which supports YAML1.1 
 
 Major differences with PyYAML 3.11:
 
@@ -38,7 +38,7 @@ comments, there are no libraries that support round trip updating of
 such commented files.
 
 INI files support comments, and the excellent `ConfigObj
-<http://www.voidspace.org.uk/python/configobj.html>` library by Foord
+<http://www.voidspace.org.uk/python/configobj.html>`_ library by Foord
 and Larosa even supports round trip editing with comment preservation,
 nesting of sections and limited lists (within a value). Retrieval of 
 particular value format is explicit (and extensible).
@@ -53,3 +53,15 @@ format. By extending the Python YAML parser to support round trip
 preservation of comments, it makes YAML a very good choice for
 configuration files that are human readable and editable while at
 the same time interpretable and modifiable by a program.
+
+yaml utlity
+===========
+
+A utility name  ``yaml`` is included and allows for basic operations on files:
+
+- ``yaml round-trip <file_name>`` for basic roundtrip testing of YAML
+  files
+- ``yaml json <file_name>`` for conversion of JSON file(s) to a single
+  YAML block style document
+
+See ``yaml --help`` for more information on the availble commands

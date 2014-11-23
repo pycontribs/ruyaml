@@ -1,9 +1,9 @@
 
 import ruamel.yaml
-from ruamel.yaml.py.composer import Composer
-from ruamel.yaml.py.constructor import Constructor
-from ruamel.yaml.py.resolver import Resolver
-from ruamel.yaml.py.compat import unichr, PY3
+from ruamel.yaml.composer import Composer
+from ruamel.yaml.constructor import Constructor
+from ruamel.yaml.resolver import Resolver
+from ruamel.yaml.compat import unichr, PY3
 
 class CanonicalError(ruamel.yaml.YAMLError):
     pass

@@ -10,8 +10,6 @@ except ImportError:
     from io import StringIO
 
 import ruamel.yaml
-from ruamel.yaml import RoundTripLoader
-from ruamel.yaml import RoundTripDumper
 
 
 def dedent(data):
@@ -28,12 +26,12 @@ def dedent(data):
 
 
 def round_trip_load(dinp):
-    return ruamel.yaml.load(dinp, RoundTripLoader)
+    return ruamel.yaml.load(dinp, ruamel.yaml.RoundTripLoader)
 
 
 def round_trip_dump(data):
     stream = StringIO()
-    dumper = RoundTripDumper
+    dumper = ruamel.yaml.RoundTripDumper
     return ruamel.yaml.dump(data, default_flow_style=False, Dumper=dumper)
 
 

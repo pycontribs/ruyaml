@@ -4,7 +4,7 @@ from __future__ import print_function
 import ruamel.yaml as yaml
 import  canonical
 import pprint
-from ruamel.yaml.py.compat import text_type, PY3
+from ruamel.yaml.compat import text_type, PY3
 
 def _convert_structure(loader):
     if loader.check_event(yaml.ScalarEvent):
