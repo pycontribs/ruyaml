@@ -77,7 +77,13 @@ class YAML:
         inl = inp.splitlines(True)  # True for keepends
         outl = outp.splitlines(True)
         diff = difflib.unified_diff(inl, outl, file_name, 'round trip YAML')
-        sys.stdout.writelines(diff)
+        # 2.6 difflib has trailing space on filename lines %-)
+        strip_trailing_space = sys.version_info < (2, 7)
+        for line in diff:
+            if strip_trailing_space and line[:4] in ['--- ', '+++ ']:
+                line = line.rstrip() + '\n'
+            sys.stdout.write(line)
+        #sys.stdout.writelines(diff)
 
 
 def to_stdout(*args):

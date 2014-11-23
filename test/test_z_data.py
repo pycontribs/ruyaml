@@ -20,8 +20,8 @@ def test_data():
     test_appliance.run(collections, args)
 
 
-@pytest.mark.skipif(not ruamel.yaml.__with_libyaml__,
-                    reason="no libyaml")
+#@pytest.mark.skipif(not ruamel.yaml.__with_libyaml__,
+#                    reason="no libyaml")
 def test_data_ext():
     collections = []
     if ruamel.yaml.__with_libyaml__:
