@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import ruamel.yaml as yaml
 import codecs, tempfile, os, os.path
-from ruamel.yaml.py.compat import PY2, PY3, StringIO, BytesIO
+from ruamel.yaml.compat import PY2, PY3, StringIO, BytesIO
 
 if PY2:
     def _unicode_open(file, encoding, errors='strict'):

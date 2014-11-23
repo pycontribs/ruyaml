@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import ruamel.yaml as yaml
 import pprint
-from ruamel.yaml.py.compat import PY3
+from ruamel.yaml.compat import PY3
 
 def test_implicit_resolver(data_filename, detect_filename, verbose=False):
     correct_tag = None

@@ -3,7 +3,7 @@ from __future__ import print_function
 
 import ruamel.yaml as yaml
 import pprint
-from ruamel.yaml.py.compat import PY3
+from ruamel.yaml.compat import PY3
 
 # Tokens mnemonic:
 # directive:            %

@@ -18,7 +18,7 @@ exclude_files = [
 
 def get_version():
     v_i = 'version_info = '
-    for line in open('__init__.py'):
+    for line in open('py/__init__.py'):
         if not line.startswith(v_i):
             continue
         s_e = line[len(v_i):].strip()[1:-1].split(', ')
@@ -109,14 +109,16 @@ class MyInstallLib(install_lib.install_lib):
 
 def main():
     install_requires = [
+        "ruamel.std.argparse",
     ]
     # use fast ordereddict for !!omap
-    install_requires = ['ruamel.ordereddict'] \
-                if sys.version_info[0] == 2 else []
+    if sys.version_info[0] == 2:
+        install_requires.extend(['ruamel.ordereddict'])
     # if sys.version_info < (3, 4):
     #     install_requires.append("")
-    packages = [full_package_name] + [(full_package_name + '.' + x) for x
-                                      in find_packages(exclude=['tests'])]
+    packages = [full_package_name] + [
+        (full_package_name + '.' + x)
+        for x in find_packages('py', exclude=['tests'])]
     setup(
         name=full_package_name,
         version=version_str,
@@ -128,7 +130,7 @@ def main():
         author='Anthon van der Neut',
         author_email='a.van.der.neut@ruamel.eu',
         license="MIT license",
-        package_dir={full_package_name: '.'},
+        package_dir={full_package_name: 'py'},
         namespace_packages=[name_space],
         packages=packages,
         entry_points=mk_entry_points(full_package_name),
@@ -143,10 +145,10 @@ def main():
     )
 
 
-def mk_entry_points(package_name):
-    script_name = package_name.replace('.', '_')
+def mk_entry_points(full_package_name):
+    script_name = full_package_name.rsplit('.', 1)[-1]
     return {'console_scripts': [
-        '{0} = {1}:main'.format(script_name, package_name),
+        '{0} = {1}:main'.format(script_name, full_package_name),
     ]}
 
 if __name__ == '__main__':

@@ -733,4 +733,3 @@ RoundTripRepresenter.add_representer(CommentedMap,
 
 RoundTripRepresenter.add_representer(set,
                                      RoundTripRepresenter.represent_set)
-

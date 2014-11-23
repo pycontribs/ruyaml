@@ -7,7 +7,7 @@ import types
 import traceback
 import pprint
 import argparse
-from ruamel.yaml.py.compat import PY3
+from ruamel.yaml.compat import PY3
 
 # DATA = 'tests/data'
 # determine the position of data dynamically relative to program
