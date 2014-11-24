@@ -9,6 +9,7 @@ from __future__ import print_function
 import sys
 import os
 import io
+from textwrap import dedent
 
 from ruamel.std.argparse import ProgramBase, option, sub_parser, version, \
     CountAction, SmartFormatter
@@ -16,12 +17,177 @@ from ruamel.std.argparse import ProgramBase, option, sub_parser, version, \
 from . import __version__
 
 import ruamel.yaml
+from ruamel.yaml.compat import ordereddict
+
 
 
 class YAML:
     def __init__(self, args, config):
         self._args = args
         self._config = config
+
+    def from_ini(self):
+        from configobj import ConfigObj
+        x = dedent("""
+        # initial comment
+        keyword1 = value1
+        keyword2 = value2  # eol comment kw2
+
+        [section 1]
+        keyword1 = value1 #
+        # comment s1kw2
+        keyword2 = value2  # eol comment s1kw2
+
+            [[sub-section]]  # eol on section
+            # this is in section 1
+            keyword1 = value1
+            keyword2 = value2
+
+                [[[nested section]]] #
+                # this is in sub section
+                keyword1 = value1
+                keyword2 = value2
+
+            [[sub-section2]] #
+            # this is in section 1 again
+            keyword1 = value1
+            keyword2 = value2
+
+        [[sub-section3]] #
+        # this is also in section 1, indentation is misleading here
+        keyword1 = value1
+        keyword2 = value2
+
+        # final comment
+        """)
+        cfg = ConfigObj(x.splitlines())
+        print(cfg)
+        doc = []
+        for line in self.walk_configobj(cfg):
+            if not line.strip():
+                continue
+            print(line)
+            doc.append(line)
+        print('--------------')
+        joined = '\n'.join(doc) + '\n'
+        rto = self.round_trip_single(joined)
+        print(rto)
+        print()
+        if rto != joined:
+            self.diff(joined, rto, "test.ini")
+        return 0
+
+    def test(self):
+        def print_input(input):
+            print(input, end='')
+            print('-' * 15)
+
+        def print_tokens(input):
+            print('Tokens ' + '#' * 60)
+            tokens = ruamel.yaml.scan(input, ruamel.yaml.RoundTripLoader)
+            for idx, token in enumerate(tokens):
+                #print(token.start_mark)
+                #print(token.end_mark)
+                print("{0:2} {1}".format(idx, token))
+
+        def rt_events(input):
+            stream = io.StringIO()
+            dumper = ruamel.yaml.RoundTripDumper
+            events = ruamel.yaml.parse(input, ruamel.yaml.RoundTripLoader)
+            print(ruamel.yaml.emit(events, indent=False, Dumper=dumper))
+
+        def rt_nodes(input):
+            stream = io.StringIO()
+            dumper = ruamel.yaml.RoundTripDumper
+            nodes = ruamel.yaml.compose(input, ruamel.yaml.RoundTripLoader)
+            print(ruamel.yaml.serialize(nodes, indent=False, Dumper=dumper))
+
+        def print_events(input):
+            print('Events ' + '#' * 60)
+            events = ruamel.yaml.parse(input, ruamel.yaml.RoundTripLoader)
+            for idx, event in enumerate(events):
+                print("{0:2} {1}".format(idx, event))
+            #for event in events:
+                #number += 1
+            #    cls = event.__class__
+                #print(cls)
+                #if (cls, -1) in substitutions:
+                #    markers.append([event.start_mark.index, +1, number, substitutions[cls, -1]])
+                #if (cls, +1) in substitutions:
+                #    markers.append([event.end_mark.index, -1, number, substitutions[cls, +1]])
+
+        def print_nodes(input):
+            print('Nodes ' + '#' * 60)
+            x = ruamel.yaml.compose(input, ruamel.yaml.RoundTripLoader)
+            x.dump()  # dump the node
+
+        input = dedent("""
+        map1:
+          # comment 1
+          map2:
+            key1: val1
+        """)
+
+        print_input(input)
+        print_tokens(input)
+        print_events(input)
+        #rt_events(input)
+        print_nodes(input)
+        #rt_nodes(input)
+
+        data = ruamel.yaml.load(input, ruamel.yaml.RoundTripLoader)
+        print('data', data)
+        if False:
+            data['american'][0] = 'Fijenoord'
+            l = data['american']
+        l = data
+        if True:
+            # print type(l), '\n', dir(l)
+            comment = getattr(l, '_yaml_comment', None)
+            print('comment_1', comment)
+        stream = io.StringIO()
+        dumper = ruamel.yaml.RoundTripDumper
+        print('>>>>>>>>>>')
+        #print ruamel.yaml.dump(data, default_flow_style=False, Dumper=dumper), '==========='
+        print(ruamel.yaml.dump(data, Dumper=dumper)+'===========')
+
+
+        # test end
+
+    @staticmethod
+    def walk_configobj(cfg):
+        from configobj import ConfigObj
+        assert isinstance(cfg, ConfigObj)
+        for c in cfg.initial_comment:
+            yield c
+        for s in YAML.walk_section(cfg):
+            yield s
+        for c in cfg.final_comment:
+            yield c
+
+    @staticmethod
+    def walk_section(s, level=0):
+        from configobj import Section
+        assert isinstance(s, Section)
+        indent = '  ' * level
+        for name in s.scalars:
+            for c in s.comments[name]:
+                yield indent + c.strip()
+            line = '{0}{1}: {2}'.format(indent, name, s[name])
+            c = s.inline_comments[name]
+            if c:
+                line += ' ' + c
+            yield line
+        for name in s.sections:
+            for c in s.comments[name]:
+                yield indent + c.strip()
+            line = '{0}{1}:'.format(indent, name)
+            c = s.inline_comments[name]
+            if c:
+                line += ' ' + c
+            yield line
+            for val in YAML.walk_section(s[name], level=level+1):
+                yield val
 
     def from_json(self):
         # use roundtrip to preserver order
@@ -143,6 +309,23 @@ class YAML_Cmd(ProgramBase):
     @option('file', nargs='+')
     def json(self, yaml):
         return yaml.from_json()
+
+    @sub_parser(
+        aliases=['from-ini'],
+        help='convert .ini/config to block YAML',
+        description='convert .ini/config to block YAML',
+    )
+    @option('file', nargs='+')
+    def ini(self, yaml):
+        return yaml.from_ini()
+
+    if 'test' in sys.argv:
+        @sub_parser(
+            description='internal test function',
+        )
+        @option('file', nargs='*')
+        def test(self, yaml):
+            return yaml.test()
 
 
 def main():

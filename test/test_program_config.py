@@ -40,20 +40,19 @@ class TestProgramConfig:
 
     def test_multi(self):
         # application configuration
-        with pytest.raises(AssertionError):
-            round_trip("""
-            # default arguments for the program
-            args:  # needed to prevent comment wrapping
-            # this should be your username
-              username: anthon
-              passwd: secret        # this is plaintext don't reuse
-                                    # important/system passwords
-              fullname: Anthon van der Neut
-              tmux:
-                session-name: test  # make sure this doesn't clash with
-                                    # other sessions
-              loop:   # looping related defaults
-                # experiment with the following
-                wait: 10
-              # no more argument info to pass
-            """)
+        round_trip("""
+        # default arguments for the program
+        args:  # needed to prevent comment wrapping
+        # this should be your username
+          username: anthon
+          passwd: secret        # this is plaintext don't reuse
+                                # important/system passwords
+          fullname: Anthon van der Neut
+          tmux:
+            session-name: test  # make sure this doesn't clash with
+                                # other sessions
+          loop:   # looping related defaults
+            # experiment with the following
+            wait: 10
+          # no more argument info to pass
+        """)

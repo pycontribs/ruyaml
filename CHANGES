@@ -1,0 +1,38 @@
+0.2: 20141123
+- add ext/_yaml.c etc to the source tree
+- tests for yaml to work on 2.6/3.3/3.4
+- change install so that you can include ruamel.yaml instead of ruamel.yaml.py
+- add "yaml" utility with initial subcommands (test rt, from json)
+
+0.1: 20141122
+- merge py2 and py3 code bases
+- remove support for 2.5/3.0/3.1/3.2 (this merge relies on u"" as
+  available in 3.3 and . imports not available in 2.5)
+- tox.ini for 2.7/3.4/2.6/3.3
+- remove lib3/ and tests/lib3 directories and content
+- commit
+- correct --verbose for test application
+- DATA=changed to be relative to __file__ of code
+- DATA using os.sep
+- remove os.path from imports as os is already imported
+- have test_yaml.py exit with value 0 on success, 1 on failures, 2 on
+  error
+- added support for octal integers starting with '0o'
+  keep support for 01234 as well as 0o1234
+- commit
+- added test_roundtrip_data:
+  requirest a .data file and .roundtrip (empty), yaml_load .data
+  and compare dump against original.
+- fix grammar as per David Pursehouse:
+  https://bitbucket.org/xi/pyyaml/pull-request/5/fix-grammar-in-error-messages/diff
+- http://www.json.org/ extra escaped char \/
+  add .skip-ext as libyaml is not updated
+- David Fraser: Extract a method to represent keys in mappings, so that
+  a subclass can choose not to quote them, used in repesent_mapping
+  https://bitbucket.org/davidfraser/pyyaml/
+- add CommentToken and percolate through parser and composer and constructor
+- add Comments to wrapped mapping and sequence constructs (not to scalars)
+- generate YAML with comments
+- initial README
+
+

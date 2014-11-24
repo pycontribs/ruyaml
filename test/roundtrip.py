@@ -1,4 +1,5 @@
 
+from __future__ import print_function
 
 """
 helper routines for testing round trip of commented YAML data
@@ -44,4 +45,5 @@ def round_trip(inp, outp=None, extra=None):
     if extra is not None:
         doutp += extra
     data = round_trip_load(dinp)
+    print('roundtrip data:\n', round_trip_dump(data), sep='')
     assert round_trip_dump(data) == doutp
