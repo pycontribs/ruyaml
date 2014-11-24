@@ -182,3 +182,50 @@ class TestComments:
         # note the requirement to add spaces for alignment of comment
         x = x.replace(': secret          ', ': deleted password')
         assert round_trip_dump(data) == x
+
+    def test_set_comment(self):
+        round_trip("""
+        !!set
+        # the beginning
+        ? a
+        # next one is B (lowercase)
+        ? b  #  You see? Promised you.
+        ? c
+        # this is the end
+        """)
+
+    @pytest.mark.xfail
+    def test_set_comment_before_tag(self):
+        # no comments before tags
+        round_trip("""
+        # the beginning
+        !!set
+        # or this one?
+        ? a
+        # next one is B (lowercase)
+        ? b  #  You see? Promised you.
+        ? c
+        # this is the end
+        """)
+
+    def test_omap_comment_roundtrip(self):
+        round_trip("""
+        !!omap
+        - a: 1
+        - b: 2  # two
+        - c: 3  # three
+        - d: 4
+        """)
+
+    @pytest.mark.xfail
+    def test_omap_comment_roundtrip_pre_comment(self):
+        # placed on the MappingNode, doesn't get constructed (yet)
+        round_trip("""
+        !!omap
+        - a: 1
+        - b: 2  # two
+        - c: 3  # three
+        # last one
+        - d: 4
+        """)
+

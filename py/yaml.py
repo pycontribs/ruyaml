@@ -59,13 +59,11 @@ class YAML:
                 print("{0:2} {1}".format(idx, token))
 
         def rt_events(input):
-            stream = io.StringIO()
             dumper = ruamel.yaml.RoundTripDumper
             events = ruamel.yaml.parse(input, ruamel.yaml.RoundTripLoader)
             print(ruamel.yaml.emit(events, indent=False, Dumper=dumper))
 
         def rt_nodes(input):
-            stream = io.StringIO()
             dumper = ruamel.yaml.RoundTripDumper
             nodes = ruamel.yaml.compose(input, ruamel.yaml.RoundTripLoader)
             print(ruamel.yaml.serialize(nodes, indent=False, Dumper=dumper))
@@ -82,10 +80,27 @@ class YAML:
             x.dump()  # dump the node
 
         input = dedent("""
-        map1:
-          # comment 1
-          map2:
-            key1: val1
+        application: web2py
+        version: 1
+        runtime: python27
+        api_version: 1
+        threadsafe: false
+
+        default_expiration: "24h"
+
+        handlers:
+        - url: /(?P<a>.+?)/static/(?P<b>.+)
+          static_files: 'applications/\\1/static/\\2'
+          upload: applications/(.+?)/static/(.+)
+          secure: optional
+        """)
+        input = dedent("""
+        !!omap
+        - a: 1
+        - b: 2  # two
+        - c: 3  # three
+        # last one
+        - d: 4
         """)
 
         print_input(input)
@@ -105,12 +120,11 @@ class YAML:
             # print type(l), '\n', dir(l)
             comment = getattr(l, '_yaml_comment', None)
             print('comment_1', comment)
-        stream = io.StringIO()
         dumper = ruamel.yaml.RoundTripDumper
         print('>>>>>>>>>>')
         # print(ruamel.yaml.dump(data, default_flow_style=False,
         #    Dumper=dumper), '===========')
-        print(ruamel.yaml.dump(data, Dumper=dumper)+'===========')
+        print("{0}=========".format(ruamel.yaml.dump(data, Dumper=dumper)))
 
         # test end
 
@@ -157,7 +171,6 @@ class YAML:
             inp = open(file_name).read()
             loader = ruamel.yaml.RoundTripLoader
             docs.append(ruamel.yaml.load(inp, loader))
-        stream = io.StringIO()
         dumper = ruamel.yaml.RoundTripDumper
         print(ruamel.yaml.dump_all(docs, Dumper=dumper))
         return 1 if errors else 0
@@ -193,7 +206,6 @@ class YAML:
         loader = ruamel.yaml.SafeLoader if drop_comment else \
             ruamel.yaml.RoundTripLoader
         code = ruamel.yaml.load(inp, loader)
-        stream = io.StringIO()
         dumper = ruamel.yaml.SafeDumper if drop_comment else \
             ruamel.yaml.RoundTripDumper
         return ruamel.yaml.dump(code, Dumper=dumper)

@@ -10,9 +10,9 @@ Major differences with PyYAML 3.11:
 
 - intergrated Python 2 and 3 sources, running on Python 2.6, 2.7, 3.3 and 3.4.
 - round trip mode that **includes comments** (block mode, key ordering kept)
-- support for simple lists as mapping keys by transformatopm to tuples
-- omap generates ordereddict (C) on Python 2, collections.OrderedDict
-  on Python 3.
+- support for simple lists as mapping keys by transformation to tuples
+- ``!!omap`` generates ordereddict (C) on Python 2, collections.OrderedDict
+  on Python 3, and ``!!omap`` is generated for these types.
 - some YAML 1.2 enhancements (``0o`` octal prefix, ``\/`` escape)
 - pep8 compliance
 - tox and py.test based testing
@@ -66,5 +66,7 @@ A utility name  ``yaml`` is included and allows for basic operations on files:
   files
 - ``yaml json <file_name>`` for conversion of JSON file(s) to a single
   YAML block style document
+- ``yaml ini <file_name>`` for conversion of an INI/config file (ConfigObj
+  comment and nested sections supported) to a YAML block style document
 
 See ``yaml --help`` for more information on the availble commands

@@ -440,6 +440,8 @@ class Emitter(object):
                 self.write_pre_comment(self.event)
             self.write_indent()
             if self.check_simple_key():
+                if self.event.style == '?':
+                    self.write_indicator(u'?', True, indention=True)
                 self.states.append(self.expect_block_mapping_simple_value)
                 self.expect_node(mapping=True, simple_key=True)
             else:
@@ -448,7 +450,8 @@ class Emitter(object):
                 self.expect_node(mapping=True)
 
     def expect_block_mapping_simple_value(self):
-        self.write_indicator(u':', False)
+        if getattr(self.event, 'style', None) != '?':
+            self.write_indicator(u':', False)
         self.states.append(self.expect_block_mapping_key)
         self.expect_node(mapping=True)
 
@@ -539,7 +542,8 @@ class Emitter(object):
             self.analysis = self.analyze_scalar(self.event.value)
         if self.event.style == '"' or self.canonical:
             return '"'
-        if not self.event.style and self.event.implicit[0]:
+        if (not self.event.style or self.event.style == '?') and \
+           self.event.implicit[0]:
             if (not (self.simple_key_context and
                      (self.analysis.empty or self.analysis.multiline))
                 and (self.flow_level and self.analysis.allow_flow_plain

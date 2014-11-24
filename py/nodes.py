@@ -51,6 +51,14 @@ class Node(object):
 
 
 class ScalarNode(Node):
+    """
+    styles:
+      ? -> set() ? key, no value
+      " -> double quoted
+      ' -> single quoted
+      | ->
+      > ->
+    """
     id = 'scalar'
 
     def __init__(self, tag, value, start_mark=None, end_mark=None, style=None,

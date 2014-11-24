@@ -31,7 +31,7 @@ class Token(object):
         return getattr(self, '_comment', None)
 
     def move_comment(self, target):
-        """move a comment from this token to target (noramlly next token)
+        """move a comment from this token to target (normally next token)
         used to combine e.g. comments before a BlockEntryToken to the
         ScalarToken that follows it
         """

@@ -5,10 +5,6 @@ from __future__ import print_function
 helper routines for testing round trip of commented YAML data
 """
 import textwrap
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import StringIO
 
 import ruamel.yaml
 
@@ -31,7 +27,6 @@ def round_trip_load(dinp):
 
 
 def round_trip_dump(data):
-    stream = StringIO()
     dumper = ruamel.yaml.RoundTripDumper
     return ruamel.yaml.dump(data, default_flow_style=False, Dumper=dumper)
 

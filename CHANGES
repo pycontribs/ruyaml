@@ -1,3 +1,8 @@
+- make !!omap and !!set take parameters. Thre are still some restrictions:
+  - no comments before the !!tag
+  - only comments after omap elements not between
+- extra tests
+
 0.3: 20141124
 - fix value comment occuring as on previous line (looking like eol comment)
 - INI conversion in yaml + tests
