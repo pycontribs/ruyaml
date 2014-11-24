@@ -564,7 +564,8 @@ Representer.add_multi_representer(object,
                                   Representer.represent_object)
 
 
-from .constructor import CommentedMap, CommentedSeq, Comment
+from .constructor import CommentedMap, CommentedOrderedMap, CommentedSeq, \
+    CommentedSet, Comment
 
 
 class RoundTripRepresenter(SafeRepresenter):
@@ -576,6 +577,10 @@ class RoundTripRepresenter(SafeRepresenter):
             default_flow_style = False
         SafeRepresenter.__init__(self, default_style=default_style,
                                  default_flow_style=default_flow_style)
+
+    def represent_none(self, data):
+        return self.represent_scalar(u'tag:yaml.org,2002:null',
+                                     u'')
 
     def represent_sequence(self, tag, sequence, flow_style=None):
         value = []
@@ -649,47 +654,14 @@ class RoundTripRepresenter(SafeRepresenter):
                 node.flow_style = best_style
         return node
 
-#    def represent_mapping(self, tag, mapping, flow_style=None):
-#        value = []
-#        node = MappingNode(tag, value, flow_style=flow_style)
-#        if self.alias_key is not None:
-#            self.represented_objects[self.alias_key] = node
-#        best_style = True
-#        if hasattr(mapping, 'items'):
-#            mapping = list(mapping.items())
-#            try:
-#                mapping = sorted(mapping)
-#            except TypeError:
-#                pass
-#        for item_key, item_value in mapping:
-#            node_key = self.represent_key(item_key)
-#            node_value = self.represent_data(item_value)
-#            if not (isinstance(node_key, ScalarNode) and not node_key.style):
-#                best_style = False
-#            if not (isinstance(node_value, ScalarNode) and not
-#                    node_value.style):
-#                best_style = False
-#            value.append((node_key, node_value))
-#        if flow_style is None:
-#            if self.default_flow_style is not None:
-#                node.flow_style = self.default_flow_style
-#            else:
-#                node.flow_style = best_style
-#        return node
-
-    def represent_set(self, data):
-        value = {}
-        for key in data:
-            value[key] = None
-        return self.represent_mapping(u'tag:yaml.org,2002:set', value)
+    def represent_omap(self, tag, omap, flow_style=None):
         value = []
-        node = MappingNode(tag, value, flow_style=flow_style)
+        node = SequenceNode(tag, value, flow_style=flow_style)
         if self.alias_key is not None:
             self.represented_objects[self.alias_key] = node
         best_style = True
-        # no sorting! !!
         try:
-            comment = getattr(mapping, Comment.attrib)
+            comment = getattr(omap, Comment.attrib)
             node.comment = comment.comment
             item_comments = comment.items
             try:
@@ -698,25 +670,25 @@ class RoundTripRepresenter(SafeRepresenter):
                 pass
         except AttributeError:
             item_comments = {}
-        for item_key, item_value in mapping.items():
-            node_key = self.represent_key(item_key)
-            node_value = self.represent_data(item_value)
+        for item_key in omap:
+            item_val = omap[item_key]
+            node_item = self.represent_data({item_key: item_val})
+            # print('ndt', node_item)
+            # node item has two scalars in value: node_key and node_value
             item_comment = item_comments.get(item_key)
             if item_comment:
-                assert getattr(node_key, 'comment', None) is None
-                node_key.comment = item_comment[:2]
-                nvc = getattr(node_value, 'comment', None)
+                assert getattr(node_item.value[0][0], 'comment', None) is None
+                node_item.value[0][0].comment = item_comment[:2]
+                nvc = getattr(node_item.value[0][1], 'comment', None)
                 if nvc is not None:  # end comment already there
                     nvc[0] = item_comment[2]
                     nvc[1] = item_comment[3]
                 else:
-                    node_value.comment = item_comment[2:]
-            if not (isinstance(node_key, ScalarNode) and not node_key.style):
-                best_style = False
-            if not (isinstance(node_value, ScalarNode) and not
-                    node_value.style):
-                best_style = False
-            value.append((node_key, node_value))
+                    node_item.value[0][1].comment = item_comment[2:]
+            # if not (isinstance(node_item, ScalarNode) \
+            #    and not node_item.style):
+            #     best_style = False
+            value.append(node_item)
         if flow_style is None:
             if self.default_flow_style is not None:
                 node.flow_style = self.default_flow_style
@@ -724,6 +696,45 @@ class RoundTripRepresenter(SafeRepresenter):
                 node.flow_style = best_style
         return node
 
+    def represent_set(self, setting):
+        flow_style = False
+        tag = u'tag:yaml.org,2002:set'
+        # return self.represent_mapping(tag, value)
+        value = []
+        node = MappingNode(tag, value, flow_style=flow_style)
+        if self.alias_key is not None:
+            self.represented_objects[self.alias_key] = node
+        best_style = True
+        # no sorting! !!
+        try:
+            comment = getattr(setting, Comment.attrib)
+            node.comment = comment.comment
+            item_comments = comment.items
+            try:
+                node.comment.append(comment.end)
+            except AttributeError:
+                pass
+        except AttributeError:
+            item_comments = {}
+        for item_key in setting.odict:
+            node_key = self.represent_key(item_key)
+            node_value = self.represent_data(None)
+            item_comment = item_comments.get(item_key)
+            if item_comment:
+                assert getattr(node_key, 'comment', None) is None
+                node_key.comment = item_comment[:2]
+            node_key.style = node_value.style = "?"
+            if not (isinstance(node_key, ScalarNode) and not node_key.style):
+                best_style = False
+            if not (isinstance(node_value, ScalarNode) and not
+                    node_value.style):
+                best_style = False
+            value.append((node_key, node_value))
+        return node
+
+
+RoundTripRepresenter.add_representer(type(None),
+                                     RoundTripRepresenter.represent_none)
 
 RoundTripRepresenter.add_representer(CommentedSeq,
                                      RoundTripRepresenter.represent_list)
@@ -731,5 +742,8 @@ RoundTripRepresenter.add_representer(CommentedSeq,
 RoundTripRepresenter.add_representer(CommentedMap,
                                      RoundTripRepresenter.represent_dict)
 
-RoundTripRepresenter.add_representer(set,
+RoundTripRepresenter.add_representer(CommentedOrderedMap,
+    RoundTripRepresenter.represent_ordereddict)
+
+RoundTripRepresenter.add_representer(CommentedSet,
                                      RoundTripRepresenter.represent_set)

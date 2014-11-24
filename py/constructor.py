@@ -11,6 +11,7 @@ import binascii
 import re
 import sys
 import types
+from collections import MutableSet
 
 from .error import *
 from .nodes import *
@@ -386,22 +387,8 @@ class SafeConstructor(BaseConstructor):
         return data
 
     def construct_yaml_omap(self, node):
-        # Note: we do not check for duplicate keys, because it's too
-        # CPU-expensive in the omap as list represention
-        from yaml.compat import ordereddict
-        if False:
-            try:
-                from ruamel.ordereddict import ordereddict
-            except ImportError:
-                try:
-                    from collections import OrderedDict
-                except ImportError:
-                    from ordereddict import OrderedDict
-                # to get the right name import ... as ordereddict
-                # doesn't do that
-
-                class ordereddict(OrderedDict):
-                    pass
+        # Note: we do now check for duplicate keys
+        from ruamel.yaml.compat import ordereddict
         omap = ordereddict()
         yield omap
         if not isinstance(node, SequenceNode):
@@ -423,6 +410,7 @@ class SafeConstructor(BaseConstructor):
                     subnode.start_mark)
             key_node, value_node = subnode.value[0]
             key = self.construct_object(key_node)
+            assert key not in omap
             value = self.construct_object(value_node)
             omap[key] = value
 
@@ -865,6 +853,51 @@ class CommentedMap(ordereddict, CommentedBase):
             self.ca.comment = comment
 
 
+class CommentedOrderedMap(CommentedMap):
+    __slots__ = [Comment.attrib, ]
+
+
+class CommentedSet(MutableSet, CommentedBase):
+    __slots__ = [Comment.attrib, 'odict']
+
+    def __init__(self, values=None):
+        self.odict = ordereddict()
+        MutableSet.__init__(self)
+        if values is not None:
+            self |= values
+
+    def add(self, value):
+        """Add an element."""
+        self.odict[value] = None
+
+    def discard(self, value):
+        """Remove an element.  Do not raise an exception if absent."""
+        del self.odict[value]
+
+    def __contains__(self, x):
+        return x in self.odict
+
+    def __iter__(self):
+        for x in self.odict:
+            yield x
+
+    def __len__(self):
+        return len(self.odict)
+
+    def __repr__(self):
+        return 'set({0!r})'.format(self.odict.keys())
+
+    def _yaml_add_comment(self, comment, key=NoComment, end=None):
+        if key is not NoComment:
+            l = self.ca.items.setdefault(key, [None, None, None, None])
+            l[0] = comment[0]
+            l[1] = comment[1]
+        elif end is not None:
+            self.ca.end = comment  # list of end comments
+        else:
+            self.ca.comment = comment
+
+
 class RoundTripConstructor(SafeConstructor):
     """need to store the comments on the node itself,
     as well as on the items
@@ -925,6 +958,43 @@ class RoundTripConstructor(SafeConstructor):
                 maptyp._yaml_add_comment(value_node.comment, value=key)
             maptyp[key] = value
 
+    def construct_setting(self, node, typ, deep=False):
+        if not isinstance(node, MappingNode):
+            raise ConstructorError(
+                None, None,
+                "expected a mapping node, but found %s" % node.id,
+                node.start_mark)
+        if node.comment:
+            typ._yaml_add_comment(node.comment[:2])
+            if len(node.comment) > 2:
+                typ._yaml_add_comment(node.comment[2], end=True)
+        for key_node, value_node in node.value:
+            # keys can be list -> deep
+            key = self.construct_object(key_node, deep=True)
+            # lists are not hashable, but tuples are
+            if not isinstance(key, collections.Hashable):
+                if isinstance(key, list):
+                    key = tuple(key)
+            if PY2:
+                try:
+                    hash(key)
+                except TypeError as exc:
+                    raise ConstructorError(
+                        "while constructing a mapping", node.start_mark,
+                        "found unacceptable key (%s)" %
+                        exc, key_node.start_mark)
+            else:
+                if not isinstance(key, collections.Hashable):
+                    raise ConstructorError(
+                        "while constructing a mapping", node.start_mark,
+                        "found unhashable key", key_node.start_mark)
+            value = self.construct_object(value_node, deep=deep)
+            if key_node.comment:
+                typ._yaml_add_comment(key_node.comment, key=key)
+            if value_node.comment:
+                typ._yaml_add_comment(value_node.comment, value=key)
+            typ.add(key)
+
     def construct_yaml_seq(self, node):
         data = CommentedSeq()
         if node.comment:
@@ -935,14 +1005,47 @@ class RoundTripConstructor(SafeConstructor):
     def construct_yaml_map(self, node):
         data = CommentedMap()
         yield data
-        value = self.construct_mapping(node, data)
+        self.construct_mapping(node, data)
+
+    def construct_yaml_omap(self, node):
+        # Note: we do now check for duplicate keys
+        omap = CommentedOrderedMap()
+        yield omap
+        if node.comment:
+            omap._yaml_add_comment(node.comment[:2])
+            if len(node.comment) > 2:
+                omap._yaml_add_comment(node.comment[2], end=True)
+        if not isinstance(node, SequenceNode):
+            raise ConstructorError(
+                "while constructing an ordered map", node.start_mark,
+                "expected a sequence, but found %s" % node.id, node.start_mark)
+        for subnode in node.value:
+            if not isinstance(subnode, MappingNode):
+                raise ConstructorError(
+                    "while constructing an ordered map", node.start_mark,
+                    "expected a mapping of length 1, but found %s" %
+                    subnode.id,
+                    subnode.start_mark)
+            if len(subnode.value) != 1:
+                raise ConstructorError(
+                    "while constructing an ordered map", node.start_mark,
+                    "expected a single mapping item, but found %d items" %
+                    len(subnode.value),
+                    subnode.start_mark)
+            key_node, value_node = subnode.value[0]
+            key = self.construct_object(key_node)
+            assert key not in omap
+            value = self.construct_object(value_node)
+            if key_node.comment:
+                omap._yaml_add_comment(key_node.comment, key=key)
+            if value_node.comment:
+                omap._yaml_add_comment(value_node.comment, value=key)
+            omap[key] = value
 
     def construct_yaml_set(self, node):
-        data = set()
+        data = CommentedSet()
         yield data
-        mdata = CommentedMap()
-        self.construct_mapping(node, mdata)
-        data.update(mdata)
+        self.construct_setting(node, data)
 
 RoundTripConstructor.add_constructor(
     u'tag:yaml.org,2002:null',
