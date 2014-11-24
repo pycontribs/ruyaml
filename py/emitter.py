@@ -431,6 +431,11 @@ class Emitter(object):
             self.indent = self.indents.pop()
             self.state = self.states.pop()
         else:
+            if self.event.comment and self.event.comment[1]:
+                # final comments from a doc
+                if self.column != 0:
+                    self.write_line_break()
+                self.write_pre_comment(self.event)
             self.write_indent()
             if self.check_simple_key():
                 self.states.append(self.expect_block_mapping_simple_value)

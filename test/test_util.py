@@ -33,6 +33,8 @@ except AttributeError:
             # raise error
         # return output
 
+import pytest
+
 import ruamel.yaml
 from ruamel.yaml.compat import PY3
 from roundtrip import dedent
@@ -86,3 +88,46 @@ class TestUtil:
          - klm
         """).format(**dict(file_name=file_name))
 
+    @pytest.mark.skipif(not ruamel.yaml.__with_libyaml__,
+                        reason="better walker needed that keeps parent list")
+    def test_from_configobj(self, tmpdir, monkeypatch):
+        from configobj import ConfigObj
+        x = dedent("""
+        # initial comment
+        keyword1 = value1
+        keyword2 = value2
+
+        [section 1]
+        keyword1 = value1
+        keyword2 = value2
+
+            [[sub-section]]
+            # this is in section 1
+            keyword1 = value1
+            keyword2 = value2
+
+                [[[nested section]]]
+                # this is in sub section
+                keyword1 = value1
+                keyword2 = value2
+
+            [[sub-section2]]
+            # this is in section 1 again
+            keyword1 = value1
+            keyword2 = value2
+
+        [[sub-section3]]
+        # this is also in section 1, indentation is misleading here
+        keyword1 = value1
+        keyword2 = value2
+
+        # final comment
+        """)
+        cfg = ConfigObj(x.splitlines())
+        print(cfg)
+        def doit(section, key):
+            print('section {0}, key {1}, value {}'.format(
+                section.name, key, section[key]))
+        for z in cfg.walk(doit):
+            pass
+        assert False
