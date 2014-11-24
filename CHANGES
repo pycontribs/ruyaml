@@ -1,3 +1,9 @@
+0.3: 20141124
+- fix value comment occuring as on previous line (looking like eol comment)
+- INI conversion in yaml + tests
+- (hidden) test in yaml for debugging with auto command
+- fix for missing comment in middel of simple map + test
+
 0.2: 20141123
 - add ext/_yaml.c etc to the source tree
 - tests for yaml to work on 2.6/3.3/3.4
@@ -34,5 +40,3 @@
 - add Comments to wrapped mapping and sequence constructs (not to scalars)
 - generate YAML with comments
 - initial README
-
-
