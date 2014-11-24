@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from __future__ import print_function
 
 # Scanner produces tokens of the following types:
 # STREAM-START
@@ -1529,7 +1530,7 @@ class RoundTripScanner(Scanner):
         if isinstance(self.tokens[0], CommentToken):
             comment = self.tokens.pop(0)
             self.tokens_taken += 1
-            # print 'dropping', comment
+            # print('################ dropping', comment)
             comments.append(comment)
         while self.need_more_tokens():
             self.fetch_more_tokens()
@@ -1541,9 +1542,9 @@ class RoundTripScanner(Scanner):
                 # print 'dropping2', comment
                 comments.append(comment)
         if len(comments) >= 1:
-            # print '  len', len(comments), comments
-            # print '  com', comments[0], comments[0].start_mark.line
-            # print '  tok', self.tokens[0].end_mark.line
+            # print('  len', len(comments), comments)
+            # print('  com', comments[0], comments[0].start_mark.line)
+            # print('  tok', self.tokens[0].end_mark.line)
             self.tokens[0].add_pre_comments(comments)
         # pull in post comment on e.g. ':'
         if not self.done and len(self.tokens) < 2:

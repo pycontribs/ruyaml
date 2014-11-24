@@ -267,6 +267,8 @@ class Emitter(object):
                 if self.event.comment:
                     self.write_post_comment(self.event)
                 if self.event.comment and self.event.comment[1]:
+                    if self.column != 0:
+                        self.write_line_break()
                     self.write_pre_comment(self.event)
                 if self.flow_level or self.canonical or self.event.flow_style \
                         or self.check_empty_mapping():

@@ -20,7 +20,6 @@ import ruamel.yaml
 from ruamel.yaml.compat import ordereddict
 
 
-
 class YAML:
     def __init__(self, args, config):
         self._args = args
@@ -28,54 +27,23 @@ class YAML:
 
     def from_ini(self):
         from configobj import ConfigObj
-        x = dedent("""
-        # initial comment
-        keyword1 = value1
-        keyword2 = value2  # eol comment kw2
-
-        [section 1]
-        keyword1 = value1 #
-        # comment s1kw2
-        keyword2 = value2  # eol comment s1kw2
-
-            [[sub-section]]  # eol on section
-            # this is in section 1
-            keyword1 = value1
-            keyword2 = value2
-
-                [[[nested section]]] #
-                # this is in sub section
-                keyword1 = value1
-                keyword2 = value2
-
-            [[sub-section2]] #
-            # this is in section 1 again
-            keyword1 = value1
-            keyword2 = value2
-
-        [[sub-section3]] #
-        # this is also in section 1, indentation is misleading here
-        keyword1 = value1
-        keyword2 = value2
-
-        # final comment
-        """)
-        cfg = ConfigObj(x.splitlines())
-        print(cfg)
+        errors = 0
         doc = []
+        cfg = ConfigObj(open(self._args.file))
+        # print(cfg)
         for line in self.walk_configobj(cfg):
             if not line.strip():
                 continue
-            print(line)
+            # print(line)
             doc.append(line)
-        print('--------------')
-        joined = '\n'.join(doc) + '\n'
+        # print('--------------')
+        joined = '\n'.join(doc)
         rto = self.round_trip_single(joined)
-        print(rto)
-        print()
-        if rto != joined:
-            self.diff(joined, rto, "test.ini")
-        return 0
+        print(rto, end='')  # already has eol at eof
+        # print()
+        # if rto != joined:
+        #     self.diff(joined, rto, "test.ini")
+        return 1 if errors else 0
 
     def test(self):
         def print_input(input):
@@ -86,8 +54,8 @@ class YAML:
             print('Tokens ' + '#' * 60)
             tokens = ruamel.yaml.scan(input, ruamel.yaml.RoundTripLoader)
             for idx, token in enumerate(tokens):
-                #print(token.start_mark)
-                #print(token.end_mark)
+                # print(token.start_mark)
+                # print(token.end_mark)
                 print("{0:2} {1}".format(idx, token))
 
         def rt_events(input):
@@ -107,14 +75,6 @@ class YAML:
             events = ruamel.yaml.parse(input, ruamel.yaml.RoundTripLoader)
             for idx, event in enumerate(events):
                 print("{0:2} {1}".format(idx, event))
-            #for event in events:
-                #number += 1
-            #    cls = event.__class__
-                #print(cls)
-                #if (cls, -1) in substitutions:
-                #    markers.append([event.start_mark.index, +1, number, substitutions[cls, -1]])
-                #if (cls, +1) in substitutions:
-                #    markers.append([event.end_mark.index, -1, number, substitutions[cls, +1]])
 
         def print_nodes(input):
             print('Nodes ' + '#' * 60)
@@ -131,9 +91,9 @@ class YAML:
         print_input(input)
         print_tokens(input)
         print_events(input)
-        #rt_events(input)
+        # rt_events(input)
         print_nodes(input)
-        #rt_nodes(input)
+        # rt_nodes(input)
 
         data = ruamel.yaml.load(input, ruamel.yaml.RoundTripLoader)
         print('data', data)
@@ -148,9 +108,9 @@ class YAML:
         stream = io.StringIO()
         dumper = ruamel.yaml.RoundTripDumper
         print('>>>>>>>>>>')
-        #print ruamel.yaml.dump(data, default_flow_style=False, Dumper=dumper), '==========='
+        # print(ruamel.yaml.dump(data, default_flow_style=False,
+        #    Dumper=dumper), '===========')
         print(ruamel.yaml.dump(data, Dumper=dumper)+'===========')
-
 
         # test end
 
@@ -249,7 +209,6 @@ class YAML:
             if strip_trailing_space and line[:4] in ['--- ', '+++ ']:
                 line = line.rstrip() + '\n'
             sys.stdout.write(line)
-        #sys.stdout.writelines(diff)
 
 
 def to_stdout(*args):
@@ -315,7 +274,7 @@ class YAML_Cmd(ProgramBase):
         help='convert .ini/config to block YAML',
         description='convert .ini/config to block YAML',
     )
-    @option('file', nargs='+')
+    @option('file')
     def ini(self, yaml):
         return yaml.from_ini()
 
