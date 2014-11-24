@@ -144,7 +144,6 @@ class TestComments:
             key1: val1
         """)
 
-    @pytest.mark.skipif(True, reason="debugging")
     def test_map_in_map_1(self):
         # comment is moved from value to key
         round_trip("""

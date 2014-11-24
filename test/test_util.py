@@ -6,6 +6,7 @@ import sys
 import subprocess
 try:
     _ = subprocess.check_output
+
     def check_output(*args, **kw):
         try:
             res = subprocess.check_output(*args, **kw)
@@ -16,22 +17,12 @@ try:
             res = res.decode('utf-8')
         return res
 except AttributeError:
-    # https://gist.github.com/edufelipe/1027906
     def check_output(*args, **kw):
         process = subprocess.Popen(stdout=subprocess.PIPE, *args, **kw)
         output, unused_err = process.communicate()
         if PY3:
             output = output.decode('utf-8')
         return output
-        # retcode = process.poll()
-        # if retcode:
-            # cmd = kw.get("args")
-            # if cmd is None:
-            #     cmd = args[0]
-            # error = subprocess.CalledProcessError(retcode, cmd)
-            # error.output = output
-            # raise error
-        # return output
 
 import pytest
 
@@ -49,8 +40,10 @@ def call_util(s, file_name, cmd, mp, td):
     res = check_output(cmd, stderr=subprocess.STDOUT)
     return res
 
+
 def rt_test(s, file_name, mp, td):
     return call_util(s, file_name, ['yaml', 'rt', "-v", file_name], mp, td)
+
 
 class TestUtil:
 
@@ -75,7 +68,6 @@ class TestUtil:
         -  ghi # some comment
         - klm
         """, file_name, mp=monkeypatch, td=tmpdir)
-        #print(res)
         assert res == dedent("""
         {file_name}:
              stabelizes on second round trip, ok without comments
@@ -88,12 +80,12 @@ class TestUtil:
          - klm
         """).format(**dict(file_name=file_name))
 
-    @pytest.mark.skipif(not ruamel.yaml.__with_libyaml__,
-                        reason="better walker needed that keeps parent list")
     def test_from_configobj(self, tmpdir, monkeypatch):
-        from configobj import ConfigObj
-        x = dedent("""
+        file_name = "02_from_ini.yaml"
+        res = call_util(
+            u"""
         # initial comment
+
         keyword1 = value1
         keyword2 = value2
 
@@ -122,12 +114,98 @@ class TestUtil:
         keyword2 = value2
 
         # final comment
+        """, file_name, ['yaml', 'from-ini', file_name],
+            mp=monkeypatch, td=tmpdir)
+        print(res)
+        assert res == dedent("""
+        # initial comment
+        keyword1: value1
+        keyword2: value2
+        section 1:
+          keyword1: value1
+          keyword2: value2
+          sub-section:
+            # this is in section 1
+            keyword1: value1
+            keyword2: value2
+            nested section:
+              # this is in sub section
+              keyword1: value1
+              keyword2: value2
+          sub-section2:
+            # this is in section 1 again
+            keyword1: value1
+            keyword2: value2
+          sub-section3:
+            # this is also in section 1, indentation is misleading here
+            keyword1: value1
+            keyword2: value2
+        # final comment
         """)
-        cfg = ConfigObj(x.splitlines())
-        print(cfg)
-        def doit(section, key):
-            print('section {0}, key {1}, value {}'.format(
-                section.name, key, section[key]))
-        for z in cfg.walk(doit):
-            pass
-        assert False
+
+    def test_from_configobj_extra_comments(self, tmpdir, monkeypatch):
+        file_name = "02_from_ini.yaml"
+        res = call_util(
+            u"""
+        # initial comment
+        keyword1 = value1
+        keyword2 = value2  # eol comment kw2
+
+        [section 1]
+        keyword1 = value1 # and here more comment
+        # comment s1kw2
+        keyword2 = value2  # eol comment s1kw2
+
+            [[sub-section]]  # eol on section
+            # this is in section 1
+            keyword1 = value1
+            keyword2 = value2
+
+                [[[nested section]]]
+                # this is in sub section
+                keyword1 = value1
+                keyword2 = value2
+                # after nested
+
+            [[sub-section2]]
+            # this is in section 1 again
+            keyword1 = value1
+            keyword2 = value2
+
+        [[sub-section3]] # comment on section key
+        # this is also in section 1, indentation is misleading here
+        keyword1 = value1
+        keyword2 = value2
+
+        # final comment
+        """,
+            file_name, ['yaml', 'from-ini', file_name],
+            mp=monkeypatch, td=tmpdir)
+        print(res)
+        assert res == dedent("""
+        # initial comment
+        keyword1: value1
+        keyword2: value2 # eol comment kw2
+        section 1:
+          keyword1: value1 # and here more comment
+          # comment s1kw2
+          keyword2: value2 # eol comment s1kw2
+          sub-section: # eol on section
+            # this is in section 1
+            keyword1: value1
+            keyword2: value2
+            nested section:
+              # this is in sub section
+              keyword1: value1
+              keyword2: value2
+          # after nested
+          sub-section2:
+            # this is in section 1 again
+            keyword1: value1
+            keyword2: value2
+          sub-section3: # comment on section key
+            # this is also in section 1, indentation is misleading here
+            keyword1: value1
+            keyword2: value2
+        # final comment
+        """)
