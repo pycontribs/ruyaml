@@ -1,6 +1,7 @@
-- make !!omap and !!set take parameters. Thre are still some restrictions:
+- move comment classes in own module comments
+- fix omap pre comment
+- make !!omap and !!set take parameters. There are still some restrictions:
   - no comments before the !!tag
-  - only comments after omap elements not between
 - extra tests
 
 0.3: 20141124
