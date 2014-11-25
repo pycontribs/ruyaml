@@ -1,7 +1,10 @@
 
+from __future__ import print_function
+
 # partially from package six by Benjamin Peterson
 
 import sys
+import os
 import types
 
 try:
@@ -74,3 +77,30 @@ else:
 def with_metaclass(meta, *bases):
     """Create a base class with a metaclass."""
     return meta("NewBase", bases, {})
+
+DBG_TOKEN = 1
+DBG_EVENT = 2
+DBG_NODE = 4
+
+
+_debug = None
+
+
+# used from yaml util when testing
+def dbg(val=None):
+    global _debug
+    if _debug is None:
+        # set to true or false
+        _debug = os.environ.get('YAMLDEBUG')
+        if _debug is None:
+            _debug = 0
+        else:
+            _debug = int(_debug)
+    if val is None:
+        return _debug
+    return _debug & val
+
+
+def nprint(*args, **kw):
+    if dbg:
+        print(*args, **kw)

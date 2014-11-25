@@ -11,11 +11,11 @@ import binascii
 import re
 import sys
 import types
-from collections import MutableSet
 
 from .error import *
 from .nodes import *
 from .compat import utf8, builtins_module, to_str, PY2, PY3, ordereddict
+from .comments import *
 
 
 class ConstructorError(MarkedYAMLError):
@@ -388,7 +388,6 @@ class SafeConstructor(BaseConstructor):
 
     def construct_yaml_omap(self, node):
         # Note: we do now check for duplicate keys
-        from ruamel.yaml.compat import ordereddict
         omap = ordereddict()
         yield omap
         if not isinstance(node, SequenceNode):
@@ -787,117 +786,6 @@ Constructor.add_multi_constructor(
     Constructor.construct_python_object_new)
 
 
-class Comment(object):
-    attrib = '_yaml_comment'
-
-    def __init__(self):
-        self.comment = None
-        # map key (mapping/dict) or index (sequence/list) to a  list of
-        # dict: pre_key, post_key, pre_value, post_value
-        # list: pre item, post item
-        self.items = {}
-        # self.end = []  # end of document comments
-
-    def __str__(self):
-        end = getattr(self, 'end', '')
-        if end:
-            end = ', end=' + str(end)
-        return "Comment(comment={}, items={}{})".format(
-            self.comment, self.items, end)
-
-
-# to distinguish key from None
-def NoComment():
-    pass
-
-
-class CommentedBase(object):
-    @property
-    def ca(self):
-        if not hasattr(self, Comment.attrib):
-            setattr(self, Comment.attrib, Comment())
-        return getattr(self, Comment.attrib)
-
-
-class CommentedSeq(list, CommentedBase):
-    __slots__ = [Comment.attrib, ]
-
-    def _yaml_add_comment(self, comment, key=NoComment, end=None):
-        if key is not NoComment:
-            l = self.ca.items.setdefault(key, [None, None, None, None])
-            l[0] = comment[0]
-            l[1] = comment[1]
-        elif end is not None:
-            self.ca.end = comment  # list of end comments
-        else:
-            self.ca.comment = comment
-
-
-class CommentedMap(ordereddict, CommentedBase):
-    __slots__ = [Comment.attrib, ]
-
-    def _yaml_add_comment(self, comment, key=NoComment, value=NoComment,
-                          end=None):
-        """values is set to key to indicate a value attachment of comment"""
-        if key is not NoComment:
-            l = self.ca.items.setdefault(key, [None, None, None, None])
-            l[0] = comment[0]
-            l[1] = comment[1]
-        elif value is not NoComment:
-            l = self.ca.items.setdefault(value, [None, None, None, None])
-            l[2] = comment[0]
-            l[3] = comment[1]
-        elif end is not None:
-            self.ca.end = comment  # list of end comments
-        else:
-            self.ca.comment = comment
-
-
-class CommentedOrderedMap(CommentedMap):
-    __slots__ = [Comment.attrib, ]
-
-
-class CommentedSet(MutableSet, CommentedBase):
-    __slots__ = [Comment.attrib, 'odict']
-
-    def __init__(self, values=None):
-        self.odict = ordereddict()
-        MutableSet.__init__(self)
-        if values is not None:
-            self |= values
-
-    def add(self, value):
-        """Add an element."""
-        self.odict[value] = None
-
-    def discard(self, value):
-        """Remove an element.  Do not raise an exception if absent."""
-        del self.odict[value]
-
-    def __contains__(self, x):
-        return x in self.odict
-
-    def __iter__(self):
-        for x in self.odict:
-            yield x
-
-    def __len__(self):
-        return len(self.odict)
-
-    def __repr__(self):
-        return 'set({0!r})'.format(self.odict.keys())
-
-    def _yaml_add_comment(self, comment, key=NoComment, end=None):
-        if key is not NoComment:
-            l = self.ca.items.setdefault(key, [None, None, None, None])
-            l[0] = comment[0]
-            l[1] = comment[1]
-        elif end is not None:
-            self.ca.end = comment  # list of end comments
-        else:
-            self.ca.comment = comment
-
-
 class RoundTripConstructor(SafeConstructor):
     """need to store the comments on the node itself,
     as well as on the items
@@ -913,7 +801,7 @@ class RoundTripConstructor(SafeConstructor):
         if node.comment:
             seqtyp._yaml_add_comment(node.comment[:2])
             if len(node.comment) > 2:
-                seqtyp._yaml_add_comment(node.comment[2], end=True)
+                seqtyp.yaml_end_comment_extend(node.comment[2], clear=True)
         for idx, child in enumerate(node.value):
             ret_val.append(self.construct_object(child, deep=deep))
             if child.comment:
@@ -930,7 +818,7 @@ class RoundTripConstructor(SafeConstructor):
         if node.comment:
             maptyp._yaml_add_comment(node.comment[:2])
             if len(node.comment) > 2:
-                maptyp._yaml_add_comment(node.comment[2], end=True)
+                maptyp.yaml_end_comment_extend(node.comment[2], clear=True)
         for key_node, value_node in node.value:
             # keys can be list -> deep
             key = self.construct_object(key_node, deep=True)
@@ -967,7 +855,7 @@ class RoundTripConstructor(SafeConstructor):
         if node.comment:
             typ._yaml_add_comment(node.comment[:2])
             if len(node.comment) > 2:
-                typ._yaml_add_comment(node.comment[2], end=True)
+                typ.yaml_end_comment_extend(node.comment[2], clear=True)
         for key_node, value_node in node.value:
             # keys can be list -> deep
             key = self.construct_object(key_node, deep=True)
@@ -1014,7 +902,7 @@ class RoundTripConstructor(SafeConstructor):
         if node.comment:
             omap._yaml_add_comment(node.comment[:2])
             if len(node.comment) > 2:
-                omap._yaml_add_comment(node.comment[2], end=True)
+                omap.yaml_end_comment_extend(node.comment[2], clear=True)
         if not isinstance(node, SequenceNode):
             raise ConstructorError(
                 "while constructing an ordered map", node.start_mark,
@@ -1038,6 +926,8 @@ class RoundTripConstructor(SafeConstructor):
             value = self.construct_object(value_node)
             if key_node.comment:
                 omap._yaml_add_comment(key_node.comment, key=key)
+            if subnode.comment:
+                omap._yaml_add_comment(subnode.comment, key=key)
             if value_node.comment:
                 omap._yaml_add_comment(value_node.comment, value=key)
             omap[key] = value

@@ -12,7 +12,7 @@ __all__ = ['Emitter', 'EmitterError']
 
 from .error import YAMLError
 from .events import *
-from .compat import utf8, text_type, PY2
+from .compat import utf8, text_type, PY2, nprint, dbg, DBG_EVENT
 
 
 class EmitterError(YAMLError):
@@ -114,6 +114,8 @@ class Emitter(object):
         self.state = None
 
     def emit(self, event):
+        if dbg(DBG_EVENT):
+            nprint(event)
         self.events.append(event)
         while not self.need_more_events():
             self.event = self.events.pop(0)
@@ -267,8 +269,6 @@ class Emitter(object):
                 if self.event.comment:
                     self.write_post_comment(self.event)
                 if self.event.comment and self.event.comment[1]:
-                    if self.column != 0:
-                        self.write_line_break()
                     self.write_pre_comment(self.event)
                 if self.flow_level or self.canonical or self.event.flow_style \
                         or self.check_empty_mapping():
@@ -353,8 +353,8 @@ class Emitter(object):
 
     def expect_flow_mapping_key(self):
         if isinstance(self.event, MappingEndEvent):
-            if self.event.comment and self.event.comment[1]:
-                self.write_pre_comment(self.event)
+            # if self.event.comment and self.event.comment[1]:
+            #     self.write_pre_comment(self.event)
             self.indent = self.indents.pop()
             self.flow_level -= 1
             if self.canonical:
@@ -400,8 +400,6 @@ class Emitter(object):
         if not first and isinstance(self.event, SequenceEndEvent):
             if self.event.comment and self.event.comment[1]:
                 # final comments from a doc
-                if self.column != 0:
-                    self.write_line_break()
                 self.write_pre_comment(self.event)
             self.indent = self.indents.pop()
             self.state = self.states.pop()
@@ -427,16 +425,12 @@ class Emitter(object):
         if not first and isinstance(self.event, MappingEndEvent):
             if self.event.comment and self.event.comment[1]:
                 # final comments from a doc
-                if self.column != 0:
-                    self.write_line_break()
                 self.write_pre_comment(self.event)
             self.indent = self.indents.pop()
             self.state = self.states.pop()
         else:
             if self.event.comment and self.event.comment[1]:
                 # final comments from a doc
-                if self.column != 0:
-                    self.write_line_break()
                 self.write_pre_comment(self.event)
             self.write_indent()
             if self.check_simple_key():
@@ -1209,7 +1203,14 @@ class Emitter(object):
         comments = event.comment[1]
         try:
             for comment in comments:
+                if isinstance(event, MappingStartEvent) and \
+                   getattr(comment, 'pre_done', None):
+                    continue
+                if self.column != 0:
+                        self.write_line_break()
                 self.write_comment(comment)
+                if isinstance(event, MappingStartEvent):
+                    comment.pre_done = True
         except TypeError:
             print ('eventtt', type(event), event)
             raise

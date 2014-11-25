@@ -40,5 +40,6 @@ def round_trip(inp, outp=None, extra=None):
     if extra is not None:
         doutp += extra
     data = round_trip_load(dinp)
-    print('roundtrip data:\n', round_trip_dump(data), sep='')
-    assert round_trip_dump(data) == doutp
+    res = round_trip_dump(data)
+    print('roundtrip data:\n', res, sep='')
+    assert res == doutp
