@@ -17,7 +17,7 @@ from ruamel.std.argparse import ProgramBase, option, sub_parser, version, \
 from . import __version__
 
 import ruamel.yaml
-from ruamel.yaml.compat import ordereddict
+from ruamel.yaml.compat import ordereddict, DBG_TOKEN, DBG_EVENT, DBG_NODE
 
 
 class YAML:
@@ -46,6 +46,18 @@ class YAML:
         return 1 if errors else 0
 
     def test(self):
+        self._args.event = self._args.node = True
+        dbg = 0
+        if self._args.event:
+            dbg |= DBG_EVENT
+        if self._args.node:
+            dbg |= DBG_NODE
+        os.environ['YAMLDEBUG'] = str(dbg)
+        if False:
+            x = ruamel.yaml.comment.Comment()
+            print(sys.getsizeof(x))
+            return
+
         def print_input(input):
             print(input, end='')
             print('-' * 15)
@@ -94,14 +106,6 @@ class YAML:
           upload: applications/(.+?)/static/(.+)
           secure: optional
         """)
-        input = dedent("""
-        !!omap
-        - a: 1
-        - b: 2  # two
-        - c: 3  # three
-        # last one
-        - d: 4
-        """)
 
         print_input(input)
         print_tokens(input)
@@ -125,6 +129,8 @@ class YAML:
         # print(ruamel.yaml.dump(data, default_flow_style=False,
         #    Dumper=dumper), '===========')
         print("{0}=========".format(ruamel.yaml.dump(data, Dumper=dumper)))
+        comment = getattr(l, '_yaml_comment', None)
+        print('comment_2', comment)
 
         # test end
 

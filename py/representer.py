@@ -6,7 +6,8 @@ __all__ = ['BaseRepresenter', 'SafeRepresenter', 'Representer',
 
 from .error import *
 from .nodes import *
-from .compat import text_type, binary_type, to_unicode, PY2, PY3, ordereddict
+from .compat import text_type, binary_type, to_unicode, PY2, PY3, \
+    ordereddict, nprint
 
 import datetime
 import sys
@@ -564,8 +565,8 @@ Representer.add_multi_representer(object,
                                   Representer.represent_object)
 
 
-from .constructor import CommentedMap, CommentedOrderedMap, CommentedSeq, \
-    CommentedSet, Comment
+from .comments import CommentedMap, CommentedOrderedMap, CommentedSeq, \
+    CommentedSet, comment_attrib
 
 
 class RoundTripRepresenter(SafeRepresenter):
@@ -589,7 +590,7 @@ class RoundTripRepresenter(SafeRepresenter):
             self.represented_objects[self.alias_key] = node
         best_style = True
         try:
-            comment = getattr(sequence, Comment.attrib)
+            comment = getattr(sequence, comment_attrib)
             item_comments = comment.items
             node.comment = comment.comment
             try:
@@ -619,7 +620,7 @@ class RoundTripRepresenter(SafeRepresenter):
         best_style = True
         # no sorting! !!
         try:
-            comment = getattr(mapping, Comment.attrib)
+            comment = getattr(mapping, comment_attrib)
             node.comment = comment.comment
             item_comments = comment.items
             try:
@@ -661,7 +662,7 @@ class RoundTripRepresenter(SafeRepresenter):
             self.represented_objects[self.alias_key] = node
         best_style = True
         try:
-            comment = getattr(omap, Comment.attrib)
+            comment = getattr(omap, comment_attrib)
             node.comment = comment.comment
             item_comments = comment.items
             try:
@@ -673,12 +674,13 @@ class RoundTripRepresenter(SafeRepresenter):
         for item_key in omap:
             item_val = omap[item_key]
             node_item = self.represent_data({item_key: item_val})
-            # print('ndt', node_item)
             # node item has two scalars in value: node_key and node_value
             item_comment = item_comments.get(item_key)
             if item_comment:
+                if item_comment[1]:
+                    node_item.comment = [None, item_comment[1]]
                 assert getattr(node_item.value[0][0], 'comment', None) is None
-                node_item.value[0][0].comment = item_comment[:2]
+                node_item.value[0][0].comment = [item_comment[0], None]
                 nvc = getattr(node_item.value[0][1], 'comment', None)
                 if nvc is not None:  # end comment already there
                     nvc[0] = item_comment[2]
@@ -707,7 +709,7 @@ class RoundTripRepresenter(SafeRepresenter):
         best_style = True
         # no sorting! !!
         try:
-            comment = getattr(setting, Comment.attrib)
+            comment = getattr(setting, comment_attrib)
             node.comment = comment.comment
             item_comments = comment.items
             try:
@@ -742,7 +744,8 @@ RoundTripRepresenter.add_representer(CommentedSeq,
 RoundTripRepresenter.add_representer(CommentedMap,
                                      RoundTripRepresenter.represent_dict)
 
-RoundTripRepresenter.add_representer(CommentedOrderedMap,
+RoundTripRepresenter.add_representer(
+    CommentedOrderedMap,
     RoundTripRepresenter.represent_ordereddict)
 
 RoundTripRepresenter.add_representer(CommentedSet,

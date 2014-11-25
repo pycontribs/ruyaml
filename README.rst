@@ -57,6 +57,43 @@ preservation of comments, it makes YAML a very good choice for
 configuration files that are human readable and editable while at
 the same time interpretable and modifiable by a program.
 
+Examples
+========
+
+Basic round trip of parsing YAML to Python objects, modifying
+and generating YAML::
+
+  from __future__ import print_function
+  
+  import ruamel.yaml
+  
+  inp = """\
+  # example
+  name:
+    # details
+    family: Smith   # very common
+    given: Alice    # one of the siblings
+  """
+  
+  code = ruamel.yaml.load(inp, ruamel.yaml.RoundTripLoader)
+  code['name']['given'] = 'Bob'
+  
+  print(ruamel.yaml.dump(code, Dumper= ruamel.yaml.RoundTripDumper), end='')
+
+.. example code small.py
+
+Resulting in ::
+
+  # example
+  name:
+    # details
+    family: Smith   # very common
+    given: Bob      # one of the siblings
+
+
+.. example output small.py
+
+
 yaml utlity
 ===========
 

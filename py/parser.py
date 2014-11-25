@@ -490,6 +490,7 @@ class Parser(object):
                 "expected <block end>, but found %r" % token.id,
                 token.start_mark)
         token = self.get_token()
+        token.move_comment(self.peek_token())
         event = MappingEndEvent(token.start_mark, token.end_mark,
                                 comment=token.comment)
         self.state = self.states.pop()

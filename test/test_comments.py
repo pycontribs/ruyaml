@@ -217,9 +217,7 @@ class TestComments:
         - d: 4
         """)
 
-    @pytest.mark.xfail
     def test_omap_comment_roundtrip_pre_comment(self):
-        # placed on the MappingNode, doesn't get constructed (yet)
         round_trip("""
         !!omap
         - a: 1
@@ -228,4 +226,3 @@ class TestComments:
         # last one
         - d: 4
         """)
-

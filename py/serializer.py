@@ -6,6 +6,8 @@ from .error import YAMLError
 from .events import *
 from .nodes import *
 
+from .compat import nprint, DBG_NODE, dbg
+
 
 class SerializerError(YAMLError):
     pass
@@ -47,6 +49,9 @@ class Serializer(object):
     #     self.close()
 
     def serialize(self, node):
+        if dbg(DBG_NODE):
+            nprint('Serializing nodes')
+            node.dump()
         if self.closed is None:
             raise SerializerError("serializer is not opened")
         elif self.closed:

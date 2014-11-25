@@ -38,6 +38,9 @@ class Token(object):
         c = self.comment
         if c is None:
             return
+        # don't push beyond last element
+        if isinstance(target, StreamEndToken):
+            return
         delattr(self, '_comment')
         tc = target.comment
         if not tc:  # target comment, just insert

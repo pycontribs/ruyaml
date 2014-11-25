@@ -11,6 +11,7 @@ import ruamel.yaml
 from ruamel.yaml.compat import ordereddict
 from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump
 
+
 class TestYAML:
     def test_backslash(self):
         round_trip("""
@@ -60,7 +61,7 @@ class TestYAML:
         c: null
         """)
 
-    #@pytest.mark.xfail
+    # @pytest.mark.xfail
     # ordering is not preserved in a set
     def test_set_compact(self):
         # this format is read and also should be written by default
