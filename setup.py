@@ -129,7 +129,6 @@ def main():
             libraries=['yaml'],
             ),
     ]
-    ext_modules = []
     setup(
         name=full_package_name,
         version=version_str,
