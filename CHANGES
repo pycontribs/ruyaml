@@ -1,3 +1,6 @@
+- move configobj -> YAML generator to own module
+
+0.4: 20141125
 - move comment classes in own module comments
 - fix omap pre comment
 - make !!omap and !!set take parameters. There are still some restrictions:
