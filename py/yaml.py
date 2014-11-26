@@ -18,7 +18,7 @@ from . import __version__
 
 import ruamel.yaml
 from ruamel.yaml.compat import ordereddict, DBG_TOKEN, DBG_EVENT, DBG_NODE
-
+from ruamel.yaml.configobjwalker import configobj_walker
 
 class YAML:
     def __init__(self, args, config):
@@ -30,13 +30,8 @@ class YAML:
         errors = 0
         doc = []
         cfg = ConfigObj(open(self._args.file))
-        # print(cfg)
-        for line in self.walk_configobj(cfg):
-            if not line.strip():
-                continue
-            # print(line)
+        for line in configobj_walker(cfg):
             doc.append(line)
-        # print('--------------')
         joined = '\n'.join(doc)
         rto = self.round_trip_single(joined)
         print(rto, end='')  # already has eol at eof
@@ -133,41 +128,6 @@ class YAML:
         print('comment_2', comment)
 
         # test end
-
-    @staticmethod
-    def walk_configobj(cfg):
-        from configobj import ConfigObj
-        assert isinstance(cfg, ConfigObj)
-        for c in cfg.initial_comment:
-            yield c
-        for s in YAML.walk_section(cfg):
-            yield s
-        for c in cfg.final_comment:
-            yield c
-
-    @staticmethod
-    def walk_section(s, level=0):
-        from configobj import Section
-        assert isinstance(s, Section)
-        indent = '  ' * level
-        for name in s.scalars:
-            for c in s.comments[name]:
-                yield indent + c.strip()
-            line = '{0}{1}: {2}'.format(indent, name, s[name])
-            c = s.inline_comments[name]
-            if c:
-                line += ' ' + c
-            yield line
-        for name in s.sections:
-            for c in s.comments[name]:
-                yield indent + c.strip()
-            line = '{0}{1}:'.format(indent, name)
-            c = s.inline_comments[name]
-            if c:
-                line += ' ' + c
-            yield line
-            for val in YAML.walk_section(s[name], level=level+1):
-                yield val
 
     def from_json(self):
         # use roundtrip to preserver order
