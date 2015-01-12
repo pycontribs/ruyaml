@@ -118,6 +118,14 @@ class CommentedMap(ordereddict, CommentedBase):
         else:
             self.ca.comment = comment
 
+    def update(self, vals):
+        try:
+            ordereddict.update(self, vals)
+        except TypeError:
+            # probably a dict that is used
+            for x in vals:
+                self[x] = vals[x]
+
 
 class CommentedOrderedMap(CommentedMap):
     __slots__ = [Comment.attrib, ]

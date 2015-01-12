@@ -4,7 +4,7 @@ ruamel.yaml
 
 ``ruamel.yaml`` is a YAML package for Python. It is a derivative
 of Kirill Simonov's `PyYAML 3.11 <https://bitbucket.org/xi/pyyaml>`_
-which supports YAML1.1 
+which supports YAML1.1
 
 Major differences with PyYAML 3.11:
 
@@ -16,17 +16,20 @@ Major differences with PyYAML 3.11:
 - some YAML 1.2 enhancements (``0o`` octal prefix, ``\/`` escape)
 - pep8 compliance
 - tox and py.test based testing
-- currently assumes that the C yaml library is installed. That library
+- currently assumes that the C yaml library is installed as well as the header
+  files. That library
   doesn't generate CommentTokens, so it cannot be used to do
-  round trip editing on comments. It can be used for normal
-  processing (no need to install ``ruamel.yaml`` and ``PyYaml``)
+  round trip editing on comments. It can be used for speeded up normal
+  processing (so you don't need to install ``ruamel.yaml`` and ``PyYaml``).
+  See the section *Requirements*.
+
 
 Round trip including comments
 =============================
 
 The major motivation for this fork is the round-trip capability for
 comments. The integration of the sources was just an initial step to
-make this easier. 
+make this easier.
 
 Config file formats
 -------------------
@@ -43,7 +46,7 @@ such commented files.
 INI files support comments, and the excellent `ConfigObj
 <http://www.voidspace.org.uk/python/configobj.html>`_ library by Foord
 and Larosa even supports round trip editing with comment preservation,
-nesting of sections and limited lists (within a value). Retrieval of 
+nesting of sections and limited lists (within a value). Retrieval of
 particular value format is explicit (and extensible).
 
 YAML has basic mapping and sequence structures as well support for
@@ -64,9 +67,9 @@ Basic round trip of parsing YAML to Python objects, modifying
 and generating YAML::
 
   from __future__ import print_function
-  
+
   import ruamel.yaml
-  
+
   inp = """\
   # example
   name:
@@ -74,10 +77,10 @@ and generating YAML::
     family: Smith   # very common
     given: Alice    # one of the siblings
   """
-  
+
   code = ruamel.yaml.load(inp, ruamel.yaml.RoundTripLoader)
   code['name']['given'] = 'Bob'
-  
+
   print(ruamel.yaml.dump(code, Dumper= ruamel.yaml.RoundTripDumper), end='')
 
 .. example code small.py
@@ -92,6 +95,29 @@ Resulting in ::
 
 
 .. example output small.py
+
+Requirements
+============
+
+You currently have to have the C yaml library and headers installed, as well as
+the header files for your Python executables.
+
+On Debian systems you should use::
+
+    sudo apt-get install libyaml-dev python-dev python3-dev
+
+you can leave out ``python3-dev`` if you don't use python3
+
+For CentOS (7) based systems you should do::
+
+   sudo yum install libyaml-devel python-devel
+
+Testing
+=======
+
+Testing is done using the `tox <https://pypi.python.org/pypi/tox>`_, which
+uses `virtualenv <https://pypi.python.org/pypi/virtualenv>`_ and
+`pytest <http://pytest.org/latest/>`_.
 
 
 yaml utlity
