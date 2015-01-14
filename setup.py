@@ -70,26 +70,6 @@ class MyInstallLib(install_lib.install_lib):
     "create __init__.py on the fly"
     def run(self):
         install_lib.install_lib.run(self)
-        init_txt = dedent('''\
-            # coding: utf-8
-            # Copyright © 2013-2014 Anthon van der Neut, RUAMEL bvba
-            "generated __init__.py "
-            try:
-                __import__('pkg_resources').declare_namespace(__name__)
-            except ImportError:
-                pass
-        ''')
-        init_path = full_package_name.split('.')[:-1]
-        for product_init in [
-            os.path.join(
-                *([self.install_dir] + init_path[:p+1] + ['__init__.py']))
-                for p in range(len(init_path))
-        ]:
-            if not os.path.exists(product_init):
-                print('creating %s' % product_init)
-                with open(product_init, "w") as fp:
-                    fp.write(init_txt)
-        setup = os.path.join(self.install_dir, 'setup.py')
 
     def install(self):
         fpp = full_package_name.split('.')  # full package path
@@ -109,7 +89,8 @@ class MyInstallLib(install_lib.install_lib):
 
 def main():
     install_requires = [
-        "ruamel.std.argparse",
+        "ruamel.base",
+        "ruamel.std.argparse>=0.5.1",
     ]
     # use fast ordereddict for !!omap
     if sys.version_info[0] == 2:
