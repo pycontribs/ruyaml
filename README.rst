@@ -130,6 +130,7 @@ A utility name  ``yaml`` is included and allows for basic operations on files:
 - ``yaml json <file_name>`` for conversion of JSON file(s) to a single
   YAML block style document
 - ``yaml ini <file_name>`` for conversion of an INI/config file (ConfigObj
-  comment and nested sections supported) to a YAML block style document
+  comment and nested sections supported) to a YAML block style document.
+  This requires ``configobj`` to be installed (``pip install configobj``)
 
 See ``yaml --help`` for more information on the availble commands

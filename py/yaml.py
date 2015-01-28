@@ -26,7 +26,12 @@ class YAML:
         self._config = config
 
     def from_ini(self):
-        from configobj import ConfigObj
+        try:
+            from configobj import ConfigObj
+        except ImportError:
+            print("to convert from .ini you need to install configobj:")
+            print("  pip install configobj:")
+            sys.exit(1)
         errors = 0
         doc = []
         cfg = ConfigObj(open(self._args.file))
@@ -34,7 +39,14 @@ class YAML:
             doc.append(line)
         joined = '\n'.join(doc)
         rto = self.round_trip_single(joined)
-        print(rto, end='')  # already has eol at eof
+        if self._args.basename:
+            out_fn = os.path.splitext(self._args.file)[0] + '.yaml'
+            if self._args.verbose > 0:
+                print('writing', out_fn)
+            with open(out_fn, 'w') as fp:
+                print(rto, end='', file=fp)  # already has eol at eof
+        else:
+            print(rto, end='')  # already has eol at eof
         # print()
         # if rto != joined:
         #     self.diff(joined, rto, "test.ini")
@@ -212,9 +224,9 @@ class YAML_Cmd(ProgramBase):
         pass
 
     def run(self):
-        yaml = YAML(self._args, self._config)
+        self._yaml = YAML(self._args, self._config)
         if self._args.func:
-            return self._args.func(yaml)
+            return self._args.func()
 
     def parse_args(self):
         # self._config = AppConfig(
@@ -235,8 +247,8 @@ class YAML_Cmd(ProgramBase):
         description='test round trip on YAML data',
     )
     @option('file', nargs='+')
-    def rt(self, yaml):
-        return yaml.round_trip()
+    def rt(self):
+        return self._yaml.round_trip()
 
     @sub_parser(
         aliases=['from-json'],
@@ -244,25 +256,28 @@ class YAML_Cmd(ProgramBase):
         description='convert json to block YAML',
     )
     @option('file', nargs='+')
-    def json(self, yaml):
-        return yaml.from_json()
+    def json(self):
+        return self._yaml.from_json()
 
     @sub_parser(
         aliases=['from-ini'],
         help='convert .ini/config to block YAML',
         description='convert .ini/config to block YAML',
     )
+    @option('--basename', '-b', action='store_true',
+            help='re-use basename of file for .yaml file, instead of writing'
+            ' to stdout')
     @option('file')
-    def ini(self, yaml):
-        return yaml.from_ini()
+    def ini(self):
+        return self._yaml.from_ini()
 
     if 'test' in sys.argv:
         @sub_parser(
             description='internal test function',
         )
         @option('file', nargs='*')
-        def test(self, yaml):
-            return yaml.test()
+        def test(self):
+            return self._yaml.test()
 
 
 def main():
