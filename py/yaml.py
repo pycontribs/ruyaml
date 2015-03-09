@@ -20,6 +20,32 @@ import ruamel.yaml
 from ruamel.yaml.compat import ordereddict, DBG_TOKEN, DBG_EVENT, DBG_NODE
 from ruamel.yaml.configobjwalker import configobj_walker
 
+
+def yaml_to_html2(code):
+    buf = io.StringIO()
+    buf.write(u'<HTML>\n')
+    buf.write(u'<HEAD>\n')
+    buf.write(u'</HEAD>\n')
+    buf.write(u'<BODY>\n')
+    buf.write(u'<TABLE>\n')
+    if isinstance(code, dict):
+        for k in code:
+            buf.write(u'  <TR>\n')
+            for x in [k] + code[k]:
+                buf.write(u'    <TD>{}</TD>\n'.format(x))
+            buf.write(u'  </TR>\n')
+    buf.write(u'<TABLE>\n')
+    buf.write(u'</BODY>\n')
+    buf.write(u'</HTML>\n')
+    return buf.getvalue()
+
+def yaml_to_html(code, level):
+    if level == 2:
+        return yaml_to_html2(code)
+    elif level == 3:
+        return yaml_to_html3(code)
+    raise NotImplementedError
+
 class YAML:
     def __init__(self, args, config):
         self._args = args
@@ -153,6 +179,34 @@ class YAML:
         print(ruamel.yaml.dump_all(docs, Dumper=dumper))
         return 1 if errors else 0
 
+    def to_html(self):
+        def vals(x):
+            if isinstance(x, list):
+                return x
+            if isinstance(x, (dict, ordereddict)):
+                return x.values()
+            return []
+
+        def seek_levels(x, count=0):
+            my_level = count
+            sub_level = 0
+            for v in vals(x):
+                if v is None:
+                    continue
+                sub_level = max(sub_level, seek_levels(v, my_level+1))
+            return max(my_level, sub_level)
+
+        inp = open(self._args.file).read()
+        loader = ruamel.yaml.RoundTripLoader
+        code = ruamel.yaml.load(inp, loader)
+        #assert isinstance(code, [ruamel.yaml.comments.CommentedMap])
+        assert isinstance(code, (dict, list))
+        levels = seek_levels(code)
+        if self._args.level:
+            print("levels:", levels)
+            return
+        print(yaml_to_html(code, levels))
+
     def round_trip(self):
         errors = 0
         warnings = 0
@@ -270,6 +324,22 @@ class YAML_Cmd(ProgramBase):
     @option('file')
     def ini(self):
         return self._yaml.from_ini()
+
+    @sub_parser(
+        aliases=['to-html'],
+        help='convert YAML ot html tables',
+        description="""convert YAML to html tables. If hierarchy is two deep (
+        list/mapping over list/mapping) this is mapped to one table
+        If the hierarchy is three deep, a list of 2 deep tables is assumed, but
+        any non-list/mapp second level items are considered text.
+        Row level keys are inserted in first column (unless --no-row-key),
+        item level keys are used as classes for the TD.
+        """,
+    )
+    @option("--level", action='store_true', help="print # levels and exit")
+    @option('file')
+    def html(self):
+        return self._yaml.to_html()
 
     if 'test' in sys.argv:
         @sub_parser(
