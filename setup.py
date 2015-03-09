@@ -87,6 +87,45 @@ class MyInstallLib(install_lib.install_lib):
         return alt_files
 
 
+def check_extensions():
+    import tempfile
+    import shutil
+    import subprocess
+
+    c_code = dedent("""
+    #include <yaml.h>
+
+    int main(int argc, char* argv[])
+    {
+        yaml_parser_t parser;
+        return 0;
+    }
+    """)
+    tmp_dir = tempfile.mkdtemp(prefix = 'tmp_ruamel_yaml_')
+    bin_file_name = os.path.join(tmp_dir, 'test_yaml')
+    file_name = bin_file_name + '.c'
+    with open(file_name, 'w') as fp:
+        fp.write(c_code)
+    try:
+        res = subprocess.check_call(
+            ['cc', '-o', bin_file_name, file_name],
+            stderr = subprocess.STDOUT,
+        )
+        # print(res)
+    except subprocess.CalledProcessError:
+        print('libyaml not found')
+        ret_val = None
+    else:
+        ret_val = [
+            Extension(
+                '_yaml',
+                sources=['ext/_yaml.c'],
+                libraries=['yaml'],
+                ),
+        ]
+    shutil.rmtree(tmp_dir)
+    return ret_val
+
 def main():
     install_requires = [
         "ruamel.base",
@@ -100,16 +139,6 @@ def main():
     packages = [full_package_name] + [
         (full_package_name + '.' + x)
         for x in find_packages('py', exclude=['test'])]
-    ext_modules = [
-        # Extension('_yaml', ['ext/_yaml.pyx'],
-        #          'libyaml', "LibYAML bindings", LIBYAML_CHECK,
-        #          libraries=['yaml']),
-        Extension(
-            '_yaml',
-            sources=['ext/_yaml.c'],
-            libraries=['yaml'],
-            ),
-    ]
     setup(
         name=full_package_name,
         version=version_str,
@@ -124,7 +153,7 @@ def main():
         package_dir={full_package_name: 'py'},
         namespace_packages=[name_space],
         packages=packages,
-        ext_modules=ext_modules,
+        ext_modules=check_extensions(),
         entry_points=mk_entry_points(full_package_name),
         cmdclass={'install_lib': MyInstallLib},
         classifiers=[
