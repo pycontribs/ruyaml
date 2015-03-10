@@ -32,7 +32,7 @@ def yaml_to_html2(code):
         for k in code:
             buf.write(u'  <TR>\n')
             for x in [k] + code[k]:
-                buf.write(u'    <TD>{}</TD>\n'.format(x))
+                buf.write(u'    <TD>{0}</TD>\n'.format(x))
             buf.write(u'  </TR>\n')
     buf.write(u'<TABLE>\n')
     buf.write(u'</BODY>\n')

@@ -87,17 +87,28 @@ class MyInstallLib(install_lib.install_lib):
         return alt_files
 
 
+
 def check_extensions():
+    """check if the C module can be build by trying to compile a small program
+    against the libyaml development library"""
     import tempfile
     import shutil
     import subprocess
 
+    import distutils.sysconfig
+    import distutils.ccompiler
+    from distutils.errors import CompileError, LinkError
+
+    libraries = ['yaml']
+
+    # write a temporary .c file to compile
     c_code = dedent("""
     #include <yaml.h>
 
     int main(int argc, char* argv[])
     {
         yaml_parser_t parser;
+        parser = parser;  /* prevent warning */
         return 0;
     }
     """)
@@ -106,21 +117,30 @@ def check_extensions():
     file_name = bin_file_name + '.c'
     with open(file_name, 'w') as fp:
         fp.write(c_code)
+
+    # and try to compile it
+    compiler = distutils.ccompiler.new_compiler()
+    assert isinstance(compiler, distutils.ccompiler.CCompiler)
+    distutils.sysconfig.customize_compiler(compiler)
+
     try:
-        res = subprocess.check_call(
-            ['cc', '-o', bin_file_name, file_name],
-            stderr = subprocess.STDOUT,
+        compiler.link_executable(
+            compiler.compile([file_name]),
+            bin_file_name,
+            libraries=libraries,
         )
-        # print(res)
-    except subprocess.CalledProcessError:
-        print('libyaml not found')
+    except CompileError:
+        print('libyaml compile error')
+        ret_val = None
+    except LinkError:
+        print('libyaml link error')
         ret_val = None
     else:
         ret_val = [
             Extension(
                 '_yaml',
                 sources=['ext/_yaml.c'],
-                libraries=['yaml'],
+                libraries=libraries,
                 ),
         ]
     shutil.rmtree(tmp_dir)
@@ -179,6 +199,9 @@ def mk_entry_points(full_package_name):
     ]}
 
 if __name__ == '__main__':
+    if 'yamlctest' in sys.argv:
+        print(check_extensions())
+        sys.exit(1)
     if len(sys.argv) > 1 and sys.argv[1] == 'sdist':
         assert full_package_name == os.path.abspath(os.path.dirname(
             __file__)).split('site-packages' + os.path.sep)[1].replace(

@@ -6,6 +6,7 @@ syntax: glob
 *.o
 *.orig
 dist
+venv
 build
 *.egg-info
 .tox
