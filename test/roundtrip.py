@@ -31,7 +31,7 @@ def round_trip_dump(data):
     return ruamel.yaml.dump(data, default_flow_style=False, Dumper=dumper)
 
 
-def round_trip(inp, outp=None, extra=None):
+def round_trip(inp, outp=None, extra=None, intermediate=None):
     dinp = dedent(inp)
     if outp is not None:
         doutp = dedent(outp)
@@ -40,6 +40,12 @@ def round_trip(inp, outp=None, extra=None):
     if extra is not None:
         doutp += extra
     data = round_trip_load(dinp)
+    if intermediate is not None:
+        if isinstance(intermediate, dict):
+            for k, v in intermediate.items():
+                if data[k] != v:
+                    print('{0!r} <> {1!r}'.format(data[k], v))
+                    raise ValueError
     res = round_trip_dump(data)
     print('roundtrip data:\n', res, sep='')
     assert res == doutp

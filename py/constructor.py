@@ -16,6 +16,7 @@ from .error import *
 from .nodes import *
 from .compat import utf8, builtins_module, to_str, PY2, PY3, ordereddict
 from .comments import *
+from .scalarstring import *
 
 
 class ConstructorError(MarkedYAMLError):
@@ -790,6 +791,18 @@ class RoundTripConstructor(SafeConstructor):
     """need to store the comments on the node itself,
     as well as on the items
     """
+
+    def construct_scalar(self, node):
+        if not isinstance(node, ScalarNode):
+            raise ConstructorError(
+                None, None,
+                "expected a scalar node, but found %s" % node.id,
+                node.start_mark)
+
+        if node.style == '|' and isinstance(node.value, unicode):
+            print('value', repr(node.value), repr(node.style))
+            return ScalarString(node.value)
+        return node.value
 
     def construct_sequence(self, node, seqtyp, deep=False):
         if not isinstance(node, SequenceNode):

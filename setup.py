@@ -87,13 +87,11 @@ class MyInstallLib(install_lib.install_lib):
         return alt_files
 
 
-
 def check_extensions():
-    """check if the C module can be build by trying to compile a small program
-    against the libyaml development library"""
+    """check if the C module can be build by trying to compile a small
+    program against the libyaml development library"""
     import tempfile
     import shutil
-    import subprocess
 
     import distutils.sysconfig
     import distutils.ccompiler
@@ -112,7 +110,7 @@ def check_extensions():
         return 0;
     }
     """)
-    tmp_dir = tempfile.mkdtemp(prefix = 'tmp_ruamel_yaml_')
+    tmp_dir = tempfile.mkdtemp(prefix='tmp_ruamel_yaml_')
     bin_file_name = os.path.join(tmp_dir, 'test_yaml')
     file_name = bin_file_name + '.c'
     with open(file_name, 'w') as fp:
@@ -145,6 +143,7 @@ def check_extensions():
         ]
     shutil.rmtree(tmp_dir)
     return ret_val
+
 
 def main():
     install_requires = [

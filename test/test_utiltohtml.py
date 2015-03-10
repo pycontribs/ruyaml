@@ -9,6 +9,7 @@ from roundtrip import dedent
 
 from test_util import check_output, call_util
 
+
 def to_html(s, file_name, mp, td, options=None):
     cmd = ['yaml', 'to-html', file_name]
     if options:

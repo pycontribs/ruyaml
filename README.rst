@@ -16,12 +16,11 @@ Major differences with PyYAML 3.11:
 - some YAML 1.2 enhancements (``0o`` octal prefix, ``\/`` escape)
 - pep8 compliance
 - tox and py.test based testing
-- currently assumes that the C yaml library is installed as well as the header
-  files. That library
-  doesn't generate CommentTokens, so it cannot be used to do
-  round trip editing on comments. It can be used for speeded up normal
+- Tests whether the C yaml library is installed as well as the header
+  files. That library  doesn't generate CommentTokens, so it cannot be used to
+  do round trip editing on comments. It can be used for speeded up normal
   processing (so you don't need to install ``ruamel.yaml`` and ``PyYaml``).
-  See the section *Requirements*.
+  See the section *Optional requirements*.
 
 
 Round trip including comments
@@ -60,6 +59,19 @@ preservation of comments, it makes YAML a very good choice for
 configuration files that are human readable and editable while at
 the same time interpretable and modifiable by a program.
 
+Extending
+---------
+
+There are normally 6 files involved when extending the roundtrip
+capabilities: the reader, parser, composer and constructor to go from YAML to
+Python and the resolver, representer, sberializer and Emitter to go the other
+way.
+
+Extending involves keeping extra data around for the next process step,
+eventuallly resulting in a different Python object (subclass or alternative),
+that should behave like the original, but on the way from Python to YAML
+generates the original (or at least something much closer).
+
 Examples
 ========
 
@@ -96,11 +108,12 @@ Resulting in ::
 
 .. example output small.py
 
-Requirements
-============
+Optional requirements
+=====================
 
-You currently have to have the C yaml library and headers installed, as well as
-the header files for your Python executables.
+If you have the C yaml library and headers installed, as well as
+the header files for your Python executables then you can use the
+non-roundtrip but faster C loader en emitter.
 
 On Debian systems you should use::
 
@@ -132,5 +145,26 @@ A utility name  ``yaml`` is included and allows for basic operations on files:
 - ``yaml ini <file_name>`` for conversion of an INI/config file (ConfigObj
   comment and nested sections supported) to a YAML block style document.
   This requires ``configobj`` to be installed (``pip install configobj``)
+- ``yaml html <file_name>`` for conversion of the basic structure in a YAML
+  file to a a table in an HTML file. The YAML file::
+
+    title:
+    - fruit
+    - legume
+    local:
+    - apple
+    - sprouts
+    import:
+    - orange
+    - broccoli
+
+  is converted into the table:
+
+  ====== ====== ========
+  title  fruit  legume
+  local  apple  sprouts
+  import orange broccoli
+  ====== ====== ========
+
 
 See ``yaml --help`` for more information on the availble commands

@@ -13,4 +13,4 @@ name:
 code = ruamel.yaml.load(inp, ruamel.yaml.RoundTripLoader)
 code['name']['given'] = 'Bob'
 
-print(ruamel.yaml.dump(code, Dumper= ruamel.yaml.RoundTripDumper), end='')
+print(ruamel.yaml.dump(code, Dumper=ruamel.yaml.RoundTripDumper), end='')
