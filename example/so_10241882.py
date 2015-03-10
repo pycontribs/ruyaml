@@ -28,11 +28,11 @@ features:
 
 code = ruamel.yaml.load(inp, ruamel.yaml.RoundTripLoader)
 
-res = ruamel.yaml.dump(code, Dumper= ruamel.yaml.RoundTripDumper)
+res = ruamel.yaml.dump(code, Dumper=ruamel.yaml.RoundTripDumper)
 print(res, end='')
 code2 = ruamel.yaml.load(res, ruamel.yaml.RoundTripLoader)
 
-res2 = ruamel.yaml.dump(code2, Dumper= ruamel.yaml.RoundTripDumper)
+res2 = ruamel.yaml.dump(code2, Dumper=ruamel.yaml.RoundTripDumper)
 assert res == res2
 
 inp = """\

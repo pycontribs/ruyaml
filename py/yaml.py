@@ -39,12 +39,14 @@ def yaml_to_html2(code):
     buf.write(u'</HTML>\n')
     return buf.getvalue()
 
+
 def yaml_to_html(code, level):
     if level == 2:
         return yaml_to_html2(code)
     elif level == 3:
         return yaml_to_html3(code)
     raise NotImplementedError
+
 
 class YAML:
     def __init__(self, args, config):
@@ -199,7 +201,7 @@ class YAML:
         inp = open(self._args.file).read()
         loader = ruamel.yaml.RoundTripLoader
         code = ruamel.yaml.load(inp, loader)
-        #assert isinstance(code, [ruamel.yaml.comments.CommentedMap])
+        # assert isinstance(code, [ruamel.yaml.comments.CommentedMap])
         assert isinstance(code, (dict, list))
         levels = seek_levels(code)
         if self._args.level:

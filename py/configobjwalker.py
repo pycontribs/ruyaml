@@ -1,6 +1,5 @@
 
 
-
 def configobj_walker(cfg):
     """
     walks over a ConfigObj (INI file with comments) generating
@@ -17,6 +16,7 @@ def configobj_walker(cfg):
     for c in cfg.final_comment:
         if c.strip():
             yield c
+
 
 def _walk_section(s, level=0):
     from configobj import Section
