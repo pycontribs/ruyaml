@@ -8,6 +8,7 @@ from .error import *
 from .nodes import *
 from .compat import text_type, binary_type, to_unicode, PY2, PY3, \
     ordereddict, nprint
+from .scalarstring import *
 
 import datetime
 import sys
@@ -583,6 +584,14 @@ class RoundTripRepresenter(SafeRepresenter):
         return self.represent_scalar(u'tag:yaml.org,2002:null',
                                      u'')
 
+    def represent_preserved_scalarstring(self, data):
+        tag = None
+        style = '|'
+        if PY2 and not isinstance(data, unicode):
+            data = unicode(data, 'ascii')
+        tag = u'tag:yaml.org,2002:str'
+        return self.represent_scalar(tag, data, style=style)
+
     def represent_sequence(self, tag, sequence, flow_style=None):
         value = []
         node = SequenceNode(tag, value, flow_style=flow_style)
@@ -737,6 +746,10 @@ class RoundTripRepresenter(SafeRepresenter):
 
 RoundTripRepresenter.add_representer(type(None),
                                      RoundTripRepresenter.represent_none)
+
+RoundTripRepresenter.add_representer(
+    PreservedScalarString,
+    RoundTripRepresenter.represent_preserved_scalarstring)
 
 RoundTripRepresenter.add_representer(CommentedSeq,
                                      RoundTripRepresenter.represent_list)
