@@ -14,7 +14,8 @@ import types
 
 from .error import *
 from .nodes import *
-from .compat import utf8, builtins_module, to_str, PY2, PY3, ordereddict
+from .compat import (utf8, builtins_module, to_str, PY2, PY3, ordereddict,
+                     text_type)
 from .comments import *
 from .scalarstring import *
 
@@ -799,10 +800,20 @@ class RoundTripConstructor(SafeConstructor):
                 "expected a scalar node, but found %s" % node.id,
                 node.start_mark)
 
-        if node.style == '|' and isinstance(node.value, unicode):
-            print('value', repr(node.value), repr(node.style))
-            return ScalarString(node.value)
+        if node.style == '|' and isinstance(node.value, text_type):
+            return PreservedScalarString(node.value)
         return node.value
+
+    def construct_yaml_str(self, node):
+        value = self.construct_scalar(node)
+        if isinstance(value, ScalarString):
+            return value
+        if PY3:
+            return value
+        try:
+            return value.encode('ascii')
+        except UnicodeEncodeError:
+            return value
 
     def construct_sequence(self, node, seqtyp, deep=False):
         if not isinstance(node, SequenceNode):

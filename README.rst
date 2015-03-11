@@ -21,6 +21,11 @@ Major differences with PyYAML 3.11:
   do round trip editing on comments. It can be used for speeded up normal
   processing (so you don't need to install ``ruamel.yaml`` and ``PyYaml``).
   See the section *Optional requirements*.
+- Basic support for multiline strings with preserved newlines and
+  chomping ( '``|``', '``|+``', '``|-``' ). As this subclasses the string type
+  the information is lost on reassignment. (This might be changed
+  in the future so that the preservation/folding/chomping is part of the
+  parent container, like comments).
 
 
 Round trip including comments
@@ -64,7 +69,7 @@ Extending
 
 There are normally 6 files involved when extending the roundtrip
 capabilities: the reader, parser, composer and constructor to go from YAML to
-Python and the resolver, representer, sberializer and Emitter to go the other
+Python and the resolver, representer, serializer and emitter to go the other
 way.
 
 Extending involves keeping extra data around for the next process step,

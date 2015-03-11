@@ -1,5 +1,6 @@
 
 0.6 2015-03-XX
+- basic support for scalars with preserved newlines
 - html option for yaml command
 - check if yaml C library is available before trying to compile C extension
 - include unreleased change in PyYAML dd 20141128
