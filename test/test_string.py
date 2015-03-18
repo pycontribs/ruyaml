@@ -61,7 +61,8 @@ class TestYAML:
             """, intermediate=dict(a='ghi\njkl\n\n\n', b='x'))
 
     def test_preserve_string_keep_at_end(self):
-        # with pytest.raises(AssertionError) as excinfo:
+        # at EOF you have to specify the ... to get proper "closure"
+        # of the multiline scalar
         round_trip("""
             a: |+
               ghi
