@@ -5,6 +5,7 @@ from __future__ import print_function
 
 import sys
 import os
+import platform
 from textwrap import dedent
 
 name_space = 'ruamel'
@@ -151,7 +152,8 @@ def main():
         "ruamel.std.argparse>=0.5.1",
     ]
     # use fast ordereddict for !!omap
-    if sys.version_info[0] == 2:
+    if sys.version_info[0] == 2 and \
+       platform.python_implementation() == "CPython":
         install_requires.extend(['ruamel.ordereddict'])
     # if sys.version_info < (3, 4):
     #     install_requires.append("")
@@ -185,6 +187,8 @@ def main():
             "Programming Language :: Python :: 2.7",
             "Programming Language :: Python :: 3.3",
             "Programming Language :: Python :: 3.4",
+            "Programming Language :: Python :: Implementation :: CPython",
+            "Programming Language :: Python :: Implementation :: PyPy",
             "Topic :: Software Development :: Libraries :: Python Modules",
             "Topic :: Text Processing :: Markup",
         ]
