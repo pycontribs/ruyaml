@@ -26,7 +26,8 @@ Major differences with PyYAML 3.11:
   the information is lost on reassignment. (This might be changed
   in the future so that the preservation/folding/chomping is part of the
   parent container, like comments).
-
+- RoundTrip preservation of flow style sequences ( 'a: b, c, d') (based
+  on request and test by Anthony Sottile)
 
 Round trip including comments
 =============================

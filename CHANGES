@@ -2,9 +2,9 @@
 0.7 2015-03-26
 - tests (currently failing) for inline sequece and non-standard spacing between
   block sequence dash and scaler (Anthony Sotille)
-- initial possibility (on list, i.e. CommentedSeq) to set the flow format
+- possibility (on list, i.e. CommentedSeq) to set the flow format
   explicitly
-
+- RoundTrip capability of flow style sequences ( 'a: b, c, d' )
 
 0.6.1 2015-03-15
 - setup.py changed so ruamel.ordereddict no longer is a dependency
