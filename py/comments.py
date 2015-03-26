@@ -80,6 +80,10 @@ class Format(object):
         self._flow_style = False
 
     def flow_style(self, default):
+        """if default (the flow_style) is None, the flow style tacked on to
+        the object explicitly will be taken. If that is None as well the
+        default flow style rules the format down the line, or the type
+        of the constituent values (simple -> flow, map/list -> block)"""
         if self._flow_style is None:
             return default
         return self._flow_style

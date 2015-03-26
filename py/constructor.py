@@ -909,6 +909,10 @@ class RoundTripConstructor(SafeConstructor):
 
     def construct_yaml_seq(self, node):
         data = CommentedSeq()
+        if node.flow_style is True:
+            data.fa.set_flow_style()
+        elif node.flow_style is False:
+            data.fa.set_block_style()
         if node.comment:
             data._yaml_add_comment(node.comment)
         yield data
