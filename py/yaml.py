@@ -142,6 +142,8 @@ class YAML:
           secure: optional
         """)
 
+        input = "a: [b, c, d]"
+
         print_input(input)
         print_tokens(input)
         print_events(input)

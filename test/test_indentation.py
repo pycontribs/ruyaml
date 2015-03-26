@@ -17,7 +17,7 @@ def rt(s):
     ).strip() + '\n'
 
 
-@pytest.mark.xfail
+# @pytest.mark.xfail
 def test_roundtrip_inline_list():
     s = 'a: [a, b, c]\n'
     output = rt(s)
@@ -34,7 +34,7 @@ def test_added_inline_list():
     data = ruamel.yaml.load(s1, Loader=ruamel.yaml.RoundTripLoader)
     val = data['a']
     val.fa.set_flow_style()
-    print(type(val), '_yaml_format' in dir(val))
+    # print(type(val), '_yaml_format' in dir(val))
     output = ruamel.yaml.dump(data, Dumper=ruamel.yaml.RoundTripDumper)
     assert s == output
 

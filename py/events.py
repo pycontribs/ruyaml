@@ -16,7 +16,8 @@ class Event(object):
         self.comment = comment
 
     def __repr__(self):
-        attributes = [key for key in ['anchor', 'tag', 'implicit', 'value']
+        attributes = [key for key in ['anchor', 'tag', 'implicit', 'value',
+                                      'flow_style', 'style']
                       if hasattr(self, key)]
         arguments = ', '.join(['%s=%r' % (key, getattr(self, key))
                                for key in attributes])

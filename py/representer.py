@@ -670,6 +670,7 @@ class RoundTripRepresenter(SafeRepresenter):
 
     def represent_omap(self, tag, omap, flow_style=None):
         value = []
+        flow_style = omap.fa.flow_style(flow_style)
         node = SequenceNode(tag, value, flow_style=flow_style)
         if self.alias_key is not None:
             self.represented_objects[self.alias_key] = node
@@ -716,6 +717,7 @@ class RoundTripRepresenter(SafeRepresenter):
         tag = u'tag:yaml.org,2002:set'
         # return self.represent_mapping(tag, value)
         value = []
+        flow_style = setting.fa.flow_style(flow_style)
         node = MappingNode(tag, value, flow_style=flow_style)
         if self.alias_key is not None:
             self.represented_objects[self.alias_key] = node
