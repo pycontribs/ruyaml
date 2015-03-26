@@ -205,8 +205,4 @@ if __name__ == '__main__':
     if 'yamlctest' in sys.argv:
         print(check_extensions())
         sys.exit(1)
-    if len(sys.argv) > 1 and sys.argv[1] == 'sdist':
-        assert full_package_name == os.path.abspath(os.path.dirname(
-            __file__)).split('site-packages' + os.path.sep)[1].replace(
-            os.path.sep, '.')
     main()
