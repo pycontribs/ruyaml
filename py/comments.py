@@ -1,3 +1,5 @@
+# coding: utf-8
+
 from __future__ import absolute_import
 from __future__ import print_function
 
@@ -5,7 +7,9 @@ __all__ = ["CommentedSeq", "CommentedMap", "CommentedOrderedMap",
            "CommentedSet", 'comment_attrib']
 
 """
-stuff to deal with comments on dict/list/ordereddict/set
+stuff to deal with comments and formatting on dict/list/ordereddict/set
+these are not really related, formatting could be factored out as
+a separate base
 """
 
 from collections import MutableSet
@@ -13,12 +17,12 @@ from collections import MutableSet
 from .compat import ordereddict
 
 comment_attrib = '_yaml_comment'
-
+format_attrib = '_yaml_format'
 
 class Comment(object):
     # sys.getsize tested the Comment objects, __slots__ make them bigger
     # and adding self.end did not matter
-    attrib = '_yaml_comment'
+    attrib = comment_attrib
 
     def __init__(self):
         self.comment = None  # [post, [pre]]
@@ -63,6 +67,23 @@ def NoComment():
     pass
 
 
+class Format(object):
+    attrib = format_attrib
+
+    def __init__(self):
+        self._flow_style = None
+
+    def set_flow_style(self):
+        self._flow_style = True
+
+    def set_block_style(self):
+        self._flow_style = False
+
+    def flow_style(self, default):
+        if self._flow_style is None:
+            return default
+        return self._flow_style
+
 class CommentedBase(object):
     @property
     def ca(self):
@@ -94,6 +115,12 @@ class CommentedBase(object):
         else:
             l[3].extend(comment[0])
         l[2] = comment[0]
+
+    @property
+    def fa(self):
+        if not hasattr(self, Format.attrib):
+            setattr(self, Format.attrib, Format())
+        return getattr(self, Format.attrib)
 
 
 class CommentedSeq(list, CommentedBase):

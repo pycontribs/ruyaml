@@ -594,6 +594,10 @@ class RoundTripRepresenter(SafeRepresenter):
 
     def represent_sequence(self, tag, sequence, flow_style=None):
         value = []
+        # if the flow_style is None, the flow style tacked on to the object
+        # explicitly will be taken. If that is None as well the default flow
+        # style rules
+        flow_style = sequence.fa.flow_style(flow_style)
         node = SequenceNode(tag, value, flow_style=flow_style)
         if self.alias_key is not None:
             self.represented_objects[self.alias_key] = node
