@@ -2,6 +2,9 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
+
+from textwrap import dedent
+
 import pytest
 
 import ruamel.yaml
@@ -18,6 +21,21 @@ def rt(s):
 def test_roundtrip_inline_list():
     s = 'a: [a, b, c]\n'
     output = rt(s)
+    assert s == output
+
+def test_added_inline_list():
+    s1 = dedent("""
+    a:
+    - b
+    - c
+    - d
+    """)
+    s = 'a: [b, c, d]\n'
+    data = ruamel.yaml.load(s1, Loader=ruamel.yaml.RoundTripLoader)
+    val = data['a']
+    val.fa.set_flow_style()
+    print(type(val), '_yaml_format' in dir(val))
+    output = ruamel.yaml.dump(data, Dumper=ruamel.yaml.RoundTripDumper)
     assert s == output
 
 

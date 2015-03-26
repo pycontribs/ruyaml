@@ -10,4 +10,5 @@ venv
 build
 *.egg-info
 .tox
+.cache
 README.pdf

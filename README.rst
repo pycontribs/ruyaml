@@ -77,6 +77,7 @@ eventuallly resulting in a different Python object (subclass or alternative),
 that should behave like the original, but on the way from Python to YAML
 generates the original (or at least something much closer).
 
+
 Examples
 ========
 
