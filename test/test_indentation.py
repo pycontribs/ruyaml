@@ -17,12 +17,43 @@ def rt(s):
     ).strip() + '\n'
 
 
-# @pytest.mark.xfail
 def test_roundtrip_inline_list():
     s = 'a: [a, b, c]\n'
     output = rt(s)
     assert s == output
 
+def test_roundtrip_mapping_of_inline_lists():
+    s = dedent("""\
+    a: [a, b, c]
+    j: [k, l, m]
+    """)
+    output = rt(s)
+    assert s == output
+
+def test_roundtrip_mapping_of_inline_lists_comments():
+    s = dedent("""\
+    # comment A
+    a: [a, b, c]
+    # comment B
+    j: [k, l, m]
+    """)
+    output = rt(s)
+    assert s == output
+
+# the following doesn't work correctly. The comment for the sequence is
+# emitted on the next line instead of after the flow sequence
+@pytest.mark.xfail
+def test_roundtrip_mapping_of_inline_lists_eol_comments():
+    s = dedent("""\
+    # comment A
+    a: [a, b, c]  # comment B
+    j: [k, l, m]  # comment C
+    """)
+    output = rt(s)
+    assert s == output
+
+
+# first test by explicitly setting flow style
 def test_added_inline_list():
     s1 = dedent("""
     a:
@@ -38,6 +69,19 @@ def test_added_inline_list():
     output = ruamel.yaml.dump(data, Dumper=ruamel.yaml.RoundTripDumper)
     assert s == output
 
+############# flow mappings
+
+def test_roundtrip_flow_mapping():
+    s = dedent("""\
+    - {a: 1, b: hallo}
+    - {j: fka, k: 42}
+    """)
+    data = ruamel.yaml.load(s, Loader=ruamel.yaml.RoundTripLoader)
+    output = ruamel.yaml.dump(data, Dumper=ruamel.yaml.RoundTripDumper)
+    assert s == output
+
+
+############# indentation
 
 @pytest.mark.xfail
 def test_roundtrip_four_space_indents():

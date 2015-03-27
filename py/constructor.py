@@ -920,12 +920,20 @@ class RoundTripConstructor(SafeConstructor):
 
     def construct_yaml_map(self, node):
         data = CommentedMap()
+        if node.flow_style is True:
+            data.fa.set_flow_style()
+        elif node.flow_style is False:
+            data.fa.set_block_style()
         yield data
         self.construct_mapping(node, data)
 
     def construct_yaml_omap(self, node):
         # Note: we do now check for duplicate keys
         omap = CommentedOrderedMap()
+        if node.flow_style is True:
+            data.fa.set_flow_style()
+        elif node.flow_style is False:
+            data.fa.set_block_style()
         yield omap
         if node.comment:
             omap._yaml_add_comment(node.comment[:2])
