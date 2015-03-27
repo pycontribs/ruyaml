@@ -627,6 +627,10 @@ class RoundTripRepresenter(SafeRepresenter):
 
     def represent_mapping(self, tag, mapping, flow_style=None):
         value = []
+        try:
+            flow_style = mapping.fa.flow_style(flow_style)
+        except AttributeError:
+            pass
         node = MappingNode(tag, value, flow_style=flow_style)
         if self.alias_key is not None:
             self.represented_objects[self.alias_key] = node
