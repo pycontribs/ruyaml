@@ -931,9 +931,9 @@ class RoundTripConstructor(SafeConstructor):
         # Note: we do now check for duplicate keys
         omap = CommentedOrderedMap()
         if node.flow_style is True:
-            data.fa.set_flow_style()
+            omap.fa.set_flow_style()
         elif node.flow_style is False:
-            data.fa.set_block_style()
+            omap.fa.set_block_style()
         yield omap
         if node.comment:
             omap._yaml_add_comment(node.comment[:2])
