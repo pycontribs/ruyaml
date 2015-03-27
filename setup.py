@@ -164,8 +164,8 @@ def main():
         name=full_package_name,
         version=version_str,
         description=full_package_name + " is a YAML parser/emitter that "
-        "supports roundtrip preservation of comments, sequence flow style, "
-        "key order",
+        "supports roundtrip preservation of comments, seq/map flow style, and "
+        "map key order",
         install_requires=install_requires,
         long_description=open('README.rst').read(),
         url='https://bitbucket.org/ruamel/' + package_name,
