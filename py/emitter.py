@@ -258,7 +258,9 @@ class Emitter(object):
                 self.expect_scalar()
             elif isinstance(self.event, SequenceStartEvent):
                 if self.event.comment:
-                    self.write_post_comment(self.event)
+                    self.write_pre_comment(self.event)
+                    if self.event.flow_style is False and self.event.comment:
+                        self.write_post_comment(self.event)
                 # print('seq event', self.event)
                 if self.flow_level or self.canonical or self.event.flow_style \
                         or self.check_empty_sequence():
@@ -266,7 +268,7 @@ class Emitter(object):
                 else:
                     self.expect_block_sequence()
             elif isinstance(self.event, MappingStartEvent):
-                if self.event.comment:
+                if self.event.flow_style is False and self.event.comment:
                     self.write_post_comment(self.event)
                 if self.event.comment and self.event.comment[1]:
                     self.write_pre_comment(self.event)
@@ -318,6 +320,9 @@ class Emitter(object):
                 self.write_indicator(u',', False)
                 self.write_indent()
             self.write_indicator(u']', False)
+            if self.event.comment and self.event.comment[0]:
+                # eol comment on flow sequence
+                self.write_post_comment(self.event)
             self.state = self.states.pop()
         else:
             self.write_indicator(u',', False)
@@ -339,6 +344,9 @@ class Emitter(object):
             self.indent = self.indents.pop()
             self.flow_level -= 1
             self.write_indicator(u'}', False)
+            #if self.event.comment and self.event.comment[0]:
+            #    # eol comment on flow sequence
+            #    self.write_post_comment(self.event)
             self.state = self.states.pop()
         else:
             if self.canonical or self.column > self.best_width:
@@ -361,6 +369,9 @@ class Emitter(object):
                 self.write_indicator(u',', False)
                 self.write_indent()
             self.write_indicator(u'}', False)
+            if self.event.comment and self.event.comment[0]:
+                # eol comment on flow mapping
+                self.write_post_comment(self.event)
             self.state = self.states.pop()
         else:
             self.write_indicator(u',', False)
@@ -1201,6 +1212,8 @@ class Emitter(object):
 
     def write_pre_comment(self, event):
         comments = event.comment[1]
+        if comments is None:
+            return
         try:
             for comment in comments:
                 if isinstance(event, MappingStartEvent) and \

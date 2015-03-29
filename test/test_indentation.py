@@ -40,10 +40,7 @@ def test_roundtrip_mapping_of_inline_lists_comments():
     output = rt(s)
     assert s == output
 
-# the following doesn't work correctly. The comment for the sequence is
-# emitted on the next line instead of after the flow sequence
-@pytest.mark.xfail
-def test_roundtrip_mapping_of_inline_lists_eol_comments():
+def test_roundtrip_mapping_of_inline_sequence_eol_comments():
     s = dedent("""\
     # comment A
     a: [a, b, c]  # comment B
@@ -79,6 +76,16 @@ def test_roundtrip_flow_mapping():
     data = ruamel.yaml.load(s, Loader=ruamel.yaml.RoundTripLoader)
     output = ruamel.yaml.dump(data, Dumper=ruamel.yaml.RoundTripDumper)
     assert s == output
+
+def test_roundtrip_sequence_of_inline_mappings_eol_comments():
+    s = dedent("""\
+    # comment A
+    - {a: 1, b: hallo}  # comment B
+    - {j: fka, k: 42}  # comment C
+    """)
+    output = rt(s)
+    assert s == output
+
 
 
 ############# indentation

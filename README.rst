@@ -8,7 +8,8 @@ which supports YAML1.1
 
 Major differences with PyYAML 3.11:
 
-- intergrated Python 2 and 3 sources, running on Python 2.6, 2.7, 3.3 and 3.4.
+- intergrated Python 2 and 3 sources, running on Python 2.6, 2.7 (CPython, 
+  PyPy), 3.3 and 3.4.
 - round trip mode that **includes comments** (block mode, key ordering kept)
 - support for simple lists as mapping keys by transformation to tuples
 - ``!!omap`` generates ordereddict (C) on Python 2, collections.OrderedDict
