@@ -21,7 +21,7 @@ def _convert_version(tup):
     return ret_val
 
 
-version_info = (0, 7, 1)
+version_info = (0, 7, 2)
 __version__ = _convert_version(version_info)
 
 del _convert_version

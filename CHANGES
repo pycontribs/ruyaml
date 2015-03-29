@@ -1,4 +1,10 @@
 
+0.7.2: 2015-03-29
+- support for end-of-line comments on flow style sequences and mappings
+
+0.7.1: 2015-03-27
+- RoundTrip capability of flow style sequences ( 'a: b, c, d' )
+
 0.7 2015-03-26
 - tests (currently failing) for inline sequece and non-standard spacing between
   block sequence dash and scalar (Anthony Sottile)

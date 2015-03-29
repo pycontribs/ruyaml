@@ -104,7 +104,13 @@ class Serializer(object):
                 implicit = (node.tag
                             == self.resolve(SequenceNode, node.value, True))
                 comment = node.comment
+                # print('comment >>>>>>>>>>>>>.', comment, node.flow_style)
                 end_comment = None
+                seq_comment = None
+                if node.flow_style is True:
+                    if comment:  # eol comment on flow style sequence
+                        seq_comment = comment[0]
+                        # comment[0] = None
                 if comment and len(comment) > 2:
                     end_comment = comment[2]
                 else:
@@ -116,12 +122,17 @@ class Serializer(object):
                 for item in node.value:
                     self.serialize_node(item, node, index)
                     index += 1
-                self.emit(SequenceEndEvent(comment=[None, end_comment]))
+                self.emit(SequenceEndEvent(comment=[seq_comment, end_comment]))
             elif isinstance(node, MappingNode):
                 implicit = (node.tag
                             == self.resolve(MappingNode, node.value, True))
                 comment = node.comment
                 end_comment = None
+                map_comment = None
+                if node.flow_style is True:
+                    if comment:  # eol comment on flow style sequence
+                        map_comment = comment[0]
+                        # comment[0] = None
                 if comment and len(comment) > 2:
                     end_comment = comment[2]
                 self.emit(MappingStartEvent(alias, node.tag, implicit,
@@ -130,5 +141,5 @@ class Serializer(object):
                 for key, value in node.value:
                     self.serialize_node(key, node, None)
                     self.serialize_node(value, node, key)
-                self.emit(MappingEndEvent(comment=[None, end_comment]))
+                self.emit(MappingEndEvent(comment=[map_comment, end_comment]))
             self.ascend_resolver()

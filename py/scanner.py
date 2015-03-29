@@ -1520,6 +1520,7 @@ class RoundTripScanner(Scanner):
             return self.tokens[0]
 
     def _gather_comments(self):
+        """combine multiple comment lines"""
         comments = []
         if not self.tokens:
             return comments
@@ -1552,11 +1553,17 @@ class RoundTripScanner(Scanner):
             self.fetch_more_tokens()
         self._gather_comments()
         if self.tokens:
-            # only add post comment to scalar token or value token. otherwise
+            # only add post comment to single line tokens:
+            # scalar, value token. FlowXEndToken, otherwise
             # hidden streamtokens could get them (leave them and they will be
             # pre comments for the next map/seq
             if len(self.tokens) > 1 and \
-               isinstance(self.tokens[0], (ScalarToken, ValueToken)) and \
+               isinstance(self.tokens[0], (
+                   ScalarToken,
+                   ValueToken,
+                   FlowSequenceEndToken,
+                   FlowMappingEndToken,
+                   )) and \
                isinstance(self.tokens[1], CommentToken) and \
                self.tokens[0].end_mark.line == self.tokens[1].start_mark.line:
                 self.tokens_taken += 1

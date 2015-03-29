@@ -98,7 +98,7 @@ class YAML:
             print('-' * 15)
 
         def print_tokens(input):
-            print('Tokens ' + '#' * 60)
+            print('Tokens (from scanner) ' + '#' * 50)
             tokens = ruamel.yaml.scan(input, ruamel.yaml.RoundTripLoader)
             for idx, token in enumerate(tokens):
                 # print(token.start_mark)
@@ -116,13 +116,13 @@ class YAML:
             print(ruamel.yaml.serialize(nodes, indent=False, Dumper=dumper))
 
         def print_events(input):
-            print('Events ' + '#' * 60)
+            print('Events (from parser) ' + '#' * 50)
             events = ruamel.yaml.parse(input, ruamel.yaml.RoundTripLoader)
             for idx, event in enumerate(events):
                 print("{0:2} {1}".format(idx, event))
 
         def print_nodes(input):
-            print('Nodes ' + '#' * 60)
+            print('Nodes (from composer) ' + '#' * 50)
             x = ruamel.yaml.compose(input, ruamel.yaml.RoundTripLoader)
             x.dump()  # dump the node
 
@@ -142,7 +142,33 @@ class YAML:
           secure: optional
         """)
 
-        input = "a: [b, c, d]"
+        input = dedent("""\
+        # comment A
+        a: [b, c, d]  # comment B
+        j: [k, l, m]  # comment C
+        """)
+
+        Xinput = dedent("""\
+        # comment A
+        - {a: 1, b: hallo}  # comment B
+        - {j: fka, k: 42}   # comment C
+        """)
+
+        Xinput = dedent("""\
+            # comment A
+            - {a: 1, b: hallo}
+            - {j: fka, k: 42}
+            """)
+
+        Xinput = dedent("""\
+        # C start a
+        # C start b
+        - abc      # abc comment
+        - ghi
+        - klm      # klm comment
+        # C end a
+        # C end b
+        """)
 
         print_input(input)
         print_tokens(input)

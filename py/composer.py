@@ -113,13 +113,21 @@ class Composer(object):
                             start_event.start_mark, None,
                             flow_style=start_event.flow_style,
                             comment=start_event.comment)
+        #print('.................', node.comment)
         if anchor is not None:
             self.anchors[anchor] = node
         index = 0
+        #print('...............0.', node.comment)
         while not self.check_event(SequenceEndEvent):
+            #print('...............1.', node.comment)
             node.value.append(self.compose_node(node, index))
             index += 1
         end_event = self.get_event()
+        if node.flow_style is True and end_event.comment is not None:
+            if node.comment is not None:
+                print('Warning: unexpected end_event commment in sequence '
+                      'node {}'.format(node.flow_style))
+            node.comment = end_event.comment
         node.end_mark = end_event.end_mark
         self.check_end_doc_comment(end_event, node)
         return node
@@ -146,6 +154,8 @@ class Composer(object):
             # node.value[item_key] = item_value
             node.value.append((item_key, item_value))
         end_event = self.get_event()
+        if node.flow_style is True and end_event.comment is not None:
+            node.comment = end_event.comment
         node.end_mark = end_event.end_mark
         self.check_end_doc_comment(end_event, node)
         return node
