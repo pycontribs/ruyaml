@@ -143,31 +143,9 @@ class YAML:
         """)
 
         input = dedent("""\
-        # comment A
-        a: [b, c, d]  # comment B
-        j: [k, l, m]  # comment C
-        """)
-
-        Xinput = dedent("""\
-        # comment A
-        - {a: 1, b: hallo}  # comment B
-        - {j: fka, k: 42}   # comment C
-        """)
-
-        Xinput = dedent("""\
-            # comment A
-            - {a: 1, b: hallo}
-            - {j: fka, k: 42}
-            """)
-
-        Xinput = dedent("""\
-        # C start a
-        # C start b
-        - abc      # abc comment
-        - ghi
-        - klm      # klm comment
-        # C end a
-        # C end b
+        a:
+            b: foo
+            c: bar
         """)
 
         print_input(input)
@@ -191,7 +169,10 @@ class YAML:
         print('>>>>>>>>>>')
         # print(ruamel.yaml.dump(data, default_flow_style=False,
         #    Dumper=dumper), '===========')
-        print("{0}=========".format(ruamel.yaml.dump(data, Dumper=dumper)))
+        print("{0}=========".format(ruamel.yaml.dump(
+            data,
+            indent=4,
+            Dumper=dumper)))
         comment = getattr(l, '_yaml_comment', None)
         print('comment_2', comment)
 
@@ -357,9 +338,9 @@ class YAML_Cmd(ProgramBase):
 
     @sub_parser(
         aliases=['to-html'],
-        help='convert YAML ot html tables',
+        help='convert YAML to html tables',
         description="""convert YAML to html tables. If hierarchy is two deep (
-        list/mapping over list/mapping) this is mapped to one table
+        sequence/mapping over sequence/mapping) this is mapped to one table
         If the hierarchy is three deep, a list of 2 deep tables is assumed, but
         any non-list/mapp second level items are considered text.
         Row level keys are inserted in first column (unless --no-row-key),
