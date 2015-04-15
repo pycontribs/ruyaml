@@ -1,5 +1,6 @@
-0.7.3: 2015-04
+0.8: 2015-04-15
 - bug fix for non-roundtrip save of ordereddict
+- adding/replacing end of line comments on block style mappings/sequences
 
 0.7.2: 2015-03-29
 - support for end-of-line comments on flow style sequences and mappings

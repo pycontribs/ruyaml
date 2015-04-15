@@ -8,7 +8,7 @@ which supports YAML1.1
 
 Major differences with PyYAML 3.11:
 
-- intergrated Python 2 and 3 sources, running on Python 2.6, 2.7 (CPython, 
+- intergrated Python 2 and 3 sources, running on Python 2.6, 2.7 (CPython,
   PyPy), 3.3 and 3.4.
 - round trip mode that **includes comments** (block mode, key ordering kept)
 - support for simple lists as mapping keys by transformation to tuples
@@ -29,6 +29,8 @@ Major differences with PyYAML 3.11:
   parent container, like comments).
 - RoundTrip preservation of flow style sequences ( 'a: b, c, d') (based
   on request and test by Anthony Sottile)
+- adding/replacing of comments on block style sequences and mappings
+  with smart column positioning
 
 Round trip including comments
 =============================
@@ -37,12 +39,69 @@ The major motivation for this fork is the round-trip capability for
 comments. The integration of the sources was just an initial step to
 make this easier.
 
-Config file formats
--------------------
+adding/replacing comments
+-------------------------
 
-There are only a few configuration file formats that are human
-readable and editable: JSON, INI/ConfigParser, YAML (XML is to verbose
-to be readable).
+Starting with version 0.8, you can add/replace comments on block style
+collections (mappings/sequences resuting in Python dict/list). The basic
+for for this is::
+
+  from __future__ import print_function
+
+  import ruamel.yaml
+
+  inp = """\
+  abc:
+    - a     # comment 1
+  xyz:
+    a: 1    # comment 2
+    b: 2
+    c: 3
+    d: 4
+    e: 5
+    f: 6 # comment 3
+  """
+
+  data = ruamel.yaml.load(inp, ruamel.yaml.RoundTripLoader)
+  data['abc'].append('b')
+  data['abc'].yaml_add_eol_comment('comment 4', 1)  # takes column of comment 1
+  data['xyz'].yaml_add_eol_comment('comment 5', 'c')  # takes column of comment 2
+  data['xyz'].yaml_add_eol_comment('comment 6', 'e')  # takes column of comment 3
+  data['xyz'].yaml_add_eol_comment('comment 7', 'd', column=20)
+
+  print(ruamel.yaml.dump(data, Dumper=ruamel.yaml.RoundTripDumper), end='')
+
+.. example code add_comment.py
+
+Resulting in::
+
+  abc:
+  - a       # comment 1
+  - b       # comment 4
+  xyz:
+    a: 1    # comment 2
+    b: 2
+    c: 3    # comment 5
+    d: 4              # comment 7
+    e: 5 # comment 6
+    f: 6 # comment 3
+
+
+.. example output add_comment.py
+
+
+If the comment doesn't start with '#', this will be added. The key is is
+the element index for list, the actual key for dictionaries. As can be seen
+from the example, the column to choose for a comment is derived
+from the previous, next or preceding comment column (picking the first one
+found).
+
+Config file formats
+===================
+
+There are only a few configuration file formats that are easily
+readable, and editable: JSON, INI/ConfigParser, YAML (XML is to cluttered
+to be called easily readable).
 
 Unfortunately `JSON <http://www.json.org/>`_ doesn't support comments,
 and although there are some solutions with pre-processed filtering of
@@ -67,7 +126,7 @@ configuration files that are human readable and editable while at
 the same time interpretable and modifiable by a program.
 
 Extending
----------
+=========
 
 There are normally 6 files involved when extending the roundtrip
 capabilities: the reader, parser, composer and constructor to go from YAML to
@@ -101,7 +160,7 @@ and generating YAML::
   code = ruamel.yaml.load(inp, ruamel.yaml.RoundTripLoader)
   code['name']['given'] = 'Bob'
 
-  print(ruamel.yaml.dump(code, Dumper= ruamel.yaml.RoundTripDumper), end='')
+  print(ruamel.yaml.dump(code, Dumper=ruamel.yaml.RoundTripDumper), end='')
 
 .. example code small.py
 
