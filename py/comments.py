@@ -79,7 +79,7 @@ class Format(object):
     def set_block_style(self):
         self._flow_style = False
 
-    def flow_style(self, default):
+    def flow_style(self, default=None):
         """if default (the flow_style) is None, the flow style tacked on to
         the object explicitly will be taken. If that is None as well the
         default flow style rules the format down the line, or the type
@@ -127,6 +127,27 @@ class CommentedBase(object):
         return getattr(self, Format.attrib)
 
 
+    def yaml_add_eol_comment(self, comment, key=NoComment, column=None):
+        """
+        there is a problem as eol comments should start with ' #'
+        (but at the beginning of the line the space doesn't have to be before
+        the #. The column index is for the # mark
+        """
+        from .tokens import CommentToken
+        from .error import Mark
+        if column is None:
+            column = self._yaml_get_column(key)
+        if comment[0] != '#':
+            comment = '# ' + comment
+        if column is None:
+            if comment[0] == '#':
+                comment = ' ' + comment
+                column = 0
+        start_mark = Mark(None, None, None, column, None, None)
+        ct = [CommentToken(comment, start_mark, None), None]
+        self._yaml_add_eol_comment(ct, key=key)
+
+
 class CommentedSeq(list, CommentedBase):
     __slots__ = [Comment.attrib, ]
 
@@ -136,6 +157,32 @@ class CommentedSeq(list, CommentedBase):
         else:
             self.ca.comment = comment
 
+    def _yaml_add_eol_comment(self, comment, key):
+        self._yaml_add_comment(comment, key=key)
+
+    def _yaml_get_columnX(self, key):
+        return self.ca.items[key][0].start_mark.column
+
+    def _yaml_get_column(self, key):
+        column = None
+        sel_idx = None
+        pre, post = key-1, key+1
+        if pre in self.ca.items:
+            sel_idx = pre
+        elif post in self.ca.items:
+            sel_idx = post
+        else:
+            # self.ca.items is not ordered
+            for row_idx, k1 in enumerate(self):
+                if row_idx >= key:
+                    break
+                if row_idx not in self.ca.items:
+                    continue
+                sel_idx = row_idx
+        if sel_idx is not None:
+            column = self._yaml_get_columnX(sel_idx)
+        return column
+
 
 class CommentedMap(ordereddict, CommentedBase):
     __slots__ = [Comment.attrib, ]
@@ -144,10 +191,45 @@ class CommentedMap(ordereddict, CommentedBase):
         """values is set to key to indicate a value attachment of comment"""
         if key is not NoComment:
             self.yaml_key_comment_extend(key, comment)
-        elif value is not NoComment:
+            return
+        if value is not NoComment:
             self.yaml_value_comment_extend(value, comment)
         else:
             self.ca.comment = comment
+
+    def _yaml_add_eol_comment(self, comment, key):
+        """add on the value line, with value specified by the key"""
+        self._yaml_add_comment(comment, value=key)
+
+    def _yaml_get_columnX(self, key):
+        return self.ca.items[key][2].start_mark.column
+
+    def _yaml_get_column(self, key):
+        column = None
+        sel_idx = None
+        pre, post, last = None, None, None
+        for x in self:
+            if pre is not None and x != key:
+                post = x
+                break
+            if x == key:
+                pre = last
+            last = x
+        if pre in self.ca.items:
+            sel_idx = pre
+        elif post in self.ca.items:
+            sel_idx = post
+        else:
+            # self.ca.items is not ordered
+            for row_idx, k1 in enumerate(self):
+                if k1 >= key:
+                    break
+                if k1 not in self.ca.items:
+                    continue
+                sel_idx = k1
+        if sel_idx is not None:
+            column = self._yaml_get_columnX(sel_idx)
+        return column
 
     def update(self, vals):
         try:
