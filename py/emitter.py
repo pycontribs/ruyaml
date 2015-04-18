@@ -344,9 +344,9 @@ class Emitter(object):
             self.indent = self.indents.pop()
             self.flow_level -= 1
             self.write_indicator(u'}', False)
-            #if self.event.comment and self.event.comment[0]:
-            #    # eol comment on flow sequence
-            #    self.write_post_comment(self.event)
+            # if self.event.comment and self.event.comment[0]:
+            #     # eol comment on flow sequence
+            #     self.write_post_comment(self.event)
             self.state = self.states.pop()
         else:
             if self.canonical or self.column > self.best_width:
