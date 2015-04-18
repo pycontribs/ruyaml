@@ -18,6 +18,8 @@ from .compat import ordereddict
 
 comment_attrib = '_yaml_comment'
 format_attrib = '_yaml_format'
+line_col_attrib = '_yaml_line_col'
+
 
 class Comment(object):
     # sys.getsize tested the Comment objects, __slots__ make them bigger
@@ -88,6 +90,15 @@ class Format(object):
             return default
         return self._flow_style
 
+
+class LineCol(object):
+    attrib = line_col_attrib
+
+    def __init__(self):
+        self.line = None
+        self.col = None
+
+
 class CommentedBase(object):
     @property
     def ca(self):
@@ -126,7 +137,6 @@ class CommentedBase(object):
             setattr(self, Format.attrib, Format())
         return getattr(self, Format.attrib)
 
-
     def yaml_add_eol_comment(self, comment, key=NoComment, column=None):
         """
         there is a problem as eol comments should start with ' #'
@@ -146,6 +156,16 @@ class CommentedBase(object):
         start_mark = Mark(None, None, None, column, None, None)
         ct = [CommentToken(comment, start_mark, None), None]
         self._yaml_add_eol_comment(ct, key=key)
+
+    @property
+    def lc(self):
+        if not hasattr(self, LineCol.attrib):
+            setattr(self, LineCol.attrib, LineCol())
+        return getattr(self, LineCol.attrib)
+
+    def _yaml_set_line_col(self, line, col):
+        self.lc.line = line
+        self.lc.col = col
 
 
 class CommentedSeq(list, CommentedBase):
