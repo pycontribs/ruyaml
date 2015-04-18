@@ -377,10 +377,10 @@ class Parser(object):
                     # indentation?
                     pt = self.peek_token()
                     comment = pt.comment
-                    #print('pt0', type(pt))
+                    # print('pt0', type(pt))
                     if comment is None or comment[1] is None:
                         comment = pt.split_comment()
-                    #print('pt1', comment)
+                    # print('pt1', comment)
                     event = SequenceStartEvent(
                         anchor, tag, implicit, start_mark, end_mark,
                         flow_style=False,
@@ -418,7 +418,7 @@ class Parser(object):
     def parse_block_sequence_first_entry(self):
         token = self.get_token()
         # move any comment from start token
-        #token.move_comment(self.peek_token())
+        # token.move_comment(self.peek_token())
         self.marks.append(token.start_mark)
         return self.parse_block_sequence_entry()
 
@@ -426,8 +426,6 @@ class Parser(object):
         if self.check_token(BlockEntryToken):
             token = self.get_token()
             token.move_comment(self.peek_token())
-            #print('================== here be dragons', repr(token))
-            #print(token.comment)
             if not self.check_token(BlockEntryToken, BlockEndToken):
                 self.states.append(self.parse_block_sequence_entry)
                 return self.parse_block_node()

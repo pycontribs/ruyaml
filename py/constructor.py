@@ -909,6 +909,7 @@ class RoundTripConstructor(SafeConstructor):
 
     def construct_yaml_seq(self, node):
         data = CommentedSeq()
+        data._yaml_set_line_col(node.start_mark.line, node.start_mark.column)
         if node.flow_style is True:
             data.fa.set_flow_style()
         elif node.flow_style is False:
@@ -920,6 +921,7 @@ class RoundTripConstructor(SafeConstructor):
 
     def construct_yaml_map(self, node):
         data = CommentedMap()
+        data._yaml_set_line_col(node.start_mark.line, node.start_mark.column)
         if node.flow_style is True:
             data.fa.set_flow_style()
         elif node.flow_style is False:
@@ -930,6 +932,7 @@ class RoundTripConstructor(SafeConstructor):
     def construct_yaml_omap(self, node):
         # Note: we do now check for duplicate keys
         omap = CommentedOrderedMap()
+        omap._yaml_set_line_col(node.start_mark.line, node.start_mark.column)
         if node.flow_style is True:
             omap.fa.set_flow_style()
         elif node.flow_style is False:
@@ -970,6 +973,7 @@ class RoundTripConstructor(SafeConstructor):
 
     def construct_yaml_set(self, node):
         data = CommentedSet()
+        data._yaml_set_line_col(node.start_mark.line, node.start_mark.column)
         yield data
         self.construct_setting(node, data)
 
