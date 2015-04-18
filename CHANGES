@@ -1,3 +1,7 @@
+0.9: 2015-04-18
+- collections read in by the RoundTripLoader now have a ``lc`` property
+  that can be quired for line and column ( ``lc.line`` resp. ``lc.col``)
+
 0.8: 2015-04-15
 - bug fix for non-roundtrip save of ordereddict
 - adding/replacing end of line comments on block style mappings/sequences
