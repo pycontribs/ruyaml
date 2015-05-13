@@ -37,7 +37,7 @@ def _check_convert_version(tup):
         if isinstance(x, int):
             nr_digits += 1
             if nr_digits > 2:
-                raise ValueError("to many consecutive digits " + ret_val)
+                raise ValueError("too many consecutive digits " + ret_val)
             ret_val += next_sep + str(x)
             next_sep = '.'
             continue
