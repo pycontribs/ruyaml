@@ -184,10 +184,12 @@ class YAML:
         docs = []
         for file_name in self._args.file:
             inp = open(file_name).read()
-            loader = ruamel.yaml.RoundTripLoader
+            loader = ruamel.yaml.Loader # RoundTripLoader
             docs.append(ruamel.yaml.load(inp, loader))
         dumper = ruamel.yaml.RoundTripDumper
-        print(ruamel.yaml.dump_all(docs, Dumper=dumper))
+        print(ruamel.yaml.dump_all(
+            docs, Dumper=dumper,
+            default_flow_style=self._args.flow))
         return 1 if errors else 0
 
     def to_html(self):
@@ -320,6 +322,8 @@ class YAML_Cmd(ProgramBase):
         help='convert json to block YAML',
         description='convert json to block YAML',
     )
+    @option('--flow', action='store_true',
+            help='use flow instead of block style')
     @option('file', nargs='+')
     def json(self):
         return self._yaml.from_json()
