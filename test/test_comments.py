@@ -195,7 +195,7 @@ class TestComments:
         """)
 
     @pytest.mark.xfail
-    def test_set_comment_before_tag(self):
+    def XXXtest_set_comment_before_tag(self):
         # no comments before tags
         round_trip("""
         # the beginning
