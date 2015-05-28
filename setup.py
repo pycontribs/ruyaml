@@ -63,8 +63,13 @@ version_str = _check_convert_version(version_info)
 
 if __name__ == '__main__':
     # put here so setup.py can be imported more easily
-    from setuptools import setup, find_packages, Extension
+    from setuptools import setup, find_packages, Extension, Distribution
     from setuptools.command import install_lib
+
+    # windows things this is pure, that way you would get pure python
+    # whl files that take precedence on Linux over source with compilable C
+    Distribution.is_pure = lambda *args: True
+
 
 
 class MyInstallLib(install_lib.install_lib):

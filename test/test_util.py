@@ -38,7 +38,7 @@ def call_util(s, file_name, cmd, mp, td):
     with io.open(file_name, 'w') as fp:
         fp.write(dedent(s))
     res = check_output(cmd, stderr=subprocess.STDOUT)
-    return res
+    return res.replace('\r\n', '\n')
 
 
 def rt_test(s, file_name, mp, td):
@@ -50,7 +50,8 @@ class TestUtil:
     def test_version(self, capsys):
         res = check_output(
             ['yaml', '--version'], stderr=subprocess.STDOUT)
-        assert res == u"version: {0}\n".format(ruamel.yaml.__version__)
+        assert res.replace('\r\n', '\n') == \
+               u"version: {0}\n".format(ruamel.yaml.__version__)
 
     def test_ok(self, tmpdir, monkeypatch):
         file_name = "00_ok.yaml"
@@ -68,7 +69,7 @@ class TestUtil:
         -  ghi # some comment
         - klm
         """, file_name, mp=monkeypatch, td=tmpdir)
-        assert res == dedent("""
+        assert res.replace('\r\n', '\n') == dedent("""
         {file_name}:
              stabelizes on second round trip, ok without comments
         --- 01_second_rt_ok.yaml
@@ -117,7 +118,7 @@ class TestUtil:
         """, file_name, ['yaml', 'from-ini', file_name],
             mp=monkeypatch, td=tmpdir)
         print(res)
-        assert res == dedent("""
+        assert res.replace('\r\n', '\n') == dedent("""
         # initial comment
         keyword1: value1
         keyword2: value2
@@ -182,7 +183,7 @@ class TestUtil:
             file_name, ['yaml', 'from-ini', file_name],
             mp=monkeypatch, td=tmpdir)
         print(res)
-        assert res == dedent("""
+        assert res.replace('\r\n', '\n') == dedent("""
         # initial comment
         keyword1: value1
         keyword2: value2 # eol comment kw2
