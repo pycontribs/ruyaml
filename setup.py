@@ -68,7 +68,8 @@ if __name__ == '__main__':
 
     # windows things this is pure, that way you would get pure python
     # whl files that take precedence on Linux over source with compilable C
-    Distribution.is_pure = lambda *args: True
+    if '--universal' in sys.argv:
+        Distribution.is_pure = lambda *args: True
 
 
 
