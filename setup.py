@@ -70,6 +70,7 @@ if __name__ == '__main__':
     # whl files that take precedence on Linux over source with compilable C
     if '--universal' in sys.argv:
         Distribution.is_pure = lambda *args: True
+    Distribution.is_pure = lambda *args: False
 
 
 
