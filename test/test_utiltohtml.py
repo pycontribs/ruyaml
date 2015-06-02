@@ -11,7 +11,7 @@ from test_util import check_output, call_util
 
 
 def to_html(s, file_name, mp, td, options=None):
-    cmd = ['yaml', 'to-html', file_name]
+    cmd = ['yaml', 'htmltable', file_name]
     if options:
         cmd.extend(options)
     return call_util(s, file_name, cmd, mp, td)
