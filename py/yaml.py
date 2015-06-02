@@ -5,6 +5,8 @@ this is the source for the yaml utility
 """
 
 from __future__ import print_function
+from __future__ import absolute_import
+
 
 import sys
 import os
@@ -192,7 +194,7 @@ class YAML:
             default_flow_style=self._args.flow))
         return 1 if errors else 0
 
-    def to_html(self):
+    def to_htmltable(self):
         def vals(x):
             if isinstance(x, list):
                 return x
@@ -219,6 +221,12 @@ class YAML:
             print("levels:", levels)
             return
         print(yaml_to_html(code, levels))
+
+    def from_html(self):
+        from .convert.html import HTML2YAML
+        h2y = HTML2YAML(self._args)
+        with open(self._args.file) as fp:
+            print(h2y(fp.read()))
 
     def round_trip(self):
         errors = 0
@@ -341,7 +349,7 @@ class YAML_Cmd(ProgramBase):
         return self._yaml.from_ini()
 
     @sub_parser(
-        aliases=['to-html'],
+        #aliases=['to-html'],
         help='convert YAML to html tables',
         description="""convert YAML to html tables. If hierarchy is two deep (
         sequence/mapping over sequence/mapping) this is mapped to one table
@@ -353,8 +361,24 @@ class YAML_Cmd(ProgramBase):
     )
     @option("--level", action='store_true', help="print # levels and exit")
     @option('file')
-    def html(self):
-        return self._yaml.to_html()
+    def htmltable(self):
+        return self._yaml.to_htmltable()
+
+    @sub_parser('from-html',
+        help='convert HTML to YAML',
+        description="""convert HTML to YAML. Tags become keys with as
+        value a list. The first item in the list is a key value pair with
+        key ".attribute" if attributes are available followed by tag and string
+        segment items. Lists with one item are by default flattened.
+        """,
+    )
+    @option("--no-body", action='store_true',
+            help="drop top level html and body from HTML code segments")
+    @option("--strip", action='store_true',
+            help="strip whitespace surrounding strings")
+    @option('file')
+    def from_html(self):
+        return self._yaml.from_html()
 
     if 'test' in sys.argv:
         @sub_parser(
