@@ -328,7 +328,6 @@ class YAML:
         """return the last non-empty line of a block of text (stripped)
         do not split or strip the complete txt
         """
-        assert isinstance(txt, basestring)
         pos = txt.rfind('\n')
         prev_pos = len(txt)
         maxloop = 10
