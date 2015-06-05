@@ -98,6 +98,8 @@ class MyInstallLib(install_lib.install_lib):
 def check_extensions():
     """check if the C module can be build by trying to compile a small
     program against the libyaml development library"""
+    if sys.platform == "win32":
+        return None
     import tempfile
     import shutil
 
@@ -119,37 +121,41 @@ def check_extensions():
     }
     """)
     tmp_dir = tempfile.mkdtemp(prefix='tmp_ruamel_yaml_')
-    bin_file_name = os.path.join(tmp_dir, 'test_yaml')
-    file_name = bin_file_name + '.c'
-    with open(file_name, 'w') as fp:
-        fp.write(c_code)
-
-    # and try to compile it
-    compiler = distutils.ccompiler.new_compiler()
-    assert isinstance(compiler, distutils.ccompiler.CCompiler)
-    distutils.sysconfig.customize_compiler(compiler)
-
+    ret_val = None
     try:
-        compiler.link_executable(
-            compiler.compile([file_name]),
-            bin_file_name,
-            libraries=libraries,
-        )
-    except CompileError:
-        print('libyaml compile error')
-        ret_val = None
-    except LinkError:
-        print('libyaml link error')
-        ret_val = None
-    else:
-        ret_val = [
-            Extension(
-                '_yaml',
-                sources=['ext/_yaml.c'],
+        print('tmp_dir', tmp_dir)
+        bin_file_name = os.path.join(tmp_dir, 'test_yaml')
+        file_name = bin_file_name + '.c'
+        with open(file_name, 'w') as fp:
+            fp.write(c_code)
+
+        # and try to compile it
+        compiler = distutils.ccompiler.new_compiler()
+        assert isinstance(compiler, distutils.ccompiler.CCompiler)
+        distutils.sysconfig.customize_compiler(compiler)
+
+        try:
+            compiler.link_executable(
+                compiler.compile([file_name]),
+                bin_file_name,
                 libraries=libraries,
-                ),
-        ]
-    shutil.rmtree(tmp_dir)
+            )
+        except CompileError:
+            print('libyaml compile error')
+        except LinkError:
+            print('libyaml link error')
+        else:
+            ret_val = [
+                Extension(
+                    '_yaml',
+                    sources=['ext/_yaml.c'],
+                    libraries=libraries,
+                    ),
+            ]
+    except:
+        pass
+    finally:
+        shutil.rmtree(tmp_dir)
     return ret_val
 
 
