@@ -123,7 +123,6 @@ def check_extensions():
     tmp_dir = tempfile.mkdtemp(prefix='tmp_ruamel_yaml_')
     ret_val = None
     try:
-        print('tmp_dir', tmp_dir)
         bin_file_name = os.path.join(tmp_dir, 'test_yaml')
         file_name = bin_file_name + '.c'
         with open(file_name, 'w') as fp:
