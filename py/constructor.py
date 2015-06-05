@@ -812,6 +812,9 @@ class RoundTripConstructor(SafeConstructor):
             return value
         try:
             return value.encode('ascii')
+        except AttributeError:
+            # in case you replace the node dynamically e.g. with a dict
+            return value
         except UnicodeEncodeError:
             return value
 
