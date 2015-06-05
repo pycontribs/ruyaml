@@ -128,6 +128,17 @@ class YAML:
             x = ruamel.yaml.compose(input, ruamel.yaml.RoundTripLoader)
             x.dump()  # dump the node
 
+        def scan_file(file_name):
+            inp = open(file_name).read()
+            print('---------\n', file_name)
+            print('---', repr(self.first_non_empty_line(inp)))
+            print('<<<', repr(self.last_non_empty_line(inp)))
+
+        if True:
+            for x in self._args.file:
+                scan_file(x)
+            return
+
         input = dedent("""
         application: web2py
         version: 1
@@ -228,40 +239,110 @@ class YAML:
         with open(self._args.file) as fp:
             print(h2y(fp.read()))
 
+    def from_csv(self):
+        from .convert.from_csv import CSV2YAML
+        c2y = CSV2YAML(self._args)
+        c2y(self._args.file)
+
     def round_trip(self):
         errors = 0
         warnings = 0
         for file_name in self._args.file:
             inp = open(file_name).read()
-            outp = self.round_trip_single(inp)
-            if inp == outp:
+            e, w, stabilize, outp = self.round_trip_input(inp)
+            if w == 0:
                 if self._args.verbose > 0:
                     print(u"{0}: ok".format(file_name))
                 continue
-            warnings += 1
-            stabelize = []
-            if inp.split() != outp.split():
-                errors += 1
-                stabelize.append(u"drops info on round trip")
+            if self._args.save:
+                backup_file_name = file_name + '.orig'
+                if not os.path.exists(backup_file_name):
+                    os.rename(file_name, backup_file_name)
+                with open(file_name, 'w') as ofp:
+                    ofp.write(outp)
+            if not self._args.save or self._args.verbose > 0:
+                print("{0}:\n     {1}".format(file_name, u', '.join(stabilize)))
+                self.diff(inp, outp, file_name)
+            errors += e
+            warnings += w
+        if errors > 0:
+            return 2
+        if warnings > 0:
+            return 1
+        return 0
+
+    def round_trip_input(self, inp):
+        errors = 0
+        warnings = 0
+        stabilize = []
+        outp = self.round_trip_single(inp)
+        if inp == outp:
+            return errors, warnings, stabilize, outp
+        warnings += 1
+        if inp.split() != outp.split():
+            errors += 1
+            stabilize.append(u"drops info on round trip")
+        else:
+            if self.round_trip_single(outp) == outp:
+                stabilize.append(u"stabilizes on second round trip")
             else:
-                if self.round_trip_single(outp) == outp:
-                    stabelize.append(u"stabelizes on second round trip")
-                else:
-                    errors += 1
-            ncoutp = self.round_trip_single(inp, drop_comment=True)
-            if self.round_trip_single(ncoutp, drop_comment=True) == ncoutp:
-                stabelize.append(u"ok without comments")
-            print("{0}:\n     {1}".format(file_name, u', '.join(stabelize)))
-            self.diff(inp, outp, file_name)
-        return 2 if errors > 0 else 1 if warnings > 0 else 0
+                errors += 1
+        ncoutp = self.round_trip_single(inp, drop_comment=True)
+        if self.round_trip_single(ncoutp, drop_comment=True) == ncoutp:
+            stabilize.append(u"ok without comments")
+        return errors, warnings, stabilize, outp
 
     def round_trip_single(self, inp, drop_comment=False):
+        explicit_start=self.first_non_empty_line(inp) == '---'
+        explicit_end=self.last_non_empty_line(inp) == '...'
+        indent = self._args.indent
         loader = ruamel.yaml.SafeLoader if drop_comment else \
             ruamel.yaml.RoundTripLoader
         code = ruamel.yaml.load(inp, loader)
         dumper = ruamel.yaml.SafeDumper if drop_comment else \
             ruamel.yaml.RoundTripDumper
-        return ruamel.yaml.dump(code, Dumper=dumper)
+        return ruamel.yaml.dump(
+            code,
+            Dumper=dumper,
+            indent=indent,
+            explicit_start=explicit_start,
+            explicit_end=explicit_end,
+        )
+
+    def first_non_empty_line(self, txt):
+        """return the first non-empty line of a block of text (stripped)
+        do not split or strip the complete txt
+        """
+        pos = txt.find('\n')
+        prev_pos = 0
+        while pos >= 0:
+            segment = txt[prev_pos:pos].strip()
+            if segment:
+                break
+            # print (pos, repr(segment))
+            prev_pos = pos
+            pos = txt.find('\n', pos+1)
+        return segment
+
+    def last_non_empty_line(self, txt):
+        """return the last non-empty line of a block of text (stripped)
+        do not split or strip the complete txt
+        """
+        assert isinstance(txt, basestring)
+        pos = txt.rfind('\n')
+        prev_pos = len(txt)
+        maxloop = 10
+        while pos >= 0:
+            segment = txt[pos:prev_pos].strip()
+            if segment:
+                break
+            # print (pos, repr(segment))
+            prev_pos = pos
+            pos = txt.rfind('\n', 0, pos-1)
+            maxloop -= 1
+            if maxloop < 0:
+                break
+        return segment
 
     def diff(self, inp, outp, file_name):
         import difflib
@@ -293,6 +374,7 @@ class YAML_Cmd(ProgramBase):
     @option('--verbose', '-v',
             help='increase verbosity level', action=CountAction,
             const=1, nargs=0, default=0, global_option=True)
+    @option('--indent', type=int, global_option=True)
     @version('version: ' + __version__)
     def _pb_init(self):
         # special name for which attribs are included in help
@@ -321,6 +403,9 @@ class YAML_Cmd(ProgramBase):
         help='test round trip on YAML data',
         description='test round trip on YAML data',
     )
+    @option('--save', action='store_true', help="""save the rewritten data back
+    to the input file (if it doesn't exist a '.orig' backup will be made)
+    """)
     @option('file', nargs='+')
     def rt(self):
         return self._yaml.round_trip()
@@ -379,6 +464,20 @@ class YAML_Cmd(ProgramBase):
     @option('file')
     def from_html(self):
         return self._yaml.from_html()
+
+    @sub_parser('from-csv',
+        aliases=['csv'],
+        help='convert CSV to YAML',
+        description="""convert CSV to YAML.
+        By default generates a list of rows, with the items in a 2nd level
+        list.
+        """,
+    )
+    @option('--delimiter')
+    #@option('--quotechar')
+    @option('file')
+    def from_csv(self):
+        return self._yaml.from_csv()
 
     if 'test' in sys.argv:
         @sub_parser(

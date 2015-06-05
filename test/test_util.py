@@ -71,7 +71,7 @@ class TestUtil:
         """, file_name, mp=monkeypatch, td=tmpdir)
         assert res.replace('\r\n', '\n') == dedent("""
         {file_name}:
-             stabelizes on second round trip, ok without comments
+             stabilizes on second round trip, ok without comments
         --- 01_second_rt_ok.yaml
         +++ round trip YAML
         @@ -1,3 +1,3 @@
