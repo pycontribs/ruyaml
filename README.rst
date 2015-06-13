@@ -14,7 +14,8 @@ Major differences with PyYAML 3.11:
 - support for simple lists as mapping keys by transformation to tuples
 - ``!!omap`` generates ordereddict (C) on Python 2, collections.OrderedDict
   on Python 3, and ``!!omap`` is generated for these types.
-- some YAML 1.2 enhancements (``0o`` octal prefix, ``\/`` escape)
+- some `YAML 1.2 <http://yaml.org/spec/1.2/spec.html>`_ enhancements 
+  (``0o`` octal prefix, ``\/`` escape)
 - pep8 compliance
 - tox and py.test based testing
 - Tests whether the C yaml library is installed as well as the header
@@ -140,6 +141,29 @@ eventuallly resulting in a different Python object (subclass or alternative),
 that should behave like the original, but on the way from Python to YAML
 generates the original (or at least something much closer).
 
+Smartening
+==========
+
+When you use round-tripping, then the complex data you get are 
+already subclasses of the build in types. So you can patch
+in extra methods or override existing ones. Some methods are already
+included and you can do::
+
+    yaml_str = """\
+    a:
+    - b:
+      c: 42
+    - d:
+        f: 196
+      e:
+        g: 3.14
+    """
+    
+    
+    data = yaml.load(yaml_str, Loader=yaml.RoundTripLoader)
+    
+    assert data.mlget(['a', 1, 'd', 'f'], list_ok=True) == 196
+    
 
 Examples
 ========
