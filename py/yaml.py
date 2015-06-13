@@ -134,9 +134,30 @@ class YAML:
             print('---', repr(self.first_non_empty_line(inp)))
             print('<<<', repr(self.last_non_empty_line(inp)))
 
-        if True:
+        if False:
             for x in self._args.file:
                 scan_file(x)
+            return
+
+        if True:
+            import pickle
+            lines = 0
+            for x in self._args.file:
+                print(x, end=' ')
+                if x.endswith('.yaml'):
+                    data = ruamel.yaml.load(open(x))
+                    print(len(data), end=' ')
+                    lines += len(data)
+                    out_name = x.replace('.yaml', '.pickle')
+                    with open(out_name, 'w') as fp:
+                        pickle.dump(data, fp)
+                elif x.endswith('.pickle'):
+                    with open(x) as fp:
+                        data = pickle.load(fp)
+                    print(len(data), end=' ')
+                    lines += len(data)
+                print()
+            print('lines', lines)
             return
 
         input = dedent("""

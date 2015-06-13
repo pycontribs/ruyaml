@@ -226,3 +226,21 @@ class TestComments:
         # last one
         - d: 4
         """)
+
+
+class TestMultiLevelGet:
+    def test_mlget_00(self):
+        x = dedent("""\
+        a:
+        - b:
+          c: 42
+        - d:
+            f: 196
+          e:
+            g: 3.14
+        """)
+        d = round_trip_load(x)
+        assert d.mlget(['a', 1, 'd', 'f'], list_ok=True) == 196
+        with pytest.raises(AssertionError):
+            d.mlget(['a', 1, 'd', 'f']) == 196
+
