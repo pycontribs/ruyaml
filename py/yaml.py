@@ -65,6 +65,9 @@ class YAML:
         errors = 0
         doc = []
         cfg = ConfigObj(open(self._args.file))
+        if self._args.test:
+            print(ruamel.yaml.dump(cfg))
+            return
         for line in configobj_walker(cfg):
             doc.append(line)
         joined = '\n'.join(doc)
@@ -217,7 +220,10 @@ class YAML:
         errors = 0
         docs = []
         for file_name in self._args.file:
-            inp = open(file_name).read()
+            if file_name == '-':
+                inp = sys.stdin.read()
+            else:
+                inp = open(file_name).read()
             loader = ruamel.yaml.Loader # RoundTripLoader
             docs.append(ruamel.yaml.load(inp, loader))
         dumper = ruamel.yaml.RoundTripDumper
@@ -449,6 +455,7 @@ class YAML_Cmd(ProgramBase):
     @option('--basename', '-b', action='store_true',
             help='re-use basename of file for .yaml file, instead of writing'
             ' to stdout')
+    @option('--test', action='store_true')
     @option('file')
     def ini(self):
         return self._yaml.from_ini()
