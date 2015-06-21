@@ -854,6 +854,10 @@ class RoundTripConstructor(SafeConstructor):
             maptyp._yaml_add_comment(node.comment[:2])
             if len(node.comment) > 2:
                 maptyp.yaml_end_comment_extend(node.comment[2], clear=True)
+        if node.anchor:
+            from ruamel.yaml.serializer import templated_id
+            if not templated_id(node.anchor):
+                maptyp.set_yaml_anchor(node.anchor)
         for key_node, value_node in node.value:
             # keys can be list -> deep
             key = self.construct_object(key_node, deep=True)

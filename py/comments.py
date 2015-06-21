@@ -19,6 +19,7 @@ from .compat import ordereddict
 comment_attrib = '_yaml_comment'
 format_attrib = '_yaml_format'
 line_col_attrib = '_yaml_line_col'
+anchor_attrib = '_yaml_anchor'
 
 
 class Comment(object):
@@ -98,6 +99,11 @@ class LineCol(object):
         self.line = None
         self.col = None
 
+class Anchor(object):
+    attrib = anchor_attrib
+
+    def __init__(self):
+        self.value = None
 
 class CommentedBase(object):
     @property
@@ -166,6 +172,22 @@ class CommentedBase(object):
     def _yaml_set_line_col(self, line, col):
         self.lc.line = line
         self.lc.col = col
+
+    @property
+    def anchor(self):
+        if not hasattr(self, Anchor.attrib):
+            setattr(self, Anchor.attrib, Anchor())
+        return getattr(self, Anchor.attrib)
+
+    def yaml_anchor(self):
+        if not hasattr(self, Anchor.attrib):
+            return None
+        return self.anchor.value
+
+    def set_yaml_anchor(self, value):
+        self.anchor.value = value
+
+
 
 
 class CommentedSeq(list, CommentedBase):

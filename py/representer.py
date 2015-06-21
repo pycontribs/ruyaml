@@ -601,7 +601,8 @@ class RoundTripRepresenter(SafeRepresenter):
             flow_style = sequence.fa.flow_style(flow_style)
         except AttributeError:
             flow_style = flow_style
-        node = SequenceNode(tag, value, flow_style=flow_style)
+        node = SequenceNode(tag, value, flow_style=flow_style,
+                           anchor=mapping.yaml_anchor())
         if self.alias_key is not None:
             self.represented_objects[self.alias_key] = node
         best_style = True
@@ -634,7 +635,8 @@ class RoundTripRepresenter(SafeRepresenter):
             flow_style = mapping.fa.flow_style(flow_style)
         except AttributeError:
             flow_style = flow_style
-        node = MappingNode(tag, value, flow_style=flow_style)
+        node = MappingNode(tag, value, flow_style=flow_style,
+                           anchor=mapping.yaml_anchor())
         if self.alias_key is not None:
             self.represented_objects[self.alias_key] = node
         best_style = True
@@ -681,7 +683,8 @@ class RoundTripRepresenter(SafeRepresenter):
             flow_style = omap.fa.flow_style(flow_style)
         except AttributeError:
             flow_style = flow_style
-        node = SequenceNode(tag, value, flow_style=flow_style)
+        node = SequenceNode(tag, value, flow_style=flow_style,
+                           anchor=mapping.yaml_anchor())
         if self.alias_key is not None:
             self.represented_objects[self.alias_key] = node
         best_style = True
@@ -728,7 +731,8 @@ class RoundTripRepresenter(SafeRepresenter):
         # return self.represent_mapping(tag, value)
         value = []
         flow_style = setting.fa.flow_style(flow_style)
-        node = MappingNode(tag, value, flow_style=flow_style)
+        node = MappingNode(tag, value, flow_style=flow_style,
+                           anchor=mapping.yaml_anchor())
         if self.alias_key is not None:
             self.represented_objects[self.alias_key] = node
         best_style = True

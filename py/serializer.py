@@ -2,6 +2,8 @@ from __future__ import absolute_import
 
 __all__ = ['Serializer', 'SerializerError']
 
+import re
+
 from .error import YAMLError
 from .events import *
 from .nodes import *
@@ -15,7 +17,10 @@ class SerializerError(YAMLError):
 
 class Serializer(object):
 
+    # 'id' and 3+ numbers, but not 000
     ANCHOR_TEMPLATE = u'id%03d'
+    ANCHOR_RE = re.compile(u'id(?!000$)\\d{3,}')
+
 
     def __init__(self, encoding=None, explicit_start=None, explicit_end=None,
                  version=None, tags=None):
@@ -28,6 +33,7 @@ class Serializer(object):
         self.anchors = {}
         self.last_anchor_id = 0
         self.closed = None
+        self._templated_id = None
 
     def open(self):
         if self.closed is None:
@@ -81,8 +87,14 @@ class Serializer(object):
                     self.anchor_node(value)
 
     def generate_anchor(self, node):
-        self.last_anchor_id += 1
-        return self.ANCHOR_TEMPLATE % self.last_anchor_id
+        try:
+            anchor = node.anchor
+        except:
+            anchor = None
+        if anchor is None:
+            self.last_anchor_id += 1
+            return self.ANCHOR_TEMPLATE % self.last_anchor_id
+        return anchor
 
     def serialize_node(self, node, parent, index):
         alias = self.anchors[node]
@@ -143,3 +155,6 @@ class Serializer(object):
                     self.serialize_node(value, node, key)
                 self.emit(MappingEndEvent(comment=[map_comment, end_comment]))
             self.ascend_resolver()
+
+def templated_id(s):
+    return Serializer.ANCHOR_RE.match(s)
