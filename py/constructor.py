@@ -199,6 +199,11 @@ class SafeConstructor(BaseConstructor):
         return BaseConstructor.construct_scalar(self, node)
 
     def flatten_mapping(self, node):
+        """
+        This implements the merge key feature http://yaml.org/type/merge.html
+        by inserting keys from the merge dict/list of dicts if not yet
+        available in this node
+        """
         merge = []
         index = 0
         while index < len(node.value):
@@ -245,6 +250,7 @@ class SafeConstructor(BaseConstructor):
         self.construct_scalar(node)
         return None
 
+    # YAML 1.2 spec doesn't mention yes/no etc any more, 1.1 does
     bool_values = {
         u'yes':     True,
         u'no':      False,
@@ -841,6 +847,8 @@ class RoundTripConstructor(SafeConstructor):
                 None, None,
                 "expected a mapping node, but found %s" % node.id,
                 node.start_mark)
+        if isinstance(node, MappingNode):
+            self.flatten_mapping(node)
         # mapping = {}
         if node.comment:
             maptyp._yaml_add_comment(node.comment[:2])
