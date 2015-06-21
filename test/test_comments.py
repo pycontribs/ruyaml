@@ -183,6 +183,7 @@ class TestComments:
         x = x.replace(': secret          ', ': deleted password')
         assert round_trip_dump(data) == x
 
+
     def test_set_comment(self):
         round_trip("""
         !!set
