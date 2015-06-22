@@ -30,6 +30,8 @@ Major differences with PyYAML 3.11:
   parent container, like comments).
 - RoundTrip preservation of flow style sequences ( 'a: b, c, d') (based
   on request and test by Anthony Sottile)
+- anchors names that are hand-crafted (not of the form``idNNN``), are preserved
+- `merges <http://yaml.org/type/merge.html>`_ in dictionaries are preserved
 - adding/replacing of comments on block style sequences and mappings
   with smart column positioning
 - collection objects (when read in via RoundTripParser) have an ``lc``
@@ -50,9 +52,9 @@ collections (mappings/sequences resuting in Python dict/list). The basic
 for for this is::
 
   from __future__ import print_function
-
+  
   import ruamel.yaml
-
+  
   inp = """\
   abc:
     - a     # comment 1
@@ -64,14 +66,14 @@ for for this is::
     e: 5
     f: 6 # comment 3
   """
-
+  
   data = ruamel.yaml.load(inp, ruamel.yaml.RoundTripLoader)
   data['abc'].append('b')
   data['abc'].yaml_add_eol_comment('comment 4', 1)  # takes column of comment 1
   data['xyz'].yaml_add_eol_comment('comment 5', 'c')  # takes column of comment 2
   data['xyz'].yaml_add_eol_comment('comment 6', 'e')  # takes column of comment 3
   data['xyz'].yaml_add_eol_comment('comment 7', 'd', column=20)
-
+  
   print(ruamel.yaml.dump(data, Dumper=ruamel.yaml.RoundTripDumper), end='')
 
 .. example code add_comment.py
@@ -172,9 +174,9 @@ Basic round trip of parsing YAML to Python objects, modifying
 and generating YAML::
 
   from __future__ import print_function
-
+  
   import ruamel.yaml
-
+  
   inp = """\
   # example
   name:
@@ -182,10 +184,10 @@ and generating YAML::
     family: Smith   # very common
     given: Alice    # one of the siblings
   """
-
+  
   code = ruamel.yaml.load(inp, ruamel.yaml.RoundTripLoader)
   code['name']['given'] = 'Bob'
-
+  
   print(ruamel.yaml.dump(code, Dumper=ruamel.yaml.RoundTripDumper), end='')
 
 .. example code small.py
@@ -200,6 +202,44 @@ Resulting in ::
 
 
 .. example output small.py
+
+
+YAML handcrafted anchors and references as well as key merging 
+is preserved. The merged keys can transparently be accessed
+using ``[]`` and ``.get()``::
+
+  import ruamel.yaml
+  
+  inp = """\
+  - &CENTER {x: 1, y: 2}
+  - &LEFT {x: 0, y: 2}
+  - &BIG {r: 10}
+  - &SMALL {r: 1}
+  # All the following maps are equal:
+  # Explicit keys
+  - x: 1
+    y: 2
+    r: 10
+    label: center/big
+  # Merge one map
+  - <<: *CENTER
+    r: 10
+    label: center/big
+  # Merge multiple maps
+  - <<: [*CENTER, *BIG]
+    label: center/big
+  # Override
+  - <<: [*BIG, *LEFT, *SMALL]
+    x: 1
+    label: center/big
+  """
+  
+  data = ruamel.yaml.load(inp, ruamel.yaml.RoundTripLoader)
+  assert data[7]['y'] == 2
+  
+
+.. example code anchor_merge.py
+
 
 Optional requirements
 =====================
@@ -238,7 +278,9 @@ A utility name  ``yaml`` is included and allows for basic operations on files:
 - ``yaml ini <file_name>`` for conversion of an INI/config file (ConfigObj
   comment and nested sections supported) to a YAML block style document.
   This requires ``configobj`` to be installed (``pip install configobj``)
-- ``yaml html <file_name>`` for conversion of the basic structure in a YAML
+- ``yaml from-csv <file_name>`` for conversion CSV to a YAML
+  file to a a table in an HTML file. 
+- ``yaml htmltable <file_name>`` for conversion of the basic structure in a YAML
   file to a a table in an HTML file. The YAML file::
 
     title:
