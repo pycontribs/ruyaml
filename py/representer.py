@@ -567,7 +567,7 @@ Representer.add_multi_representer(object,
 
 
 from .comments import CommentedMap, CommentedOrderedMap, CommentedSeq, \
-    CommentedSet, comment_attrib
+    CommentedSet, comment_attrib, merge_attrib
 
 
 class RoundTripRepresenter(SafeRepresenter):
@@ -601,7 +601,11 @@ class RoundTripRepresenter(SafeRepresenter):
             flow_style = sequence.fa.flow_style(flow_style)
         except AttributeError:
             flow_style = flow_style
-        node = SequenceNode(tag, value, flow_style=flow_style)
+        try:
+            anchor = sequence.yaml_anchor()
+        except AttributeError:
+            anchor = None
+        node = SequenceNode(tag, value, flow_style=flow_style, anchor=anchor)
         if self.alias_key is not None:
             self.represented_objects[self.alias_key] = node
         best_style = True
@@ -634,7 +638,11 @@ class RoundTripRepresenter(SafeRepresenter):
             flow_style = mapping.fa.flow_style(flow_style)
         except AttributeError:
             flow_style = flow_style
-        node = MappingNode(tag, value, flow_style=flow_style)
+        try:
+            anchor = mapping.yaml_anchor()
+        except AttributeError:
+            anchor = None
+        node = MappingNode(tag, value, flow_style=flow_style, anchor=anchor)
         if self.alias_key is not None:
             self.represented_objects[self.alias_key] = node
         best_style = True
@@ -673,6 +681,17 @@ class RoundTripRepresenter(SafeRepresenter):
                 node.flow_style = self.default_flow_style
             else:
                 node.flow_style = best_style
+        merge_list = [m[1] for m in getattr(mapping, merge_attrib, [])]
+        if merge_list:
+            # because of the call to represent_data here, the anchors
+            # are marked as being used and thereby created
+            if len(merge_list) == 1:
+                arg = self.represent_data(merge_list[0])
+            else:
+                arg = self.represent_data(merge_list)
+                arg.flow_style = True
+            value.insert(0,
+                         (ScalarNode(u'tag:yaml.org,2002:merge', '<<'), arg))
         return node
 
     def represent_omap(self, tag, omap, flow_style=None):
@@ -681,7 +700,11 @@ class RoundTripRepresenter(SafeRepresenter):
             flow_style = omap.fa.flow_style(flow_style)
         except AttributeError:
             flow_style = flow_style
-        node = SequenceNode(tag, value, flow_style=flow_style)
+        try:
+            anchor = omap.yaml_anchor()
+        except AttributeError:
+            anchor = None
+        node = SequenceNode(tag, value, flow_style=flow_style, anchor=anchor)
         if self.alias_key is not None:
             self.represented_objects[self.alias_key] = node
         best_style = True
@@ -728,7 +751,11 @@ class RoundTripRepresenter(SafeRepresenter):
         # return self.represent_mapping(tag, value)
         value = []
         flow_style = setting.fa.flow_style(flow_style)
-        node = MappingNode(tag, value, flow_style=flow_style)
+        try:
+            anchor = setting.yaml_anchor()
+        except AttributeError:
+            anchor = None
+        node = MappingNode(tag, value, flow_style=flow_style, anchor=anchor)
         if self.alias_key is not None:
             self.represented_objects[self.alias_key] = node
         best_style = True

@@ -68,15 +68,15 @@ class Composer(object):
     def compose_node(self, parent, index):
         if self.check_event(AliasEvent):
             event = self.get_event()
-            anchor = event.anchor
-            if anchor not in self.anchors:
+            alias = event.anchor
+            if alias not in self.anchors:
                 raise ComposerError(
                     None, None, "found undefined alias %r"
-                    % utf8(anchor), event.start_mark)
-            return self.anchors[anchor]
+                    % utf8(alias), event.start_mark)
+            return self.anchors[alias]
         event = self.peek_event()
         anchor = event.anchor
-        if anchor is not None:
+        if anchor is not None:  # have an anchor
             if anchor in self.anchors:
                 raise ComposerError(
                     "found duplicate anchor %r; first occurence"
@@ -112,7 +112,7 @@ class Composer(object):
         node = SequenceNode(tag, [],
                             start_event.start_mark, None,
                             flow_style=start_event.flow_style,
-                            comment=start_event.comment)
+                            comment=start_event.comment, anchor=anchor)
         if anchor is not None:
             self.anchors[anchor] = node
         index = 0
@@ -137,7 +137,7 @@ class Composer(object):
         node = MappingNode(tag, [],
                            start_event.start_mark, None,
                            flow_style=start_event.flow_style,
-                           comment=start_event.comment)
+                           comment=start_event.comment, anchor=anchor)
         if anchor is not None:
             self.anchors[anchor] = node
         while not self.check_event(MappingEndEvent):
