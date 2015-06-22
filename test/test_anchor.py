@@ -93,3 +93,67 @@ class TestAnchorsAliases:
           c: 2
         f: *etemplate
         """)
+
+    def test_alias_before_anchor(self):
+        from ruamel.yaml.composer import ComposerError
+        with pytest.raises(ComposerError):
+            data = load("""
+            d: *id002
+            a: &id002
+              b: 1
+              c: 2
+            """)
+
+
+    merge_yaml = dedent("""
+        - &CENTER {x: 1, y: 2}
+        - &LEFT {x: 0, y: 2}
+        - &BIG {r: 10}
+        - &SMALL {r: 1}
+        # All the following maps are equal:
+        # Explicit keys
+        - x: 1
+          y: 2
+          r: 10
+          label: center/big
+        # Merge one map
+        - <<: *CENTER
+          r: 10
+          label: center/big
+        # Merge multiple maps
+        - <<: [*CENTER, *BIG]
+          label: center/big
+        # Override
+        - <<: [*BIG, *LEFT, *SMALL]
+          x: 1
+          label: center/big
+        """)
+
+    def test_merge_00(self):
+        data = load(self.merge_yaml)
+        d = data[4]
+        ok = True
+        for k in d:
+            for o in [5, 6, 7]:
+                if d.get(k) != data[o].get(k):
+                    ok = False
+                    print('key', k, d.get(k), data[o].get(k))
+        assert ok
+
+    def test_merge_accessible(self):
+        from ruamel.yaml.comments import CommentedMap, merge_attrib
+        data = load("""
+        k: &level_2 { a: 1, b2 }
+        l: &level_1 { a: 10, c: 3 }
+        m:
+          << : *level_1
+          c: 30
+          d: 40
+        """)
+        d = data['m']
+        assert isinstance(d, CommentedMap)
+        assert hasattr(d, merge_attrib)
+
+    def test_merge_01(self):
+        data = load(self.merge_yaml)
+        compare(data, self.merge_yaml)

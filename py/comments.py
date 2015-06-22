@@ -4,7 +4,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 __all__ = ["CommentedSeq", "CommentedMap", "CommentedOrderedMap",
-           "CommentedSet", 'comment_attrib']
+           "CommentedSet", 'comment_attrib', 'merge_attrib']
 
 """
 stuff to deal with comments and formatting on dict/list/ordereddict/set
@@ -20,7 +20,7 @@ comment_attrib = '_yaml_comment'
 format_attrib = '_yaml_format'
 line_col_attrib = '_yaml_line_col'
 anchor_attrib = '_yaml_anchor'
-
+merge_attrib = '_yaml_merge'
 
 class Comment(object):
     # sys.getsize tested the Comment objects, __slots__ make them bigger
@@ -189,7 +189,6 @@ class CommentedBase(object):
 
 
 
-
 class CommentedSeq(list, CommentedBase):
     __slots__ = [Comment.attrib, ]
 
@@ -303,6 +302,31 @@ class CommentedMap(ordereddict, CommentedBase):
             if not list_ok:
                 Raise
             return default
+
+    def __getitem__(self, key):
+        try:
+            return ordereddict.__getitem__(self, key)
+        except KeyError:
+            for merged in getattr(self, merge_attrib, []):
+                if key in merged[1]:
+                    return merged[1][key]
+            raise
+
+    def get(self, key, default=None):
+        try:
+            return self.__getitem__(key)
+        except:
+            return default
+
+    @property
+    def merge(self):
+        if not hasattr(self, merge_attrib):
+            setattr(self, merge_attrib, [])
+        return getattr(self, merge_attrib)
+
+    def add_yaml_merge(self, value):
+        self.merge.extend(value)
+
 
 
 class CommentedOrderedMap(CommentedMap):

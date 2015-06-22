@@ -567,7 +567,7 @@ Representer.add_multi_representer(object,
 
 
 from .comments import CommentedMap, CommentedOrderedMap, CommentedSeq, \
-    CommentedSet, comment_attrib
+    CommentedSet, comment_attrib, merge_attrib
 
 
 class RoundTripRepresenter(SafeRepresenter):
@@ -681,6 +681,17 @@ class RoundTripRepresenter(SafeRepresenter):
                 node.flow_style = self.default_flow_style
             else:
                 node.flow_style = best_style
+        merge_list = [m[1] for m in getattr(mapping, merge_attrib, [])]
+        if merge_list:
+            # because of the call to represent_data here, the anchors
+            # are marked as being used and thereby created
+            if len(merge_list) == 1:
+                arg = self.represent_data(merge_list[0])
+            else:
+                arg = self.represent_data(merge_list)
+                arg.flow_style = True
+            value.insert(0,
+                         (ScalarNode(u'tag:yaml.org,2002:merge', '<<'), arg))
         return node
 
     def represent_omap(self, tag, omap, flow_style=None):
