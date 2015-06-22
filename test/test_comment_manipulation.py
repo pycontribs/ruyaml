@@ -10,10 +10,11 @@ from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump
 def load(s):
     return round_trip_load(dedent(s))
 
+
 def compare(data, s):
     assert round_trip_dump(data) == dedent(s)
-
 #@pytest.mark.xfail
+
 
 class TestCommentsManipulation:
 
