@@ -77,7 +77,13 @@ class Serializer(object):
             if self.anchors[node] is None:
                 self.anchors[node] = self.generate_anchor(node)
         else:
-            self.anchors[node] = None
+            anchor = None
+            try:
+                if node.anchor.always_dump:
+                    anchor = node.anchor.value
+            except:
+                pass
+            self.anchors[node] = anchor
             if isinstance(node, SequenceNode):
                 for item in node.value:
                     self.anchor_node(item)
@@ -88,7 +94,7 @@ class Serializer(object):
 
     def generate_anchor(self, node):
         try:
-            anchor = node.anchor
+            anchor = node.anchor.value
         except:
             anchor = None
         if anchor is None:

@@ -1,5 +1,7 @@
 # coding: utf-8
 
+from __future__ import print_function
+
 import pytest
 from textwrap import dedent
 
@@ -224,4 +226,168 @@ class TestCommentsManipulation:
             d: 4
             e: 5     # comment 3
             """)
+
+# the ugly {comment} in the following is because
+# py.test cannot handle comments in strings properly
+# https://bitbucket.org/pytest-dev/pytest/issue/752/internalerror-indexerror-list-index-out-of
+
+    #@pytest.mark.xfail
+    def test_before_top_map_rt(self):
+        data = load("""
+        a: 1
+        b: 2
+        """)
+        data.yaml_set_start_comment('Hello\nWorld\n')
+        compare(data, """
+        {comment} Hello
+        {comment} World
+        a: 1
+        b: 2
+        """.format(comment='#'))
+
+    def test_before_top_map_replace(self):
+        data = load("""
+        # abc
+        # def
+        a: 1 # 1
+        b: 2
+        """)
+        data.yaml_set_start_comment('Hello\nWorld\n')
+        compare(data, """
+        {comment} Hello
+        {comment} World
+        a: 1 # 1
+        b: 2
+        """.format(comment='#'))
+
+    def test_before_top_map_from_scratch(self):
+        from ruamel.yaml.comments import CommentedMap
+        data = CommentedMap()
+        data['a'] = 1
+        data['b'] = 2
+        data.yaml_set_start_comment('Hello\nWorld\n')
+        #print(data.ca)
+        #print(data.ca._items)
+        compare(data, """
+            {comment} Hello
+            {comment} World
+            a: 1
+            b: 2
+            """.format(comment='#'))
+
+    def test_before_top_seq_rt(self):
+        data = load("""
+        - a
+        - b
+        """)
+        data.yaml_set_start_comment('Hello\nWorld\n')
+        print(round_trip_dump(data))
+        compare(data, """
+        # Hello
+        # World
+        - a
+        - b
+        """)
+
+    def test_before_top_seq_rt_replace(self):
+        data = load("""
+        {comment} this
+        {comment} that
+        - a
+        - b
+        """.format(comment='#'))
+        data.yaml_set_start_comment('Hello\nWorld\n')
+        print(round_trip_dump(data))
+        compare(data, """
+        {comment} Hello
+        {comment} World
+        - a
+        - b
+        """.format(comment='#'))
+
+    def test_before_top_seq_from_scratch(self):
+        from ruamel.yaml.comments import CommentedSeq
+        data = CommentedSeq()
+        data.append('a')
+        data.append('b')
+        data.yaml_set_start_comment('Hello\nWorld\n')
+        print(round_trip_dump(data))
+        compare(data, """
+        {comment} Hello
+        {comment} World
+        - a
+        - b
+        """.format(comment='#'))
+
+    # nested variants
+    def test_before_nested_map_rt(self):
+        data = load("""
+        a: 1
+        b:
+          c: 2
+          d: 3
+        """)
+        data['b'].yaml_set_start_comment('Hello\nWorld\n')
+        compare(data, """
+        a: 1
+        b:
+        {comment} Hello
+        {comment} World
+          c: 2
+          d: 3
+        """.format(comment='#'))
+
+    def test_before_nested_map_rt_indent(self):
+        data = load("""
+        a: 1
+        b:
+          c: 2
+          d: 3
+        """)
+        data['b'].yaml_set_start_comment('Hello\nWorld\n', indent=2)
+        compare(data, """
+        a: 1
+        b:
+          {comment} Hello
+          {comment} World
+          c: 2
+          d: 3
+        """.format(comment='#'))
+        print(data['b'].ca)
+
+    def test_before_nested_map_from_scratch(self):
+        from ruamel.yaml.comments import CommentedMap
+        data = CommentedMap()
+        datab = CommentedMap()
+        data['a'] = 1
+        data['b'] = datab
+        datab['c'] = 2
+        datab['d'] = 3
+        data['b'].yaml_set_start_comment('Hello\nWorld\n')
+        compare(data, """
+        a: 1
+        b:
+        {comment} Hello
+        {comment} World
+          c: 2
+          d: 3
+        """.format(comment='#'))
+
+    def test_before_nested_seq_from_scratch(self):
+        from ruamel.yaml.comments import CommentedMap, CommentedSeq
+        data = CommentedMap()
+        datab = CommentedSeq()
+        data['a'] = 1
+        data['b'] = datab
+        datab.append('c')
+        datab.append('d')
+        data['b'].yaml_set_start_comment('Hello\nWorld\n', indent=2)
+        compare(data, """
+        a: 1
+        b:
+          {comment} Hello
+          {comment} World
+          - c
+          - d
+        """.format(comment='#'))
 

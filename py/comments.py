@@ -104,6 +104,7 @@ class Anchor(object):
 
     def __init__(self):
         self.value = None
+        self.always_dump = False
 
 class CommentedBase(object):
     @property
@@ -136,6 +137,19 @@ class CommentedBase(object):
         else:
             l[3].extend(comment[0])
         l[2] = comment[0]
+
+    def yaml_set_start_comment(self, comment, indent=0):
+        """overwrites any preceding comment lines on an object
+        expects comment to be without `#` and possible have mutlple lines
+        """
+        from .error import Mark
+        from .tokens import CommentToken
+        pre_comments = self._yaml_get_pre_comment()
+        if comment[-1] == '\n':
+            comment = comment[:-1]  # strip final newline if there
+        start_mark = Mark(None, None, None, indent, None, None)
+        for com in comment.split('\n'):
+            pre_comments.append(CommentToken('# ' + com + '\n', start_mark, None))
 
     @property
     def fa(self):
@@ -182,12 +196,11 @@ class CommentedBase(object):
     def yaml_anchor(self):
         if not hasattr(self, Anchor.attrib):
             return None
-        return self.anchor.value
+        return self.anchor
 
-    def set_yaml_anchor(self, value):
+    def yaml_set_anchor(self, value, always_dump=False):
         self.anchor.value = value
-
-
+        self.anchor.always_dump = always_dump
 
 class CommentedSeq(list, CommentedBase):
     __slots__ = [Comment.attrib, ]
@@ -223,6 +236,14 @@ class CommentedSeq(list, CommentedBase):
         if sel_idx is not None:
             column = self._yaml_get_columnX(sel_idx)
         return column
+
+    def _yaml_get_pre_comment(self):
+        if self.ca.comment is None:
+            pre_comments = []
+            self.ca.comment = [None, pre_comments]
+        else:
+            pre_comments = self.ca.comment[1] = []
+        return pre_comments
 
 
 class CommentedMap(ordereddict, CommentedBase):
@@ -271,6 +292,14 @@ class CommentedMap(ordereddict, CommentedBase):
         if sel_idx is not None:
             column = self._yaml_get_columnX(sel_idx)
         return column
+
+    def _yaml_get_pre_comment(self):
+        if self.ca.comment is None:
+            pre_comments = []
+            self.ca.comment = [None, pre_comments]
+        else:
+            pre_comments = self.ca.comment[1] = []
+        return pre_comments
 
     def update(self, vals):
         try:
