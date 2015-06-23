@@ -911,7 +911,7 @@ class RoundTripConstructor(SafeConstructor):
         if node.anchor:
             from ruamel.yaml.serializer import templated_id
             if not templated_id(node.anchor):
-                maptyp.set_yaml_anchor(node.anchor)
+                maptyp.yaml_set_anchor(node.anchor)
         for key_node, value_node in node.value:
             # keys can be list -> deep
             key = self.construct_object(key_node, deep=True)

@@ -69,7 +69,8 @@ class TestAnchorsAliases:
         assert d.yaml_anchor() is None  # got dropped as it matches pattern
         e = data['e']
         assert isinstance(e, CommentedMap)
-        assert e.yaml_anchor() == 'etemplate'
+        assert e.yaml_anchor().value == 'etemplate'
+        assert e.yaml_anchor().always_dump is False
 
     #@pytest.mark.xfail
     def test_anchor_id_retained(self):
@@ -157,3 +158,19 @@ class TestAnchorsAliases:
     def test_merge_01(self):
         data = load(self.merge_yaml)
         compare(data, self.merge_yaml)
+
+    def test_add_anchor(self):
+        from ruamel.yaml.comments import CommentedMap
+        data = CommentedMap()
+        data_a = CommentedMap()
+        data['a'] = data_a
+        data_a['c'] = 3
+        data['b'] = 2
+        data.yaml_set_anchor('klm', always_dump=True)
+        data['a'].yaml_set_anchor('xyz', always_dump=True)
+        compare(data, """
+        &klm
+        a: &xyz
+          c: 3
+        b: 2
+        """)
