@@ -40,6 +40,8 @@ class Emitter(object):
         u'tag:yaml.org,2002:': u'!!',
     }
 
+    MAX_SIMPLE_KEY_LENGTH = 128
+
     def __init__(self, stream, canonical=None, indent=None, width=None,
                  allow_unicode=None, line_break=None):
 
@@ -499,7 +501,7 @@ class Emitter(object):
             if self.analysis is None:
                 self.analysis = self.analyze_scalar(self.event.value)
             length += len(self.analysis.scalar)
-        return (length < 128 and (
+        return (length < self.MAX_SIMPLE_KEY_LENGTH and (
             isinstance(self.event, AliasEvent)
             or (isinstance(self.event, ScalarEvent)
                 and not self.analysis.empty and not self.analysis.multiline)
