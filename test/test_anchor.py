@@ -105,6 +105,26 @@ class TestAnchorsAliases:
               c: 2
             """)
 
+    def test_anchor_on_sequence(self):
+        # as reported by Bjorn Stabell
+        # https://bitbucket.org/ruamel/yaml/issue/7/anchor-names-not-preserved
+        from ruamel.yaml.comments import CommentedSeq
+        data = load("""
+        nut1: &alice
+         - 1
+         - 2
+        nut2: &blake
+         - some data
+         - *alice
+        nut3:
+         - *blake
+         - *alice
+        """)
+        l = data['nut1']
+        assert isinstance(l, CommentedSeq)
+        assert l.yaml_anchor() is not None
+        assert l.yaml_anchor().value == 'alice'
+
 
     merge_yaml = dedent("""
         - &CENTER {x: 1, y: 2}
