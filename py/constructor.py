@@ -835,6 +835,10 @@ class RoundTripConstructor(SafeConstructor):
             seqtyp._yaml_add_comment(node.comment[:2])
             if len(node.comment) > 2:
                 seqtyp.yaml_end_comment_extend(node.comment[2], clear=True)
+        if node.anchor:
+            from ruamel.yaml.serializer import templated_id
+            if not templated_id(node.anchor):
+                seqtyp.yaml_set_anchor(node.anchor)
         for idx, child in enumerate(node.value):
             ret_val.append(self.construct_object(child, deep=deep))
             if child.comment:
@@ -949,6 +953,10 @@ class RoundTripConstructor(SafeConstructor):
             typ._yaml_add_comment(node.comment[:2])
             if len(node.comment) > 2:
                 typ.yaml_end_comment_extend(node.comment[2], clear=True)
+        if node.anchor:
+            from ruamel.yaml.serializer import templated_id
+            if not templated_id(node.anchor):
+                typ.yaml_set_anchor(node.anchor)
         for key_node, value_node in node.value:
             # keys can be list -> deep
             key = self.construct_object(key_node, deep=True)
