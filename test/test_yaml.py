@@ -71,3 +71,17 @@ class TestYAML:
         ? b
         ? c
         """)
+
+    def test_blank_line(self):
+        round_trip("""
+        # foo
+
+        a: foo
+
+        # bar
+        b:
+        - bar
+
+
+        - baz
+        """)
