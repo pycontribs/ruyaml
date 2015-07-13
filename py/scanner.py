@@ -1355,7 +1355,14 @@ class Scanner(object):
             if not spaces or self.peek() == u'#' \
                     or (not self.flow_level and self.column < indent):
                 break
-        return ScalarToken(u''.join(chunks), True, start_mark, end_mark)
+
+        token = ScalarToken(u''.join(chunks), True, start_mark, end_mark)
+        if spaces and spaces[0] == '\n':
+            # Create a comment token to preserve the trailing line breaks.
+            comment = CommentToken(''.join(spaces) + '\n', start_mark, end_mark)
+            token.add_post_comment(comment)
+        return token
+
 
     def scan_plain_spaces(self, indent, start_mark):
         # See the specification for details.
