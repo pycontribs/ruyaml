@@ -1065,15 +1065,29 @@ class Scanner(object):
             else:
                 break
 
-        # Chomp the tail.
+        # Process trailing line breaks. The 'chomping' setting determines
+        # whether they are included in the value.
+        comment = []
         if chomping is not False:
             chunks.append(line_break)
+        else:
+            comment.append(line_break)
         if chomping is True:
             chunks.extend(breaks)
+        else:
+            comment.extend(breaks)
 
         # We are done.
-        return ScalarToken(u''.join(chunks), False, start_mark, end_mark,
-                           style)
+        token = ScalarToken(u''.join(chunks), False, start_mark, end_mark,
+                            style)
+        if len(comment) > 0:
+            # Keep track of the trailing whitespace as a comment token, if
+            # isn't all included in the actual value.
+            comment_end_mark = self.get_mark()
+            comment = CommentToken(''.join(comment), end_mark,
+                                   comment_end_mark)
+            token.add_post_comment(comment)
+        return token
 
     def scan_block_scalar_indicators(self, start_mark):
         # See the specification for details.
