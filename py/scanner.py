@@ -1621,6 +1621,11 @@ class RoundTripScanner(Scanner):
                         break
                     comment += ch
                     self.forward()
+                # gather any blank lines following the comment too
+                ch = self.scan_line_break()
+                while len(ch) > 0:
+                    comment += ch
+                    ch = self.scan_line_break()
                 end_mark = self.get_mark()
                 if not self.flow_level:
                     self.allow_simple_key = True
