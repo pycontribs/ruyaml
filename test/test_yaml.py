@@ -72,13 +72,13 @@ class TestYAML:
         ? c
         """)
 
-    def test_blank_line(self):
+    def test_blank_lines(self):
         round_trip("""
-        # foo
+        # Comment with a space after it.
 
-        a: foo
+        a: 1
 
-        # bar
+        # Seq with spaces in between items.
         b:
         - bar
 
