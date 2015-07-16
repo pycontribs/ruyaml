@@ -1068,13 +1068,11 @@ class Scanner(object):
         # Process trailing line breaks. The 'chomping' setting determines
         # whether they are included in the value.
         comment = []
-        if chomping is not False:
+        if chomping in [None, True]:
             chunks.append(line_break)
-        else:
-            comment.append(line_break)
         if chomping is True:
             chunks.extend(breaks)
-        else:
+        elif chomping in [None, False]:
             comment.extend(breaks)
 
         # We are done.
