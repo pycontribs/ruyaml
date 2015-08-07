@@ -29,7 +29,8 @@ class HTML2YAML(object):
         import ruamel.yaml
         return ruamel.yaml.dump(
             d,
-            Dumper=ruamel.yaml.RoundTripDumper
+            Dumper=ruamel.yaml.RoundTripDumper,
+            allow_unicode=True,
         )
 
     def html_to_data(self, html):
