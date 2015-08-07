@@ -216,7 +216,7 @@ class YAML:
         # test end
 
     def from_json(self):
-        # use roundtrip to preserver order
+        # use roundtrip to preserve order
         errors = 0
         docs = []
         for file_name in self._args.file:
@@ -226,6 +226,10 @@ class YAML:
                 inp = open(file_name).read()
             loader = ruamel.yaml.Loader # RoundTripLoader
             docs.append(ruamel.yaml.load(inp, loader))
+        #if self._args.literal:
+        #    from ruamel.yaml.convert.literal import walk_tree
+        #    for doc in docs:
+        #        walk_tree(doc)
         dumper = ruamel.yaml.RoundTripDumper
         print(ruamel.yaml.dump_all(
             docs, Dumper=dumper,
@@ -443,6 +447,8 @@ class YAML_Cmd(ProgramBase):
     )
     @option('--flow', action='store_true',
             help='use flow instead of block style')
+    #@option('--literal', action='store_true',
+    #        help='convert scalars with newlines to literal block style')
     @option('file', nargs='+')
     def json(self):
         return self._yaml.from_json()
