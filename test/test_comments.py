@@ -1,3 +1,4 @@
+# coding: utf-8
 
 """
 comment testing is all about roundtrips
@@ -226,6 +227,29 @@ class TestComments:
         - c: 3  # three
         # last one
         - d: 4
+        """)
+
+    @pytest.mark.xfail
+    def test_non_ascii_comment(self):
+        round_trip("""
+        verbosity: 1                  # 0 is minimal output, -1 none
+        base_url: http://gopher.net
+        special_indices: [1, 5, 8]
+        also_special:
+        - a
+        - 19
+        - 32
+        asia and europe: &asia_europe
+            Turkey: Ankara
+            Russia: Moscow
+        countries:
+            Asia:
+                <<: *asia_europe
+                Japan: Tokyo # 東京
+            Europe:
+                <<: *asia_europe
+                Spain: Madrid
+                Italy: Rome
         """)
 
 

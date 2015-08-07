@@ -57,7 +57,7 @@ class ScalarNode(Node):
       ? -> set() ? key, no value
       " -> double quoted
       ' -> single quoted
-      | ->
+      | -> literal style
       > ->
     """
     id = 'scalar'
