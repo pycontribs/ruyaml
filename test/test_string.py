@@ -46,8 +46,7 @@ class TestYAML:
               def
 
             """
-        o = dedent(s).rstrip() + '\n'
-        round_trip(s, outp=o, intermediate=dict(a='abc\ndef'))
+        round_trip(s, intermediate=dict(a='abc\ndef'))
 
     def test_preserve_string_keep(self):
             # with pytest.raises(AssertionError) as excinfo:

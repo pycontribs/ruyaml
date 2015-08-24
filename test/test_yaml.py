@@ -71,3 +71,37 @@ class TestYAML:
         ? b
         ? c
         """)
+
+    def test_blank_line_after_comment(self):
+        round_trip("""
+        # Comment with spaces after it.
+
+
+        a: 1
+        """)
+
+    def test_blank_line_between_seq_items(self):
+        round_trip("""
+        # Seq with spaces in between items.
+        b:
+        - bar
+
+
+        - baz
+        """)
+
+    def test_blank_line_after_literal(self):
+        round_trip("""
+        c:
+        - |
+          This item
+          has a blank line
+          following it.
+
+        - |
+          To visually separate it from this item.
+
+          This item contains a blank line.
+
+
+        """)
