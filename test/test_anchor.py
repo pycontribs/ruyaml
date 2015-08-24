@@ -179,6 +179,31 @@ class TestAnchorsAliases:
         data = load(self.merge_yaml)
         compare(data, self.merge_yaml)
 
+    def test_merge_nested(self):
+        yaml = '''
+        a:
+          <<: &content
+            1: plugh
+            2: plover
+          0: xyzzy
+        b:
+          <<: *content
+        '''
+        data = round_trip(yaml)
+
+    def test_merge_nested_with_sequence(self):
+        yaml = '''
+        a:
+          <<: &content
+            <<: &y2
+              1: plugh
+            2: plover
+          0: xyzzy
+        b:
+          <<: [*content, *y2]
+        '''
+        data = round_trip(yaml)
+
     def test_add_anchor(self):
         from ruamel.yaml.comments import CommentedMap
         data = CommentedMap()
