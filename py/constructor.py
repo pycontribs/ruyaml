@@ -851,6 +851,18 @@ class RoundTripConstructor(SafeConstructor):
         by inserting keys from the merge dict/list of dicts if not yet
         available in this node
         """
+
+        def constructed(value_node):
+            # If the contents of a merge are defined within the
+            # merge marker, then they won't have been constructed
+            # yet. But if they were already constructed, we need to use
+            # the existing object.
+            if value_node in self.constructed_objects:
+                value = self.constructed_objects[value_node]
+            else:
+                value = self.construct_object(value_node, deep=False)
+            return value
+
         #merge = []
         merge_map_list = []
         index = 0
@@ -859,10 +871,8 @@ class RoundTripConstructor(SafeConstructor):
             if key_node.tag == u'tag:yaml.org,2002:merge':
                 del node.value[index]
                 if isinstance(value_node, MappingNode):
-                    # such an anchor node is already constructed
-                    assert value_node in self.constructed_objects
                     merge_map_list.append(
-                        (index, self.constructed_objects[value_node]))
+                        (index, constructed(value_node)))
                     #self.flatten_mapping(value_node)
                     #merge.extend(value_node.value)
                 elif isinstance(value_node, SequenceNode):
@@ -875,7 +885,7 @@ class RoundTripConstructor(SafeConstructor):
                                 "expected a mapping for merging, but found %s"
                                 % subnode.id, subnode.start_mark)
                         merge_map_list.append(
-                            (index, self.constructed_objects[subnode]))
+                            (index, constructed(subnode)))
                     #    self.flatten_mapping(subnode)
                     #    submerge.append(subnode.value)
                     #submerge.reverse()
