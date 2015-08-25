@@ -90,8 +90,8 @@ class TestYAML:
         - baz
         """)
 
-    def test_blank_line_after_literal(self):
-        round_trip("""
+    def test_blank_line_after_literal_chip(self):
+        s = """
         c:
         - |
           This item
@@ -104,4 +104,54 @@ class TestYAML:
           This item contains a blank line.
 
 
-        """)
+        """
+        d = round_trip_load(dedent(s))
+        print(d)
+        round_trip(s)
+        assert d['c'][0].split('it.')[1] == '\n'
+        assert d['c'][1].split('line.')[1] == '\n'
+
+    def test_blank_line_after_literal_keep(self):
+        """ have to insert an eof marker in YAML to test this"""
+        s = """
+        c:
+        - |+
+          This item
+          has a blank line
+          following it.
+
+        - |+
+          To visually separate it from this item.
+
+          This item contains a blank line.
+
+
+        ...
+        """
+        d = round_trip_load(dedent(s))
+        print(d)
+        round_trip(s)
+        assert d['c'][0].split('it.')[1] == '\n\n'
+        assert d['c'][1].split('line.')[1] == '\n\n\n'
+
+    def test_blank_line_after_literal_strip(self):
+        s = """
+        c:
+        - |-
+          This item
+          has a blank line
+          following it.
+
+        - |-
+          To visually separate it from this item.
+
+          This item contains a blank line.
+
+
+        """
+        d = round_trip_load(dedent(s))
+        print(d)
+        round_trip(s)
+        assert d['c'][0].split('it.')[1] == ''
+        assert d['c'][1].split('line.')[1] == ''
+

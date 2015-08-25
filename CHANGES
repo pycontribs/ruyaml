@@ -1,3 +1,10 @@
+0.10.5: 2015-08-25
+- preservation of newlines after block scalars. Contributed by Sam Thursfield.
+
+0.10: 2015-06-22
+- preservation of hand crafted anchor names ( not of the form "idNNN")
+- preservation of map merges ( <<< )
+
 0.9: 2015-04-18
 - collections read in by the RoundTripLoader now have a ``lc`` property
   that can be quired for line and column ( ``lc.line`` resp. ``lc.col``)
