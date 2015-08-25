@@ -36,6 +36,7 @@ Major differences with PyYAML 3.11:
   with smart column positioning
 - collection objects (when read in via RoundTripParser) have an ``lc``
   property that contains line and column info ``lc.line`` and ``lc.col``
+- preservation of whitelines after block scalars. Contributed by Sam Thursfield.
 
 Round trip including comments
 =============================
