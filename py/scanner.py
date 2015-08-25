@@ -1065,15 +1065,27 @@ class Scanner(object):
             else:
                 break
 
-        # Chomp the tail.
-        if chomping is not False:
+        # Process trailing line breaks. The 'chomping' setting determines
+        # whether they are included in the value.
+        comment = []
+        if chomping in [None, True]:
             chunks.append(line_break)
         if chomping is True:
             chunks.extend(breaks)
+        elif chomping in [None, False]:
+            comment.extend(breaks)
 
         # We are done.
-        return ScalarToken(u''.join(chunks), False, start_mark, end_mark,
-                           style)
+        token = ScalarToken(u''.join(chunks), False, start_mark, end_mark,
+                            style)
+        if len(comment) > 0:
+            # Keep track of the trailing whitespace as a comment token, if
+            # isn't all included in the actual value.
+            comment_end_mark = self.get_mark()
+            comment = CommentToken(''.join(comment), end_mark,
+                                   comment_end_mark)
+            token.add_post_comment(comment)
+        return token
 
     def scan_block_scalar_indicators(self, start_mark):
         # See the specification for details.
@@ -1355,7 +1367,14 @@ class Scanner(object):
             if not spaces or self.peek() == u'#' \
                     or (not self.flow_level and self.column < indent):
                 break
-        return ScalarToken(u''.join(chunks), True, start_mark, end_mark)
+
+        token = ScalarToken(u''.join(chunks), True, start_mark, end_mark)
+        if spaces and spaces[0] == '\n':
+            # Create a comment token to preserve the trailing line breaks.
+            comment = CommentToken(''.join(spaces) + '\n', start_mark, end_mark)
+            token.add_post_comment(comment)
+        return token
+
 
     def scan_plain_spaces(self, indent, start_mark):
         # See the specification for details.
@@ -1614,6 +1633,11 @@ class RoundTripScanner(Scanner):
                         break
                     comment += ch
                     self.forward()
+                # gather any blank lines following the comment too
+                ch = self.scan_line_break()
+                while len(ch) > 0:
+                    comment += ch
+                    ch = self.scan_line_break()
                 end_mark = self.get_mark()
                 if not self.flow_level:
                     self.allow_simple_key = True
