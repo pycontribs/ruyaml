@@ -22,13 +22,14 @@ class BaseDumper(Emitter, Serializer, BaseRepresenter, BaseResolver):
                  allow_unicode=None, line_break=None,
                  encoding=None, explicit_start=None, explicit_end=None,
                  version=None, tags=None, block_seq_indent=None,
-                 top_level_colon_align=None, prefix_colon=None):
-        # type: (Any, StreamType, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], Any, Any, Any, Any, Any) -> None   # NOQA
+                 top_level_colon_align=None, prefix_colon=None,
+                 allow_space_break=None):
+        # type: (Any, StreamType, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], Any, Any, Any, Any, Any, Any) -> None   # NOQA
         Emitter.__init__(self, stream, canonical=canonical,
                          indent=indent, width=width,
                          allow_unicode=allow_unicode, line_break=line_break,
                          block_seq_indent=block_seq_indent,
-                         dumper=self)
+                         dumper=self, allow_space_break=allow_space_break)
         Serializer.__init__(self, encoding=encoding,
                             explicit_start=explicit_start,
                             explicit_end=explicit_end,
@@ -47,13 +48,14 @@ class SafeDumper(Emitter, Serializer, SafeRepresenter, Resolver):
                  allow_unicode=None, line_break=None,
                  encoding=None, explicit_start=None, explicit_end=None,
                  version=None, tags=None, block_seq_indent=None,
-                 top_level_colon_align=None, prefix_colon=None):
-        # type: (Any, StreamType, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], Any, Any, Any, Any, Any) -> None  # NOQA
+                 top_level_colon_align=None, prefix_colon=None,
+                 allow_space_break=None):
+        # type: (Any, StreamType, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], Any, Any, Any, Any, Any, Any) -> None  # NOQA
         Emitter.__init__(self, stream, canonical=canonical,
                          indent=indent, width=width,
                          allow_unicode=allow_unicode, line_break=line_break,
                          block_seq_indent=block_seq_indent,
-                         dumper=self)
+                         dumper=self, allow_space_break=allow_space_break)
         Serializer.__init__(self, encoding=encoding,
                             explicit_start=explicit_start,
                             explicit_end=explicit_end,
@@ -72,13 +74,14 @@ class Dumper(Emitter, Serializer, Representer, Resolver):
                  allow_unicode=None, line_break=None,
                  encoding=None, explicit_start=None, explicit_end=None,
                  version=None, tags=None, block_seq_indent=None,
-                 top_level_colon_align=None, prefix_colon=None):
-        # type: (Any, StreamType, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], Any, Any, Any, Any, Any) -> None   # NOQA
+                 top_level_colon_align=None, prefix_colon=None,
+                 allow_space_break=None):
+        # type: (Any, StreamType, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], Any, Any, Any, Any, Any, Any) -> None   # NOQA
         Emitter.__init__(self, stream, canonical=canonical,
                          indent=indent, width=width,
                          allow_unicode=allow_unicode, line_break=line_break,
                          block_seq_indent=block_seq_indent,
-                         dumper=self)
+                         dumper=self, allow_space_break=allow_space_break)
         Serializer.__init__(self, encoding=encoding,
                             explicit_start=explicit_start,
                             explicit_end=explicit_end,
@@ -97,15 +100,17 @@ class RoundTripDumper(Emitter, Serializer, RoundTripRepresenter, VersionedResolv
                  allow_unicode=None, line_break=None,
                  encoding=None, explicit_start=None, explicit_end=None,
                  version=None, tags=None, block_seq_indent=None,
-                 top_level_colon_align=None, prefix_colon=None):
-        # type: (Any, StreamType, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], Any, Any, Any, Any, Any) -> None  # NOQA
+                 top_level_colon_align=None, prefix_colon=None,
+                 allow_space_break=None):
+        # type: (Any, StreamType, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], Any, Any, Any, Any, Any, Any) -> None  # NOQA
+        print('xxx', allow_space_break)
         Emitter.__init__(self, stream, canonical=canonical,
                          indent=indent, width=width,
                          allow_unicode=allow_unicode, line_break=line_break,
                          block_seq_indent=block_seq_indent,
                          top_level_colon_align=top_level_colon_align,
                          prefix_colon=prefix_colon,
-                         dumper=self)
+                         dumper=self, allow_space_break=allow_space_break)
         Serializer.__init__(self, encoding=encoding,
                             explicit_start=explicit_start,
                             explicit_end=explicit_end,

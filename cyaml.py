@@ -63,8 +63,9 @@ class CBaseDumper(CEmitter, BaseRepresenter, BaseResolver):  # type: ignore
                  allow_unicode=None, line_break=None,
                  encoding=None, explicit_start=None, explicit_end=None,
                  version=None, tags=None, block_seq_indent=None,
-                 top_level_colon_align=None, prefix_colon=None):
-        # type: (StreamType, Any, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], Any, Any, Any, Any, Any) -> None   # NOQA
+                 top_level_colon_align=None, prefix_colon=None,
+                 allow_space_break=None):
+        # type: (StreamType, Any, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], Any, Any, Any, Any, Any, Any) -> None   # NOQA
         CEmitter.__init__(self, stream, canonical=canonical,
                           indent=indent, width=width, encoding=encoding,
                           allow_unicode=allow_unicode, line_break=line_break,
@@ -84,8 +85,9 @@ class CSafeDumper(CEmitter, SafeRepresenter, Resolver):  # type: ignore
                  allow_unicode=None, line_break=None,
                  encoding=None, explicit_start=None, explicit_end=None,
                  version=None, tags=None, block_seq_indent=None,
-                 top_level_colon_align=None, prefix_colon=None):
-        # type: (StreamType, Any, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], Any, Any, Any, Any, Any) -> None   # NOQA
+                 top_level_colon_align=None, prefix_colon=None,
+                 allow_space_break=None):
+        # type: (StreamType, Any, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], Any, Any, Any, Any, Any, Any) -> None   # NOQA
         self._emitter = self._serializer = self._representer = self
         CEmitter.__init__(self, stream, canonical=canonical,
                           indent=indent, width=width, encoding=encoding,
@@ -105,8 +107,9 @@ class CDumper(CEmitter, Serializer, Representer, Resolver):  # type: ignore
                  allow_unicode=None, line_break=None,
                  encoding=None, explicit_start=None, explicit_end=None,
                  version=None, tags=None, block_seq_indent=None,
-                 top_level_colon_align=None, prefix_colon=None):
-        # type: (StreamType, Any, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], Any, Any, Any, Any, Any) -> None   # NOQA
+                 top_level_colon_align=None, prefix_colon=None,
+                 allow_space_break=None):
+        # type: (StreamType, Any, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], Any, Any, Any, Any, Any, Any) -> None   # NOQA
         CEmitter.__init__(self, stream, canonical=canonical,
                           indent=indent, width=width, encoding=encoding,
                           allow_unicode=allow_unicode, line_break=line_break,

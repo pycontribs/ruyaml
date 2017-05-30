@@ -52,7 +52,8 @@ class Emitter(object):
 
     def __init__(self, stream, canonical=None, indent=None, width=None,
                  allow_unicode=None, line_break=None, block_seq_indent=None,
-                 top_level_colon_align=None, prefix_colon=None, dumper=None):
+                 top_level_colon_align=None, prefix_colon=None, dumper=None,
+                 allow_space_break=None):
         # type: (StreamType, Any, int, int, bool, Any, int, bool, Any, Any) -> None
         self.dumper = dumper
         if self.dumper is not None:
@@ -67,6 +68,7 @@ class Emitter(object):
 
         # Encoding can be overriden by STREAM-START.
         self.encoding = None  # type: Union[None, Text]
+        self.allow_space_break = allow_space_break
 
         # Emitter is a state machine with a stack of states to handle nested
         # structures.
@@ -902,9 +904,12 @@ class Emitter(object):
 
         # Spaces followed by breaks, as well as special character are only
         # allowed for double quoted scalars.
-        if space_break or special_characters:
-            allow_flow_plain = allow_block_plain = \
-                allow_single_quoted = allow_block = False
+        if special_characters:
+            allow_flow_plain = allow_block_plain = allow_single_quoted = allow_block = False
+        elif space_break:
+            allow_flow_plain = allow_block_plain = allow_single_quoted = False
+            if not self.allow_space_break:
+                allow_block = False
 
         # Although the plain scalar writer supports breaks, we never emit
         # multiline plain scalars.

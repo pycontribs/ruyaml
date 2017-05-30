@@ -156,8 +156,8 @@ def round_trip_load_all(stream, version=None, preserve_quotes=None):
 
 def emit(events, stream=None, Dumper=Dumper,
          canonical=None, indent=None, width=None,
-         allow_unicode=None, line_break=None):
-    # type: (Any, StreamType, Any, bool, Union[int, None], int, bool, Any) -> Any
+         allow_unicode=None, line_break=None, allow_space_break=None):
+    # type: (Any, StreamType, Any, bool, Union[int, None], int, bool, Any, Any) -> Any
     """
     Emit YAML parsing events into a stream.
     If stream is None, return the produced string instead.
@@ -167,7 +167,8 @@ def emit(events, stream=None, Dumper=Dumper,
         stream = StringIO()
         getvalue = stream.getvalue
     dumper = Dumper(stream, canonical=canonical, indent=indent, width=width,
-                    allow_unicode=allow_unicode, line_break=line_break)
+                    allow_unicode=allow_unicode, line_break=line_break,
+                    allow_space_break=allow_space_break)
     try:
         for event in events:
             dumper.emit(event)
@@ -234,8 +235,9 @@ def dump_all(documents, stream=None, Dumper=Dumper,
              allow_unicode=None, line_break=None,
              encoding=enc, explicit_start=None, explicit_end=None,
              version=None, tags=None, block_seq_indent=None,
-             top_level_colon_align=None, prefix_colon=None):
-    # type: (Any, StreamType, Any, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], Any, Any, Any, Any, Any) -> Union[None, str]   # NOQA
+             top_level_colon_align=None, prefix_colon=None,
+             allow_space_break=None):
+    # type: (Any, StreamType, Any, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], Any, Any, Any, Any, Any, Any) -> Union[None, str]   # NOQA
     """
     Serialize a sequence of Python objects into a YAML stream.
     If stream is None, return the produced string instead.
@@ -257,7 +259,7 @@ def dump_all(documents, stream=None, Dumper=Dumper,
                     explicit_end=explicit_end, version=version,
                     tags=tags, block_seq_indent=block_seq_indent,
                     top_level_colon_align=top_level_colon_align, prefix_colon=prefix_colon,
-                    )
+                    allow_space_break=allow_space_break)
     try:
         dumper._serializer.open()
         for data in documents:
@@ -283,8 +285,8 @@ def dump(data, stream=None, Dumper=Dumper,
          canonical=None, indent=None, width=None,
          allow_unicode=None, line_break=None,
          encoding=enc, explicit_start=None, explicit_end=None,
-         version=None, tags=None, block_seq_indent=None):
-    # type: (Any, StreamType, Any, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], VersionType, Any, Any) -> Union[None, str]   # NOQA
+         version=None, tags=None, block_seq_indent=None, allow_space_break=None):
+    # type: (Any, StreamType, Any, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], VersionType, Any, Any, Any) -> Union[None, str]   # NOQA
     """
     Serialize a Python object into a YAML stream.
     If stream is None, return the produced string instead.
@@ -301,7 +303,8 @@ def dump(data, stream=None, Dumper=Dumper,
                     line_break=line_break,
                     encoding=encoding, explicit_start=explicit_start,
                     explicit_end=explicit_end,
-                    version=version, tags=tags, block_seq_indent=block_seq_indent)
+                    version=version, tags=tags, block_seq_indent=block_seq_indent,
+                    allow_space_break=allow_space_break)
 
 
 def safe_dump_all(documents, stream=None, **kwds):
@@ -330,8 +333,9 @@ def round_trip_dump(data, stream=None, Dumper=RoundTripDumper,
                     allow_unicode=None, line_break=None,
                     encoding=enc, explicit_start=None, explicit_end=None,
                     version=None, tags=None, block_seq_indent=None,
-                    top_level_colon_align=None, prefix_colon=None):
-    # type: (Any, StreamType, Any, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], VersionType, Any, Any, Any, Any) -> Union[None, str]   # NOQA
+                    top_level_colon_align=None, prefix_colon=None,
+                    allow_space_break=None):
+    # type: (Any, StreamType, Any, Any, Any, bool, Union[None, int], Union[None, int], bool, Any, Any, Union[None, bool], Union[None, bool], VersionType, Any, Any, Any, Any, Any) -> Union[None, str]   # NOQA
     allow_unicode = True if allow_unicode is None else allow_unicode
     return dump_all([data], stream, Dumper=Dumper,
                     default_style=default_style,
@@ -343,7 +347,8 @@ def round_trip_dump(data, stream=None, Dumper=RoundTripDumper,
                     encoding=encoding, explicit_start=explicit_start,
                     explicit_end=explicit_end,
                     version=version, tags=tags, block_seq_indent=block_seq_indent,
-                    top_level_colon_align=top_level_colon_align, prefix_colon=prefix_colon)
+                    top_level_colon_align=top_level_colon_align, prefix_colon=prefix_colon,
+                    allow_space_break=allow_space_break)
 
 
 # Loader/Dumper are no longer composites, to get to the associated
