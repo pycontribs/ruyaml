@@ -64,7 +64,7 @@ class TestNoIndent:
 
     def test_root_literal_scalar_no_indent_1_1_old_style(self):
         from textwrap import dedent
-        from ruamel.yaml import safe_load
+        from ruyaml import safe_load
 
         s = 'testing123'
         inp = """
@@ -77,7 +77,7 @@ class TestNoIndent:
         assert d == s + '\n'
 
     def test_root_literal_scalar_no_indent_1_1_no_raise(self):
-        # from ruamel.yaml.parser import ParserError
+        # from ruyaml.parser import ParserError
 
         yaml = YAML()
         yaml.root_level_block_style_scalar_no_indent_error_1_1 = True

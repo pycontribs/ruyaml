@@ -4,16 +4,16 @@ from __future__ import print_function
 import codecs  # NOQA
 import io
 
-from ruamel.yaml.compat import PY2
-import ruamel.yaml.reader
+from ruyaml.compat import PY2
+import ruyaml.reader
 
 
 def _run_reader(data, verbose):
     try:
-        stream = ruamel.yaml.py.reader.Reader(data)
+        stream = ruyaml.py.reader.Reader(data)
         while stream.peek() != u'\0':
             stream.forward()
-    except ruamel.yaml.py.reader.ReaderError as exc:
+    except ruyaml.py.reader.ReaderError as exc:
         if verbose:
             print(exc)
     else:

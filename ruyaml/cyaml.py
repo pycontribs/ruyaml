@@ -2,15 +2,15 @@
 
 from __future__ import absolute_import
 
-from _ruamel_yaml import CParser, CEmitter  # type: ignore
+from _ruyaml import CParser, CEmitter  # type: ignore
 
-from ruamel.yaml.constructor import Constructor, BaseConstructor, SafeConstructor
-from ruamel.yaml.representer import Representer, SafeRepresenter, BaseRepresenter
-from ruamel.yaml.resolver import Resolver, BaseResolver
+from ruyaml.constructor import Constructor, BaseConstructor, SafeConstructor
+from ruyaml.representer import Representer, SafeRepresenter, BaseRepresenter
+from ruyaml.resolver import Resolver, BaseResolver
 
 if False:  # MYPY
     from typing import Any, Union, Optional  # NOQA
-    from ruamel.yaml.compat import StreamTextType, StreamType, VersionType  # NOQA
+    from ruyaml.compat import StreamTextType, StreamType, VersionType  # NOQA
 
 __all__ = ['CBaseLoader', 'CSafeLoader', 'CLoader', 'CBaseDumper', 'CSafeDumper', 'CDumper']
 

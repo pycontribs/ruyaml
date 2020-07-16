@@ -1,9 +1,9 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-import ruamel.yaml as yaml
+import ruyaml as yaml
 import pprint
-from ruamel.yaml.compat import PY3
+from ruyaml.compat import PY3
 
 # Tokens mnemonic:
 # directive:            %

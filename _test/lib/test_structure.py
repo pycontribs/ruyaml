@@ -1,10 +1,10 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-import ruamel.yaml as yaml
+import ruyaml as yaml
 import canonical  # NOQA
 import pprint
-from ruamel.yaml.compat import text_type, PY3
+from ruyaml.compat import text_type, PY3
 
 
 def _convert_structure(loader):

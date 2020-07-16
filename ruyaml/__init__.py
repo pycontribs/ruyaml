@@ -6,19 +6,19 @@ if False:  # MYPY
     from typing import Dict, Any  # NOQA
 
 _package_data = dict(
-    full_package_name='ruamel.yaml',
+    full_package_name='ruyaml',
     version_info=(0, 16, 10),
     __version__='0.16.10',
     author='Anthon van der Neut',
     author_email='a.van.der.neut@ruamel.eu',
-    description='ruamel.yaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order',  # NOQA
+    description='ruyaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order',  # NOQA
     entry_points=None,
     since=2014,
     extras_require={':platform_python_implementation=="CPython" and python_version<="2.7"': [
             'ruamel.ordereddict',
         ], ':platform_python_implementation=="CPython" and python_version<"3.9"': [
-            'ruamel.yaml.clib>=0.1.2',
-        ], 'jinja2': ['ruamel.yaml.jinja2>=0.2'], 'docs': ['ryd']},
+            'ruyaml.clib>=0.1.2',
+        ], 'jinja2': ['ruyaml.jinja2>=0.2'], 'docs': ['ryd']},
     # NOQA
     # test='#include "ext/yaml.h"\n\nint main(int argc, char* argv[])\n{\nyaml_parser_t parser;\nparser = parser;  /* prevent warning */\nreturn 0;\n}\n',  # NOQA
     classifiers=[
@@ -57,4 +57,4 @@ try:
 except (ImportError, ValueError):  # for Jython
     __with_libyaml__ = False
 
-from ruamel.yaml.main import *  # NOQA
+from ruyaml.main import *  # NOQA

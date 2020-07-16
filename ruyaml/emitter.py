@@ -11,17 +11,17 @@ from __future__ import print_function
 # mapping ::= MAPPING-START (node node)* MAPPING-END
 
 import sys
-from ruamel.yaml.error import YAMLError, YAMLStreamError
-from ruamel.yaml.events import *  # NOQA
+from ruyaml.error import YAMLError, YAMLStreamError
+from ruyaml.events import *  # NOQA
 
 # fmt: off
-from ruamel.yaml.compat import utf8, text_type, PY2, nprint, dbg, DBG_EVENT, \
+from ruyaml.compat import utf8, text_type, PY2, nprint, dbg, DBG_EVENT, \
     check_anchorname_char
 # fmt: on
 
 if False:  # MYPY
     from typing import Any, Dict, List, Union, Text, Tuple, Optional  # NOQA
-    from ruamel.yaml.compat import StreamType  # NOQA
+    from ruyaml.compat import StreamType  # NOQA
 
 __all__ = ['Emitter', 'EmitterError']
 

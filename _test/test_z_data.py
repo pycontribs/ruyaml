@@ -8,7 +8,7 @@ import warnings  # NOQA
 
 from ruamel.std.pathlib import Path
 
-base_path = Path('data')  # that is ruamel.yaml.data
+base_path = Path('data')  # that is ruyaml.data
 PY2 = sys.version_info[0] == 2
 
 
@@ -50,7 +50,7 @@ class YAMLData(object):
 
     @classmethod
     def from_yaml(cls, constructor, node):
-        from ruamel.yaml.nodes import MappingNode
+        from ruyaml.nodes import MappingNode
 
         if isinstance(node, MappingNode):
             return cls(constructor.construct_mapping(node))
@@ -70,7 +70,7 @@ class Assert(YAMLData):
 
     @property
     def value(self):
-        from ruamel.yaml.compat import Mapping
+        from ruyaml.compat import Mapping
 
         if hasattr(self, '_pa'):
             return self._pa
@@ -95,7 +95,7 @@ def pytest_generate_tests(metafunc):
 
 class TestYAMLData(object):
     def yaml(self, yaml_version=None):
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         y = YAML()
         y.preserve_quotes = True
@@ -104,7 +104,7 @@ class TestYAMLData(object):
         return y
 
     def docs(self, path):
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         tyaml = YAML(typ='safe', pure=True)
         tyaml.register_class(YAMLData)
@@ -119,7 +119,7 @@ class TestYAMLData(object):
         return yaml, data
 
     def round_trip(self, input, output=None, yaml_version=None):
-        from ruamel.yaml.compat import StringIO
+        from ruyaml.compat import StringIO
 
         yaml, data = self.yaml_load(input.value, yaml_version=yaml_version)
         buf = StringIO()
@@ -133,7 +133,7 @@ class TestYAMLData(object):
         assert value == expected
 
     def load_assert(self, input, confirm, yaml_version=None):
-        from ruamel.yaml.compat import Mapping
+        from ruyaml.compat import Mapping
 
         d = self.yaml_load(input.value, yaml_version=yaml_version)[1]  # NOQA
         print('confirm.value', confirm.value, type(confirm.value))
@@ -159,7 +159,7 @@ class TestYAMLData(object):
     # this is executed by pytest the methods with names not starting with test_
     # are helpers
     def test_yaml_data(self, yaml, tmpdir):
-        from ruamel.yaml.compat import Mapping
+        from ruyaml.compat import Mapping
 
         idx = 0
         typ = None

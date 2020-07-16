@@ -10,10 +10,10 @@ from roundtrip import save_and_run  # NOQA
 
 def test_monster(tmpdir):
     program_src = u'''\
-    import ruamel.yaml
+    import ruyaml
     from textwrap import dedent
 
-    class Monster(ruamel.yaml.YAMLObject):
+    class Monster(ruyaml.YAMLObject):
         yaml_tag = u'!Monster'
 
         def __init__(self, name, hp, ac, attacks):
@@ -26,15 +26,15 @@ def test_monster(tmpdir):
             return "%s(name=%r, hp=%r, ac=%r, attacks=%r)" % (
                 self.__class__.__name__, self.name, self.hp, self.ac, self.attacks)
 
-    data = ruamel.yaml.load(dedent("""\\
+    data = ruyaml.load(dedent("""\\
         --- !Monster
         name: Cave spider
         hp: [2,6]    # 2d6
         ac: 16
         attacks: [BITE, HURT]
-    """), Loader=ruamel.yaml.Loader)
+    """), Loader=ruyaml.Loader)
     # normal dump, keys will be sorted
-    assert ruamel.yaml.dump(data) == dedent("""\\
+    assert ruyaml.dump(data) == dedent("""\\
         !Monster
         ac: 16
         attacks: [BITE, HURT]
@@ -49,8 +49,8 @@ def test_monster(tmpdir):
 def test_qualified_name00(tmpdir):
     """issue 214"""
     program_src = u"""\
-    from ruamel.yaml import YAML
-    from ruamel.yaml.compat import StringIO
+    from ruyaml import YAML
+    from ruyaml.compat import StringIO
 
     class A:
         def f(self):
@@ -72,15 +72,15 @@ def test_qualified_name00(tmpdir):
 @pytest.mark.skipif(sys.version_info < (3, 0), reason='no __qualname__')
 def test_qualified_name01(tmpdir):
     """issue 214"""
-    from ruamel.yaml import YAML
-    import ruamel.yaml.comments
-    from ruamel.yaml.compat import StringIO
+    from ruyaml import YAML
+    import ruyaml.comments
+    from ruyaml.compat import StringIO
 
     yaml = YAML(typ='unsafe', pure=True)
     yaml.explicit_end = True
     buf = StringIO()
-    yaml.dump(ruamel.yaml.comments.CommentedBase.yaml_anchor, buf)
+    yaml.dump(ruyaml.comments.CommentedBase.yaml_anchor, buf)
     res = buf.getvalue()
-    assert res == "!!python/name:ruamel.yaml.comments.CommentedBase.yaml_anchor ''\n...\n"
+    assert res == "!!python/name:ruyaml.comments.CommentedBase.yaml_anchor ''\n...\n"
     x = yaml.load(res)
-    assert x == ruamel.yaml.comments.CommentedBase.yaml_anchor
+    assert x == ruyaml.comments.CommentedBase.yaml_anchor

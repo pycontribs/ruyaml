@@ -5,8 +5,8 @@ pdf: true
 --- !python-pre |
 import sys
 from io import StringIO
-import ruamel.yaml
-from ruamel.yaml import YAML
+import ruyaml
+from ruyaml import YAML
 yaml=YAML()
 ostream = s = StringIO()
 istream = stream = doc = "a: 1"
@@ -17,14 +17,14 @@ from pathlib import Path  # or: from ruamel.std.pathlib import Path
 Departure from previous API
 +++++++++++++++++++++++++++
 
-With version 0.15.0 ``ruamel.yaml`` starts to depart from the previous (PyYAML) way
+With version 0.15.0 ``ruyaml`` starts to depart from the previous (PyYAML) way
 of loading and dumping.  During a transition period the original
 ``load()`` and ``dump()`` in its various formats will still be supported,
 but this is not guaranteed to be so with the transition to 1.0.
 
 At the latest with 1.0, but possible earlier transition error and
 warning messages will be issued, so any packages depending on
-ruamel.yaml should pin the version with which they are testing.
+ruyaml should pin the version with which they are testing.
 
 
 Up to 0.15.0, the loaders (``load()``, ``safe_load()``,
@@ -37,7 +37,7 @@ preserve quotes.
 Up to 0.15.0, the dumpers (``dump()``, ``safe_dump``,
 ``round_trip_dump()``, ``dump_all()``, etc.) had a plethora of
 arguments, some inherited from ``PyYAML``, some added in
-``ruamel.yaml``. The only required argument is the ``data`` to be
+``ruyaml``. The only required argument is the ``data`` to be
 dumped. If the stream argument is not provided to the dumper, then a
 string representation is build up in memory and returned to the
 caller.
@@ -60,7 +60,7 @@ with out.open('w') as fp:
 after::
 --- !python |
 from pathlib import Path
-from ruamel.yaml import YAML
+from ruyaml import YAML
 
 yaml = YAML(typ='safe')
 yaml.default_flow_style = False
@@ -114,7 +114,7 @@ In the new API (starting 0.15.1) duplicate keys in mappings are no longer allowe
 default. To allow duplicate keys in mappings::
 
 --- !python |
-yaml = ruamel.yaml.YAML()
+yaml = ruyaml.YAML()
 yaml.allow_duplicate_keys = True
 yaml.load(stream)
 --- |
@@ -200,7 +200,7 @@ available attributes include:
 Transparent usage of new and old API
 ++++++++++++++++++++++++++++++++++++
 
-If you have multiple packages depending on ``ruamel.yaml``, or install
+If you have multiple packages depending on ``ruyaml``, or install
 your utility together with other packages not under your control, then
 fixing your ``install_requires`` might not be so easy.
 
@@ -214,11 +214,11 @@ for reading resp.  writing.
 Loading and dumping using the ``SafeLoader``::
 
 --- !python |
-if ruamel.yaml.version_info < (0, 15):
+if ruyaml.version_info < (0, 15):
     data = yaml.safe_load(istream)
     yaml.safe_dump(data, ostream)
 else:
-    yml = ruamel.yaml.YAML(typ='safe', pure=True)  # 'safe' load and dump
+    yml = ruyaml.YAML(typ='safe', pure=True)  # 'safe' load and dump
     data = yml.load(istream)
     yml.dump(data, ostream)
 --- |
@@ -226,13 +226,13 @@ Loading with the ``CSafeLoader``, dumping with
 ``RoundTripLoader``. You need two ``YAML`` instances, but each of them
 can be re-used::
 --- !python |
-if ruamel.yaml.version_info < (0, 15):
+if ruyaml.version_info < (0, 15):
     data = yaml.load(istream, Loader=yaml.CSafeLoader)
     yaml.round_trip_dump(data, ostream, width=1000, explicit_start=True)
 else:
-    yml = ruamel.yaml.YAML(typ='safe')
+    yml = ruyaml.YAML(typ='safe')
     data = yml.load(istream)
-    ymlo = ruamel.yaml.YAML()   # or yaml.YAML(typ='rt')
+    ymlo = ruyaml.YAML()   # or yaml.YAML(typ='rt')
     ymlo.width = 1000
     ymlo.explicit_start = True
     ymlo.dump(data, ostream)
@@ -242,7 +242,7 @@ round-trip-loader::
 
 --- !code |
 # in myyaml.py
-if ruamel.yaml.version_info < (0, 15):
+if ruyaml.version_info < (0, 15):
     class MyYAML(yaml.YAML):
         def __init__(self):
             yaml.YAML.__init__(self)
@@ -252,7 +252,7 @@ if ruamel.yaml.version_info < (0, 15):
 try:
     from myyaml import MyYAML
 except (ModuleNotFoundError, ImportError):
-    if ruamel.yaml.version_info >= (0, 15):
+    if ruyaml.version_info >= (0, 15):
         raise
 
 # some pathlib.Path
@@ -260,7 +260,7 @@ from pathlib import Path
 inf = Path('/tmp/in.yaml')
 outf = Path('/tmp/out.yaml')
 
-if ruamel.yaml.version_info < (0, 15):
+if ruyaml.version_info < (0, 15):
     with inf.open() as ifp:
          data = yaml.round_trip_load(ifp, preserve_quotes=True)
     with outf.open('w') as ofp:
@@ -275,7 +275,7 @@ else:
 Reason for API change
 +++++++++++++++++++++
 
-``ruamel.yaml`` inherited the way of doing things from ``PyYAML``. In
+``ruyaml`` inherited the way of doing things from ``PyYAML``. In
 particular when calling the function ``load()`` or ``dump()``
 temporary instances of  ``Loader()`` resp. ``Dumper()``  were
 created that were discarded on termination of the function.
@@ -319,7 +319,7 @@ This way of doing things leads to several problems:
   is difficult
 
 
-With ``ruamel.yaml>=0.15.0`` the various steps "know" about the
+With ``ruyaml>=0.15.0`` the various steps "know" about the
 ``YAML`` instance and can pick up setting, as well as report back
 information via that instance. Representers, etc., are added to a
 reusable instance and different YAML instances can co-exists.

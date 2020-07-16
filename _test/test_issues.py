@@ -19,7 +19,7 @@ from roundtrip import (
 
 class TestIssues:
     def test_issue_61(self):
-        import ruamel.yaml
+        import ruyaml
 
         s = dedent("""
         def1: &ANCHOR1
@@ -30,7 +30,7 @@ class TestIssues:
         comb:
             <<: *ANCHOR
         """)
-        data = ruamel.yaml.round_trip_load(s)
+        data = ruyaml.round_trip_load(s)
         assert str(data['comb']) == str(data['def'])
         assert str(data['comb']) == "ordereddict([('key', 'value'), ('key1', 'value1')])"
 
@@ -96,7 +96,7 @@ class TestIssues:
         x = round_trip(yaml_str, preserve_quotes=True)  # NOQA
 
     def test_issue_150(self):
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         inp = """\
         base: &base_key
@@ -113,7 +113,7 @@ class TestIssues:
         assert 'second' in dict(**child)
 
     def test_issue_160(self):
-        from ruamel.yaml.compat import StringIO
+        from ruyaml.compat import StringIO
         s = dedent("""\
         root:
             # a comment
@@ -178,7 +178,7 @@ class TestIssues:
 
     def test_issue_176(self):
         # basic request by Stuart Berg
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         yaml = YAML()
         seq = yaml.load('[1,2,3]')
@@ -200,7 +200,7 @@ class TestIssues:
         assert res == yaml_str.replace(' b ', ' B ').replace(' d\n', ' D\n')
 
     def test_issue_176_test_slicing(self):
-        from ruamel.yaml.compat import PY2
+        from ruyaml.compat import PY2
 
         mss = round_trip_load('[0, 1, 2, 3, 4]')
         assert len(mss) == 5
@@ -286,7 +286,7 @@ class TestIssues:
 
     def test_issue_220(self, tmpdir):
         program_src = r'''
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         yaml_str = u"""\
         ---
@@ -300,14 +300,14 @@ class TestIssues:
         assert save_and_run(dedent(program_src), tmpdir, optimized=True) == 0
 
     def test_issue_221_add(self):
-        from ruamel.yaml.comments import CommentedSeq
+        from ruyaml.comments import CommentedSeq
 
         a = CommentedSeq([1, 2, 3])
         a + [4, 5]
 
     def test_issue_221_sort(self):
-        from ruamel.yaml import YAML
-        from ruamel.yaml.compat import StringIO
+        from ruyaml import YAML
+        from ruyaml.compat import StringIO
 
         yaml = YAML()
         inp = dedent("""\
@@ -331,8 +331,8 @@ class TestIssues:
         assert buf.getvalue() == exp
 
     def test_issue_221_sort_reverse(self):
-        from ruamel.yaml import YAML
-        from ruamel.yaml.compat import StringIO
+        from ruyaml import YAML
+        from ruyaml.compat import StringIO
 
         yaml = YAML()
         inp = dedent("""\
@@ -356,8 +356,8 @@ class TestIssues:
         assert buf.getvalue() == exp
 
     def test_issue_221_sort_key(self):
-        from ruamel.yaml import YAML
-        from ruamel.yaml.compat import StringIO
+        from ruyaml import YAML
+        from ruyaml.compat import StringIO
 
         yaml = YAML()
         inp = dedent("""\
@@ -381,8 +381,8 @@ class TestIssues:
         assert buf.getvalue() == exp
 
     def test_issue_221_sort_key_reverse(self):
-        from ruamel.yaml import YAML
-        from ruamel.yaml.compat import StringIO
+        from ruyaml import YAML
+        from ruyaml.compat import StringIO
 
         yaml = YAML()
         inp = dedent("""\
@@ -406,30 +406,30 @@ class TestIssues:
         assert buf.getvalue() == exp
 
     def test_issue_222(self):
-        import ruamel.yaml
-        from ruamel.yaml.compat import StringIO
+        import ruyaml
+        from ruyaml.compat import StringIO
 
         buf = StringIO()
-        ruamel.yaml.safe_dump(['012923'], buf)
+        ruyaml.safe_dump(['012923'], buf)
         assert buf.getvalue() == "['012923']\n"
 
     def test_issue_223(self):
-        import ruamel.yaml
+        import ruyaml
 
-        yaml = ruamel.yaml.YAML(typ='safe')
+        yaml = ruyaml.YAML(typ='safe')
         yaml.load('phone: 0123456789')
 
     def test_issue_232(self):
-        import ruamel.yaml
+        import ruyaml
         from ruamel import yaml
 
-        with pytest.raises(ruamel.yaml.parser.ParserError):
+        with pytest.raises(ruyaml.parser.ParserError):
             yaml.safe_load(']')
-        with pytest.raises(ruamel.yaml.parser.ParserError):
+        with pytest.raises(ruyaml.parser.ParserError):
             yaml.safe_load('{]')
 
     def test_issue_233(self):
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
         import json
 
         yaml = YAML()
@@ -437,7 +437,7 @@ class TestIssues:
         json_str = json.dumps(data)  # NOQA
 
     def test_issue_233a(self):
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
         import json
 
         yaml = YAML()
@@ -445,7 +445,7 @@ class TestIssues:
         json_str = json.dumps(data)  # NOQA
 
     def test_issue_234(self):
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         inp = dedent("""\
         - key: key1
@@ -471,10 +471,10 @@ class TestIssues:
 
     def test_issue_238(self, tmpdir):
         program_src = r"""
-        import ruamel.yaml
-        from ruamel.yaml.compat import StringIO
+        import ruyaml
+        from ruyaml.compat import StringIO
 
-        yaml = ruamel.yaml.YAML(typ='unsafe')
+        yaml = ruyaml.YAML(typ='unsafe')
 
 
         class A:
@@ -522,13 +522,13 @@ class TestIssues:
         d = YAML().round_trip_all(inp)  # NOQA
 
     def test_issue_242(self):
-        from ruamel.yaml.comments import CommentedMap
+        from ruyaml.comments import CommentedMap
 
         d0 = CommentedMap([('a', 'b')])
         assert d0['a'] == 'b'
 
     def test_issue_245(self):
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
         inp = """
         d: yes
         """
@@ -575,8 +575,8 @@ class TestIssues:
 
     # @pytest.mark.xfail(strict=True, reason='bla bla', raises=AssertionError)
     def test_issue_279(self):
-        from ruamel.yaml import YAML
-        from ruamel.yaml.compat import StringIO
+        from ruyaml import YAML
+        from ruyaml.compat import StringIO
 
         yaml = YAML()
         yaml.indent(sequence=4, offset=2)
@@ -594,8 +594,8 @@ class TestIssues:
         assert buf.getvalue() == inp
 
     def test_issue_280(self):
-        from ruamel.yaml import YAML
-        from ruamel.yaml.representer import RepresenterError
+        from ruyaml import YAML
+        from ruyaml.representer import RepresenterError
         from collections import namedtuple
         from sys import stdout
         T = namedtuple('T', ('a', 'b'))
@@ -606,33 +606,33 @@ class TestIssues:
 
     def test_issue_282(self):
         # update from list of tuples caused AttributeError
-        import ruamel.yaml
-        yaml_data = ruamel.yaml.comments.CommentedMap([('a', 'apple'), ('b', 'banana')])
+        import ruyaml
+        yaml_data = ruyaml.comments.CommentedMap([('a', 'apple'), ('b', 'banana')])
         yaml_data.update([('c', 'cantaloupe')])
         yaml_data.update({'d': 'date', 'k': 'kiwi'})
         assert 'c' in yaml_data.keys()
         assert 'c' in yaml_data._ok
 
     def test_issue_284(self):
-        import ruamel.yaml
+        import ruyaml
         inp = dedent("""\
         plain key: in-line value
         : # Both empty
         "quoted key":
         - entry
         """)
-        yaml = ruamel.yaml.YAML(typ='rt')
+        yaml = ruyaml.YAML(typ='rt')
         yaml.version = (1, 2)
         d = yaml.load(inp)
         assert d[None] is None
 
-        yaml = ruamel.yaml.YAML(typ='rt')
+        yaml = ruyaml.YAML(typ='rt')
         yaml.version = (1, 1)
-        with pytest.raises(ruamel.yaml.parser.ParserError, match='expected <block end>'):
+        with pytest.raises(ruyaml.parser.ParserError, match='expected <block end>'):
             d = yaml.load(inp)
 
     def test_issue_285(self):
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         yaml = YAML()
         inp = dedent("""\
@@ -650,8 +650,8 @@ class TestIssues:
         assert not a[3]
 
     def test_issue_286(self):
-        from ruamel.yaml import YAML
-        from ruamel.yaml.compat import StringIO
+        from ruyaml import YAML
+        from ruyaml.compat import StringIO
 
         yaml = YAML()
         inp = dedent("""\
@@ -667,8 +667,8 @@ class TestIssues:
 
     def test_issue_288(self):
         import sys
-        from ruamel.yaml.compat import StringIO
-        from ruamel.yaml import YAML
+        from ruyaml.compat import StringIO
+        from ruyaml import YAML
 
         yamldoc = dedent("""\
         ---
@@ -698,8 +698,8 @@ class TestIssues:
 
     def test_issue_288a(self):
         import sys
-        from ruamel.yaml.compat import StringIO
-        from ruamel.yaml import YAML
+        from ruyaml.compat import StringIO
+        from ruyaml import YAML
 
         yamldoc = dedent("""\
         ---
@@ -729,8 +729,8 @@ class TestIssues:
 
     def test_issue_290(self):
         import sys
-        from ruamel.yaml.compat import StringIO
-        from ruamel.yaml import YAML
+        from ruyaml.compat import StringIO
+        from ruyaml import YAML
 
         yamldoc = dedent("""\
         ---
@@ -765,8 +765,8 @@ class TestIssues:
 
     def test_issue_290a(self):
         import sys
-        from ruamel.yaml.compat import StringIO
-        from ruamel.yaml import YAML
+        from ruyaml.compat import StringIO
+        from ruyaml import YAML
 
         yamldoc = dedent("""\
         ---
@@ -826,7 +826,7 @@ class TestIssues:
         assert round_trip_dump(dc) == inp
 
     def test_issue_300(self):
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         inp = dedent("""
         %YAML 1.2
@@ -837,7 +837,7 @@ class TestIssues:
         YAML().load(inp)
 
     def test_issue_300a(self):
-        import ruamel.yaml
+        import ruyaml
 
         inp = dedent("""
         %YAML 1.1
@@ -846,7 +846,7 @@ class TestIssues:
         null
         """)
         yaml = YAML()
-        with pytest.raises(ruamel.yaml.scanner.ScannerError,
+        with pytest.raises(ruyaml.scanner.ScannerError,
                            match='while scanning a directive'):
             yaml.load(inp)
 

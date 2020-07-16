@@ -11,7 +11,7 @@ Basic round trip of parsing YAML to Python objects, modifying
 and generating YAML::
 --- !python |
   import sys
-  from ruamel.yaml import YAML
+  from ruyaml import YAML
 
   inp = """\
   # example
@@ -35,7 +35,7 @@ with the old API::
   from __future__ import print_function
 
   import sys
-  import ruamel.yaml
+  import ruyaml
 
   inp = """\
   # example
@@ -45,14 +45,14 @@ with the old API::
     given: Alice    # one of the siblings
   """
 
-  code = ruamel.yaml.load(inp, ruamel.yaml.RoundTripLoader)
+  code = ruyaml.load(inp, ruyaml.RoundTripLoader)
   code['name']['given'] = 'Bob'
 
-  ruamel.yaml.dump(code, sys.stdout, Dumper=ruamel.yaml.RoundTripDumper)
+  ruyaml.dump(code, sys.stdout, Dumper=ruyaml.RoundTripDumper)
 
   # the last statement can be done less efficient in time and memory with
   # leaving out the end='' would cause a double newline at the end
-  # print(ruamel.yaml.dump(code, Dumper=ruamel.yaml.RoundTripDumper), end='')
+  # print(ruyaml.dump(code, Dumper=ruyaml.RoundTripDumper), end='')
 --- !stdout |
 Resulting in ::
 --- |
@@ -62,7 +62,7 @@ YAML handcrafted anchors and references as well as key merging
 are preserved. The merged keys can transparently be accessed
 using ``[]`` and ``.get()``::
 --- !python |
-  from ruamel.yaml import YAML
+  from ruyaml import YAML
 
   inp = """\
   - &CENTER {x: 1, y: 2}
@@ -97,7 +97,7 @@ The ``CommentedMap``, which is the ``dict`` like construct one gets when round-t
 supports insertion of a key into a particular position, while optionally adding a comment::
 --- !python |
   import sys
-  from ruamel.yaml import YAML
+  from ruyaml import YAML
 
   yaml_str = """\
   first_name: Art
@@ -120,7 +120,7 @@ posted by *demux* on StackOverflow.
 
 ----
 
-By default ``ruamel.yaml`` indents with two positions in block style, for
+By default ``ruyaml`` indents with two positions in block style, for
 both mappings and sequences. For sequences the indent is counted to the
 beginning of the scalar, with the dash taking the first position of the
 indented "space".
@@ -131,7 +131,7 @@ You can change this default indentation by e.g. using ``yaml.indent()``::
 --- !python |
 
 import sys
-from ruamel.yaml import YAML
+from ruyaml import YAML
 
 d = dict(a=dict(b=2),c=[3, 4])
 yaml = YAML()
@@ -162,7 +162,7 @@ within sequence) to begin on the next line use ``yaml.compact()``::
 --- !python |
 
 import sys
-from ruamel.yaml import YAML
+from ruyaml import YAML
 
 d = [dict(b=2), [3, 4]]
 yaml = YAML()
@@ -187,7 +187,7 @@ three documents::
 
 --- !python |
 import sys
-from ruamel.yaml import YAML
+from ruyaml import YAML
 
 data = {1: {1: [{1: 1, 2: 2}, {1: 1, 2: 2}], 2: 2}, 2: 42}
 
@@ -263,8 +263,8 @@ you really need to have it (or think you do)::
 
 --- !python |
 import sys
-from ruamel.yaml import YAML
-from ruamel.yaml.compat import StringIO
+from ruyaml import YAML
+from ruyaml.compat import StringIO
 
 class MyYAML(YAML):
     def dump(self, data, stream=None, **kw):

@@ -2,8 +2,8 @@
 
 from __future__ import print_function, absolute_import, division, unicode_literals
 
-from ruamel.yaml.compat import text_type
-from ruamel.yaml.anchor import Anchor
+from ruyaml.compat import text_type
+from ruyaml.anchor import Anchor
 
 if False:  # MYPY
     from typing import Text, Any, Dict, List  # NOQA
@@ -124,13 +124,13 @@ def walk_tree(base, map=None):
 
     You can also provide an explicit (ordered) mapping for multiple transforms
     (first of which is executed):
-        map = ruamel.yaml.compat.ordereddict
+        map = ruyaml.compat.ordereddict
         map['\n'] = preserve_literal
         map[':'] = SingleQuotedScalarString
         walk_tree(data, map=map)
     """
-    from ruamel.yaml.compat import string_types
-    from ruamel.yaml.compat import MutableMapping, MutableSequence  # type: ignore
+    from ruyaml.compat import string_types
+    from ruyaml.compat import MutableMapping, MutableSequence  # type: ignore
 
     if map is None:
         map = {'\n': preserve_literal}

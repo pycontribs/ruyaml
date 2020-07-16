@@ -12,28 +12,28 @@ from textwrap import dedent
 )
 def test_load_cyaml():
     print("???????????????????????", platform.python_implementation())
-    import ruamel.yaml
+    import ruyaml
 
     if sys.version_info >= (3, 8):
         return
-    assert ruamel.yaml.__with_libyaml__
-    from ruamel.yaml.cyaml import CLoader
+    assert ruyaml.__with_libyaml__
+    from ruyaml.cyaml import CLoader
 
-    ruamel.yaml.load('abc: 1', Loader=CLoader)
+    ruyaml.load('abc: 1', Loader=CLoader)
 
 
 @pytest.mark.skipif(sys.version_info >= (3, 8)
                     or platform.python_implementation() in ['Jython', 'PyPy'],
                     reason='no _PyGC_FINALIZED')
 def test_dump_cyaml():
-    import ruamel.yaml
+    import ruyaml
 
     if sys.version_info >= (3, 8):
         return
     data = {'a': 1, 'b': 2}
-    res = ruamel.yaml.dump(
+    res = ruyaml.dump(
         data,
-        Dumper=ruamel.yaml.cyaml.CSafeDumper,
+        Dumper=ruyaml.cyaml.CSafeDumper,
         default_flow_style=False,
         allow_unicode=True,
     )
@@ -45,17 +45,17 @@ def test_dump_cyaml():
 )
 def test_load_cyaml_1_2():
     # issue 155
-    import ruamel.yaml
+    import ruyaml
 
     if sys.version_info >= (3, 8):
         return
-    assert ruamel.yaml.__with_libyaml__
+    assert ruyaml.__with_libyaml__
     inp = dedent("""\
     %YAML 1.2
     ---
     num_epochs: 70000
     """)
-    yaml = ruamel.yaml.YAML(typ='safe')
+    yaml = ruyaml.YAML(typ='safe')
     yaml.load(inp)
 
 
@@ -64,13 +64,13 @@ def test_load_cyaml_1_2():
 )
 def test_dump_cyaml_1_2():
     # issue 155
-    import ruamel.yaml
-    from ruamel.yaml.compat import StringIO
+    import ruyaml
+    from ruyaml.compat import StringIO
 
     if sys.version_info >= (3, 8):
         return
-    assert ruamel.yaml.__with_libyaml__
-    yaml = ruamel.yaml.YAML(typ='safe')
+    assert ruyaml.__with_libyaml__
+    yaml = ruyaml.YAML(typ='safe')
     yaml.version = (1, 2)
     yaml.default_flow_style = False
     data = {'a': 1, 'b': 2}

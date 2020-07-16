@@ -18,7 +18,7 @@ and the chomping modifiers:
 import pytest
 import platform
 
-# from ruamel.yaml.compat import ordereddict
+# from ruyaml.compat import ordereddict
 from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump  # NOQA
 
 
@@ -153,7 +153,7 @@ class TestReplace:
         """)
         data = round_trip_load(s, preserve_quotes=True)
         so = data['foo'].replace('foo', 'bar', 2)
-        assert isinstance(so, ruamel.yaml.scalarstring.LiteralScalarString)
+        assert isinstance(so, ruyaml.scalarstring.LiteralScalarString)
         assert so == dedent("""
         bar
         bar
@@ -169,14 +169,14 @@ class TestReplace:
         """)
         data = round_trip_load(s, preserve_quotes=True)
         so = data['foo'].replace('foo', 'bar', 2)
-        assert isinstance(so, ruamel.yaml.scalarstring.DoubleQuotedScalarString)
+        assert isinstance(so, ruyaml.scalarstring.DoubleQuotedScalarString)
         assert so == 'bar bar bar foo'
 
 
 class TestWalkTree:
     def test_basic(self):
-        from ruamel.yaml.comments import CommentedMap
-        from ruamel.yaml.scalarstring import walk_tree
+        from ruyaml.comments import CommentedMap
+        from ruyaml.scalarstring import walk_tree
 
         data = CommentedMap()
         data[1] = 'a'
@@ -191,11 +191,11 @@ class TestWalkTree:
         assert round_trip_dump(data) == dedent(exp)
 
     def test_map(self):
-        from ruamel.yaml.compat import ordereddict
-        from ruamel.yaml.comments import CommentedMap
-        from ruamel.yaml.scalarstring import walk_tree, preserve_literal
-        from ruamel.yaml.scalarstring import DoubleQuotedScalarString as dq
-        from ruamel.yaml.scalarstring import SingleQuotedScalarString as sq
+        from ruyaml.compat import ordereddict
+        from ruyaml.comments import CommentedMap
+        from ruyaml.scalarstring import walk_tree, preserve_literal
+        from ruyaml.scalarstring import DoubleQuotedScalarString as dq
+        from ruyaml.scalarstring import SingleQuotedScalarString as sq
 
         data = CommentedMap()
         data[1] = 'a'

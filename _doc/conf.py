@@ -54,7 +54,7 @@ author = u'Anthon van der Neut'
 # built documents.
 #
 try:
-    from ruamel.yaml import __version__, version_info  # NOQA
+    from ruyaml import __version__, version_info  # NOQA
 
     # The short X.Y version.
     version = '.'.join([str(l) for l in version_info[:3]])
@@ -63,7 +63,7 @@ try:
 except Exception as e:
     print('exception', e)
     version = release = 'dev'
-print('ruamel.yaml version', version)
+print('ruyaml version', version)
 # print('cwd:', os.getcwd())
 # current working directory is the one with `conf.py` !
 

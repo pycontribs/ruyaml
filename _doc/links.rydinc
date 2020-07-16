@@ -4,4 +4,4 @@
 .. _YAML 1.1: http://www.yaml.org/spec/1.1/spec.html
 .. _YAML 1.2: http://www.yaml.org/spec/1.2/spec.html
 .. _PyPI: https://pypi.python.org/pypi
-.. _ruamel.yaml: https://pypi.python.org/pypi/ruamel.yaml
+.. _ruyaml: https://pypi.python.org/pypi/ruyaml
