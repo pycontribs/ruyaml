@@ -3,9 +3,9 @@ from setuptools import setup, find_packages
 LONG_DESC = open("README.rst", encoding="utf-8").read()
 
 setup(
-    full_package_name='ruyaml',
-    version_info=(0, 19, 0),
-    __version__='0.19.0',
+    name='ruyaml',
+    use_scm_version={"version_scheme": "guess-next-dev", "local_scheme": "dirty-tag"},
+    setup_requires=["setuptools_scm"],
     author='Matthias Urlichs',
     author_email='matthias@urlichs.de',
     description='ruyaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order',  # NOQA
