@@ -11,7 +11,7 @@ yaml=YAML()
 ostream = s = StringIO()
 istream = stream = doc = "a: 1"
 data = dict(a=1)
-from pathlib import Path  # or: from ruamel.std.pathlib import Path
+from pathlib import Path  # or: from pathlib import Path
 --- |
 +++++++++++++++++++++++++++
 Departure from previous API

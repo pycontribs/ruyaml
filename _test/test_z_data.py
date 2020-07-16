@@ -6,7 +6,7 @@ import sys
 import pytest  # NOQA
 import warnings  # NOQA
 
-from ruamel.std.pathlib import Path
+from pathlib import Path
 
 base_path = Path('data')  # that is ruyaml.data
 PY2 = sys.version_info[0] == 2

@@ -7,7 +7,7 @@ helper routines for testing round trip of commented YAML data
 """
 import sys
 import textwrap
-from ruamel.std.pathlib import Path
+from pathlib import Path
 
 enforce = object()
 

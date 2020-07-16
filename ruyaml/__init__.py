@@ -39,7 +39,7 @@ _package_data = dict(
     supported=[(2, 7), (3, 5)],  # minimum
     tox=dict(
         env='*',  # remove 'pn', no longer test narrow Python 2.7 for unicode patterns and PyPy
-        deps='ruamel.std.pathlib',
+        deps='pathlib',
         fl8excl='_test/lib',
     ),
     universal=True,
