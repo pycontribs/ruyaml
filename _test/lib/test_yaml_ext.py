@@ -16,7 +16,6 @@ except ImportError:
     ruyaml.CDumper = None
 import types
 import pprint
-from ruyaml.compat import PY3
 
 ruyaml.PyBaseLoader = ruyaml.BaseLoader
 ruyaml.PySafeLoader = ruyaml.SafeLoader
@@ -358,14 +357,7 @@ def wrap_ext_function(function):
         finally:
             _tear_down()
 
-    if PY3:
-        wrapper.__name__ = '%s_ext' % function.__name__
-    else:
-        try:
-            wrapper.__name__ = '%s_ext' % function.__name__
-        except TypeError:
-            pass
-        wrapper.unittest_name = '%s_ext' % function.__name__
+    wrapper.__name__ = '%s_ext' % function.__name__
     wrapper.unittest = function.unittest
     wrapper.skip = getattr(function, 'skip', []) + ['.skip-ext']
     return wrapper
@@ -383,12 +375,8 @@ def wrap_ext(collections):
             if isinstance(value, types.FunctionType) and hasattr(value, 'unittest'):
                 functions.append(wrap_ext_function(value))
     for function in functions:
-        if PY3:
-            assert function.__name__ not in globals()
-            globals()[function.__name__] = function
-        else:
-            assert function.unittest_name not in globals()
-            globals()[function.unittest_name] = function
+        assert function.__name__ not in globals()
+        globals()[function.__name__] = function
 
 
 import test_tokens  # NOQA

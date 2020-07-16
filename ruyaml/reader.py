@@ -24,7 +24,7 @@ from __future__ import absolute_import
 import codecs
 
 from ruyaml.error import YAMLError, FileMark, StringMark, YAMLStreamError
-from ruyaml.compat import text_type, binary_type, PY3, UNICODE_SIZE
+from ruyaml.compat import text_type, binary_type, UNICODE_SIZE
 from ruyaml.util import RegExp
 
 if False:  # MYPY
@@ -69,8 +69,8 @@ class Reader(object):
     # - adds '\0' to the end.
 
     # Reader accepts
-    #  - a `str` object (PY2) / a `bytes` object (PY3),
-    #  - a `unicode` object (PY2) / a `str` object (PY3),
+    #  - a `bytes` object,
+    #  - a `str` object,
     #  - a file-like object with its `read` method returning `str`,
     #  - a file-like object with its `read` method returning `unicode`.
 
@@ -268,10 +268,7 @@ class Reader(object):
                 try:
                     data, converted = self.raw_decode(self.raw_buffer, 'strict', self.eof)
                 except UnicodeDecodeError as exc:
-                    if PY3:
-                        character = self.raw_buffer[exc.start]
-                    else:
-                        character = exc.object[exc.start]
+                    character = self.raw_buffer[exc.start]
                     if self.stream is not None:
                         position = self.stream_pointer - len(self.raw_buffer) + exc.start
                     elif self.stream is not None:
@@ -293,7 +290,7 @@ class Reader(object):
     def update_raw(self, size=None):
         # type: (Optional[int]) -> None
         if size is None:
-            size = 4096 if PY3 else 1024
+            size = 4096
         data = self.stream.read(size)
         if self.raw_buffer is None:
             self.raw_buffer = data

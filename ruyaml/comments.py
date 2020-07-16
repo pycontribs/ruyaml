@@ -13,14 +13,11 @@ import copy
 
 
 from ruyaml.compat import ordereddict  # type: ignore
-from ruyaml.compat import PY2, string_types, MutableSliceableSequence
+from ruyaml.compat import string_types, MutableSliceableSequence
 from ruyaml.scalarstring import ScalarString
 from ruyaml.anchor import Anchor
 
-if PY2:
-    from collections import MutableSet, Sized, Set, Mapping
-else:
-    from collections.abc import MutableSet, Sized, Set, Mapping
+from collections.abc import MutableSet, Sized, Set, Mapping
 
 if False:  # MYPY
     from typing import Any, Dict, Optional, List, Union, Optional, Iterator  # NOQA
@@ -584,7 +581,7 @@ class CommentedMapKeysView(CommentedMapView, Set):  # type: ignore
         return key in self._mapping
 
     def __iter__(self):
-        # type: () -> Any  # yield from self._mapping  # not in py27, pypy
+        # type: () -> Any  # yield from self._mapping  # not in pypy
         # for x in self._mapping._keys():
         for x in self._mapping:
             yield x
@@ -835,75 +832,22 @@ class CommentedMap(ordereddict, CommentedBase):  # type: ignore
         # type: (Any) -> bool
         return bool(dict(self) == other)
 
-    if PY2:
+    def keys(self):
+        # type: () -> Any
+        return CommentedMapKeysView(self)
 
-        def keys(self):
-            # type: () -> Any
-            return list(self._keys())
-
-        def iterkeys(self):
-            # type: () -> Any
-            return self._keys()
-
-        def viewkeys(self):
-            # type: () -> Any
-            return CommentedMapKeysView(self)
-
-    else:
-
-        def keys(self):
-            # type: () -> Any
-            return CommentedMapKeysView(self)
-
-    if PY2:
-
-        def _values(self):
-            # type: () -> Any
-            for x in ordereddict.__iter__(self):
-                yield ordereddict.__getitem__(self, x)
-
-        def values(self):
-            # type: () -> Any
-            return list(self._values())
-
-        def itervalues(self):
-            # type: () -> Any
-            return self._values()
-
-        def viewvalues(self):
-            # type: () -> Any
-            return CommentedMapValuesView(self)
-
-    else:
-
-        def values(self):
-            # type: () -> Any
-            return CommentedMapValuesView(self)
+    def values(self):
+        # type: () -> Any
+        return CommentedMapValuesView(self)
 
     def _items(self):
         # type: () -> Any
         for x in ordereddict.__iter__(self):
             yield x, ordereddict.__getitem__(self, x)
 
-    if PY2:
-
-        def items(self):
-            # type: () -> Any
-            return list(self._items())
-
-        def iteritems(self):
-            # type: () -> Any
-            return self._items()
-
-        def viewitems(self):
-            # type: () -> Any
-            return CommentedMapItemsView(self)
-
-    else:
-
-        def items(self):
-            # type: () -> Any
-            return CommentedMapItemsView(self)
+    def items(self):
+        # type: () -> Any
+        return CommentedMapItemsView(self)
 
     @property
     def merge(self):
@@ -970,13 +914,7 @@ class CommentedKeyMap(CommentedBase, Mapping):  # type: ignore
         # type: (Any, Any) -> None
         if hasattr(self, '_od'):
             raise_immutable(self)
-        try:
-            self._od = ordereddict(*args, **kw)
-        except TypeError:
-            if PY2:
-                self._od = ordereddict(args[0].items())
-            else:
-                raise
+        self._od = ordereddict(*args, **kw)
 
     __delitem__ = __setitem__ = clear = pop = popitem = setdefault = update = raise_immutable
 

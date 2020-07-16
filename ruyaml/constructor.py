@@ -15,7 +15,7 @@ from ruyaml.error import (MarkedYAMLError, MarkedYAMLFutureWarning,
                                MantissaNoDotYAML1_1Warning)
 from ruyaml.nodes import *                               # NOQA
 from ruyaml.nodes import (SequenceNode, MappingNode, ScalarNode)
-from ruyaml.compat import (utf8, builtins_module, to_str, PY2, PY3,  # NOQA
+from ruyaml.compat import (utf8, builtins_module, to_str,  # NOQA
                                 text_type, nprint, nprintf, version_tnf)
 from ruyaml.compat import ordereddict, Hashable, MutableSequence  # type: ignore
 from ruyaml.compat import MutableMapping  # type: ignore
@@ -233,24 +233,13 @@ class BaseConstructor(object):
                 if not isinstance(key, Hashable):
                     if isinstance(key, list):
                         key = tuple(key)
-                if PY2:
-                    try:
-                        hash(key)
-                    except TypeError as exc:
-                        raise ConstructorError(
-                            'while constructing a mapping',
-                            node.start_mark,
-                            'found unacceptable key (%s)' % exc,
-                            key_node.start_mark,
-                        )
-                else:
-                    if not isinstance(key, Hashable):
-                        raise ConstructorError(
-                            'while constructing a mapping',
-                            node.start_mark,
-                            'found unhashable key',
-                            key_node.start_mark,
-                        )
+                if not isinstance(key, Hashable):
+                    raise ConstructorError(
+                        'while constructing a mapping',
+                        node.start_mark,
+                        'found unhashable key',
+                        key_node.start_mark,
+                    )
 
                 value = self.construct_object(value_node, deep=deep)
                 if check:
@@ -267,13 +256,6 @@ class BaseConstructor(object):
         if key in mapping:
             if not self.allow_duplicate_keys:
                 mk = mapping.get(key)
-                if PY2:
-                    if isinstance(key, unicode):
-                        key = key.encode('utf-8')
-                    if isinstance(value, unicode):
-                        value = value.encode('utf-8')
-                    if isinstance(mk, unicode):
-                        mk = mk.encode('utf-8')
                 args = [
                     'while constructing a mapping',
                     node.start_mark,
@@ -300,9 +282,6 @@ class BaseConstructor(object):
         # type: (Any, Any, Any, Any, Any) -> None
         if key in setting:
             if not self.allow_duplicate_keys:
-                if PY2:
-                    if isinstance(key, unicode):
-                        key = key.encode('utf-8')
                 args = [
                     'while constructing a set',
                     node.start_mark,
@@ -527,40 +506,27 @@ class SafeConstructor(BaseConstructor):
                     warnings.warn(MantissaNoDotYAML1_1Warning(node, value_so))
             return sign * float(value_s)
 
-    if PY3:
+    def construct_yaml_binary(self, node):
+        # type: (Any) -> Any
+        try:
+            value = self.construct_scalar(node).encode('ascii')
+        except UnicodeEncodeError as exc:
+            raise ConstructorError(
+                None,
+                None,
+                'failed to convert base64 data into ascii: %s' % exc,
+                node.start_mark,
+            )
+        try:
+            if hasattr(base64, 'decodebytes'):
+                return base64.decodebytes(value)
+            else:
+                return base64.decodestring(value)
+        except binascii.Error as exc:
+            raise ConstructorError(
+                None, None, 'failed to decode base64 data: %s' % exc, node.start_mark
+            )
 
-        def construct_yaml_binary(self, node):
-            # type: (Any) -> Any
-            try:
-                value = self.construct_scalar(node).encode('ascii')
-            except UnicodeEncodeError as exc:
-                raise ConstructorError(
-                    None,
-                    None,
-                    'failed to convert base64 data into ascii: %s' % exc,
-                    node.start_mark,
-                )
-            try:
-                if hasattr(base64, 'decodebytes'):
-                    return base64.decodebytes(value)
-                else:
-                    return base64.decodestring(value)
-            except binascii.Error as exc:
-                raise ConstructorError(
-                    None, None, 'failed to decode base64 data: %s' % exc, node.start_mark
-                )
-
-    else:
-
-        def construct_yaml_binary(self, node):
-            # type: (Any) -> Any
-            value = self.construct_scalar(node)
-            try:
-                return to_str(value).decode('base64')
-            except (binascii.Error, UnicodeEncodeError) as exc:
-                raise ConstructorError(
-                    None, None, 'failed to decode base64 data: %s' % exc, node.start_mark
-                )
 
     timestamp_regexp = RegExp(
         u"""^(?P<year>[0-9][0-9][0-9][0-9])
@@ -703,12 +669,7 @@ class SafeConstructor(BaseConstructor):
     def construct_yaml_str(self, node):
         # type: (Any) -> Any
         value = self.construct_scalar(node)
-        if PY3:
-            return value
-        try:
-            return value.encode('ascii')
-        except UnicodeEncodeError:
-            return value
+        return value
 
     def construct_yaml_seq(self, node):
         # type: (Any) -> Any
@@ -778,11 +739,6 @@ SafeConstructor.add_constructor(u'tag:yaml.org,2002:map', SafeConstructor.constr
 
 SafeConstructor.add_constructor(None, SafeConstructor.construct_undefined)
 
-if PY2:
-
-    class classobj:
-        pass
-
 
 class Constructor(SafeConstructor):
     def construct_python_str(self, node):
@@ -793,35 +749,31 @@ class Constructor(SafeConstructor):
         # type: (Any) -> Any
         return self.construct_scalar(node)
 
-    if PY3:
-
-        def construct_python_bytes(self, node):
-            # type: (Any) -> Any
-            try:
-                value = self.construct_scalar(node).encode('ascii')
-            except UnicodeEncodeError as exc:
-                raise ConstructorError(
-                    None,
-                    None,
-                    'failed to convert base64 data into ascii: %s' % exc,
-                    node.start_mark,
-                )
-            try:
-                if hasattr(base64, 'decodebytes'):
-                    return base64.decodebytes(value)
-                else:
-                    return base64.decodestring(value)
-            except binascii.Error as exc:
-                raise ConstructorError(
-                    None, None, 'failed to decode base64 data: %s' % exc, node.start_mark
-                )
+    def construct_python_bytes(self, node):
+        # type: (Any) -> Any
+        try:
+            value = self.construct_scalar(node).encode('ascii')
+        except UnicodeEncodeError as exc:
+            raise ConstructorError(
+                None,
+                None,
+                'failed to convert base64 data into ascii: %s' % exc,
+                node.start_mark,
+            )
+        try:
+            if hasattr(base64, 'decodebytes'):
+                return base64.decodebytes(value)
+            else:
+                return base64.decodestring(value)
+        except binascii.Error as exc:
+            raise ConstructorError(
+                None, None, 'failed to decode base64 data: %s' % exc, node.start_mark
+            )
 
     def construct_python_long(self, node):
         # type: (Any) -> int
         val = self.construct_yaml_int(node)
-        if PY3:
-            return val
-        return int(val)
+        return val
 
     def construct_python_complex(self, node):
         # type: (Any) -> Any
@@ -931,20 +883,10 @@ class Constructor(SafeConstructor):
         if not kwds:
             kwds = {}
         cls = self.find_python_name(suffix, node.start_mark)
-        if PY3:
-            if newobj and isinstance(cls, type):
-                return cls.__new__(cls, *args, **kwds)
-            else:
-                return cls(*args, **kwds)
+        if newobj and isinstance(cls, type):
+            return cls.__new__(cls, *args, **kwds)
         else:
-            if newobj and isinstance(cls, type(classobj)) and not args and not kwds:
-                instance = classobj()
-                instance.__class__ = cls
-                return instance
-            elif newobj and isinstance(cls, type):
-                return cls.__new__(cls, *args, **kwds)
-            else:
-                return cls(*args, **kwds)
+            return cls(*args, **kwds)
 
     def set_python_instance_state(self, instance, state):
         # type: (Any, Any) -> None
@@ -1023,10 +965,9 @@ Constructor.add_constructor(
     u'tag:yaml.org,2002:python/unicode', Constructor.construct_python_unicode
 )
 
-if PY3:
-    Constructor.add_constructor(
-        u'tag:yaml.org,2002:python/bytes', Constructor.construct_python_bytes
-    )
+Constructor.add_constructor(
+    u'tag:yaml.org,2002:python/bytes', Constructor.construct_python_bytes
+)
 
 Constructor.add_constructor(u'tag:yaml.org,2002:python/int', Constructor.construct_yaml_int)
 
@@ -1282,17 +1223,7 @@ class RoundTripConstructor(SafeConstructor):
     def construct_yaml_str(self, node):
         # type: (Any) -> Any
         value = self.construct_scalar(node)
-        if isinstance(value, ScalarString):
-            return value
-        if PY3:
-            return value
-        try:
-            return value.encode('ascii')
-        except AttributeError:
-            # in case you replace the node dynamically e.g. with a dict
-            return value
-        except UnicodeEncodeError:
-            return value
+        return value
 
     def construct_rt_sequence(self, node, seqtyp, deep=False):
         # type: (Any, Any, bool) -> Any
@@ -1448,24 +1379,13 @@ class RoundTripConstructor(SafeConstructor):
                     elif key_node.flow_style is False:
                         key_m.fa.set_block_style()
                     key = key_m
-            if PY2:
-                try:
-                    hash(key)
-                except TypeError as exc:
-                    raise ConstructorError(
-                        'while constructing a mapping',
-                        node.start_mark,
-                        'found unacceptable key (%s)' % exc,
-                        key_node.start_mark,
-                    )
-            else:
-                if not isinstance(key, Hashable):
-                    raise ConstructorError(
-                        'while constructing a mapping',
-                        node.start_mark,
-                        'found unhashable key',
-                        key_node.start_mark,
-                    )
+            if not isinstance(key, Hashable):
+                raise ConstructorError(
+                    'while constructing a mapping',
+                    node.start_mark,
+                    'found unhashable key',
+                    key_node.start_mark,
+                )
             value = self.construct_object(value_node, deep=deep)
             if self.check_mapping_key(node, key_node, maptyp, key, value):
                 if key_node.comment and len(key_node.comment) > 4 and key_node.comment[4]:
@@ -1518,24 +1438,13 @@ class RoundTripConstructor(SafeConstructor):
             if not isinstance(key, Hashable):
                 if isinstance(key, list):
                     key = tuple(key)
-            if PY2:
-                try:
-                    hash(key)
-                except TypeError as exc:
-                    raise ConstructorError(
-                        'while constructing a mapping',
-                        node.start_mark,
-                        'found unacceptable key (%s)' % exc,
-                        key_node.start_mark,
-                    )
-            else:
-                if not isinstance(key, Hashable):
-                    raise ConstructorError(
-                        'while constructing a mapping',
-                        node.start_mark,
-                        'found unhashable key',
-                        key_node.start_mark,
-                    )
+            if not isinstance(key, Hashable):
+                raise ConstructorError(
+                    'while constructing a mapping',
+                    node.start_mark,
+                    'found unhashable key',
+                    key_node.start_mark,
+                )
             # construct but should be null
             value = self.construct_object(value_node, deep=deep)  # NOQA
             self.check_set_key(node, key_node, typ, key)

@@ -9,7 +9,6 @@ import warnings  # NOQA
 from pathlib import Path
 
 base_path = Path('data')  # that is ruyaml.data
-PY2 = sys.version_info[0] == 2
 
 
 class YAMLData(object):
@@ -126,10 +125,6 @@ class TestYAMLData(object):
         yaml.dump(data, buf)
         expected = input.value if output is None else output.value
         value = buf.getvalue()
-        if PY2:
-            value = value.decode('utf-8')
-            print('value', value)
-            # print('expected', expected)
         assert value == expected
 
     def load_assert(self, input, confirm, yaml_version=None):

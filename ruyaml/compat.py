@@ -46,77 +46,33 @@ except:  # NOQA
                     self[old_key] = od[old_key]
 
 
-PY2 = sys.version_info[0] == 2
-PY3 = sys.version_info[0] == 3
+def utf8(s):
+    # type: (str) -> str
+    return s
 
+def to_str(s):
+    # type: (str) -> str
+    return s
 
-if PY3:
+def to_unicode(s):
+    # type: (str) -> str
+    return s
 
-    def utf8(s):
-        # type: (str) -> str
-        return s
+string_types = str
+integer_types = int
+class_types = type
+text_type = str
+binary_type = bytes
 
-    def to_str(s):
-        # type: (str) -> str
-        return s
+MAXSIZE = sys.maxsize
+unichr = chr
+import io
 
-    def to_unicode(s):
-        # type: (str) -> str
-        return s
-
-
-else:
-    if False:
-        unicode = str
-
-    def utf8(s):
-        # type: (unicode) -> str
-        return s.encode('utf-8')
-
-    def to_str(s):
-        # type: (str) -> str
-        return str(s)
-
-    def to_unicode(s):
-        # type: (str) -> unicode
-        return unicode(s)  # NOQA
-
-
-if PY3:
-    string_types = str
-    integer_types = int
-    class_types = type
-    text_type = str
-    binary_type = bytes
-
-    MAXSIZE = sys.maxsize
-    unichr = chr
-    import io
-
-    StringIO = io.StringIO
-    BytesIO = io.BytesIO
-    # have unlimited precision
-    no_limit_int = int
-    from collections.abc import Hashable, MutableSequence, MutableMapping, Mapping  # NOQA
-
-else:
-    string_types = basestring  # NOQA
-    integer_types = (int, long)  # NOQA
-    class_types = (type, types.ClassType)
-    text_type = unicode  # NOQA
-    binary_type = str
-
-    # to allow importing
-    unichr = unichr
-    from StringIO import StringIO as _StringIO
-
-    StringIO = _StringIO
-    import cStringIO
-
-    BytesIO = cStringIO.StringIO
-    # have unlimited precision
-    no_limit_int = long  # NOQA not available on Python 3
-    from collections import Hashable, MutableSequence, MutableMapping, Mapping  # NOQA
+StringIO = io.StringIO
+BytesIO = io.BytesIO
+# have unlimited precision
+no_limit_int = int
+from collections.abc import Hashable, MutableSequence, MutableMapping, Mapping  # NOQA
 
 if False:  # MYPY
     # StreamType = Union[BinaryIO, IO[str], IO[unicode],  StringIO]
@@ -126,10 +82,7 @@ if False:  # MYPY
     StreamTextType = StreamType  # Union[Text, StreamType]
     VersionType = Union[List[int], str, Tuple[int, int]]
 
-if PY3:
-    builtins_module = 'builtins'
-else:
-    builtins_module = '__builtin__'
+builtins_module = 'builtins'
 
 UNICODE_SIZE = 4 if sys.maxunicode > 65535 else 2
 

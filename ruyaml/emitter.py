@@ -15,7 +15,7 @@ from ruyaml.error import YAMLError, YAMLStreamError
 from ruyaml.events import *  # NOQA
 
 # fmt: off
-from ruyaml.compat import utf8, text_type, PY2, nprint, dbg, DBG_EVENT, \
+from ruyaml.compat import utf8, text_type, nprint, dbg, DBG_EVENT, \
     check_anchorname_char
 # fmt: on
 
@@ -314,12 +314,8 @@ class Emitter(object):
     def expect_stream_start(self):
         # type: () -> None
         if isinstance(self.event, StreamStartEvent):
-            if PY2:
-                if self.event.encoding and not getattr(self.stream, 'encoding', None):
-                    self.encoding = self.event.encoding
-            else:
-                if self.event.encoding and not hasattr(self.stream, 'encoding'):
-                    self.encoding = self.event.encoding
+            if self.event.encoding and not hasattr(self.stream, 'encoding'):
+                self.encoding = self.event.encoding
             self.write_stream_start()
             self.state = self.expect_first_document_start
         else:

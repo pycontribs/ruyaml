@@ -18,7 +18,7 @@ from ruyaml.nodes import *  # NOQA
 
 from ruyaml.loader import BaseLoader, SafeLoader, Loader, RoundTripLoader  # NOQA
 from ruyaml.dumper import BaseDumper, SafeDumper, Dumper, RoundTripDumper  # NOQA
-from ruyaml.compat import StringIO, BytesIO, with_metaclass, PY3, nprint
+from ruyaml.compat import StringIO, BytesIO, with_metaclass, nprint
 from ruyaml.resolver import VersionedResolver, Resolver  # NOQA
 from ruyaml.representer import (
     BaseRepresenter,
@@ -38,10 +38,7 @@ if False:  # MYPY
     from typing import List, Set, Dict, Union, Any, Callable, Optional, Text  # NOQA
     from ruyaml.compat import StreamType, StreamTextType, VersionType  # NOQA
 
-    if PY3:
-        from pathlib import Path
-    else:
-        Path = Any
+    from pathlib import Path
 
 try:
     from _ruyaml import CParser, CEmitter  # type: ignore
@@ -1066,7 +1063,7 @@ def emit(
         return getvalue()
 
 
-enc = None if PY3 else 'utf-8'
+enc = None
 
 
 def serialize_all(

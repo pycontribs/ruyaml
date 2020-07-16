@@ -2,11 +2,11 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 import ruyaml as yaml
-from ruyaml.compat import text_type, PY3
+from ruyaml.compat import text_type
 
 
 def test_marks(marks_filename, verbose=False):
-    with open(marks_filename, 'r' if PY3 else 'rb') as fp0:
+    with open(marks_filename, 'r') as fp0:
         inputs = fp0.read().split('---\n')[1:]
     for input in inputs:
         index = 0

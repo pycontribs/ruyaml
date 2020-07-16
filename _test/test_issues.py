@@ -200,8 +200,6 @@ class TestIssues:
         assert res == yaml_str.replace(' b ', ' B ').replace(' d\n', ' D\n')
 
     def test_issue_176_test_slicing(self):
-        from ruyaml.compat import PY2
-
         mss = round_trip_load('[0, 1, 2, 3, 4]')
         assert len(mss) == 5
         assert mss[2:2] == []
@@ -231,18 +229,10 @@ class TestIssues:
         m[1::2] = [42, 43]
         assert m == [0, 42, 2, 43, 4]
         m = mss[:]
-        if PY2:
-            with pytest.raises(ValueError, match='attempt to assign'):
-                m[1::2] = [42, 43, 44]
-        else:
-            with pytest.raises(TypeError, match='too many'):
-                m[1::2] = [42, 43, 44]
-        if PY2:
-            with pytest.raises(ValueError, match='attempt to assign'):
-                m[1::2] = [42]
-        else:
-            with pytest.raises(TypeError, match='not enough'):
-                m[1::2] = [42]
+        with pytest.raises(TypeError, match='too many'):
+            m[1::2] = [42, 43, 44]
+        with pytest.raises(TypeError, match='not enough'):
+            m[1::2] = [42]
         m = mss[:]
         m += [5]
         m[1::2] = [42, 43, 44]
