@@ -1,15 +1,23 @@
 
-ruamel.yaml
-===========
+ruyaml
+======
 
-``ruamel.yaml`` is a YAML 1.2 loader/dumper package for Python.
+``ruyaml`` is a YAML 1.2 loader/dumper package for Python.
 
 :version:       0.16.10
 :updated:       2020-02-12
-:documentation: http://yaml.readthedocs.io
-:repository:    https://bitbucket.org/ruamel/yaml
-:pypi:          https://pypi.org/project/ruamel.yaml/
+:documentation: http://ruyaml.readthedocs.io
+:repository:    https://github.com/pycontribs/ruyaml
+:pypi:          https://pypi.org/project/ruyaml/
 
+This is a fork of `ruamel.yaml <https://pypi.org/project/ruamel.yaml/>`_
+which is a fork of `pyyaml <https://pypi.org/project/PyYAML/>`_.
+
+It was forked because ruamel.yaml appears to have become quite
+contributor-unfriendly.
+
+Old README
+==========
 
 Starting with version 0.15.0 the way YAML files are loaded and dumped
 is changing. See the API doc for details.  Currently existing
@@ -23,16 +31,16 @@ me an email, preferably with some information on how you use the
 package (or a link to bitbucket/github) and I'll keep you informed
 when the status of the API is stable enough to make the transition.
 
-* `Overview <http://yaml.readthedocs.org/en/latest/overview.html>`_
-* `Installing <http://yaml.readthedocs.org/en/latest/install.html>`_
-* `Basic Usage <http://yaml.readthedocs.org/en/latest/basicuse.html>`_
-* `Details <http://yaml.readthedocs.org/en/latest/detail.html>`_
-* `Examples <http://yaml.readthedocs.org/en/latest/example.html>`_
-* `API <http://yaml.readthedocs.org/en/latest/api.html>`_
-* `Differences with PyYAML <http://yaml.readthedocs.org/en/latest/pyyaml.html>`_
+* `Overview <http://ruyaml.readthedocs.org/en/latest/overview.html>`_
+* `Installing <http://ruyaml.readthedocs.org/en/latest/install.html>`_
+* `Basic Usage <http://ruyaml.readthedocs.org/en/latest/basicuse.html>`_
+* `Details <http://ruyaml.readthedocs.org/en/latest/detail.html>`_
+* `Examples <http://ruyaml.readthedocs.org/en/latest/example.html>`_
+* `API <http://ruyaml.readthedocs.org/en/latest/api.html>`_
+* `Differences with PyYAML <http://ruyaml.readthedocs.org/en/latest/pyyaml.html>`_
 
 .. image:: https://readthedocs.org/projects/yaml/badge/?version=stable
-   :target: https://yaml.readthedocs.org/en/stable
+   :target: https://ruyaml.readthedocs.org/en/stable
 
 .. image:: https://bestpractices.coreinfrastructure.org/projects/1128/badge
    :target: https://bestpractices.coreinfrastructure.org/projects/1128
@@ -671,7 +679,7 @@ ChangeLog
   - update to conform to mypy 0.511: mypy --strict
 
 0.15.1 (2017-06-07):
-  - `duplicate keys  <http://yaml.readthedocs.io/en/latest/api.html#duplicate-keys>`__
+  - `duplicate keys  <http://ruyaml.readthedocs.io/en/latest/api.html#duplicate-keys>`__
     in mappings generate an error (in the old API this change generates a warning until 0.16)
   - dependecy on ruamel.ordereddict for 2.7 now via extras_require
 
