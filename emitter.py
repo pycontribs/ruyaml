@@ -168,9 +168,8 @@ class Emitter(object):
         self.colon = u':'
         self.prefixed_colon = self.colon if prefix_colon is None else prefix_colon + self.colon
         # single entry mappings in flow sequence
-        self.brace_single_entry_mapping_in_flow_sequence = (
-         brace_single_entry_mapping_in_flow_sequence
-        )  # NOQA
+        self.brace_single_entry_mapping_in_flow_sequence = \
+            brace_single_entry_mapping_in_flow_sequence
 
         # Formatting details.
         self.canonical = canonical

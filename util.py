@@ -69,10 +69,10 @@ def load_yaml_guess_indent(stream, **kw):
     from .main import round_trip_load
 
     # load a yaml file guess the indentation, if you use TABs ...
-    def leading_spaces(l):
+    def leading_spaces(line):
         # type: (Any) -> int
         idx = 0
-        while idx < len(l) and l[idx] == ' ':
+        while idx < len(line) and line[idx] == ' ':
             idx += 1
         return idx
 

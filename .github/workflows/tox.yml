@@ -27,7 +27,6 @@ jobs:
         include:
         - name: linters
           python-version: 3.6
-          continue-on-error: true
         - name: docs
           python-version: 3.6
           continue-on-error: true
