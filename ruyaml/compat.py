@@ -10,24 +10,26 @@ import io
 import traceback
 from abc import abstractmethod
 
-from collections import OrderedDict as ordereddict  # noqa
+from collections import OrderedDict
 
 
-if not hasattr(ordereddict, 'insert'):
-
-    def insert(self, pos, key, value):
-        # type: (int, Any, Any) -> None
-        if pos >= len(self):
-            self[key] = value
-            return
-        od = ordereddict()
-        od.update(self)
-        for k in od:
-            del self[k]
-        for index, old_key in enumerate(od):
-            if pos == index:
+if hasattr(OrderedDict, 'insert'):
+    ordereddict = OrderedDict
+else:
+    class ordereddict(OrderedDict):
+        def insert(self, pos, key, value):
+            # type: (int, Any, Any) -> None
+            if pos >= len(self):
                 self[key] = value
-            self[old_key] = od[old_key]
+                return
+            od = ordereddict()
+            od.update(self)
+            for k in od:
+                del self[k]
+            for index, old_key in enumerate(od):
+                if pos == index:
+                    self[key] = value
+                self[old_key] = od[old_key]
 
 
 # fmt: off

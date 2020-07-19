@@ -257,14 +257,6 @@ def _make_objects():
     today = datetime.date.today()
 
 
-from collections import OrderedDict
-
-# to get the right name import ... as ordereddict doesn't do that
-
-class ordereddict(OrderedDict):
-    pass
-
-
 def _load_code(expression):
     return eval(expression, globals())
 
