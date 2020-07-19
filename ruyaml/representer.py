@@ -487,7 +487,7 @@ Representer.add_multi_representer(object, Representer.represent_object)
 
 Representer.add_multi_representer(type, Representer.represent_name)
 
-from ruyaml.comments import (
+from ruyaml.comments import (  # noqa: E402
     CommentedMap,
     CommentedOrderedMap,
     CommentedSeq,
@@ -497,7 +497,7 @@ from ruyaml.comments import (
     comment_attrib,
     merge_attrib,
     TaggedScalar,
-)  # NOQA
+)
 
 
 class RoundTripRepresenter(SafeRepresenter):
