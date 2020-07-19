@@ -6,11 +6,7 @@ import pprint
 
 import datetime
 
-try:
-    set
-except NameError:
-    from sets import Set as set  # NOQA
-import ruyaml.tokens
+from ruyaml.compat import ordereddict
 
 
 def execute(code):
