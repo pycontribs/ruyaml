@@ -644,7 +644,7 @@ Representer.add_multi_representer(object, Representer.represent_object)
 
 Representer.add_multi_representer(type, Representer.represent_name)
 
-from ruamel.yaml.comments import (
+from ruamel.yaml.comments import (  # noqa: E402
     CommentedMap,
     CommentedOrderedMap,
     CommentedSeq,
@@ -654,7 +654,7 @@ from ruamel.yaml.comments import (
     comment_attrib,
     merge_attrib,
     TaggedScalar,
-)  # NOQA
+)
 
 
 class RoundTripRepresenter(SafeRepresenter):
