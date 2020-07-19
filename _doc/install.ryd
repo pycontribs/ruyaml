@@ -21,12 +21,6 @@ installing ``ruyaml``.
 
     pip install ruyaml
 
-If you want to process jinja2/YAML templates (which are not valid YAML
-with the default jinja2 markers), do ``pip install
-ruyaml[jinja2]`` (you might need to quote the last argument
-because of the ``[]``)
-
-
 There also is a commandline utility ``yaml`` available after installing::
 
    pip install ruyaml.cmd
