@@ -412,9 +412,9 @@ class TestIssues:
     def test_issue_232(self):
         import ruyaml as yaml
 
-        with pytest.raises(ruyaml.parser.ParserError):
+        with pytest.raises(yaml.parser.ParserError):
             yaml.safe_load(']')
-        with pytest.raises(ruyaml.parser.ParserError):
+        with pytest.raises(yaml.parser.ParserError):
             yaml.safe_load('{]')
 
     def test_issue_233(self):
