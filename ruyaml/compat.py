@@ -6,6 +6,7 @@ from __future__ import print_function
 
 import sys
 import os
+import io
 import types
 import traceback
 from abc import abstractmethod
@@ -59,7 +60,6 @@ binary_type = bytes
 
 MAXSIZE = sys.maxsize
 unichr = chr
-import io
 
 StringIO = io.StringIO
 BytesIO = io.BytesIO
