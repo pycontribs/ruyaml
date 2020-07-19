@@ -26,7 +26,7 @@ from ruyaml.comments import (CommentedMap, CommentedOrderedMap, CommentedSet,
                              CommentedKeyMap)
 from ruyaml.scalarstring import (SingleQuotedScalarString, DoubleQuotedScalarString,
                                  LiteralScalarString, FoldedScalarString,
-                                 PlainScalarString, ScalarString,)
+                                 PlainScalarString)
 from ruyaml.scalarint import ScalarInt, BinaryInt, OctalInt, HexInt, HexCapsInt
 from ruyaml.scalarfloat import ScalarFloat
 from ruyaml.scalarbool import ScalarBoolean
