@@ -1,1 +1,4 @@
 .tox
+build
+dist
+.eggs

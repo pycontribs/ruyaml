@@ -30,6 +30,8 @@ jobs:
         - name: docs
           python-version: 3.6
           continue-on-error: true
+        - name: packaging
+          python-version: 3.6
         - name: py36
           python-version: 3.6
         - name: py37
