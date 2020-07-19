@@ -15,8 +15,8 @@ from ruyaml.error import (MarkedYAMLError, MarkedYAMLFutureWarning,
                                MantissaNoDotYAML1_1Warning)
 from ruyaml.nodes import *                               # NOQA
 from ruyaml.nodes import (SequenceNode, MappingNode, ScalarNode)
-from ruyaml.compat import (utf8, builtins_module, to_str,  # NOQA
-                                text_type, nprint, nprintf, version_tnf)
+from ruyaml.compat import (builtins_module,  # NOQA
+                                nprint, nprintf, version_tnf)
 from ruyaml.compat import ordereddict, Hashable, MutableSequence  # type: ignore
 from ruyaml.compat import MutableMapping  # type: ignore
 
@@ -442,7 +442,7 @@ class SafeConstructor(BaseConstructor):
 
     def construct_yaml_int(self, node):
         # type: (Any) -> int
-        value_s = to_str(self.construct_scalar(node))
+        value_s = self.construct_scalar(node)
         value_s = value_s.replace('_', "")
         sign = +1
         if value_s[0] == '-':
@@ -478,7 +478,7 @@ class SafeConstructor(BaseConstructor):
 
     def construct_yaml_float(self, node):
         # type: (Any) -> float
-        value_so = to_str(self.construct_scalar(node))
+        value_so = self.construct_scalar(node)
         value_s = value_so.replace('_', "").lower()
         sign = +1
         if value_s[0] == '-':
@@ -700,7 +700,7 @@ class SafeConstructor(BaseConstructor):
         raise ConstructorError(
             None,
             None,
-            'could not determine a constructor for the tag %r' % utf8(node.tag),
+            'could not determine a constructor for the tag %r' % (node.tag,),
             node.start_mark,
         )
 
@@ -743,7 +743,7 @@ SafeConstructor.add_constructor(None, SafeConstructor.construct_undefined)
 class Constructor(SafeConstructor):
     def construct_python_str(self, node):
         # type: (Any) -> Any
-        return utf8(self.construct_scalar(node))
+        return self.construct_scalar(node)
 
     def construct_python_unicode(self, node):
         # type: (Any) -> Any
@@ -798,7 +798,7 @@ class Constructor(SafeConstructor):
             raise ConstructorError(
                 'while constructing a Python module',
                 mark,
-                'cannot find module %r (%s)' % (utf8(name), exc),
+                'cannot find module %r (%s)' % (name, exc),
                 mark,
             )
         return sys.modules[name]
@@ -834,7 +834,7 @@ class Constructor(SafeConstructor):
             raise ConstructorError(
                 'while constructing a Python object',
                 mark,
-                'cannot find module %r (%s)' % (utf8(module_name), exc),
+                'cannot find module %r (%s)' % (module_name, exc),
                 mark,
             )
         module = sys.modules[module_name]
@@ -846,7 +846,7 @@ class Constructor(SafeConstructor):
                 raise ConstructorError(
                     'while constructing a Python object',
                     mark,
-                    'cannot find %r in the module %r' % (utf8(object_name), module.__name__),
+                    'cannot find %r in the module %r' % (object_name, module.__name__),
                     mark,
                 )
             obj = getattr(obj, lobject_name.pop(0))
@@ -859,7 +859,7 @@ class Constructor(SafeConstructor):
             raise ConstructorError(
                 'while constructing a Python name',
                 node.start_mark,
-                'expected the empty value, but found %r' % utf8(value),
+                'expected the empty value, but found %r' % (value,),
                 node.start_mark,
             )
         return self.find_python_name(suffix, node.start_mark)
@@ -871,7 +871,7 @@ class Constructor(SafeConstructor):
             raise ConstructorError(
                 'while constructing a Python module',
                 node.start_mark,
-                'expected the empty value, but found %r' % utf8(value),
+                'expected the empty value, but found %r' % (value,),
                 node.start_mark,
             )
         return self.find_python_module(suffix, node.start_mark)
@@ -1024,12 +1024,12 @@ class RoundTripConstructor(SafeConstructor):
                 None, None, 'expected a scalar node, but found %s' % node.id, node.start_mark
             )
 
-        if node.style == '|' and isinstance(node.value, text_type):
+        if node.style == '|' and isinstance(node.value, str):
             lss = LiteralScalarString(node.value, anchor=node.anchor)
             if node.comment and node.comment[1]:
                 lss.comment = node.comment[1][0]  # type: ignore
             return lss
-        if node.style == '>' and isinstance(node.value, text_type):
+        if node.style == '>' and isinstance(node.value, str):
             fold_positions = []  # type: List[int]
             idx = -1
             while True:
@@ -1043,7 +1043,7 @@ class RoundTripConstructor(SafeConstructor):
             if fold_positions:
                 fss.fold_pos = fold_positions  # type: ignore
             return fss
-        elif bool(self._preserve_quotes) and isinstance(node.value, text_type):
+        elif bool(self._preserve_quotes) and isinstance(node.value, str):
             if node.style == "'":
                 return SingleQuotedScalarString(node.value, anchor=node.anchor)
             if node.style == '"':
@@ -1055,7 +1055,7 @@ class RoundTripConstructor(SafeConstructor):
     def construct_yaml_int(self, node):
         # type: (Any) -> Any
         width = None  # type: Any
-        value_su = to_str(self.construct_scalar(node))
+        value_su = self.construct_scalar(node)
         try:
             sx = value_su.rstrip('_')
             underscore = [len(sx) - sx.rindex('_') - 1, False, False]  # type: Any
@@ -1157,7 +1157,7 @@ class RoundTripConstructor(SafeConstructor):
 
         # underscore = None
         m_sign = False  # type: Any
-        value_so = to_str(self.construct_scalar(node))
+        value_so = self.construct_scalar(node)
         value_s = value_so.replace('_', "").lower()
         sign = +1
         if value_s[0] == '-':
@@ -1590,7 +1590,7 @@ class RoundTripConstructor(SafeConstructor):
         raise ConstructorError(
             None,
             None,
-            'could not determine a constructor for the tag %r' % utf8(node.tag),
+            'could not determine a constructor for the tag %r' % (node.tag,),
             node.start_mark,
         )
 

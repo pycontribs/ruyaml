@@ -15,7 +15,7 @@ from ruyaml.error import YAMLError, YAMLStreamError
 from ruyaml.events import *  # NOQA
 
 # fmt: off
-from ruyaml.compat import utf8, text_type, nprint, dbg, DBG_EVENT, \
+from ruyaml.compat import nprint, dbg, DBG_EVENT, \
     check_anchorname_char
 # fmt: on
 
@@ -898,13 +898,13 @@ class Emitter(object):
         if not handle:
             raise EmitterError('tag handle must not be empty')
         if handle[0] != u'!' or handle[-1] != u'!':
-            raise EmitterError("tag handle must start and end with '!': %r" % (utf8(handle)))
+            raise EmitterError("tag handle must start and end with '!': %r" % (handle,))
         for ch in handle[1:-1]:
             if not (
                 u'0' <= ch <= u'9' or u'A' <= ch <= u'Z' or u'a' <= ch <= u'z' or ch in u'-_'
             ):
                 raise EmitterError(
-                    'invalid character %r in the tag handle: %r' % (utf8(ch), utf8(handle))
+                    'invalid character %r in the tag handle: %r' % (ch, handle)
                 )
         return handle
 
@@ -929,7 +929,7 @@ class Emitter(object):
                 if start < end:
                     chunks.append(prefix[start:end])
                 start = end = end + 1
-                data = utf8(ch)
+                data = ch
                 for ch in data:
                     chunks.append(u'%%%02X' % ord(ch))
         if start < end:
@@ -970,7 +970,7 @@ class Emitter(object):
                 if start < end:
                     chunks.append(suffix[start:end])
                 start = end = end + 1
-                data = utf8(ch)
+                data = ch
                 for ch in data:
                     chunks.append(u'%%%02X' % ord(ch))
         if start < end:
@@ -988,7 +988,7 @@ class Emitter(object):
         for ch in anchor:
             if not check_anchorname_char(ch):
                 raise EmitterError(
-                    'invalid character %r in the anchor: %r' % (utf8(ch), utf8(anchor))
+                    'invalid character %r in the anchor: %r' % (ch, anchor)
                 )
         return anchor
 
@@ -1413,7 +1413,7 @@ class Emitter(object):
         if text:
             if text[0] in u' \n\x85\u2028\u2029':
                 indent = self.best_sequence_indent
-                hints += text_type(indent)
+                hints += str(indent)
             elif self.root_context:
                 for end in ['\n---', '\n...']:
                     pos = 0

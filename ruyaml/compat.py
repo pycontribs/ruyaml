@@ -40,24 +40,6 @@ if False:  # MYPY
 _DEFAULT_YAML_VERSION = (1, 2)
 
 
-def utf8(s):
-    # type: (str) -> str
-    return s
-
-def to_str(s):
-    # type: (str) -> str
-    return s
-
-def to_unicode(s):
-    # type: (str) -> str
-    return s
-
-string_types = str
-integer_types = int
-class_types = type
-text_type = str
-binary_type = bytes
-
 MAXSIZE = sys.maxsize
 unichr = chr
 

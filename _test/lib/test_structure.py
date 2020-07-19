@@ -4,7 +4,6 @@ from __future__ import print_function
 import ruyaml as yaml
 import canonical  # NOQA
 import pprint
-from ruyaml.compat import text_type
 
 
 def _convert_structure(loader):
@@ -168,7 +167,7 @@ def _make_loader():
 
         def construct_mapping(self, node):
             pairs = self.construct_pairs(node)
-            pairs.sort(key=(lambda i: text_type(i)))
+            pairs.sort(key=(lambda i: str(i)))
             return pairs
 
         def construct_undefined(self, node):
@@ -187,7 +186,7 @@ def _make_canonical_loader():
 
         def construct_mapping(self, node):
             pairs = self.construct_pairs(node)
-            pairs.sort(key=(lambda i: text_type(i)))
+            pairs.sort(key=(lambda i: str(i)))
             return pairs
 
         def construct_undefined(self, node):

@@ -5,7 +5,7 @@ from __future__ import absolute_import, print_function
 import warnings
 
 from ruyaml.error import MarkedYAMLError, ReusedAnchorWarning
-from ruyaml.compat import utf8, nprint, nprintf  # NOQA
+from ruyaml.compat import nprint, nprintf  # NOQA
 
 from ruyaml.events import (
     StreamStartEvent,
@@ -113,7 +113,7 @@ class Composer(object):
             alias = event.anchor
             if alias not in self.anchors:
                 raise ComposerError(
-                    None, None, 'found undefined alias %r' % utf8(alias), event.start_mark
+                    None, None, 'found undefined alias %r' % (alias,), event.start_mark
                 )
             return self.anchors[alias]
         event = self.parser.peek_event()
@@ -122,7 +122,7 @@ class Composer(object):
             if anchor in self.anchors:
                 # raise ComposerError(
                 #     "found duplicate anchor %r; first occurrence"
-                #     % utf8(anchor), self.anchors[anchor].start_mark,
+                #     % anchor, self.anchors[anchor].start_mark,
                 #     "second occurrence", event.start_mark)
                 ws = (
                     '\nfound duplicate anchor {!r}\nfirst occurrence {}\nsecond occurrence '

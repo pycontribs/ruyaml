@@ -5,7 +5,6 @@ from __future__ import print_function, absolute_import, division
 
 from ruyaml.error import *  # NOQA
 from ruyaml.nodes import *  # NOQA
-from ruyaml.compat import text_type, binary_type, to_unicode
 from ruyaml.compat import ordereddict  # type: ignore
 from ruyaml.compat import nprint, nprintf  # NOQA
 from ruyaml.scalarstring import (
@@ -104,7 +103,7 @@ class BaseRepresenter(object):
                 elif None in self.yaml_representers:
                     node = self.yaml_representers[None](self, data)
                 else:
-                    node = ScalarNode(None, text_type(data))
+                    node = ScalarNode(None, str(data))
         # if alias_key is not None:
         #     self.represented_objects[alias_key] = node
         return node
@@ -229,7 +228,7 @@ class SafeRepresenter(BaseRepresenter):
         # so "data is ()" should not be used
         if data is None or (isinstance(data, tuple) and data == ()):
             return True
-        if isinstance(data, (binary_type, text_type, bool, int, float)):
+        if isinstance(data, (bytes, str, bool, int, float)):
             return True
         return False
 
@@ -262,7 +261,7 @@ class SafeRepresenter(BaseRepresenter):
 
     def represent_int(self, data):
         # type: (Any) -> Any
-        return self.represent_scalar(u'tag:yaml.org,2002:int', text_type(data))
+        return self.represent_scalar(u'tag:yaml.org,2002:int', str(data))
 
     inf_value = 1e300
     while repr(inf_value) != repr(inf_value * inf_value):
@@ -277,7 +276,7 @@ class SafeRepresenter(BaseRepresenter):
         elif data == -self.inf_value:
             value = u'-.inf'
         else:
-            value = to_unicode(repr(data)).lower()
+            value = repr(data).lower()
             if getattr(self.serializer, 'use_version', None) == (1, 1):
                 if u'.' not in value and u'e' in value:
                     # Note that in some cases `repr(data)` represents a float number
@@ -324,12 +323,12 @@ class SafeRepresenter(BaseRepresenter):
 
     def represent_date(self, data):
         # type: (Any) -> Any
-        value = to_unicode(data.isoformat())
+        value = data.isoformat()
         return self.represent_scalar(u'tag:yaml.org,2002:timestamp', value)
 
     def represent_datetime(self, data):
         # type: (Any) -> Any
-        value = to_unicode(data.isoformat(' '))
+        value = data.isoformat(' ')
         return self.represent_scalar(u'tag:yaml.org,2002:timestamp', value)
 
     def represent_yaml_object(self, tag, data, cls, flow_style=None):
@@ -722,7 +721,7 @@ class RoundTripRepresenter(SafeRepresenter):
                 )
 
         if value is None:
-            value = to_unicode(repr(data)).lower()
+            value = repr(data).lower()
         return self.represent_scalar(u'tag:yaml.org,2002:float', value, anchor=anchor)
 
     def represent_sequence(self, tag, sequence, flow_style=None):
@@ -1031,7 +1030,7 @@ class RoundTripRepresenter(SafeRepresenter):
             value = data.isoformat(inter)
         if _yaml['tz']:
             value += _yaml['tz']
-        return self.represent_scalar(u'tag:yaml.org,2002:timestamp', to_unicode(value))
+        return self.represent_scalar(u'tag:yaml.org,2002:timestamp', value)
 
     def represent_tagged_scalar(self, data):
         # type: (Any) -> Any
