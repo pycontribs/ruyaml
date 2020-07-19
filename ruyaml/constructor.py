@@ -12,21 +12,21 @@ import warnings
 
 # fmt: off
 from ruyaml.error import (MarkedYAMLError, MarkedYAMLFutureWarning,
-                               MantissaNoDotYAML1_1Warning)
+                          MantissaNoDotYAML1_1Warning)
 from ruyaml.nodes import *                               # NOQA
 from ruyaml.nodes import (SequenceNode, MappingNode, ScalarNode)
 from ruyaml.compat import (builtins_module,  # NOQA
-                                nprint, nprintf, version_tnf)
+                           nprint, nprintf, version_tnf)
 from ruyaml.compat import ordereddict, Hashable, MutableSequence  # type: ignore
 from ruyaml.compat import MutableMapping  # type: ignore
 
 from ruyaml.comments import *                               # NOQA
 from ruyaml.comments import (CommentedMap, CommentedOrderedMap, CommentedSet,
-                                  CommentedKeySeq, CommentedSeq, TaggedScalar,
-                                  CommentedKeyMap)
+                             CommentedKeySeq, CommentedSeq, TaggedScalar,
+                             CommentedKeyMap)
 from ruyaml.scalarstring import (SingleQuotedScalarString, DoubleQuotedScalarString,
-                                      LiteralScalarString, FoldedScalarString,
-                                      PlainScalarString, ScalarString,)
+                                 LiteralScalarString, FoldedScalarString,
+                                 PlainScalarString, ScalarString,)
 from ruyaml.scalarint import ScalarInt, BinaryInt, OctalInt, HexInt, HexCapsInt
 from ruyaml.scalarfloat import ScalarFloat
 from ruyaml.scalarbool import ScalarBoolean
@@ -526,7 +526,6 @@ class SafeConstructor(BaseConstructor):
             raise ConstructorError(
                 None, None, 'failed to decode base64 data: %s' % exc, node.start_mark
             )
-
 
     timestamp_regexp = RegExp(
         u"""^(?P<year>[0-9][0-9][0-9][0-9])
