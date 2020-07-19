@@ -60,7 +60,7 @@ class TestYAML:
         reason='ruyaml not available',
     )
     def test_dump_ruamel_ordereddict(self):
-        from ruamel.ordereddict import ordereddict
+        from collections import OrderedDict as ordereddict
         import ruyaml  # NOQA
 
         # OrderedDict mapped to !!omap

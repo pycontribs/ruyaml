@@ -50,7 +50,7 @@ of ``YAML`` before calling ``load()`` or ``dump()``
 Before 0.15.0::
 --- !python |
 from pathlib import Path
-from ruamel import yaml
+import ruyaml as yaml
 
 data = yaml.safe_load("abc: 1")
 out = Path('/tmp/out.yaml')
@@ -206,7 +206,7 @@ fixing your ``install_requires`` might not be so easy.
 
 Depending on your usage you might be able to "version" your usage to
 be compatible with both the old and the new. The following are some
-examples all assuming ``from ruamel import yaml`` somewhere at the top
+examples all assuming ``import ruyaml as yaml`` somewhere at the top
 of your file and some ``istream`` and ``ostream`` apropriately opened
 for reading resp.  writing.
 

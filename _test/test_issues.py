@@ -38,7 +38,7 @@ class TestIssues:
         program_src = r'''
         from __future__ import print_function
 
-        from ruamel import yaml
+        import ruyaml as yaml
 
         import re
 
@@ -410,8 +410,7 @@ class TestIssues:
         yaml.load('phone: 0123456789')
 
     def test_issue_232(self):
-        import ruyaml
-        from ruamel import yaml
+        import ruyaml as yaml
 
         with pytest.raises(ruyaml.parser.ParserError):
             yaml.safe_load(']')

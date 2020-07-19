@@ -10,6 +10,8 @@ import types
 import traceback
 from abc import abstractmethod
 
+from collections import OrderedDict as ordereddict  # noqa
+
 
 # fmt: off
 if False:  # MYPY
@@ -18,32 +20,6 @@ if False:  # MYPY
 # fmt: on
 
 _DEFAULT_YAML_VERSION = (1, 2)
-
-try:
-    from ruamel.ordereddict import ordereddict
-except:  # NOQA
-    try:
-        from collections import OrderedDict
-    except ImportError:
-        from ordereddict import OrderedDict  # type: ignore
-    # to get the right name import ... as ordereddict doesn't do that
-
-    class ordereddict(OrderedDict):  # type: ignore
-        if not hasattr(OrderedDict, 'insert'):
-
-            def insert(self, pos, key, value):
-                # type: (int, Any, Any) -> None
-                if pos >= len(self):
-                    self[key] = value
-                    return
-                od = ordereddict()
-                od.update(self)
-                for k in od:
-                    del self[k]
-                for index, old_key in enumerate(od):
-                    if pos == index:
-                        self[key] = value
-                    self[old_key] = od[old_key]
 
 
 def utf8(s):

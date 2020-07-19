@@ -142,7 +142,7 @@ class TestReplace:
     """inspired by issue 110 from sandres23"""
 
     def test_replace_preserved_scalar_string(self):
-        import ruamel
+        import ruyaml
 
         s = dedent("""\
         foo: |
@@ -162,7 +162,7 @@ class TestReplace:
         """)
 
     def test_replace_double_quoted_scalar_string(self):
-        import ruamel
+        import ruyaml
 
         s = dedent("""\
         foo: "foo foo bar foo"

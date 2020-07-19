@@ -6,7 +6,7 @@ from roundtrip import round_trip, round_trip_load, YAML
 
 
 def register_xxx(**kw):
-    from ruamel import yaml
+    import ruyaml as yaml
 
     class XXX(yaml.comments.CommentedMap):
         @staticmethod
