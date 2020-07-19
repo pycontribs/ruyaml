@@ -14,7 +14,7 @@ setup(
     extras_require={
         # ':platform_python_implementation=="CPython" and python_version<"3.9"': [
         #    'ruyaml.clib>=0.1.2',
-        #],
+        # ],
         'jinja2': ['ruyaml.jinja2>=0.2'], 'docs': ['ryd']},
     # NOQA
     # test='#include "ext/yaml.h"\n\nint main(int argc, char* argv[])\n{\nyaml_parser_t parser;\nparser = parser;  /* prevent warning */\nreturn 0;\n}\n',  # NOQA
