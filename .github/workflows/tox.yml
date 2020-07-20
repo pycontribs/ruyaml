@@ -27,9 +27,9 @@ jobs:
         include:
         - name: linters
           python-version: 3.6
-        - name: docs
-          python-version: 3.6
-          continue-on-error: true
+        # - name: docs
+        #   python-version: 3.6
+        #   continue-on-error: true
         - name: packaging
           python-version: 3.6
         - name: py36
