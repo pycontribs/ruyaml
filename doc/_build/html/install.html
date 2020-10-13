@@ -1,0 +1,145 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Installing &#8212; Python YAML package documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Basic Usage" href="basicuse.html" />
+    <link rel="prev" title="Overview" href="overview.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="basicuse.html" title="Basic Usage"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="overview.html" title="Overview"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Python YAML package documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="installing">
+<h1>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h1>
+<p>Make sure you have a recent version of <code class="docutils literal notranslate"><span class="pre">pip</span></code> and <code class="docutils literal notranslate"><span class="pre">setuptools</span></code>
+installed. The later needs environment marker support
+(<code class="docutils literal notranslate"><span class="pre">setuptools&gt;=20.6.8</span></code>) and that is e.g.  bundled with Python 3.4.6 but
+not with 3.4.4. It is probably best to do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">U</span> <span class="n">pip</span> <span class="n">setuptools</span> <span class="n">wheel</span>
+</pre></div>
+</div>
+<p>in your environment (<code class="docutils literal notranslate"><span class="pre">virtualenv</span></code>, (Docker) container, etc) before
+installing <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> itself should be installed from <a class="reference external" href="https://pypi.python.org/pypi">PyPI</a> using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">ruamel</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>If you want to process jinja2/YAML templates (which are not valid YAML
+with the default jinja2 markers), do <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span>
+<span class="pre">ruamel.yaml[jinja2]</span></code> (you might need to quote the last argument
+because of the <code class="docutils literal notranslate"><span class="pre">[]</span></code>)</p>
+<p>There also is a commandline utility <code class="docutils literal notranslate"><span class="pre">yaml</span></code> available after installing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">ruamel</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">cmd</span>
+</pre></div>
+</div>
+<p>that allows for round-trip testing/re-indenting and conversion of YAML
+files (JSON,INI,HTML tables)</p>
+<div class="section" id="optional-requirements">
+<h2>Optional requirements<a class="headerlink" href="#optional-requirements" title="Permalink to this headline">¶</a></h2>
+<p>If you have the the header files for your Python executables installed
+then you can use the (non-roundtrip), but faster, C loader and emitter.</p>
+<p>On Debian systems you should use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">python3</span><span class="o">-</span><span class="n">dev</span>
+</pre></div>
+</div>
+<p>you can leave out <code class="docutils literal notranslate"><span class="pre">python3-dev</span></code> if you don’t use python3</p>
+<p>For CentOS (7) based systems you should do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">yum</span> <span class="n">install</span> <span class="n">python</span><span class="o">-</span><span class="n">devel</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installing</a><ul>
+<li><a class="reference internal" href="#optional-requirements">Optional requirements</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="overview.html"
+                        title="previous chapter">Overview</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="basicuse.html"
+                        title="next chapter">Basic Usage</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/install.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="basicuse.html" title="Basic Usage"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="overview.html" title="Overview"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Python YAML package documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017-2019, Anthon van der Neut, Ruamel bvba.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  </body>
+</html>

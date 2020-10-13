@@ -1,0 +1,382 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Details &#8212; Python YAML package documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="example.html" />
+    <link rel="prev" title="Dumping Python classes" href="dumpcls.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="example.html" title="Examples"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="dumpcls.html" title="Dumping Python classes"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Python YAML package documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="details">
+<h1>Details<a class="headerlink" href="#details" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p>support for simple lists as mapping keys by transforming these to tuples</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">!!omap</span></code> generates ordereddict (C) on Python 2, collections.OrderedDict
+on Python 3, and <code class="docutils literal notranslate"><span class="pre">!!omap</span></code> is generated for these types.</p></li>
+<li><p>Tests whether the C yaml library is installed as well as the header
+files. That library  doesn’t generate CommentTokens, so it cannot be used to
+do round trip editing on comments. It can be used to speed up normal
+processing (so you don’t need to install <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> and <code class="docutils literal notranslate"><span class="pre">PyYaml</span></code>).
+See the section <em>Optional requirements</em>.</p></li>
+<li><p>Basic support for multiline strings with preserved newlines and
+chomping ( ‘<code class="docutils literal notranslate"><span class="pre">|</span></code>’, ‘<code class="docutils literal notranslate"><span class="pre">|+</span></code>’, ‘<code class="docutils literal notranslate"><span class="pre">|-</span></code>‘ ). As this subclasses the string type
+the information is lost on reassignment. (This might be changed
+in the future so that the preservation/folding/chomping is part of the
+parent container, like comments).</p></li>
+<li><p>anchors names that are hand-crafted (not of the form``idNNN``) are preserved</p></li>
+<li><p><a class="reference external" href="http://yaml.org/type/merge.html">merges</a> in dictionaries are preserved</p></li>
+<li><p>adding/replacing comments on block-style sequences and mappings
+with smart column positioning</p></li>
+<li><p>collection objects (when read in via RoundTripParser) have an <code class="docutils literal notranslate"><span class="pre">lc</span></code>
+property that contains line and column info <code class="docutils literal notranslate"><span class="pre">lc.line</span></code> and <code class="docutils literal notranslate"><span class="pre">lc.col</span></code>.
+Individual positions for mappings and sequences can also be retrieved
+(<code class="docutils literal notranslate"><span class="pre">lc.key('a')</span></code>, <code class="docutils literal notranslate"><span class="pre">lc.value('a')</span></code> resp. <code class="docutils literal notranslate"><span class="pre">lc.item(3)</span></code>)</p></li>
+<li><p>preservation of whitelines after block scalars. Contributed by Sam Thursfield.</p></li>
+</ul>
+<p><em>In the following examples it is assumed you have done something like:</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">ruamel.yaml</span> <span class="k">import</span> <span class="n">YAML</span>
+<span class="n">yaml</span> <span class="o">=</span> <span class="n">YAML</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><em>if not explicitly specified.</em></p>
+<div class="section" id="indentation-of-block-sequences">
+<h2>Indentation of block sequences<a class="headerlink" href="#indentation-of-block-sequences" title="Permalink to this headline">¶</a></h2>
+<p>Although ruamel.yaml doesn’t preserve individual indentations of block sequence
+items, it does properly dump:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">b</span><span class="p">:</span> <span class="mi">1</span>
+<span class="o">-</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>back to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">:</span>
+<span class="o">-</span>   <span class="n">b</span><span class="p">:</span> <span class="mi">1</span>
+<span class="o">-</span>   <span class="mi">2</span>
+</pre></div>
+</div>
+<p>if you specify <code class="docutils literal notranslate"><span class="pre">yaml.indent(sequence=4)</span></code> (indentation is counted to the
+beginning of the sequence element).</p>
+<p>PyYAML (and older versions of ruamel.yaml) gives you non-indented
+scalars (when specifying default_flow_style=False):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">:</span>
+<span class="o">-</span>   <span class="n">b</span><span class="p">:</span> <span class="mi">1</span>
+<span class="o">-</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>You can use <code class="docutils literal notranslate"><span class="pre">mapping=4</span></code> to also have the mappings values indented.
+The dump also observes an additional <code class="docutils literal notranslate"><span class="pre">offset=2</span></code> setting that
+can be used to push the dash inwards, <em>within the space defined by</em> <code class="docutils literal notranslate"><span class="pre">sequence</span></code>.</p>
+<p>The above example with the often seen <code class="docutils literal notranslate"><span class="pre">yaml.indent(mapping=2,</span> <span class="pre">sequence=4,</span> <span class="pre">offset=2)</span></code>
+indentation:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">:</span>
+  <span class="n">y</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">b</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="o">-</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>The defaults are as if you specified <code class="docutils literal notranslate"><span class="pre">yaml.indent(mapping=2,</span> <span class="pre">sequence=2,</span> <span class="pre">offset=0)</span></code>.</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">offset</span></code> equals <code class="docutils literal notranslate"><span class="pre">sequence</span></code>, there is not enough
+room for the dash and the space that has to follow it. In that case the
+element itself would normally be pushed to the next line (and older versions
+of ruamel.yaml did so). But this is
+prevented from happening. However the <code class="docutils literal notranslate"><span class="pre">indent</span></code> level is what is used
+for calculating the cumulative indent for deeper levels and specifying
+<code class="docutils literal notranslate"><span class="pre">sequence=3</span></code> resp. <code class="docutils literal notranslate"><span class="pre">offset=2</span></code>, might give correct, but counter
+intuitive results.</p>
+<p><strong>It is best to always have</strong> <code class="docutils literal notranslate"><span class="pre">sequence</span> <span class="pre">&gt;=</span> <span class="pre">offset</span> <span class="pre">+</span> <span class="pre">2</span></code>
+<strong>but this is not enforced</strong>. Depending on your structure, not following
+this advice <strong>might lead to invalid output</strong>.</p>
+<div class="section" id="inconsistently-indented-yaml">
+<h3>Inconsistently indented YAML<a class="headerlink" href="#inconsistently-indented-yaml" title="Permalink to this headline">¶</a></h3>
+<p>If your input is inconsistently indented, such indentation cannot be preserved.
+The first round-trip will make it consistent/normalize it. Here are some
+inconsistently indented YAML examples.</p>
+<p><code class="docutils literal notranslate"><span class="pre">b</span></code> indented 3, <code class="docutils literal notranslate"><span class="pre">c</span></code> indented 4 positions:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">a</span><span class="p">:</span>
+   <span class="n">b</span><span class="p">:</span>
+       <span class="n">c</span><span class="p">:</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>Top level sequence is indented 2 without offset, the other sequence 4 (with offset 2):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">key</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">foo</span>
+    <span class="o">-</span> <span class="n">bar</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="positioning-in-top-level-mappings-prefixing">
+<h2>Positioning ‘:’ in top level mappings, prefixing ‘:’<a class="headerlink" href="#positioning-in-top-level-mappings-prefixing" title="Permalink to this headline">¶</a></h2>
+<p>If you want your toplevel mappings to look like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">library</span> <span class="n">version</span><span class="p">:</span> <span class="mi">1</span>
+<span class="n">comment</span>        <span class="p">:</span> <span class="o">|</span>
+    <span class="n">this</span> <span class="ow">is</span> <span class="n">just</span> <span class="n">a</span> <span class="n">first</span> <span class="k">try</span>
+</pre></div>
+</div>
+<p>then set <code class="docutils literal notranslate"><span class="pre">yaml.top_level_colon_align</span> <span class="pre">=</span> <span class="pre">True</span></code>
+(and <code class="docutils literal notranslate"><span class="pre">yaml.indent</span> <span class="pre">=</span> <span class="pre">4</span></code>). <code class="docutils literal notranslate"><span class="pre">True</span></code> causes calculation based on the longest key,
+but you can also explicitly set a number.</p>
+<p>If you want an extra space between a mapping key and the colon specify
+<code class="docutils literal notranslate"><span class="pre">yaml.prefix_colon</span> <span class="pre">=</span> <span class="pre">'</span> <span class="pre">'</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">myurl</span><span class="o">/</span><span class="n">abc</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">xz</span> <span class="p">:</span> <span class="mi">23445</span>
+<span class="c1">#                         ^ extra space here</span>
+<span class="o">-</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">myurl</span><span class="o">/</span><span class="n">def</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">xz</span> <span class="p">:</span> <span class="mi">944</span>
+</pre></div>
+</div>
+<p>If you combine <code class="docutils literal notranslate"><span class="pre">prefix_colon</span></code> with <code class="docutils literal notranslate"><span class="pre">top_level_colon_align</span></code>, the
+top level mapping doesn’t get the extra prefix. If you want that
+anyway, specify <code class="docutils literal notranslate"><span class="pre">yaml.top_level_colon_align</span> <span class="pre">=</span> <span class="pre">12</span></code> where <code class="docutils literal notranslate"><span class="pre">12</span></code> has to be an
+integer that is one more than length of the widest key.</p>
+<div class="section" id="document-version-support">
+<h3>Document version support<a class="headerlink" href="#document-version-support" title="Permalink to this headline">¶</a></h3>
+<p>In YAML a document version can be explicitly set by using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">YAML</span> <span class="mf">1.</span><span class="n">x</span>
+</pre></div>
+</div>
+<p>before the document start (at the top or before a
+<code class="docutils literal notranslate"><span class="pre">---</span></code>). For <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code>  x has to be 1 or 2. If no explicit
+version is set <a class="reference external" href="http://www.yaml.org/spec/1.2/spec.html">version 1.2</a>
+is assumed (which has been released in 2009).</p>
+<p>The 1.2 version does <strong>not</strong> support:</p>
+<ul class="simple">
+<li><p>sexagesimals like <code class="docutils literal notranslate"><span class="pre">12:34:56</span></code></p></li>
+<li><p>octals that start with 0 only: like <code class="docutils literal notranslate"><span class="pre">012</span></code> for number 10 (<code class="docutils literal notranslate"><span class="pre">0o12</span></code> <strong>is</strong>
+supported by YAML 1.2)</p></li>
+<li><p>Unquoted Yes and On as alternatives for True and No and Off for False.</p></li>
+</ul>
+<p>If you cannot change your YAML files and you need them to load as 1.1
+you can load with <code class="docutils literal notranslate"><span class="pre">yaml.version</span> <span class="pre">=</span> <span class="pre">(1,</span> <span class="pre">1)</span></code>,
+or the equivalent (version can be a tuple, list or string)  <code class="docutils literal notranslate"><span class="pre">yaml.version</span> <span class="pre">=</span> <span class="pre">&quot;1.1&quot;</span></code></p>
+<p><em>If you cannot change your code, stick with ruamel.yaml==0.10.23 and let
+me know if it would help to be able to set an environment variable.</em></p>
+<p>This does not affect dump as ruamel.yaml never emitted sexagesimals, nor
+octal numbers, and emitted booleans always as true resp. false</p>
+</div>
+<div class="section" id="round-trip-including-comments">
+<h3>Round trip including comments<a class="headerlink" href="#round-trip-including-comments" title="Permalink to this headline">¶</a></h3>
+<p>The major motivation for this fork is the round-trip capability for
+comments. The integration of the sources was just an initial step to
+make this easier.</p>
+<div class="section" id="adding-replacing-comments">
+<h4>adding/replacing comments<a class="headerlink" href="#adding-replacing-comments" title="Permalink to this headline">¶</a></h4>
+<p>Starting with version 0.8, you can add/replace comments on block style
+collections (mappings/sequences resuting in Python dict/list). The basic
+for for this is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">ruamel.yaml</span>
+
+<span class="n">yaml</span> <span class="o">=</span> <span class="n">ruamel</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">YAML</span><span class="p">()</span>  <span class="c1"># defaults to round-trip</span>
+
+<span class="n">inp</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">abc:</span>
+<span class="s2">  - a     # comment 1</span>
+<span class="s2">xyz:</span>
+<span class="s2">  a: 1    # comment 2</span>
+<span class="s2">  b: 2</span>
+<span class="s2">  c: 3</span>
+<span class="s2">  d: 4</span>
+<span class="s2">  e: 5</span>
+<span class="s2">  f: 6 # comment 3</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;abc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;abc&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">yaml_add_eol_comment</span><span class="p">(</span><span class="s1">&#39;comment 4&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># takes column of comment 1</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;xyz&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">yaml_add_eol_comment</span><span class="p">(</span><span class="s1">&#39;comment 5&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">)</span>  <span class="c1"># takes column of comment 2</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;xyz&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">yaml_add_eol_comment</span><span class="p">(</span><span class="s1">&#39;comment 6&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">)</span>  <span class="c1"># takes column of comment 3</span>
+<span class="n">data</span><span class="p">[</span><span class="s1">&#39;xyz&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">yaml_add_eol_comment</span><span class="p">(</span><span class="s1">&#39;comment 7&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="n">column</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Resulting in:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">abc</span><span class="p">:</span>
+<span class="o">-</span> <span class="n">a</span>       <span class="c1"># comment 1</span>
+<span class="o">-</span> <span class="n">b</span>       <span class="c1"># comment 4</span>
+<span class="n">xyz</span><span class="p">:</span>
+  <span class="n">a</span><span class="p">:</span> <span class="mi">1</span>    <span class="c1"># comment 2</span>
+  <span class="n">b</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="n">c</span><span class="p">:</span> <span class="mi">3</span>    <span class="c1"># comment 5</span>
+  <span class="n">d</span><span class="p">:</span> <span class="mi">4</span>              <span class="c1"># comment 7</span>
+  <span class="n">e</span><span class="p">:</span> <span class="mi">5</span> <span class="c1"># comment 6</span>
+  <span class="n">f</span><span class="p">:</span> <span class="mi">6</span> <span class="c1"># comment 3</span>
+</pre></div>
+</div>
+<p>If the comment doesn’t start with ‘#’, this will be added. The key is
+the element index for list, the actual key for dictionaries. As can be seen
+from the example, the column to choose for a comment is derived
+from the previous, next or preceding comment column (picking the first one
+found).</p>
+</div>
+</div>
+<div class="section" id="config-file-formats">
+<h3>Config file formats<a class="headerlink" href="#config-file-formats" title="Permalink to this headline">¶</a></h3>
+<p>There are only a few configuration file formats that are easily
+readable and editable: JSON, INI/ConfigParser, YAML (XML is to cluttered
+to be called easily readable).</p>
+<p>Unfortunately <a class="reference external" href="http://www.json.org/">JSON</a> doesn’t support comments,
+and although there are some solutions with pre-processed filtering of
+comments, there are no libraries that support round trip updating of
+such commented files.</p>
+<p>INI files support comments, and the excellent <a class="reference external" href="http://www.voidspace.org.uk/python/configobj.html">ConfigObj</a> library by Foord
+and Larosa even supports round trip editing with comment preservation,
+nesting of sections and limited lists (within a value). Retrieval of
+particular value format is explicit (and extensible).</p>
+<p>YAML has basic mapping and sequence structures as well as support for
+ordered mappings and sets. It supports scalars various types
+including dates and datetimes (missing in JSON).
+YAML has comments, but these are normally thrown away.</p>
+<p>Block structured YAML is a clean and very human readable
+format. By extending the Python YAML parser to support round trip
+preservation of comments, it makes YAML a very good choice for
+configuration files that are human readable and editable while at
+the same time interpretable and modifiable by a program.</p>
+</div>
+<div class="section" id="extending">
+<h3>Extending<a class="headerlink" href="#extending" title="Permalink to this headline">¶</a></h3>
+<p>There are normally six files involved when extending the roundtrip
+capabilities: the reader, parser, composer and constructor to go from YAML to
+Python and the resolver, representer, serializer and emitter to go the other
+way.</p>
+<p>Extending involves keeping extra data around for the next process step,
+eventuallly resulting in a different Python object (subclass or alternative),
+that should behave like the original, but on the way from Python to YAML
+generates the original (or at least something much closer).</p>
+</div>
+<div class="section" id="smartening">
+<h3>Smartening<a class="headerlink" href="#smartening" title="Permalink to this headline">¶</a></h3>
+<p>When you use round-tripping, then the complex data you get are
+already subclasses of the built-in types. So you can patch
+in extra methods or override existing ones. Some methods are already
+included and you can do:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yaml_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">a:</span>
+<span class="s2">- b:</span>
+<span class="s2">  c: 42</span>
+<span class="s2">- d:</span>
+<span class="s2">    f: 196</span>
+<span class="s2">  e:</span>
+<span class="s2">    g: 3.14</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">yaml_str</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">mlget</span><span class="p">([</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">],</span> <span class="n">list_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">==</span> <span class="mi">196</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Details</a><ul>
+<li><a class="reference internal" href="#indentation-of-block-sequences">Indentation of block sequences</a><ul>
+<li><a class="reference internal" href="#inconsistently-indented-yaml">Inconsistently indented YAML</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#positioning-in-top-level-mappings-prefixing">Positioning ‘:’ in top level mappings, prefixing ‘:’</a><ul>
+<li><a class="reference internal" href="#document-version-support">Document version support</a></li>
+<li><a class="reference internal" href="#round-trip-including-comments">Round trip including comments</a><ul>
+<li><a class="reference internal" href="#adding-replacing-comments">adding/replacing comments</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#config-file-formats">Config file formats</a></li>
+<li><a class="reference internal" href="#extending">Extending</a></li>
+<li><a class="reference internal" href="#smartening">Smartening</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="dumpcls.html"
+                        title="previous chapter">Dumping Python classes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="example.html"
+                        title="next chapter">Examples</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/detail.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="example.html" title="Examples"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="dumpcls.html" title="Dumping Python classes"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Python YAML package documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017-2019, Anthon van der Neut, Ruamel bvba.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Differences with PyYAML &#8212; Python YAML package documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contributing" href="contributing.html" />
+    <link rel="prev" title="Departure from previous API" href="api.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="contributing.html" title="Contributing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="Departure from previous API"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Python YAML package documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="differences-with-pyyaml">
+<h1>Differences with PyYAML<a class="headerlink" href="#differences-with-pyyaml" title="Permalink to this headline">¶</a></h1>
+<pre class="literal-block"><em>If I have seen further, it is by standing on the shoulders of giants</em>.
+                                                  Isaac Newton (1676)</pre>
+<p><code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> is a derivative of Kirill Simonov’s <a class="reference external" href="https://bitbucket.org/xi/pyyaml">PyYAML 3.11</a> and would not exist without that
+excellent base to start from.</p>
+<p>The following a summary of the major differences with PyYAML 3.11</p>
+<div class="section" id="defaulting-to-yaml-1-2-support">
+<span id="yaml-1-2-support"></span><h2>Defaulting to YAML 1.2 support<a class="headerlink" href="#defaulting-to-yaml-1-2-support" title="Permalink to this headline">¶</a></h2>
+<p>PyYAML supports the <a class="reference external" href="http://www.yaml.org/spec/1.1/spec.html">YAML 1.1</a> standard, <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> supports
+<a class="reference external" href="http://www.yaml.org/spec/1.2/spec.html">YAML 1.2</a> as released in 2009.</p>
+<ul class="simple">
+<li><p>YAML 1.2 dropped support for several features unquoted <code class="docutils literal notranslate"><span class="pre">Yes</span></code>,
+<code class="docutils literal notranslate"><span class="pre">No</span></code>, <code class="docutils literal notranslate"><span class="pre">On</span></code>, <code class="docutils literal notranslate"><span class="pre">Off</span></code></p></li>
+<li><p>YAML 1.2 no longer accepts strings that start with a <code class="docutils literal notranslate"><span class="pre">0</span></code> and solely
+consist of number characters as octal, you need to specify such strings with
+<code class="docutils literal notranslate"><span class="pre">0o[0-7]+</span></code> (zero + lower-case o for octal + one or more octal characters).</p></li>
+<li><p>YAML 1.2 no longer supports <a class="reference external" href="https://en.wikipedia.org/wiki/Sexagesimal">sexagesimals</a>, so the string scalar
+<code class="docutils literal notranslate"><span class="pre">12:34:56</span></code> doesn’t need quoting.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">\/</span></code> escape for JSON compatibility</p></li>
+<li><p>correct parsing of floating point scalars with exponentials</p></li>
+</ul>
+<p>unless the YAML document is loaded with an explicit <code class="docutils literal notranslate"><span class="pre">version==1.1</span></code> or
+the document starts with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span> <span class="n">YAML</span> <span class="mf">1.1</span>
+</pre></div>
+</div>
+<p>, <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> will load the document as version 1.2.</p>
+</div>
+<div class="section" id="py2-py3-reintegration">
+<h2>PY2/PY3 reintegration<a class="headerlink" href="#py2-py3-reintegration" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> re-integrates the Python 2 and 3 sources, running on
+Python 2.7 (CPython, PyPy), 3.3, 3.4, 3.5 and 3.6 (support for 2.6 has been
+dropped mid 2016). It is more easy to extend and maintain as only a
+miniscule part of the code is Python version specific.</p>
+</div>
+<div class="section" id="fixes">
+<h2>Fixes<a class="headerlink" href="#fixes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> follows the <code class="docutils literal notranslate"><span class="pre">indent</span></code> keyword argument on scalars
+when dumping.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> allows <code class="docutils literal notranslate"><span class="pre">:</span></code> in plain scalars, as long as these are not
+followed by a space (as per the specification)</p></li>
+</ul>
+</div>
+<div class="section" id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> is tested using <a class="reference external" href="https://pypi.python.org/pypi/tox">tox</a> and <a class="reference external" href="http://pytest.org/latest/">py.test</a>. In addition to
+new tests, the original PyYAML
+test framework is called from within <code class="docutils literal notranslate"><span class="pre">tox</span></code> runs.</p>
+<p>Before versions are pushed to PyPI, <code class="docutils literal notranslate"><span class="pre">tox</span></code> is invoked, and has to pass, on all
+supported Python versions, on PyPI as well as flake8/pep8</p>
+</div>
+<div class="section" id="api">
+<h2>API<a class="headerlink" href="#api" title="Permalink to this headline">¶</a></h2>
+<p>Starting with 0.15 the API for using <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> has diverged allowing
+easier addition of new features.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Differences with PyYAML</a><ul>
+<li><a class="reference internal" href="#defaulting-to-yaml-1-2-support">Defaulting to YAML 1.2 support</a></li>
+<li><a class="reference internal" href="#py2-py3-reintegration">PY2/PY3 reintegration</a></li>
+<li><a class="reference internal" href="#fixes">Fixes</a></li>
+<li><a class="reference internal" href="#testing">Testing</a></li>
+<li><a class="reference internal" href="#api">API</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="api.html"
+                        title="previous chapter">Departure from previous API</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="contributing.html"
+                        title="next chapter">Contributing</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/pyyaml.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="contributing.html" title="Contributing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="api.html" title="Departure from previous API"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Python YAML package documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017-2019, Anthon van der Neut, Ruamel bvba.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  </body>
+</html>

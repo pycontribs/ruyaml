@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Overview &#8212; Python YAML package documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installing" href="install.html" />
+    <link rel="prev" title="ruamel.yaml" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="install.html" title="Installing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="ruamel.yaml"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Python YAML package documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">ruyaml</span></code> is a fork of <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code>, which is a YAML 1.2  loader/dumper package for Python. It is a
+derivative of Kirill Simonov’s <a class="reference external" href="https://bitbucket.org/xi/pyyaml">PyYAML 3.11</a>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> supports <a class="reference external" href="http://www.yaml.org/spec/1.2/spec.html">YAML 1.2</a> and has  round-trip loaders and dumpers
+that preserves, among others:</p>
+<ul class="simple">
+<li><p>comments</p></li>
+<li><p>block style and key ordering are kept, so you can diff the round-tripped
+source</p></li>
+<li><p>flow style sequences ( ‘a: b, c, d’) (based on request and test by
+Anthony Sottile)</p></li>
+<li><p>anchor names that are hand-crafted (i.e. not of the form``idNNN``)</p></li>
+<li><p><a class="reference external" href="http://yaml.org/type/merge.html">merges</a> in dictionaries are preserved</p></li>
+</ul>
+<p>This preservation is normally not broken unless you severely alter
+the structure of a component (delete a key in a dict, remove list entries).
+Reassigning values or replacing list items, etc., is fine.</p>
+<p>For the specific 1.2 differences see <a class="reference internal" href="pyyaml.html#yaml-1-2-support"><span class="std std-ref">Defaulting to YAML 1.2 support</span></a></p>
+<p>Although individual indentation of lines is not preserved, you can specify
+separate indentation levels for mappings and sequences (counting for sequences
+does <strong>not</strong> include the dash for a sequence element) and specific offset of
+block sequence dashes within that indentation.</p>
+<p>Although <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> still allows most of the PyYAML way of doing
+things, adding features required a different API then the transient
+nature of PyYAML’s <code class="docutils literal notranslate"><span class="pre">Loader</span></code> and <code class="docutils literal notranslate"><span class="pre">Dumper</span></code>.  Starting with
+<code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> version 0.15.0 this new API gets introduced. Old ways
+that get in the way will be removed, after first generating warnings
+on use, then generating an error. In general a warning in version 0.N.x will become an
+error in 0.N+1.0</p>
+<p>Many of the bugs filed against PyYAML, but that were never
+acted upon, have been fixed in <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">ruamel.yaml</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="install.html"
+                        title="next chapter">Installing</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/overview.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="install.html" title="Installing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="ruamel.yaml"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Python YAML package documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017-2019, Anthon van der Neut, Ruamel bvba.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  </body>
+</html>

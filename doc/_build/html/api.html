@@ -1,0 +1,380 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Departure from previous API &#8212; Python YAML package documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Differences with PyYAML" href="pyyaml.html" />
+    <link rel="prev" title="Examples" href="example.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="pyyaml.html" title="Differences with PyYAML"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="example.html" title="Examples"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Python YAML package documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="departure-from-previous-api">
+<h1>Departure from previous API<a class="headerlink" href="#departure-from-previous-api" title="Permalink to this headline">¶</a></h1>
+<p>With version 0.15.0 <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> starts to depart from the previous (PyYAML) way
+of loading and dumping.  During a transition period the original
+<code class="docutils literal notranslate"><span class="pre">load()</span></code> and <code class="docutils literal notranslate"><span class="pre">dump()</span></code> in its various formats will still be supported,
+but this is not guaranteed to be so with the transition to 1.0.</p>
+<p>At the latest with 1.0, but possible earlier transition error and
+warning messages will be issued, so any packages depending on
+ruamel.yaml should pin the version with which they are testing.</p>
+<p>Up to 0.15.0, the loaders (<code class="docutils literal notranslate"><span class="pre">load()</span></code>, <code class="docutils literal notranslate"><span class="pre">safe_load()</span></code>,
+<code class="docutils literal notranslate"><span class="pre">round_trip_load()</span></code>, <code class="docutils literal notranslate"><span class="pre">load_all</span></code>, etc.) took, apart from the input
+stream, a <code class="docutils literal notranslate"><span class="pre">version</span></code> argument to allow downgrading to YAML 1.1,
+sometimes needed for
+documents without directive. When round-tripping, there was an option to
+preserve quotes.</p>
+<p>Up to 0.15.0, the dumpers (<code class="docutils literal notranslate"><span class="pre">dump()</span></code>, <code class="docutils literal notranslate"><span class="pre">safe_dump</span></code>,
+<code class="docutils literal notranslate"><span class="pre">round_trip_dump()</span></code>, <code class="docutils literal notranslate"><span class="pre">dump_all()</span></code>, etc.) had a plethora of
+arguments, some inherited from <code class="docutils literal notranslate"><span class="pre">PyYAML</span></code>, some added in
+<code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code>. The only required argument is the <code class="docutils literal notranslate"><span class="pre">data</span></code> to be
+dumped. If the stream argument is not provided to the dumper, then a
+string representation is build up in memory and returned to the
+caller.</p>
+<p>Starting with 0.15.0 <code class="docutils literal notranslate"><span class="pre">load()</span></code> and <code class="docutils literal notranslate"><span class="pre">dump()</span></code> are methods on a
+<code class="docutils literal notranslate"><span class="pre">YAML</span></code> instance and only take the stream,
+resp. the data and stream argument. All other parameters are set on the instance
+of <code class="docutils literal notranslate"><span class="pre">YAML</span></code> before calling <code class="docutils literal notranslate"><span class="pre">load()</span></code> or <code class="docutils literal notranslate"><span class="pre">dump()</span></code></p>
+<p>Before 0.15.0:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">ruamel</span> <span class="k">import</span> <span class="n">yaml</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="s2">&quot;abc: 1&quot;</span><span class="p">)</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/tmp/out.yaml&#39;</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">out</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+    <span class="n">yaml</span><span class="o">.</span><span class="n">safe_dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">default_flow_style</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>after:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">ruamel.yaml</span> <span class="k">import</span> <span class="n">YAML</span>
+
+<span class="n">yaml</span> <span class="o">=</span> <span class="n">YAML</span><span class="p">(</span><span class="n">typ</span><span class="o">=</span><span class="s1">&#39;safe&#39;</span><span class="p">)</span>
+<span class="n">yaml</span><span class="o">.</span><span class="n">default_flow_style</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;abc: 1&quot;</span><span class="p">)</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/tmp/out.yaml&#39;</span><span class="p">)</span>
+<span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you previously used a keyword argument <code class="docutils literal notranslate"><span class="pre">explicit_start=True</span></code> you
+now do <code class="docutils literal notranslate"><span class="pre">yaml.explicit_start</span> <span class="pre">=</span> <span class="pre">True</span></code> before calling <code class="docutils literal notranslate"><span class="pre">dump()</span></code>. The
+<code class="docutils literal notranslate"><span class="pre">Loader</span></code> and <code class="docutils literal notranslate"><span class="pre">Dumper</span></code> keyword arguments are not supported that
+way. You can provide the <code class="docutils literal notranslate"><span class="pre">typ</span></code> keyword to <code class="docutils literal notranslate"><span class="pre">rt</span></code>  (default),
+<code class="docutils literal notranslate"><span class="pre">safe</span></code>, <code class="docutils literal notranslate"><span class="pre">unsafe</span></code> or <code class="docutils literal notranslate"><span class="pre">base</span></code> (for round-trip load/dump, safe_load/dump,
+load/dump resp. using the BaseLoader / BaseDumper. More fine-control
+is possible by setting the attributes <code class="docutils literal notranslate"><span class="pre">.Parser</span></code>, <code class="docutils literal notranslate"><span class="pre">.Constructor</span></code>,
+<code class="docutils literal notranslate"><span class="pre">.Emitter</span></code>, etc., to the class of the type to create for that stage
+(typically a subclass of an existing class implementing that).</p>
+<p>The default loader (<code class="docutils literal notranslate"><span class="pre">typ='rt'</span></code>) is a direct derivative of the safe loader, without the
+methods to construct arbitrary Python objects that make the <code class="docutils literal notranslate"><span class="pre">unsafe</span></code> loader
+unsafe, but with the changes needed for round-trip preservation of comments,
+etc.. For trusted Python classes a constructor can of course be added to the round-trip
+or safe-loader, but this has to be done explicitly (<code class="docutils literal notranslate"><span class="pre">add_constructor</span></code>).</p>
+<p>All data is dumped (not just for round-trip-mode) with <code class="docutils literal notranslate"><span class="pre">.allow_unicode</span>
+<span class="pre">=</span> <span class="pre">True</span></code></p>
+<p>You can of course have multiple YAML instances active at the same
+time, with different load and/or dump behaviour.</p>
+<p>Initially only the typical operations are supported, but in principle
+all functionality of the old interface will be available via
+<code class="docutils literal notranslate"><span class="pre">YAML</span></code> instances (if you are using something that isn’t let me know).</p>
+<p>If a parse or dump fails, and throws and exception, the state of the
+<code class="docutils literal notranslate"><span class="pre">YAML()</span></code> instance is not guaranteed to be able to handle further
+processing. You should, at that point to recreate the YAML instance before
+proceeding.</p>
+<div class="section" id="loading">
+<h2>Loading<a class="headerlink" href="#loading" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="duplicate-keys">
+<h3>Duplicate keys<a class="headerlink" href="#duplicate-keys" title="Permalink to this headline">¶</a></h3>
+<p>In JSON mapping keys should be unique, in YAML they must be unique.
+PyYAML never enforced this although the YAML 1.1 specification already
+required this.</p>
+<p>In the new API (starting 0.15.1) duplicate keys in mappings are no longer allowed by
+default. To allow duplicate keys in mappings:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yaml</span> <span class="o">=</span> <span class="n">ruamel</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">YAML</span><span class="p">()</span>
+<span class="n">yaml</span><span class="o">.</span><span class="n">allow_duplicate_keys</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In the old API this is a warning starting with 0.15.2 and an error in
+0.16.0.</p>
+<p>When a duplicate key is found it and its value are discarded, as should be done
+according to the <a class="reference external" href="http://yaml.org/spec/1.1/#id932806">YAML 1.1 specification</a>.</p>
+</div>
+</div>
+<div class="section" id="dumping-a-multi-documents-yaml-stream">
+<h2>Dumping a multi-documents YAML stream<a class="headerlink" href="#dumping-a-multi-documents-yaml-stream" title="Permalink to this headline">¶</a></h2>
+<p>The “normal” <code class="docutils literal notranslate"><span class="pre">dump_all</span></code> expected as first element a list of documents, or
+something else the internals of the method can iterate over. To read
+and write a multi-document you would either make a <code class="docutils literal notranslate"><span class="pre">list</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yaml</span> <span class="o">=</span> <span class="n">YAML</span><span class="p">()</span>
+<span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">load_all</span><span class="p">(</span><span class="n">in_path</span><span class="p">))</span>
+<span class="c1"># do something on data[0], data[1], etc.</span>
+<span class="n">yaml</span><span class="o">.</span><span class="n">dump_all</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">out_path</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or create some function/object that would yield the <code class="docutils literal notranslate"><span class="pre">data</span></code> values.</p>
+<p>What you now can do is create <code class="docutils literal notranslate"><span class="pre">YAML()</span></code> as an context manager. This
+works for output (dumping) only, requires you to specify the output
+(file, buffer, <code class="docutils literal notranslate"><span class="pre">Path</span></code>) at creation time, and doesn’t support
+<code class="docutils literal notranslate"><span class="pre">transform</span></code> (yet).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">YAML</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml</span><span class="p">:</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">explicit_start</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load_all</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">multi_document_filename</span><span class="p">)):</span>
+            <span class="c1"># do something on data</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Within the context manager, you cannot use the <code class="docutils literal notranslate"><span class="pre">dump()</span></code> with a
+second (stream) argument, nor can you use <code class="docutils literal notranslate"><span class="pre">dump_all()</span></code>. The
+<code class="docutils literal notranslate"><span class="pre">dump()</span></code> within the context of the <code class="docutils literal notranslate"><span class="pre">YAML()</span></code> automatically creates
+multi-document if called more than once.</p>
+<p>To combine multiple YAML documents from multiple files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">list_of_filenames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x.yaml&#39;</span><span class="p">,</span> <span class="s1">&#39;y.yaml&#39;</span><span class="p">,</span> <span class="p">]</span>
+<span class="k">with</span> <span class="n">YAML</span><span class="p">(</span><span class="n">output</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span> <span class="k">as</span> <span class="n">yaml</span><span class="p">:</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">explicit_start</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">list_of_filename</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+                <span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fp</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The output will be a valid, uniformly indented YAML file. Doing
+<code class="docutils literal notranslate"><span class="pre">cat</span> <span class="pre">{x,y}.yaml</span></code> might result in a single document if there is not
+document start marker at the beginning of <code class="docutils literal notranslate"><span class="pre">y.yaml</span></code></p>
+</div>
+<div class="section" id="dumping">
+<h2>Dumping<a class="headerlink" href="#dumping" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="controls">
+<h3>Controls<a class="headerlink" href="#controls" title="Permalink to this headline">¶</a></h3>
+<p>On your <code class="docutils literal notranslate"><span class="pre">YAML()</span></code> instance you can set attributes e.g with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yaml</span> <span class="o">=</span> <span class="n">YAML</span><span class="p">(</span><span class="n">typ</span><span class="o">=</span><span class="s1">&#39;safe&#39;</span><span class="p">,</span> <span class="n">pure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">yaml</span><span class="o">.</span><span class="n">allow_unicode</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>available attributes include:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">unicode_supplementary</span></code></dt><dd><p>Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code> if Python’s Unicode size is larger than 2 bytes. Set to <code class="docutils literal notranslate"><span class="pre">False</span></code> to
+enforce output of the form <code class="docutils literal notranslate"><span class="pre">\U0001f601</span></code> (ignored if <code class="docutils literal notranslate"><span class="pre">allow_unicode</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>)</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="transparent-usage-of-new-and-old-api">
+<h2>Transparent usage of new and old API<a class="headerlink" href="#transparent-usage-of-new-and-old-api" title="Permalink to this headline">¶</a></h2>
+<p>If you have multiple packages depending on <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code>, or install
+your utility together with other packages not under your control, then
+fixing your <code class="docutils literal notranslate"><span class="pre">install_requires</span></code> might not be so easy.</p>
+<p>Depending on your usage you might be able to “version” your usage to
+be compatible with both the old and the new. The following are some
+examples all assuming <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">ruamel</span> <span class="pre">import</span> <span class="pre">yaml</span></code> somewhere at the top
+of your file and some <code class="docutils literal notranslate"><span class="pre">istream</span></code> and <code class="docutils literal notranslate"><span class="pre">ostream</span></code> apropriately opened
+for reading resp.  writing.</p>
+<p>Loading and dumping using the <code class="docutils literal notranslate"><span class="pre">SafeLoader</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">ruamel</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">15</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">istream</span><span class="p">)</span>
+    <span class="n">yaml</span><span class="o">.</span><span class="n">safe_dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ostream</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">yml</span> <span class="o">=</span> <span class="n">ruamel</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">YAML</span><span class="p">(</span><span class="n">typ</span><span class="o">=</span><span class="s1">&#39;safe&#39;</span><span class="p">,</span> <span class="n">pure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># &#39;safe&#39; load and dump</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">yml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">istream</span><span class="p">)</span>
+    <span class="n">yml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ostream</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Loading with the <code class="docutils literal notranslate"><span class="pre">CSafeLoader</span></code>, dumping with
+<code class="docutils literal notranslate"><span class="pre">RoundTripLoader</span></code>. You need two <code class="docutils literal notranslate"><span class="pre">YAML</span></code> instances, but each of them
+can be re-used:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">ruamel</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">15</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">istream</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">CSafeLoader</span><span class="p">)</span>
+    <span class="n">yaml</span><span class="o">.</span><span class="n">round_trip_dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ostream</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">explicit_start</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">yml</span> <span class="o">=</span> <span class="n">ruamel</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">YAML</span><span class="p">(</span><span class="n">typ</span><span class="o">=</span><span class="s1">&#39;safe&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">yml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">istream</span><span class="p">)</span>
+    <span class="n">ymlo</span> <span class="o">=</span> <span class="n">ruamel</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">YAML</span><span class="p">()</span>   <span class="c1"># or yaml.YAML(typ=&#39;rt&#39;)</span>
+    <span class="n">ymlo</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">ymlo</span><span class="o">.</span><span class="n">explicit_start</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">ymlo</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ostream</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Loading and dumping from  <code class="docutils literal notranslate"><span class="pre">pathlib.Path</span></code> instances using the
+round-trip-loader:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># in myyaml.py</span>
+<span class="k">if</span> <span class="n">ruamel</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">15</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">MyYAML</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">YAML</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">YAML</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">preserve_quotes</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">mapping</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sequence</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1"># in your code</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">myyaml</span> <span class="k">import</span> <span class="n">MyYAML</span>
+<span class="k">except</span> <span class="p">(</span><span class="n">ModuleNotFoundError</span><span class="p">,</span> <span class="ne">ImportError</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">ruamel</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">15</span><span class="p">):</span>
+        <span class="k">raise</span>
+
+<span class="c1"># some pathlib.Path</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="n">inf</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/tmp/in.yaml&#39;</span><span class="p">)</span>
+<span class="n">outf</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;/tmp/out.yaml&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">ruamel</span><span class="o">.</span><span class="n">yaml</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">15</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">inf</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">as</span> <span class="n">ifp</span><span class="p">:</span>
+         <span class="n">data</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">round_trip_load</span><span class="p">(</span><span class="n">ifp</span><span class="p">,</span> <span class="n">preserve_quotes</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">outf</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">ofp</span><span class="p">:</span>
+         <span class="n">yaml</span><span class="o">.</span><span class="n">round_trip_dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ofp</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">block_seq_indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">yml</span> <span class="o">=</span> <span class="n">MyYAML</span><span class="p">()</span>
+    <span class="c1"># no need for with statement when using pathlib.Path instances</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">yml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+    <span class="n">yml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">outf</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="reason-for-api-change">
+<h1>Reason for API change<a class="headerlink" href="#reason-for-api-change" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> inherited the way of doing things from <code class="docutils literal notranslate"><span class="pre">PyYAML</span></code>. In
+particular when calling the function <code class="docutils literal notranslate"><span class="pre">load()</span></code> or <code class="docutils literal notranslate"><span class="pre">dump()</span></code>
+temporary instances of  <code class="docutils literal notranslate"><span class="pre">Loader()</span></code> resp. <code class="docutils literal notranslate"><span class="pre">Dumper()</span></code>  were
+created that were discarded on termination of the function.</p>
+<p>This way of doing things leads to several problems:</p>
+<ul>
+<li><p>it is virtually impossible to return information to the caller apart from the
+constructed data structure. E.g. if you would get a YAML document
+version number from a directive, there is no way to let the caller
+know apart from handing back special data structures. The same
+problem exists when trying to do on the fly
+analysis of a document for indentation width.</p></li>
+<li><p>these instances were composites of the various load/dump steps and
+if you wanted to enhance one of the steps, you needed e.g. subclass
+the emitter and make a new composite (dumper) as well, providing all
+of the parameters (i.e. copy paste)</p>
+<p>Alternatives, like making a class that returned a <code class="docutils literal notranslate"><span class="pre">Dumper</span></code> when
+called and sets attributes before doing so, is cumbersome for
+day-to-day use.</p>
+</li>
+<li><p>many routines (like <code class="docutils literal notranslate"><span class="pre">add_representer()</span></code>) have a direct global
+impact on all of the following calls to <code class="docutils literal notranslate"><span class="pre">dump()</span></code> and those are
+difficult if not impossible to turn back. This forces the need to
+subclass <code class="docutils literal notranslate"><span class="pre">Loaders</span></code> and <code class="docutils literal notranslate"><span class="pre">Dumpers</span></code>, a long time problem in PyYAML
+as some attributes were not <code class="docutils literal notranslate"><span class="pre">deep_copied</span></code> although a bug-report
+(and fix) had been available a long time.</p></li>
+<li><p>If you want to set an attribute, e.g. to control whether literal
+block style scalars are allowed to have trailing spaces on a line
+instead of being dumped as double quoted scalars, you have to change
+the <code class="docutils literal notranslate"><span class="pre">dump()</span></code> family of routines, all of the <code class="docutils literal notranslate"><span class="pre">Dumpers()</span></code> as well
+as the actual functionality change in <code class="docutils literal notranslate"><span class="pre">emitter.Emitter()</span></code>. The
+functionality change takes changing 4 (four!) lines in one file, and being able
+to enable that another 50+ line changes (non-contiguous) in 3 more files resulting
+in diff that is far over 200 lines long.</p></li>
+<li><p>replacing libyaml with something that doesn’t both support <code class="docutils literal notranslate"><span class="pre">0o52</span></code>
+and <code class="docutils literal notranslate"><span class="pre">052</span></code> for the integer <code class="docutils literal notranslate"><span class="pre">42</span></code> (instead of <code class="docutils literal notranslate"><span class="pre">52</span></code> as per YAML 1.2)
+is difficult</p></li>
+</ul>
+<p>With <code class="docutils literal notranslate"><span class="pre">ruamel.yaml&gt;=0.15.0</span></code> the various steps “know” about the
+<code class="docutils literal notranslate"><span class="pre">YAML</span></code> instance and can pick up setting, as well as report back
+information via that instance. Representers, etc., are added to a
+reusable instance and different YAML instances can co-exists.</p>
+<p>This change eases development and helps prevent regressions.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Departure from previous API</a><ul>
+<li><a class="reference internal" href="#loading">Loading</a><ul>
+<li><a class="reference internal" href="#duplicate-keys">Duplicate keys</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#dumping-a-multi-documents-yaml-stream">Dumping a multi-documents YAML stream</a></li>
+<li><a class="reference internal" href="#dumping">Dumping</a><ul>
+<li><a class="reference internal" href="#controls">Controls</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#transparent-usage-of-new-and-old-api">Transparent usage of new and old API</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#reason-for-api-change">Reason for API change</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="example.html"
+                        title="previous chapter">Examples</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="pyyaml.html"
+                        title="next chapter">Differences with PyYAML</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/api.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="pyyaml.html" title="Differences with PyYAML"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="example.html" title="Examples"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Python YAML package documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017-2019, Anthon van der Neut, Ruamel bvba.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  </body>
+</html>

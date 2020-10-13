@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>ruamel.yaml &#8212; Python YAML package documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Overview" href="overview.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="overview.html" title="Overview"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Python YAML package documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="ruamel-yaml">
+<h1>ruamel.yaml<a class="headerlink" href="#ruamel-yaml" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://github.com/pycontribs/ruyaml/">Github</a> |
+<a class="reference external" href="https://pypi.python.org/pypi/ruyaml/">PyPI</a></p>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="install.html#optional-requirements">Optional requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="basicuse.html">Basic Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="basicuse.html#more-examples">More examples</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="dumpcls.html">Dumping Python classes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="detail.html">Details</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="detail.html#indentation-of-block-sequences">Indentation of block sequences</a></li>
+<li class="toctree-l2"><a class="reference internal" href="detail.html#positioning-in-top-level-mappings-prefixing">Positioning ‘:’ in top level mappings, prefixing ‘:’</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Departure from previous API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#loading">Loading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#dumping-a-multi-documents-yaml-stream">Dumping a multi-documents YAML stream</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#dumping">Dumping</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#transparent-usage-of-new-and-old-api">Transparent usage of new and old API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html#reason-for-api-change">Reason for API change</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyyaml.html">Differences with PyYAML</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyyaml.html#defaulting-to-yaml-1-2-support">Defaulting to YAML 1.2 support</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyyaml.html#py2-py3-reintegration">PY2/PY3 reintegration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyyaml.html#fixes">Fixes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyyaml.html#testing">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyyaml.html#api">API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#code">Code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#generated-files">Generated files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contributing.html#vulnerabilities">Vulnerabilities</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<a class="reference external image-reference" href="https://yaml.readthedocs.org/en/stable"><img alt="https://readthedocs.org/projects/ruyaml/badge/?version=stable" src="https://readthedocs.org/projects/ruyaml/badge/?version=stable" /></a>
+<a class="reference external image-reference" href="https://opensource.org/licenses/MIT"><img alt="https://raw.githubusercontent.com/pycontribs/ruyaml/master/doc/_static/license.svg" src="https://raw.githubusercontent.com/pycontribs/ruyaml/master/doc/_static/license.svg" /></a>
+<a class="reference external image-reference" href="https://pypi.org/project/ruyaml/"><img alt="https://badge.fury.io/py/ruyaml.svg" src="https://badge.fury.io/py/ruyaml.svg" /></a>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Next topic</h4>
+  <p class="topless"><a href="overview.html"
+                        title="next chapter">Overview</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="overview.html" title="Overview"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Python YAML package documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017-2019, Anthon van der Neut, Ruamel bvba.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  </body>
+</html>

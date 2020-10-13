@@ -1,0 +1,212 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Contributing &#8212; Python YAML package documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Differences with PyYAML" href="pyyaml.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="pyyaml.html" title="Differences with PyYAML"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Python YAML package documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="contributing">
+<h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+<p>Any contribution to <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> is welcome, be it in the form of an
+email, a question on stackoverflow (I’ll get notified of that when you tag it
+with <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code>), an issue or pull-request (PR) on bitbucket.</p>
+<p>Contributing via stackoverflow is, for most, easiest to make. When I answer your
+question there and the answer warrants an extension to the documentation or
+code, I will include it in a documnetation update and/or future (normally the
+next) release of <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code>.</p>
+<p>Please don’t post support questions as an issue on Bitbucket.</p>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<p>The documentation for <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> is in YAML, more specifically in <a class="reference external" href="https://pypi.python.org/pypi/ryd">ryd</a> ( /rɑɪt/, pronounced like the verb “write”
+). This is reStructuredText mixed with Python, each in separate YAML documents
+within a single file. If you know a bit of YAML, Python and reStructuredText it
+will be clear how that works.</p>
+<p>If you want to contribute to the documentation, you can sent me a clear
+description of the needed changes, e.g. as a unified diff. If the changes
+encompass multiple documents in a <code class="docutils literal notranslate"><span class="pre">.ryd</span></code> file, it is best to install <code class="docutils literal notranslate"><span class="pre">ryd</span></code>
+(use a virtualenv!), clone the <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> repository on Bitbucket, edit
+documentation, run <code class="docutils literal notranslate"><span class="pre">ryd</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ryd</span> <span class="o">--</span><span class="n">pdf</span> <span class="s1">&#39;**/*.ryd&#39;</span>
+</pre></div>
+</div>
+<p>(quoting might not be necessary depending on your shell), and once the PDF(s)
+look acceptable, submit a pull-request.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ryd</span></code> will check your file for single backquotes (my most common mistake going
+back and forth between reStructuredText and other mark up).</p>
+<p>If you contribute example programs, note that <code class="docutils literal notranslate"><span class="pre">ryd</span></code> will automatically run you
+program (so it should be correct) and can include the output of the program in
+the resulting <code class="docutils literal notranslate"><span class="pre">.rst</span></code> (and PDF) file.</p>
+</div>
+<div class="section" id="code">
+<h2>Code<a class="headerlink" href="#code" title="Permalink to this headline">¶</a></h2>
+<p>Code changes are welcome as well, but anything beyond a minor change should be
+tested (<code class="docutils literal notranslate"><span class="pre">tox</span></code>/<code class="docutils literal notranslate"><span class="pre">pytest</span></code>), checked for typing conformance (<code class="docutils literal notranslate"><span class="pre">mypy</span></code>) and pass
+pep8 conformance (<code class="docutils literal notranslate"><span class="pre">flake8</span></code>).</p>
+<p>In my experience it is best to use two <code class="docutils literal notranslate"><span class="pre">virtualenv</span></code> environments, one with the
+latest Python from the 2.7 series, the other with 3.5 or 3.6. In the
+site-packages directory of each virtualenv make a soft link to the ruamel
+directory of your (cloned and checked out) copy of the repository. Do not under
+any circumstances run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code> or <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">-e</span> <span class="pre">.</span></code> it will
+not work (at least not until these commands are fixed to support packages with
+namespaces).</p>
+<p>You can install <code class="docutils literal notranslate"><span class="pre">tox</span></code>, <code class="docutils literal notranslate"><span class="pre">pytest</span></code>, <code class="docutils literal notranslate"><span class="pre">mypy</span></code> and <code class="docutils literal notranslate"><span class="pre">flake8</span></code> in the Python3
+<code class="docutils literal notranslate"><span class="pre">virtualenv</span></code>, or in a <code class="docutils literal notranslate"><span class="pre">virtualenv</span></code>  of their own. If all of these commands
+pass without warning/error, you can create your pull-request.</p>
+<div class="section" id="flake">
+<h3>Flake<a class="headerlink" href="#flake" title="Permalink to this headline">¶</a></h3>
+<p>My <code class="docutils literal notranslate"><span class="pre">~/.config/flake8</span></code> file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">flake8</span><span class="p">]</span>
+<span class="n">show</span><span class="o">-</span><span class="n">source</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="nb">max</span><span class="o">-</span><span class="n">line</span><span class="o">-</span><span class="n">length</span> <span class="o">=</span> <span class="mi">95</span>
+<span class="n">ignore</span> <span class="o">=</span> <span class="n">F405</span>
+</pre></div>
+</div>
+<p>The suppress of F405 is necessary to allow <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">xxx</span> <span class="pre">import</span> <span class="pre">*</span></code>, which I have
+not removed in all places (yet).</p>
+<p>First make sure your checked out source passes <code class="docutils literal notranslate"><span class="pre">flake8</span></code> without test (it should).
+Then make your changes pass without any warnings/errors.</p>
+</div>
+<div class="section" id="tox-pytest">
+<h3>Tox/pytest<a class="headerlink" href="#tox-pytest" title="Permalink to this headline">¶</a></h3>
+<p>Whether you add something or fix some bug with your code changes, first add one
+or more tests that fail in the unmodified source when running <code class="docutils literal notranslate"><span class="pre">tox</span></code>. Once that
+is in place add your code, which should have as a result that your added test(s)
+no longer fail, and neither should any other existing tests.</p>
+</div>
+<div class="section" id="typing-mypy">
+<h3>Typing/mypy<a class="headerlink" href="#typing-mypy" title="Permalink to this headline">¶</a></h3>
+<p>If you add methods or functions to <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code>, you will need to add Python
+2.7 compatible typing information in order for <code class="docutils literal notranslate"><span class="pre">mypy</span></code> to pass without error.</p>
+<p>I run <code class="docutils literal notranslate"><span class="pre">mypy</span></code> from the directory where the (link to) ruamel directory is
+using:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mypy</span> <span class="o">--</span><span class="n">py2</span> <span class="o">--</span><span class="n">strict</span> <span class="o">--</span><span class="n">follow</span><span class="o">-</span><span class="n">imports</span> <span class="n">silent</span> <span class="n">ruamel</span><span class="o">/</span><span class="n">yaml</span><span class="o">/*.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>This should give no errors or warnings</p>
+</div>
+</div>
+<div class="section" id="generated-files">
+<h2>Generated files<a class="headerlink" href="#generated-files" title="Permalink to this headline">¶</a></h2>
+<p>I use a minimal environment when developing, void of most artifacts needed for
+packaging, testing etc. These artifact files are <em>generated</em>, just before committing to
+Bitbucket and pushing to PyPI, with nuances coming from the <code class="docutils literal notranslate"><span class="pre">_package_data</span></code>
+information in <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>. Including changes in these files will
+automatically be reverted, even assuming your PR is accepted as is.</p>
+<p>Consider the following files <strong>read-only</strong> (if you think changes need to made these,
+contact me):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">setup</span><span class="o">.</span><span class="n">py</span>
+<span class="n">tox</span><span class="o">.</span><span class="n">ini</span>
+<span class="n">LICENSE</span>
+<span class="n">_ryd</span><span class="o">/</span><span class="n">conf</span><span class="o">.</span><span class="n">py</span>
+<span class="o">-</span><span class="n">ryd</span><span class="o">/</span><span class="n">Makefile</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="vulnerabilities">
+<h2>Vulnerabilities<a class="headerlink" href="#vulnerabilities" title="Permalink to this headline">¶</a></h2>
+<p>If you find a vulnerability in <code class="docutils literal notranslate"><span class="pre">ruamel.yaml</span></code> (e.g. that would show the <code class="docutils literal notranslate"><span class="pre">safe</span></code>
+and <code class="docutils literal notranslate"><span class="pre">rt</span></code> loader are not safe due to a bug in the software)), please contact me
+directly via email, or by leaving a comment on StackOverflow (below any of my
+posts), without going into the details of the vulnerability. After contact is
+estabilished I will work to eliminate the vulnerability in a timely fashion.
+After the vulnerability is removed, and affected parties notified to allow them
+to update versions, the vulnerability will be published, and your role in
+finding/resolving this properly attributed.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Contributing</a><ul>
+<li><a class="reference internal" href="#documentation">Documentation</a></li>
+<li><a class="reference internal" href="#code">Code</a><ul>
+<li><a class="reference internal" href="#flake">Flake</a></li>
+<li><a class="reference internal" href="#tox-pytest">Tox/pytest</a></li>
+<li><a class="reference internal" href="#typing-mypy">Typing/mypy</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#generated-files">Generated files</a></li>
+<li><a class="reference internal" href="#vulnerabilities">Vulnerabilities</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pyyaml.html"
+                        title="previous chapter">Differences with PyYAML</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/contributing.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="pyyaml.html" title="Differences with PyYAML"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Python YAML package documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017-2019, Anthon van der Neut, Ruamel bvba.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.2.0.
+    </div>
+  </body>
+</html>
