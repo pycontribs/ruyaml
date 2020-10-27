@@ -3,7 +3,6 @@
 from __future__ import print_function
 
 import sys
-from .compat import string_types
 
 if False:  # MYPY
     from typing import Dict, Any, Text  # NOQA
@@ -41,7 +40,7 @@ class Node(object):
 
     def dump(self, indent=0):
         # type: (int) -> None
-        if isinstance(self.value, string_types):
+        if isinstance(self.value, str):
             sys.stdout.write(
                 '{}{}(tag={!r}, value={!r})\n'.format(
                     '  ' * indent, self.__class__.__name__, self.tag, self.value

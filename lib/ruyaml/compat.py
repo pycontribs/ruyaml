@@ -46,7 +46,6 @@ except:  # NOQA
                     self[old_key] = od[old_key]
 
 
-string_types = str
 integer_types = int
 class_types = type
 text_type = str

@@ -3,7 +3,7 @@
 from __future__ import absolute_import
 
 from ruyaml.error import YAMLError
-from ruyaml.compat import nprint, DBG_NODE, dbg, string_types, nprintf  # NOQA
+from ruyaml.compat import nprint, DBG_NODE, dbg, nprintf  # NOQA
 from ruyaml.util import RegExp
 
 from ruyaml.events import (
@@ -53,7 +53,7 @@ class Serializer(object):
         self.use_encoding = encoding
         self.use_explicit_start = explicit_start
         self.use_explicit_end = explicit_end
-        if isinstance(version, string_types):
+        if isinstance(version, str):
             self.use_version = tuple(map(int, version.split('.')))
         else:
             self.use_version = version  # type: ignore
