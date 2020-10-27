@@ -5,7 +5,6 @@ from __future__ import print_function, absolute_import, division
 
 from ruyaml.error import *  # NOQA
 from ruyaml.nodes import *  # NOQA
-from ruyaml.compat import binary_type
 from ruyaml.compat import ordereddict  # type: ignore
 from ruyaml.compat import nprint, nprintf  # NOQA
 from ruyaml.scalarstring import (
@@ -229,7 +228,7 @@ class SafeRepresenter(BaseRepresenter):
         # so "data is ()" should not be used
         if data is None or (isinstance(data, tuple) and data == ()):
             return True
-        if isinstance(data, (binary_type, str, bool, int, float)):
+        if isinstance(data, (bytes, str, bool, int, float)):
             return True
         return False
 

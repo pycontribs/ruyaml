@@ -9,8 +9,6 @@ from __future__ import absolute_import, print_function
 from functools import partial
 import re
 
-from .compat import binary_type
-
 if False:  # MYPY
     from typing import Any, Dict, Optional, List, Text  # NOQA
     from .compat import StreamTextType  # NOQA
@@ -78,7 +76,7 @@ def load_yaml_guess_indent(stream, **kw):
 
     if isinstance(stream, str):
         yaml_str = stream  # type: Any
-    elif isinstance(stream, binary_type):
+    elif isinstance(stream, bytes):
         # most likely, but the Reader checks BOM for this
         yaml_str = stream.decode('utf-8')
     else:

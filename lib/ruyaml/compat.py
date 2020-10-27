@@ -46,8 +46,6 @@ except:  # NOQA
                     self[old_key] = od[old_key]
 
 
-binary_type = bytes
-
 MAXSIZE = sys.maxsize
 unichr = chr
 import io

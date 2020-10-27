@@ -24,7 +24,7 @@ from __future__ import absolute_import
 import codecs
 
 from ruyaml.error import YAMLError, FileMark, StringMark, YAMLStreamError
-from ruyaml.compat import binary_type, UNICODE_SIZE
+from ruyaml.compat import UNICODE_SIZE
 from ruyaml.util import RegExp
 
 if False:  # MYPY
@@ -45,7 +45,7 @@ class ReaderError(YAMLError):
 
     def __str__(self):
         # type: () -> str
-        if isinstance(self.character, binary_type):
+        if isinstance(self.character, bytes):
             return "'%s' codec can't decode byte #x%02x: %s\n" '  in "%s", position %d' % (
                 self.encoding,
                 ord(self.character),
@@ -116,7 +116,7 @@ class Reader(object):
             self.name = '<unicode string>'
             self.check_printable(val)
             self.buffer = val + u'\0'  # type: ignore
-        elif isinstance(val, binary_type):
+        elif isinstance(val, bytes):
             self.name = '<byte string>'
             self.raw_buffer = val
             self.determine_encoding()
@@ -188,7 +188,7 @@ class Reader(object):
         # type: () -> None
         while not self.eof and (self.raw_buffer is None or len(self.raw_buffer) < 2):
             self.update_raw()
-        if isinstance(self.raw_buffer, binary_type):
+        if isinstance(self.raw_buffer, bytes):
             if self.raw_buffer.startswith(codecs.BOM_UTF16_LE):
                 self.raw_decode = codecs.utf_16_le_decode  # type: ignore
                 self.encoding = 'utf-16-le'
