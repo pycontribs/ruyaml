@@ -50,8 +50,6 @@ MAXSIZE = sys.maxsize
 unichr = chr
 import io
 
-StringIO = io.StringIO
-BytesIO = io.BytesIO
 # have unlimited precision
 no_limit_int = int
 from collections.abc import Hashable, MutableSequence, MutableMapping, Mapping  # NOQA

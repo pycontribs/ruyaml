@@ -118,7 +118,7 @@ class TestYAMLData(object):
         return yaml, data
 
     def round_trip(self, input, output=None, yaml_version=None):
-        from ruyaml.compat import StringIO
+        from io import StringIO
 
         yaml, data = self.yaml_load(input.value, yaml_version=yaml_version)
         buf = StringIO()

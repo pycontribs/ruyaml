@@ -69,7 +69,7 @@ def test_load_cyaml_1_2():
 def test_dump_cyaml_1_2():
     # issue 155
     import ruyaml
-    from ruyaml.compat import StringIO
+    from io import StringIO
 
     if sys.version_info >= (3, 8):
         return

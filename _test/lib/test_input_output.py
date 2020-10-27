@@ -6,7 +6,7 @@ import codecs
 import tempfile
 import os
 import os.path
-from ruyaml.compat import StringIO, BytesIO
+from io import StringIO, BytesIO
 
 def test_unicode_input(unicode_filename, verbose=False):
     with open(unicode_filename, 'rb') as fp:
