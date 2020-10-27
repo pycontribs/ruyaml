@@ -15,7 +15,7 @@ from ruyaml.error import (MarkedYAMLError, MarkedYAMLFutureWarning,
                           MantissaNoDotYAML1_1Warning)
 from ruyaml.nodes import *                               # NOQA
 from ruyaml.nodes import (SequenceNode, MappingNode, ScalarNode)
-from ruyaml.compat import (utf8, builtins_module, to_str,  # NOQA
+from ruyaml.compat import (utf8, builtins_module,  # NOQA
                            text_type, nprint, nprintf, version_tnf)
 from ruyaml.compat import ordereddict, Hashable, MutableSequence  # type: ignore
 from ruyaml.compat import MutableMapping  # type: ignore
@@ -442,7 +442,7 @@ class SafeConstructor(BaseConstructor):
 
     def construct_yaml_int(self, node):
         # type: (Any) -> int
-        value_s = to_str(self.construct_scalar(node))
+        value_s = self.construct_scalar(node)
         value_s = value_s.replace('_', "")
         sign = +1
         if value_s[0] == '-':
@@ -478,7 +478,7 @@ class SafeConstructor(BaseConstructor):
 
     def construct_yaml_float(self, node):
         # type: (Any) -> float
-        value_so = to_str(self.construct_scalar(node))
+        value_so = self.construct_scalar(node)
         value_s = value_so.replace('_', "").lower()
         sign = +1
         if value_s[0] == '-':
@@ -1054,7 +1054,7 @@ class RoundTripConstructor(SafeConstructor):
     def construct_yaml_int(self, node):
         # type: (Any) -> Any
         width = None  # type: Any
-        value_su = to_str(self.construct_scalar(node))
+        value_su = self.construct_scalar(node)
         try:
             sx = value_su.rstrip('_')
             underscore = [len(sx) - sx.rindex('_') - 1, False, False]  # type: Any
@@ -1156,7 +1156,7 @@ class RoundTripConstructor(SafeConstructor):
 
         # underscore = None
         m_sign = False  # type: Any
-        value_so = to_str(self.construct_scalar(node))
+        value_so = self.construct_scalar(node)
         value_s = value_so.replace('_', "").lower()
         sign = +1
         if value_s[0] == '-':
