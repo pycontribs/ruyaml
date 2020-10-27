@@ -225,5 +225,3 @@ class TestFlowStyle:
         yaml.dump(data, sys.stdout)
         out, err = capsys.readouterr()
         assert out == 'b: 1\na:\n- [1, 2]\n- [3, 4]\n'
-
-
