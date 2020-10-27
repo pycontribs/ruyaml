@@ -129,7 +129,6 @@ def walk_tree(base, map=None):
         map[':'] = SingleQuotedScalarString
         walk_tree(data, map=map)
     """
-    from ruyaml.compat import string_types
     from ruyaml.compat import MutableMapping, MutableSequence  # type: ignore
 
     if map is None:
@@ -138,7 +137,7 @@ def walk_tree(base, map=None):
     if isinstance(base, MutableMapping):
         for k in base:
             v = base[k]  # type: Text
-            if isinstance(v, string_types):
+            if isinstance(v, str):
                 for ch in map:
                     if ch in v:
                         base[k] = map[ch](v)
@@ -147,7 +146,7 @@ def walk_tree(base, map=None):
                 walk_tree(v)
     elif isinstance(base, MutableSequence):
         for idx, elem in enumerate(base):
-            if isinstance(elem, string_types):
+            if isinstance(elem, str):
                 for ch in map:
                     if ch in elem:  # type: ignore
                         base[idx] = map[ch](elem)

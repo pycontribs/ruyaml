@@ -13,7 +13,7 @@ import copy
 
 
 from ruyaml.compat import ordereddict  # type: ignore
-from ruyaml.compat import string_types, MutableSliceableSequence
+from ruyaml.compat import MutableSliceableSequence
 from ruyaml.scalarstring import ScalarString
 from ruyaml.anchor import Anchor
 
@@ -389,7 +389,7 @@ class CommentedSeq(MutableSliceableSequence, list, CommentedBase):  # type: igno
         # try to preserve the scalarstring type if setting an existing key to a new value
         if idx < len(self):
             if (
-                isinstance(value, string_types)
+                isinstance(value, str)
                 and not isinstance(value, ScalarString)
                 and isinstance(self[idx], ScalarString)
             ):
@@ -759,7 +759,7 @@ class CommentedMap(ordereddict, CommentedBase):  # type: ignore
         # try to preserve the scalarstring type if setting an existing key to a new value
         if key in self:
             if (
-                isinstance(value, string_types)
+                isinstance(value, str)
                 and not isinstance(value, ScalarString)
                 and isinstance(self[key], ScalarString)
             ):

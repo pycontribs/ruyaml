@@ -8,7 +8,7 @@ if False:  # MYPY
     from typing import Any, Dict, List, Union, Text, Optional  # NOQA
     from ruyaml.compat import VersionType  # NOQA
 
-from ruyaml.compat import string_types, _DEFAULT_YAML_VERSION  # NOQA
+from ruyaml.compat import _DEFAULT_YAML_VERSION  # NOQA
 from ruyaml.error import *  # NOQA
 from ruyaml.nodes import MappingNode, ScalarNode, SequenceNode  # NOQA
 from ruyaml.util import RegExp  # NOQA
@@ -198,11 +198,11 @@ class BaseResolver(object):
                 node_check = MappingNode
             elif (
                 node_check not in [ScalarNode, SequenceNode, MappingNode]
-                and not isinstance(node_check, string_types)
+                and not isinstance(node_check, str)
                 and node_check is not None
             ):
                 raise ResolverError('Invalid node checker: %s' % (node_check,))
-            if not isinstance(index_check, (string_types, int)) and index_check is not None:
+            if not isinstance(index_check, (str, int)) and index_check is not None:
                 raise ResolverError('Invalid index checker: %s' % (index_check,))
             new_path.append((node_check, index_check))
         if kind is str:
@@ -248,7 +248,7 @@ class BaseResolver(object):
     def check_resolver_prefix(self, depth, path, kind, current_node, current_index):
         # type: (int, Text, Any, Any, Any) -> bool
         node_check, index_check = path[depth - 1]
-        if isinstance(node_check, string_types):
+        if isinstance(node_check, str):
             if current_node.tag != node_check:
                 return False
         elif node_check is not None:
@@ -258,7 +258,7 @@ class BaseResolver(object):
             return False
         if (index_check is False or index_check is None) and current_index is None:
             return False
-        if isinstance(index_check, string_types):
+        if isinstance(index_check, str):
             if not (
                 isinstance(current_index, ScalarNode) and index_check == current_index.value
             ):
