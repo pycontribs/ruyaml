@@ -3,14 +3,13 @@ from __future__ import print_function
 
 import ruyaml as yaml
 import pprint
-from ruyaml.compat import PY3
 
 
 def test_implicit_resolver(data_filename, detect_filename, verbose=False):
     correct_tag = None
     node = None
     try:
-        with open(detect_filename, 'r' if PY3 else 'rb') as fp0:
+        with open(detect_filename, 'r') as fp0:
             correct_tag = fp0.read().strip()
         with open(data_filename, 'rb') as fp0:
             node = yaml.compose(fp0)

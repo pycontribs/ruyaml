@@ -32,7 +32,7 @@ from __future__ import print_function, absolute_import, division, unicode_litera
 
 from ruyaml.error import MarkedYAMLError
 from ruyaml.tokens import *  # NOQA
-from ruyaml.compat import utf8, unichr, PY3, check_anchorname_char, nprint  # NOQA
+from ruyaml.compat import utf8, unichr, check_anchorname_char, nprint  # NOQA
 
 if False:  # MYPY
     from typing import Any, Dict, Optional, List, Union, Text  # NOQA
@@ -1718,16 +1718,10 @@ class Scanner(object):
                         ' but found %r' % utf8(srp(k)),
                         self.reader.get_mark(),
                     )
-            if PY3:
-                code_bytes.append(int(self.reader.prefix(2), 16))
-            else:
-                code_bytes.append(chr(int(self.reader.prefix(2), 16)))
+            code_bytes.append(int(self.reader.prefix(2), 16))
             srf(2)
         try:
-            if PY3:
-                value = bytes(code_bytes).decode('utf-8')
-            else:
-                value = unicode(b"".join(code_bytes), 'utf-8')
+            value = bytes(code_bytes).decode('utf-8')
         except UnicodeDecodeError as exc:
             raise ScannerError('while scanning a %s' % (name,), start_mark, str(exc), mark)
         return value

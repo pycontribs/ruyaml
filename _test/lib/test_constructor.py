@@ -3,7 +3,6 @@ from __future__ import print_function
 
 import ruyaml
 import pprint
-from ruyaml.compat import PY2
 
 import datetime
 
@@ -211,7 +210,6 @@ def _make_objects():
         def __setstate__(self, state):
             self.baz = state
 
-    # if PY3 or PY2:
     InitArgs = NewArgs
 
     InitArgsWithState = NewArgsWithState
@@ -291,8 +289,6 @@ def _serialize_value(data):
         return '{%s}' % ', '.join(items)
     elif isinstance(data, datetime.datetime):
         return repr(data.utctimetuple())
-    elif PY2 and isinstance(data, unicode):  # NOQA
-        return data.encode('utf-8')
     elif isinstance(data, float) and data != data:
         return '?'
     else:
