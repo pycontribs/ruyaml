@@ -91,7 +91,7 @@ class TestCommentsManipulation:
         """)
         print(data._yaml_comment)
         # print(type(data._yaml_comment._items[0][0].start_mark))
-        # ruamel.yaml.error.Mark
+        # ruyaml.error.Mark
         # print(type(data._yaml_comment._items[0][0].start_mark))
         data.yaml_add_eol_comment('comment 2', key=2)
         exp = """
@@ -117,7 +117,7 @@ class TestCommentsManipulation:
         """)
         print(data._yaml_comment)
         # print(type(data._yaml_comment._items[0][0].start_mark))
-        # ruamel.yaml.error.Mark
+        # ruyaml.error.Mark
         # print(type(data._yaml_comment._items[0][0].start_mark))
         data.yaml_add_eol_comment('comment 2', key=3)
         exp = """
@@ -272,7 +272,7 @@ class TestCommentsManipulation:
         compare(data, exp.format(comment='#'))
 
     def test_before_top_map_from_scratch(self):
-        from ruamel.yaml.comments import CommentedMap
+        from ruyaml.comments import CommentedMap
 
         data = CommentedMap()
         data['a'] = 1
@@ -322,7 +322,7 @@ class TestCommentsManipulation:
         compare(data, exp.format(comment='#'))
 
     def test_before_top_seq_from_scratch(self):
-        from ruamel.yaml.comments import CommentedSeq
+        from ruyaml.comments import CommentedSeq
 
         data = CommentedSeq()
         data.append('a')
@@ -376,7 +376,7 @@ class TestCommentsManipulation:
         print(data['b'].ca)
 
     def test_before_nested_map_from_scratch(self):
-        from ruamel.yaml.comments import CommentedMap
+        from ruyaml.comments import CommentedMap
 
         data = CommentedMap()
         datab = CommentedMap()
@@ -396,7 +396,7 @@ class TestCommentsManipulation:
         compare(data, exp.format(comment='#'))
 
     def test_before_nested_seq_from_scratch(self):
-        from ruamel.yaml.comments import CommentedMap, CommentedSeq
+        from ruyaml.comments import CommentedMap, CommentedSeq
 
         data = CommentedMap()
         datab = CommentedSeq()
@@ -416,7 +416,7 @@ class TestCommentsManipulation:
         compare(data, exp.format(comment='#'))
 
     def test_before_nested_seq_from_scratch_block_seq_indent(self):
-        from ruamel.yaml.comments import CommentedMap, CommentedSeq
+        from ruyaml.comments import CommentedMap, CommentedSeq
 
         data = CommentedMap()
         datab = CommentedSeq()

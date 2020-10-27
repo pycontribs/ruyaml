@@ -6,9 +6,9 @@ from roundtrip import round_trip, round_trip_load, YAML
 
 
 def register_xxx(**kw):
-    from ruamel import yaml
+    import ruyaml
 
-    class XXX(yaml.comments.CommentedMap):
+    class XXX(ruyaml.comments.CommentedMap):
         @staticmethod
         def yaml_dump(dumper, data):
             return dumper.represent_mapping(u'!xxx', data)
@@ -19,8 +19,8 @@ def register_xxx(**kw):
             yield data
             constructor.construct_mapping(node, data)
 
-    yaml.add_constructor(u'!xxx', XXX.yaml_load, constructor=yaml.RoundTripConstructor)
-    yaml.add_representer(XXX, XXX.yaml_dump, representer=yaml.RoundTripRepresenter)
+    ruyaml.add_constructor(u'!xxx', XXX.yaml_load, constructor=ruyaml.RoundTripConstructor)
+    ruyaml.add_representer(XXX, XXX.yaml_dump, representer=ruyaml.RoundTripRepresenter)
 
 
 class TestIndentFailures:

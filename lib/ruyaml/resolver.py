@@ -6,12 +6,12 @@ import re
 
 if False:  # MYPY
     from typing import Any, Dict, List, Union, Text, Optional  # NOQA
-    from ruamel.yaml.compat import VersionType  # NOQA
+    from ruyaml.compat import VersionType  # NOQA
 
-from ruamel.yaml.compat import string_types, _DEFAULT_YAML_VERSION  # NOQA
-from ruamel.yaml.error import *  # NOQA
-from ruamel.yaml.nodes import MappingNode, ScalarNode, SequenceNode  # NOQA
-from ruamel.yaml.util import RegExp  # NOQA
+from ruyaml.compat import string_types, _DEFAULT_YAML_VERSION  # NOQA
+from ruyaml.error import *  # NOQA
+from ruyaml.nodes import MappingNode, ScalarNode, SequenceNode  # NOQA
+from ruyaml.util import RegExp  # NOQA
 
 __all__ = ['BaseResolver', 'Resolver', 'VersionedResolver']
 

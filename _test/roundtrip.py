@@ -26,24 +26,24 @@ def dedent(data):
 
 
 def round_trip_load(inp, preserve_quotes=None, version=None):
-    import ruamel.yaml  # NOQA
+    import ruyaml  # NOQA
 
     dinp = dedent(inp)
-    return ruamel.yaml.load(
+    return ruyaml.load(
         dinp,
-        Loader=ruamel.yaml.RoundTripLoader,
+        Loader=ruyaml.RoundTripLoader,
         preserve_quotes=preserve_quotes,
         version=version,
     )
 
 
 def round_trip_load_all(inp, preserve_quotes=None, version=None):
-    import ruamel.yaml  # NOQA
+    import ruyaml  # NOQA
 
     dinp = dedent(inp)
-    return ruamel.yaml.load_all(
+    return ruyaml.load_all(
         dinp,
-        Loader=ruamel.yaml.RoundTripLoader,
+        Loader=ruyaml.RoundTripLoader,
         preserve_quotes=preserve_quotes,
         version=version,
     )
@@ -60,9 +60,9 @@ def round_trip_dump(
     explicit_end=None,
     version=None,
 ):
-    import ruamel.yaml  # NOQA
+    import ruyaml  # NOQA
 
-    return ruamel.yaml.round_trip_dump(
+    return ruyaml.round_trip_dump(
         data,
         stream=stream,
         indent=indent,
@@ -199,9 +199,9 @@ def na_round_trip(
 
 
 def YAML(**kw):
-    import ruamel.yaml  # NOQA
+    import ruyaml  # NOQA
 
-    class MyYAML(ruamel.yaml.YAML):
+    class MyYAML(ruyaml.YAML):
         """auto dedent string parameters on load"""
 
         def load(self, stream):
@@ -209,29 +209,29 @@ def YAML(**kw):
                 if stream and stream[0] == '\n':
                     stream = stream[1:]
                 stream = textwrap.dedent(stream)
-            return ruamel.yaml.YAML.load(self, stream)
+            return ruyaml.YAML.load(self, stream)
 
         def load_all(self, stream):
             if isinstance(stream, str):
                 if stream and stream[0] == '\n':
                     stream = stream[1:]
                 stream = textwrap.dedent(stream)
-            for d in ruamel.yaml.YAML.load_all(self, stream):
+            for d in ruyaml.YAML.load_all(self, stream):
                 yield d
 
         def dump(self, data, **kw):
-            from ruamel.yaml.compat import StringIO, BytesIO  # NOQA
+            from ruyaml.compat import StringIO, BytesIO  # NOQA
 
             assert ('stream' in kw) ^ ('compare' in kw)
             if 'stream' in kw:
-                return ruamel.yaml.YAML.dump(data, **kw)
+                return ruyaml.YAML.dump(data, **kw)
             lkw = kw.copy()
             expected = textwrap.dedent(lkw.pop('compare'))
             unordered_lines = lkw.pop('unordered_lines', False)
             if expected and expected[0] == '\n':
                 expected = expected[1:]
             lkw['stream'] = st = StringIO()
-            ruamel.yaml.YAML.dump(self, data, **lkw)
+            ruyaml.YAML.dump(self, data, **lkw)
             res = st.getvalue()
             print(res)
             if unordered_lines:
@@ -240,34 +240,34 @@ def YAML(**kw):
             assert res == expected
 
         def round_trip(self, stream, **kw):
-            from ruamel.yaml.compat import StringIO, BytesIO  # NOQA
+            from ruyaml.compat import StringIO, BytesIO  # NOQA
 
-            assert isinstance(stream, (ruamel.yaml.compat.text_type, str))
+            assert isinstance(stream, (ruyaml.compat.text_type, str))
             lkw = kw.copy()
             if stream and stream[0] == '\n':
                 stream = stream[1:]
             stream = textwrap.dedent(stream)
-            data = ruamel.yaml.YAML.load(self, stream)
+            data = ruyaml.YAML.load(self, stream)
             outp = lkw.pop('outp', stream)
             lkw['stream'] = st = StringIO()
-            ruamel.yaml.YAML.dump(self, data, **lkw)
+            ruyaml.YAML.dump(self, data, **lkw)
             res = st.getvalue()
             if res != outp:
                 diff(outp, res, 'input string')
             assert res == outp
 
         def round_trip_all(self, stream, **kw):
-            from ruamel.yaml.compat import StringIO, BytesIO  # NOQA
+            from ruyaml.compat import StringIO, BytesIO  # NOQA
 
-            assert isinstance(stream, (ruamel.yaml.compat.text_type, str))
+            assert isinstance(stream, (ruyaml.compat.text_type, str))
             lkw = kw.copy()
             if stream and stream[0] == '\n':
                 stream = stream[1:]
             stream = textwrap.dedent(stream)
-            data = list(ruamel.yaml.YAML.load_all(self, stream))
+            data = list(ruyaml.YAML.load_all(self, stream))
             outp = lkw.pop('outp', stream)
             lkw['stream'] = st = StringIO()
-            ruamel.yaml.YAML.dump_all(self, data, **lkw)
+            ruyaml.YAML.dump_all(self, data, **lkw)
             res = st.getvalue()
             if res != outp:
                 diff(outp, res, 'input string')

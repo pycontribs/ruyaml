@@ -11,11 +11,11 @@ from roundtrip import round_trip, round_trip_load, round_trip_dump, dedent, YAML
 
 
 def rt(s):
-    import ruamel.yaml
+    import ruyaml
 
-    res = ruamel.yaml.dump(
-        ruamel.yaml.load(s, Loader=ruamel.yaml.RoundTripLoader),
-        Dumper=ruamel.yaml.RoundTripDumper,
+    res = ruyaml.dump(
+        ruyaml.load(s, Loader=ruyaml.RoundTripLoader),
+        Dumper=ruyaml.RoundTripDumper,
     )
     return res.strip() + '\n'
 
@@ -55,7 +55,7 @@ class TestIndent:
 
     # first test by explicitly setting flow style
     def test_added_inline_list(self):
-        import ruamel.yaml
+        import ruyaml
 
         s1 = dedent("""
         a:
@@ -64,24 +64,24 @@ class TestIndent:
         - d
         """)
         s = 'a: [b, c, d]\n'
-        data = ruamel.yaml.load(s1, Loader=ruamel.yaml.RoundTripLoader)
+        data = ruyaml.load(s1, Loader=ruyaml.RoundTripLoader)
         val = data['a']
         val.fa.set_flow_style()
         # print(type(val), '_yaml_format' in dir(val))
-        output = ruamel.yaml.dump(data, Dumper=ruamel.yaml.RoundTripDumper)
+        output = ruyaml.dump(data, Dumper=ruyaml.RoundTripDumper)
         assert s == output
 
     # ############ flow mappings
 
     def test_roundtrip_flow_mapping(self):
-        import ruamel.yaml
+        import ruyaml
 
         s = dedent("""\
         - {a: 1, b: hallo}
         - {j: fka, k: 42}
         """)
-        data = ruamel.yaml.load(s, Loader=ruamel.yaml.RoundTripLoader)
-        output = ruamel.yaml.dump(data, Dumper=ruamel.yaml.RoundTripDumper)
+        data = ruyaml.load(s, Loader=ruyaml.RoundTripLoader)
+        output = ruyaml.dump(data, Dumper=ruyaml.RoundTripDumper)
         assert s == output
 
     def test_roundtrip_sequence_of_inline_mappings_eol_comments(self):
@@ -228,7 +228,7 @@ class TestYpkgIndent:
 
 
 def guess(s):
-    from ruamel.yaml.util import load_yaml_guess_indent
+    from ruyaml.util import load_yaml_guess_indent
 
     x, y, z = load_yaml_guess_indent(dedent(s))
     return y, z

@@ -3,21 +3,21 @@
 from __future__ import absolute_import
 
 
-from ruamel.yaml.reader import Reader
-from ruamel.yaml.scanner import Scanner, RoundTripScanner
-from ruamel.yaml.parser import Parser, RoundTripParser
-from ruamel.yaml.composer import Composer
-from ruamel.yaml.constructor import (
+from ruyaml.reader import Reader
+from ruyaml.scanner import Scanner, RoundTripScanner
+from ruyaml.parser import Parser, RoundTripParser
+from ruyaml.composer import Composer
+from ruyaml.constructor import (
     BaseConstructor,
     SafeConstructor,
     Constructor,
     RoundTripConstructor,
 )
-from ruamel.yaml.resolver import VersionedResolver
+from ruyaml.resolver import VersionedResolver
 
 if False:  # MYPY
     from typing import Any, Dict, List, Union, Optional  # NOQA
-    from ruamel.yaml.compat import StreamTextType, VersionType  # NOQA
+    from ruyaml.compat import StreamTextType, VersionType  # NOQA
 
 __all__ = ['BaseLoader', 'SafeLoader', 'Loader', 'RoundTripLoader']
 

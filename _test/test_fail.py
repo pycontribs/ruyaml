@@ -3,7 +3,7 @@
 # there is some work to do
 # provide a failing test xyz and a non-failing xyz_no_fail ( to see
 # what the current failing output is.
-# on fix of ruamel.yaml, move the marked test to the appropriate test (without mark)
+# on fix of ruyaml, move the marked test to the appropriate test (without mark)
 # and remove remove the xyz_no_fail
 
 import pytest
@@ -198,7 +198,7 @@ class TestMappingKey:
         round_trip(inp, preserve_quotes=True, dump_data=False)
 
     def test_set_simple_mapping_key(self):
-        from ruamel.yaml.comments import CommentedKeyMap
+        from ruyaml.comments import CommentedKeyMap
 
         d = {CommentedKeyMap([('a', 1), ('b', 2)]): 'hello world'}
         exp = dedent("""\
@@ -207,7 +207,7 @@ class TestMappingKey:
         assert round_trip_dump(d) == exp
 
     def test_change_key_simple_mapping_key(self):
-        from ruamel.yaml.comments import CommentedKeyMap
+        from ruyaml.comments import CommentedKeyMap
 
         inp = """\
         {a: 1, b: 2}: hello world
@@ -220,7 +220,7 @@ class TestMappingKey:
         assert round_trip_dump(d) == exp
 
     def test_change_value_simple_mapping_key(self):
-        from ruamel.yaml.comments import CommentedKeyMap
+        from ruyaml.comments import CommentedKeyMap
 
         inp = """\
         {a: 1, b: 2}: hello world

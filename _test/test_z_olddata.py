@@ -24,17 +24,17 @@ def test_data():
     test_appliance.run(collections, args)
 
 
-# @pytest.mark.skipif(not ruamel.yaml.__with_libyaml__,
+# @pytest.mark.skipif(not ruyaml.__with_libyaml__,
 #                     reason="no libyaml")
 
 
 def test_data_ext():
     collections = []
-    import ruamel.yaml  # NOQA
+    import ruyaml  # NOQA
     import test_appliance  # NOQA
 
-    warnings.simplefilter('ignore', ruamel.yaml.error.UnsafeLoaderWarning)
-    if ruamel.yaml.__with_libyaml__:
+    warnings.simplefilter('ignore', ruyaml.error.UnsafeLoaderWarning)
+    if ruyaml.__with_libyaml__:
         import test_yaml_ext
 
         collections.append(test_yaml_ext)

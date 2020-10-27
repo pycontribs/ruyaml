@@ -264,7 +264,7 @@ class TestComments:
         """)
 
     def test_dump_utf8(self):
-        import ruamel.yaml  # NOQA
+        import ruyaml  # NOQA
 
         x = dedent("""\
         ab:
@@ -272,15 +272,15 @@ class TestComments:
         - y  # more comment
         """)
         data = round_trip_load(x)
-        dumper = ruamel.yaml.RoundTripDumper
+        dumper = ruyaml.RoundTripDumper
         for utf in [True, False]:
-            y = ruamel.yaml.dump(
+            y = ruyaml.dump(
                 data, default_flow_style=False, Dumper=dumper, allow_unicode=utf
             )
             assert y == x
 
     def test_dump_unicode_utf8(self):
-        import ruamel.yaml  # NOQA
+        import ruyaml  # NOQA
 
         x = dedent(u"""\
         ab:
@@ -288,9 +288,9 @@ class TestComments:
         - y  # more comment
         """)
         data = round_trip_load(x)
-        dumper = ruamel.yaml.RoundTripDumper
+        dumper = ruyaml.RoundTripDumper
         for utf in [True, False]:
-            y = ruamel.yaml.dump(
+            y = ruyaml.dump(
                 data, default_flow_style=False, Dumper=dumper, allow_unicode=utf
             )
             assert y == x
@@ -829,7 +829,7 @@ a: |
 class TestBlockScalarWithComments:
     # issue 99 reported by Colm O'Connor
     def test_scalar_with_comments(self):
-        import ruamel.yaml  # NOQA
+        import ruyaml  # NOQA
 
         for x in [
             "",
@@ -843,6 +843,6 @@ class TestBlockScalarWithComments:
         ]:
 
             commented_line = test_block_scalar_commented_line_template.format(x)
-            data = ruamel.yaml.round_trip_load(commented_line)
+            data = ruyaml.round_trip_load(commented_line)
 
-            assert ruamel.yaml.round_trip_dump(data) == commented_line
+            assert ruyaml.round_trip_dump(data) == commented_line
