@@ -8,14 +8,14 @@ import json
 
 
 def load(s, typ=float):
-    import ruamel.yaml
+    import ruyaml
 
     x = '{"low": %s }' % (s)
     print('input: [%s]' % (s), repr(x))
     # just to check it is loadable json
     res = json.loads(x)
     assert isinstance(res['low'], typ)
-    ret_val = ruamel.yaml.load(x, ruamel.yaml.RoundTripLoader)
+    ret_val = ruyaml.load(x, ruyaml.RoundTripLoader)
     print(ret_val)
     return ret_val['low']
 

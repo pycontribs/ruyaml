@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-import ruamel.yaml as yaml
+import ruyaml as yaml
 
 
 def _compare_events(events1, events2):

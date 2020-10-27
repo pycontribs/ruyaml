@@ -1,7 +1,7 @@
 
 import pytest  # NOQA
 
-# import ruamel.yaml
+# import ruyaml
 from roundtrip import round_trip
 
 

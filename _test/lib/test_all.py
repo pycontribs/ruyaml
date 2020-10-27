@@ -1,6 +1,6 @@
 
 import sys  # NOQA
-import ruamel.yaml
+import ruyaml
 import test_appliance
 
 
@@ -9,7 +9,7 @@ def main(args=None):
     import test_yaml
 
     collections.append(test_yaml)
-    if ruamel.yaml.__with_libyaml__:
+    if ruyaml.__with_libyaml__:
         import test_yaml_ext
 
         collections.append(test_yaml_ext)

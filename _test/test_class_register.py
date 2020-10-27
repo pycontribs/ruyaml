@@ -91,7 +91,7 @@ class TestRegisterClass(object):
 
 class TestDecorator(object):
     def test_decorator_implicit(self):
-        from ruamel.yaml import yaml_object
+        from ruyaml import yaml_object
 
         yml = YAML()
 
@@ -110,7 +110,7 @@ class TestDecorator(object):
         yml.dump(d, compare=ys, unordered_lines=True)
 
     def test_decorator_explicit(self):
-        from ruamel.yaml import yaml_object
+        from ruyaml import yaml_object
 
         yml = YAML()
 

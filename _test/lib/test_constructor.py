@@ -1,9 +1,9 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
-import ruamel.yaml
+import ruyaml
 import pprint
-from ruamel.yaml.compat import PY2
+from ruyaml.compat import PY2
 
 import datetime
 
@@ -11,7 +11,7 @@ try:
     set
 except NameError:
     from sets import Set as set  # NOQA
-import ruamel.yaml.tokens
+import ruyaml.tokens
 
 
 def execute(code):
@@ -23,10 +23,10 @@ def execute(code):
 def _make_objects():
     global MyLoader, MyDumper, MyTestClass1, MyTestClass2, MyTestClass3, YAMLobject1, YAMLobject2, AnObject, AnInstance, AState, ACustomState, InitArgs, InitArgsWithState, NewArgs, NewArgsWithState, Reduce, ReduceWithState, MyInt, MyList, MyDict, FixedOffset, today, execute
 
-    class MyLoader(ruamel.yaml.Loader):
+    class MyLoader(ruyaml.Loader):
         pass
 
-    class MyDumper(ruamel.yaml.Dumper):
+    class MyDumper(ruyaml.Dumper):
         pass
 
     class MyTestClass1:
@@ -48,13 +48,13 @@ def _make_objects():
     def represent1(representer, native):
         return representer.represent_mapping('!tag1', native.__dict__)
 
-    ruamel.yaml.add_constructor('!tag1', construct1, Loader=MyLoader)
-    ruamel.yaml.add_representer(MyTestClass1, represent1, Dumper=MyDumper)
+    ruyaml.add_constructor('!tag1', construct1, Loader=MyLoader)
+    ruyaml.add_representer(MyTestClass1, represent1, Dumper=MyDumper)
 
-    class MyTestClass2(MyTestClass1, ruamel.yaml.YAMLObject):
-        ruamel.yaml.loader = MyLoader
-        ruamel.yaml.dumper = MyDumper
-        ruamel.yaml.tag = '!tag2'
+    class MyTestClass2(MyTestClass1, ruyaml.YAMLObject):
+        ruyaml.loader = MyLoader
+        ruyaml.dumper = MyDumper
+        ruyaml.tag = '!tag2'
 
         def from_yaml(cls, constructor, node):
             x = constructor.construct_yaml_int(node)
@@ -68,7 +68,7 @@ def _make_objects():
         to_yaml = classmethod(to_yaml)
 
     class MyTestClass3(MyTestClass2):
-        ruamel.yaml.tag = '!tag3'
+        ruyaml.tag = '!tag3'
 
         def from_yaml(cls, constructor, node):
             mapping = constructor.construct_mapping(node)
@@ -85,10 +85,10 @@ def _make_objects():
 
         to_yaml = classmethod(to_yaml)
 
-    class YAMLobject1(ruamel.yaml.YAMLObject):
-        ruamel.yaml.loader = MyLoader
-        ruamel.yaml.dumper = MyDumper
-        ruamel.yaml.tag = '!foo'
+    class YAMLobject1(ruyaml.YAMLObject):
+        ruyaml.loader = MyLoader
+        ruyaml.dumper = MyDumper
+        ruyaml.tag = '!foo'
 
         def __init__(self, my_parameter=None, my_another_parameter=None):
             self.my_parameter = my_parameter
@@ -100,10 +100,10 @@ def _make_objects():
             else:
                 return False
 
-    class YAMLobject2(ruamel.yaml.YAMLObject):
-        ruamel.yaml.loader = MyLoader
-        ruamel.yaml.dumper = MyDumper
-        ruamel.yaml.tag = '!bar'
+    class YAMLobject2(ruyaml.YAMLObject):
+        ruyaml.loader = MyLoader
+        ruyaml.dumper = MyDumper
+        ruyaml.tag = '!bar'
 
         def __init__(self, foo=1, bar=2, baz=3):
             self.foo = foo
@@ -305,7 +305,7 @@ def test_constructor_types(data_filename, code_filename, verbose=False):
     native2 = None
     try:
         with open(data_filename, 'rb') as fp0:
-            native1 = list(ruamel.yaml.load_all(fp0, Loader=MyLoader))
+            native1 = list(ruyaml.load_all(fp0, Loader=MyLoader))
         if len(native1) == 1:
             native1 = native1[0]
         with open(code_filename, 'rb') as fp0:
@@ -337,11 +337,11 @@ def test_roundtrip_data(code_filename, roundtrip_filename, verbose=False):
     _make_objects()
     with open(code_filename, 'rb') as fp0:
         value1 = fp0.read()
-    native2 = list(ruamel.yaml.load_all(value1, Loader=MyLoader))
+    native2 = list(ruyaml.load_all(value1, Loader=MyLoader))
     if len(native2) == 1:
         native2 = native2[0]
     try:
-        value2 = ruamel.yaml.dump(
+        value2 = ruyaml.dump(
             native2,
             Dumper=MyDumper,
             default_flow_style=False,

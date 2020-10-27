@@ -26,42 +26,42 @@ def dice_representer(dumper, data):
 
 
 def test_dice_constructor():
-    import ruamel.yaml  # NOQA
+    import ruyaml  # NOQA
 
-    ruamel.yaml.add_constructor(u'!dice', dice_constructor)
-    data = ruamel.yaml.load('initial hit points: !dice 8d4', Loader=ruamel.yaml.Loader)
+    ruyaml.add_constructor(u'!dice', dice_constructor)
+    data = ruyaml.load('initial hit points: !dice 8d4', Loader=ruyaml.Loader)
     assert str(data) == "{'initial hit points': Dice(8,4)}"
 
 
 def test_dice_constructor_with_loader():
-    import ruamel.yaml  # NOQA
+    import ruyaml  # NOQA
 
-    ruamel.yaml.add_constructor(u'!dice', dice_constructor, Loader=ruamel.yaml.Loader)
-    data = ruamel.yaml.load('initial hit points: !dice 8d4', Loader=ruamel.yaml.Loader)
+    ruyaml.add_constructor(u'!dice', dice_constructor, Loader=ruyaml.Loader)
+    data = ruyaml.load('initial hit points: !dice 8d4', Loader=ruyaml.Loader)
     assert str(data) == "{'initial hit points': Dice(8,4)}"
 
 
 def test_dice_representer():
-    import ruamel.yaml  # NOQA
+    import ruyaml  # NOQA
 
-    ruamel.yaml.add_representer(Dice, dice_representer)
-    # ruamel.yaml 0.15.8+ no longer forces quotes tagged scalars
+    ruyaml.add_representer(Dice, dice_representer)
+    # ruyaml 0.15.8+ no longer forces quotes tagged scalars
     assert (
-        ruamel.yaml.dump(dict(gold=Dice(10, 6)), default_flow_style=False)
+        ruyaml.dump(dict(gold=Dice(10, 6)), default_flow_style=False)
         == 'gold: !dice 10d6\n'
     )
 
 
 def test_dice_implicit_resolver():
-    import ruamel.yaml  # NOQA
+    import ruyaml  # NOQA
 
     pattern = re.compile(r'^\d+d\d+$')
-    ruamel.yaml.add_implicit_resolver(u'!dice', pattern)
+    ruyaml.add_implicit_resolver(u'!dice', pattern)
     assert (
-        ruamel.yaml.dump(dict(treasure=Dice(10, 20)), default_flow_style=False)
+        ruyaml.dump(dict(treasure=Dice(10, 20)), default_flow_style=False)
         == 'treasure: 10d20\n'
     )
-    assert ruamel.yaml.load('damage: 5d10', Loader=ruamel.yaml.Loader) == dict(
+    assert ruyaml.load('damage: 5d10', Loader=ruyaml.Loader) == dict(
         damage=Dice(5, 10)
     )
 
@@ -86,10 +86,10 @@ class YAMLObj1(object):
 
     @classmethod
     def from_yaml(cls, loader, suffix, node):
-        import ruamel.yaml  # NOQA
+        import ruyaml  # NOQA
 
         obj1 = Obj1(suffix)
-        if isinstance(node, ruamel.yaml.MappingNode):
+        if isinstance(node, ruyaml.MappingNode):
             obj1.add_node(loader.construct_mapping(node))
         else:
             raise NotImplementedError
@@ -101,26 +101,26 @@ class YAMLObj1(object):
 
 
 def test_yaml_obj():
-    import ruamel.yaml  # NOQA
+    import ruyaml  # NOQA
 
-    ruamel.yaml.add_representer(Obj1, YAMLObj1.to_yaml)
-    ruamel.yaml.add_multi_constructor(YAMLObj1.yaml_tag, YAMLObj1.from_yaml)
-    x = ruamel.yaml.load('!obj:x.2\na: 1', Loader=ruamel.yaml.Loader)
+    ruyaml.add_representer(Obj1, YAMLObj1.to_yaml)
+    ruyaml.add_multi_constructor(YAMLObj1.yaml_tag, YAMLObj1.from_yaml)
+    x = ruyaml.load('!obj:x.2\na: 1', Loader=ruyaml.Loader)
     print(x)
-    assert ruamel.yaml.dump(x) == """!obj:x.2 "{'a': 1}"\n"""
+    assert ruyaml.dump(x) == """!obj:x.2 "{'a': 1}"\n"""
 
 
 def test_yaml_obj_with_loader_and_dumper():
-    import ruamel.yaml  # NOQA
+    import ruyaml  # NOQA
 
-    ruamel.yaml.add_representer(Obj1, YAMLObj1.to_yaml, Dumper=ruamel.yaml.Dumper)
-    ruamel.yaml.add_multi_constructor(
-        YAMLObj1.yaml_tag, YAMLObj1.from_yaml, Loader=ruamel.yaml.Loader
+    ruyaml.add_representer(Obj1, YAMLObj1.to_yaml, Dumper=ruyaml.Dumper)
+    ruyaml.add_multi_constructor(
+        YAMLObj1.yaml_tag, YAMLObj1.from_yaml, Loader=ruyaml.Loader
     )
-    x = ruamel.yaml.load('!obj:x.2\na: 1', Loader=ruamel.yaml.Loader)
-    # x = ruamel.yaml.load('!obj:x.2\na: 1')
+    x = ruyaml.load('!obj:x.2\na: 1', Loader=ruyaml.Loader)
+    # x = ruyaml.load('!obj:x.2\na: 1')
     print(x)
-    assert ruamel.yaml.dump(x) == """!obj:x.2 "{'a': 1}"\n"""
+    assert ruyaml.dump(x) == """!obj:x.2 "{'a': 1}"\n"""
 
 
 # ToDo use nullege to search add_multi_representer and add_path_resolver
@@ -130,11 +130,11 @@ def test_yaml_obj_with_loader_and_dumper():
 
 
 def test_issue_127():
-    import ruamel.yaml  # NOQA
+    import ruyaml  # NOQA
 
-    class Ref(ruamel.yaml.YAMLObject):
-        yaml_constructor = ruamel.yaml.RoundTripConstructor
-        yaml_representer = ruamel.yaml.RoundTripRepresenter
+    class Ref(ruyaml.YAMLObject):
+        yaml_constructor = ruyaml.RoundTripConstructor
+        yaml_representer = ruyaml.RoundTripRepresenter
         yaml_tag = u'!Ref'
 
         def __init__(self, logical_id):
@@ -146,8 +146,8 @@ def test_issue_127():
 
         @classmethod
         def to_yaml(cls, dumper, data):
-            if isinstance(data.logical_id, ruamel.yaml.scalarstring.ScalarString):
-                style = data.logical_id.style  # ruamel.yaml>0.15.8
+            if isinstance(data.logical_id, ruyaml.scalarstring.ScalarString):
+                style = data.logical_id.style  # ruyaml>0.15.8
             else:
                 style = None
             return dumper.represent_scalar(cls.yaml_tag, data.logical_id, style=style)
@@ -163,7 +163,7 @@ def test_issue_127():
       - Five Six
       - 'Seven Eight'
     """)
-    data = ruamel.yaml.round_trip_load(document, preserve_quotes=True)
-    assert ruamel.yaml.round_trip_dump(data, indent=4, block_seq_indent=2) == document.replace(
+    data = ruyaml.round_trip_load(document, preserve_quotes=True)
+    assert ruyaml.round_trip_dump(data, indent=4, block_seq_indent=2) == document.replace(
         '\n    Two and', ' Two and'
     )

@@ -13,7 +13,7 @@ Differences with PyYAML
 
 
 
-``ruamel.yaml`` is a derivative of Kirill Simonov's `PyYAML 3.11
+``ruyaml`` is a derivative of Kirill Simonov's `PyYAML 3.11
 <https://bitbucket.org/xi/pyyaml>`_ and would not exist without that
 excellent base to start from.
 
@@ -24,7 +24,7 @@ The following a summary of the major differences with PyYAML 3.11
 Defaulting to YAML 1.2 support
 ++++++++++++++++++++++++++++++
 
-PyYAML supports the `YAML 1.1`_ standard, ``ruamel.yaml`` supports
+PyYAML supports the `YAML 1.1`_ standard, ``ruyaml`` supports
 `YAML 1.2`_ as released in 2009.
 
 - YAML 1.2 dropped support for several features unquoted ``Yes``,
@@ -43,13 +43,13 @@ the document starts with::
 
   % YAML 1.1
 
-, ``ruamel.yaml`` will load the document as version 1.2.
+, ``ruyaml`` will load the document as version 1.2.
 
 
 PY2/PY3 reintegration
 +++++++++++++++++++++
 
-``ruamel.yaml`` re-integrates the Python 2 and 3 sources, running on
+``ruyaml`` re-integrates the Python 2 and 3 sources, running on
 Python 2.7 (CPython, PyPy), 3.3, 3.4, 3.5 and 3.6 (support for 2.6 has been
 dropped mid 2016). It is more easy to extend and maintain as only a
 miniscule part of the code is Python version specific.
@@ -57,16 +57,16 @@ miniscule part of the code is Python version specific.
 Fixes
 +++++
 
-- ``ruamel.yaml`` follows the ``indent`` keyword argument on scalars
+- ``ruyaml`` follows the ``indent`` keyword argument on scalars
   when dumping.
-- ``ruamel.yaml`` allows ``:`` in plain scalars, as long as these are not
+- ``ruyaml`` allows ``:`` in plain scalars, as long as these are not
   followed by a space (as per the specification)
 
 
 Testing
 +++++++
 
-``ruamel.yaml`` is tested using `tox`_ and `py.test`_. In addition to
+``ruyaml`` is tested using `tox`_ and `py.test`_. In addition to
 new tests, the original PyYAML
 test framework is called from within ``tox`` runs.
 
@@ -76,7 +76,7 @@ supported Python versions, on PyPI as well as flake8/pep8
 API
 +++
 
-Starting with 0.15 the API for using ``ruamel.yaml`` has diverged allowing 
+Starting with 0.15 the API for using ``ruyaml`` has diverged allowing 
 easier addition of new features.
 
 --- !incraw |

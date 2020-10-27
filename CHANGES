@@ -1,3 +1,7 @@
+[0, 90, 0]: 2020-10-27
+  - UNRELEASED
+  - Renaming the project to "ruyaml".
+
 [0, 16, 7]: 2020-01-30
   - fix typchecking issue on TaggedScalar (reported by Jens Nielsen)
   - fix error in dumping literal scalar in sequence with comments before element

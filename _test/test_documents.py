@@ -16,7 +16,7 @@ class TestDocument:
         round_trip(inp, explicit_start=True, explicit_end=True)
 
     def test_multi_doc_begin_end(self):
-        from ruamel import yaml
+        import ruyaml
 
         inp = """\
         ---
@@ -28,8 +28,8 @@ class TestDocument:
         """
         docs = list(round_trip_load_all(inp))
         assert docs == [['a'], ['b']]
-        out = yaml.dump_all(
-            docs, Dumper=yaml.RoundTripDumper, explicit_start=True, explicit_end=True
+        out = ruyaml.dump_all(
+            docs, Dumper=ruyaml.RoundTripDumper, explicit_start=True, explicit_end=True
         )
         assert out == '---\n- a\n...\n---\n- b\n...\n'
 
@@ -65,10 +65,10 @@ class TestDocument:
         assert docs == [['a'], ['b']]
 
     def test_multi_doc_ends_only_1_1(self):
-        from ruamel import yaml
+        import ruyaml
 
         # this is not ok in 1.1
-        with pytest.raises(yaml.parser.ParserError):
+        with pytest.raises(ruyaml.parser.ParserError):
             inp = """\
             - a
             ...

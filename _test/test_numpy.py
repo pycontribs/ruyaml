@@ -9,15 +9,15 @@ except:  # NOQA
 
 
 def Xtest_numpy():
-    import ruamel.yaml
+    import ruyaml
 
     if numpy is None:
         return
     data = numpy.arange(10)
     print('data', type(data), data)
 
-    yaml_str = ruamel.yaml.dump(data)
-    datb = ruamel.yaml.load(yaml_str)
+    yaml_str = ruyaml.dump(data)
+    datb = ruyaml.load(yaml_str)
     print('datb', type(datb), datb)
 
     print('\nYAML', yaml_str)

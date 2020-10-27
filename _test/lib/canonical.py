@@ -1,12 +1,12 @@
 
-import ruamel.yaml
-from ruamel.yaml.composer import Composer
-from ruamel.yaml.constructor import Constructor
-from ruamel.yaml.resolver import Resolver
-from ruamel.yaml.compat import unichr, PY3
+import ruyaml
+from ruyaml.composer import Composer
+from ruyaml.constructor import Constructor
+from ruyaml.resolver import Resolver
+from ruyaml.compat import unichr, PY3
 
 
-class CanonicalError(ruamel.yaml.YAMLError):
+class CanonicalError(ruyaml.YAMLError):
     pass
 
 
@@ -55,39 +55,39 @@ class CanonicalScanner:
         return token.value
 
     def scan(self):
-        self.tokens.append(ruamel.yaml.StreamStartToken(None, None))
+        self.tokens.append(ruyaml.StreamStartToken(None, None))
         while True:
             self.find_token()
             ch = self.data[self.index]
             if ch == u'\0':
-                self.tokens.append(ruamel.yaml.StreamEndToken(None, None))
+                self.tokens.append(ruyaml.StreamEndToken(None, None))
                 break
             elif ch == u'%':
                 self.tokens.append(self.scan_directive())
             elif ch == u'-' and self.data[self.index : self.index + 3] == u'---':
                 self.index += 3
-                self.tokens.append(ruamel.yaml.DocumentStartToken(None, None))
+                self.tokens.append(ruyaml.DocumentStartToken(None, None))
             elif ch == u'[':
                 self.index += 1
-                self.tokens.append(ruamel.yaml.FlowSequenceStartToken(None, None))
+                self.tokens.append(ruyaml.FlowSequenceStartToken(None, None))
             elif ch == u'{':
                 self.index += 1
-                self.tokens.append(ruamel.yaml.FlowMappingStartToken(None, None))
+                self.tokens.append(ruyaml.FlowMappingStartToken(None, None))
             elif ch == u']':
                 self.index += 1
-                self.tokens.append(ruamel.yaml.FlowSequenceEndToken(None, None))
+                self.tokens.append(ruyaml.FlowSequenceEndToken(None, None))
             elif ch == u'}':
                 self.index += 1
-                self.tokens.append(ruamel.yaml.FlowMappingEndToken(None, None))
+                self.tokens.append(ruyaml.FlowMappingEndToken(None, None))
             elif ch == u'?':
                 self.index += 1
-                self.tokens.append(ruamel.yaml.KeyToken(None, None))
+                self.tokens.append(ruyaml.KeyToken(None, None))
             elif ch == u':':
                 self.index += 1
-                self.tokens.append(ruamel.yaml.ValueToken(None, None))
+                self.tokens.append(ruyaml.ValueToken(None, None))
             elif ch == u',':
                 self.index += 1
-                self.tokens.append(ruamel.yaml.FlowEntryToken(None, None))
+                self.tokens.append(ruyaml.FlowEntryToken(None, None))
             elif ch == u'*' or ch == u'&':
                 self.tokens.append(self.scan_alias())
             elif ch == u'!':
@@ -106,15 +106,15 @@ class CanonicalScanner:
             and self.data[self.index + len(self.DIRECTIVE)] in u' \n\0'
         ):
             self.index += len(self.DIRECTIVE)
-            return ruamel.yaml.DirectiveToken('YAML', (1, 1), None, None)
+            return ruyaml.DirectiveToken('YAML', (1, 1), None, None)
         else:
             raise CanonicalError('invalid directive')
 
     def scan_alias(self):
         if self.data[self.index] == u'*':
-            TokenClass = ruamel.yaml.AliasToken
+            TokenClass = ruyaml.AliasToken
         else:
-            TokenClass = ruamel.yaml.AnchorToken
+            TokenClass = ruyaml.AnchorToken
         self.index += 1
         start = self.index
         while self.data[self.index] not in u', \n\0':
@@ -136,7 +136,7 @@ class CanonicalScanner:
             value = value[1:-1]
         else:
             value = u'!' + value
-        return ruamel.yaml.TagToken(value, None, None)
+        return ruyaml.TagToken(value, None, None)
 
     QUOTE_CODES = {'x': 2, 'u': 4, 'U': 8}
 
@@ -197,7 +197,7 @@ class CanonicalScanner:
                 self.index += 1
         chunks.append(self.data[start : self.index])
         self.index += 1
-        return ruamel.yaml.ScalarToken("".join(chunks), False, None, None)
+        return ruyaml.ScalarToken("".join(chunks), False, None, None)
 
     def find_token(self):
         found = False
@@ -223,48 +223,48 @@ class CanonicalParser:
 
     # stream: STREAM-START document* STREAM-END
     def parse_stream(self):
-        self.get_token(ruamel.yaml.StreamStartToken)
-        self.events.append(ruamel.yaml.StreamStartEvent(None, None))
-        while not self.check_token(ruamel.yaml.StreamEndToken):
-            if self.check_token(ruamel.yaml.DirectiveToken, ruamel.yaml.DocumentStartToken):
+        self.get_token(ruyaml.StreamStartToken)
+        self.events.append(ruyaml.StreamStartEvent(None, None))
+        while not self.check_token(ruyaml.StreamEndToken):
+            if self.check_token(ruyaml.DirectiveToken, ruyaml.DocumentStartToken):
                 self.parse_document()
             else:
                 raise CanonicalError('document is expected, got ' + repr(self.tokens[0]))
-        self.get_token(ruamel.yaml.StreamEndToken)
-        self.events.append(ruamel.yaml.StreamEndEvent(None, None))
+        self.get_token(ruyaml.StreamEndToken)
+        self.events.append(ruyaml.StreamEndEvent(None, None))
 
     # document: DIRECTIVE? DOCUMENT-START node
     def parse_document(self):
         # node = None
-        if self.check_token(ruamel.yaml.DirectiveToken):
-            self.get_token(ruamel.yaml.DirectiveToken)
-        self.get_token(ruamel.yaml.DocumentStartToken)
-        self.events.append(ruamel.yaml.DocumentStartEvent(None, None))
+        if self.check_token(ruyaml.DirectiveToken):
+            self.get_token(ruyaml.DirectiveToken)
+        self.get_token(ruyaml.DocumentStartToken)
+        self.events.append(ruyaml.DocumentStartEvent(None, None))
         self.parse_node()
-        self.events.append(ruamel.yaml.DocumentEndEvent(None, None))
+        self.events.append(ruyaml.DocumentEndEvent(None, None))
 
     # node: ALIAS | ANCHOR? TAG? (SCALAR|sequence|mapping)
     def parse_node(self):
-        if self.check_token(ruamel.yaml.AliasToken):
-            self.events.append(ruamel.yaml.AliasEvent(self.get_token_value(), None, None))
+        if self.check_token(ruyaml.AliasToken):
+            self.events.append(ruyaml.AliasEvent(self.get_token_value(), None, None))
         else:
             anchor = None
-            if self.check_token(ruamel.yaml.AnchorToken):
+            if self.check_token(ruyaml.AnchorToken):
                 anchor = self.get_token_value()
             tag = None
-            if self.check_token(ruamel.yaml.TagToken):
+            if self.check_token(ruyaml.TagToken):
                 tag = self.get_token_value()
-            if self.check_token(ruamel.yaml.ScalarToken):
+            if self.check_token(ruyaml.ScalarToken):
                 self.events.append(
-                    ruamel.yaml.ScalarEvent(
+                    ruyaml.ScalarEvent(
                         anchor, tag, (False, False), self.get_token_value(), None, None
                     )
                 )
-            elif self.check_token(ruamel.yaml.FlowSequenceStartToken):
-                self.events.append(ruamel.yaml.SequenceStartEvent(anchor, tag, None, None))
+            elif self.check_token(ruyaml.FlowSequenceStartToken):
+                self.events.append(ruyaml.SequenceStartEvent(anchor, tag, None, None))
                 self.parse_sequence()
-            elif self.check_token(ruamel.yaml.FlowMappingStartToken):
-                self.events.append(ruamel.yaml.MappingStartEvent(anchor, tag, None, None))
+            elif self.check_token(ruyaml.FlowMappingStartToken):
+                self.events.append(ruyaml.MappingStartEvent(anchor, tag, None, None))
                 self.parse_mapping()
             else:
                 raise CanonicalError(
@@ -273,33 +273,33 @@ class CanonicalParser:
 
     # sequence: SEQUENCE-START (node (ENTRY node)*)? ENTRY? SEQUENCE-END
     def parse_sequence(self):
-        self.get_token(ruamel.yaml.FlowSequenceStartToken)
-        if not self.check_token(ruamel.yaml.FlowSequenceEndToken):
+        self.get_token(ruyaml.FlowSequenceStartToken)
+        if not self.check_token(ruyaml.FlowSequenceEndToken):
             self.parse_node()
-            while not self.check_token(ruamel.yaml.FlowSequenceEndToken):
-                self.get_token(ruamel.yaml.FlowEntryToken)
-                if not self.check_token(ruamel.yaml.FlowSequenceEndToken):
+            while not self.check_token(ruyaml.FlowSequenceEndToken):
+                self.get_token(ruyaml.FlowEntryToken)
+                if not self.check_token(ruyaml.FlowSequenceEndToken):
                     self.parse_node()
-        self.get_token(ruamel.yaml.FlowSequenceEndToken)
-        self.events.append(ruamel.yaml.SequenceEndEvent(None, None))
+        self.get_token(ruyaml.FlowSequenceEndToken)
+        self.events.append(ruyaml.SequenceEndEvent(None, None))
 
     # mapping: MAPPING-START (map_entry (ENTRY map_entry)*)? ENTRY? MAPPING-END
     def parse_mapping(self):
-        self.get_token(ruamel.yaml.FlowMappingStartToken)
-        if not self.check_token(ruamel.yaml.FlowMappingEndToken):
+        self.get_token(ruyaml.FlowMappingStartToken)
+        if not self.check_token(ruyaml.FlowMappingEndToken):
             self.parse_map_entry()
-            while not self.check_token(ruamel.yaml.FlowMappingEndToken):
-                self.get_token(ruamel.yaml.FlowEntryToken)
-                if not self.check_token(ruamel.yaml.FlowMappingEndToken):
+            while not self.check_token(ruyaml.FlowMappingEndToken):
+                self.get_token(ruyaml.FlowEntryToken)
+                if not self.check_token(ruyaml.FlowMappingEndToken):
                     self.parse_map_entry()
-        self.get_token(ruamel.yaml.FlowMappingEndToken)
-        self.events.append(ruamel.yaml.MappingEndEvent(None, None))
+        self.get_token(ruyaml.FlowMappingEndToken)
+        self.events.append(ruyaml.MappingEndEvent(None, None))
 
     # map_entry: KEY node VALUE node
     def parse_map_entry(self):
-        self.get_token(ruamel.yaml.KeyToken)
+        self.get_token(ruyaml.KeyToken)
         self.parse_node()
-        self.get_token(ruamel.yaml.ValueToken)
+        self.get_token(ruyaml.ValueToken)
         self.parse_node()
 
     def parse(self):
@@ -339,46 +339,46 @@ class CanonicalLoader(CanonicalScanner, CanonicalParser, Composer, Constructor, 
         Resolver.__init__(self)
 
 
-ruamel.yaml.CanonicalLoader = CanonicalLoader
+ruyaml.CanonicalLoader = CanonicalLoader
 
 
 def canonical_scan(stream):
-    return ruamel.yaml.scan(stream, Loader=CanonicalLoader)
+    return ruyaml.scan(stream, Loader=CanonicalLoader)
 
 
-ruamel.yaml.canonical_scan = canonical_scan
+ruyaml.canonical_scan = canonical_scan
 
 
 def canonical_parse(stream):
-    return ruamel.yaml.parse(stream, Loader=CanonicalLoader)
+    return ruyaml.parse(stream, Loader=CanonicalLoader)
 
 
-ruamel.yaml.canonical_parse = canonical_parse
+ruyaml.canonical_parse = canonical_parse
 
 
 def canonical_compose(stream):
-    return ruamel.yaml.compose(stream, Loader=CanonicalLoader)
+    return ruyaml.compose(stream, Loader=CanonicalLoader)
 
 
-ruamel.yaml.canonical_compose = canonical_compose
+ruyaml.canonical_compose = canonical_compose
 
 
 def canonical_compose_all(stream):
-    return ruamel.yaml.compose_all(stream, Loader=CanonicalLoader)
+    return ruyaml.compose_all(stream, Loader=CanonicalLoader)
 
 
-ruamel.yaml.canonical_compose_all = canonical_compose_all
+ruyaml.canonical_compose_all = canonical_compose_all
 
 
 def canonical_load(stream):
-    return ruamel.yaml.load(stream, Loader=CanonicalLoader)
+    return ruyaml.load(stream, Loader=CanonicalLoader)
 
 
-ruamel.yaml.canonical_load = canonical_load
+ruyaml.canonical_load = canonical_load
 
 
 def canonical_load_all(stream):
-    return ruamel.yaml.load_all(stream, Loader=CanonicalLoader)
+    return ruyaml.load_all(stream, Loader=CanonicalLoader)
 
 
-ruamel.yaml.canonical_load_all = canonical_load_all
+ruyaml.canonical_load_all = canonical_load_all

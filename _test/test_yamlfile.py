@@ -21,11 +21,11 @@ class TestYAML:
 
     def test_omap_out(self):
         # ordereddict mapped to !!omap
-        from ruamel.yaml.compat import ordereddict
-        import ruamel.yaml  # NOQA
+        from ruyaml.compat import ordereddict
+        import ruyaml  # NOQA
 
         x = ordereddict([('a', 1), ('b', 2)])
-        res = ruamel.yaml.dump(x, default_flow_style=False)
+        res = ruyaml.dump(x, default_flow_style=False)
         assert res == dedent("""
         !!omap
         - a: 1
@@ -44,11 +44,11 @@ class TestYAML:
     @pytest.mark.skipif(sys.version_info < (2, 7), reason='collections not available')
     def test_dump_collections_ordereddict(self):
         from collections import OrderedDict
-        import ruamel.yaml  # NOQA
+        import ruyaml  # NOQA
 
         # OrderedDict mapped to !!omap
         x = OrderedDict([('a', 1), ('b', 2)])
-        res = ruamel.yaml.dump(x, Dumper=ruamel.yaml.RoundTripDumper, default_flow_style=False)
+        res = ruyaml.dump(x, Dumper=ruyaml.RoundTripDumper, default_flow_style=False)
         assert res == dedent("""
         !!omap
         - a: 1
@@ -57,15 +57,15 @@ class TestYAML:
 
     @pytest.mark.skipif(
         sys.version_info >= (3, 0) or platform.python_implementation() != 'CPython',
-        reason='ruamel.yaml not available',
+        reason='ruyaml not available',
     )
     def test_dump_ruamel_ordereddict(self):
         from ruamel.ordereddict import ordereddict
-        import ruamel.yaml  # NOQA
+        import ruyaml  # NOQA
 
         # OrderedDict mapped to !!omap
         x = ordereddict([('a', 1), ('b', 2)])
-        res = ruamel.yaml.dump(x, Dumper=ruamel.yaml.RoundTripDumper, default_flow_style=False)
+        res = ruyaml.dump(x, Dumper=ruyaml.RoundTripDumper, default_flow_style=False)
         assert res == dedent("""
         !!omap
         - a: 1
@@ -73,7 +73,7 @@ class TestYAML:
         """)
 
     def test_CommentedSet(self):
-        from ruamel.yaml.constructor import CommentedSet
+        from ruyaml.constructor import CommentedSet
 
         s = CommentedSet(['a', 'b', 'c'])
         s.remove('b')
@@ -86,10 +86,10 @@ class TestYAML:
 
     def test_set_out(self):
         # preferable would be the shorter format without the ': null'
-        import ruamel.yaml  # NOQA
+        import ruyaml  # NOQA
 
         x = set(['a', 'b', 'c'])
-        res = ruamel.yaml.dump(x, default_flow_style=False)
+        res = ruyaml.dump(x, default_flow_style=False)
         assert res == dedent("""
         !!set
         a: null
@@ -200,7 +200,7 @@ class TestYAML:
         assert d['c'][1].split('line.')[1] == ""
 
     def test_load_all_perserve_quotes(self):
-        import ruamel.yaml  # NOQA
+        import ruyaml  # NOQA
 
         s = dedent("""\
         a: 'hello'
@@ -208,10 +208,10 @@ class TestYAML:
         b: "goodbye"
         """)
         data = []
-        for x in ruamel.yaml.round_trip_load_all(s, preserve_quotes=True):
+        for x in ruyaml.round_trip_load_all(s, preserve_quotes=True):
             data.append(x)
-        out = ruamel.yaml.dump_all(data, Dumper=ruamel.yaml.RoundTripDumper)
+        out = ruyaml.dump_all(data, Dumper=ruyaml.RoundTripDumper)
         print(type(data[0]['a']), data[0]['a'])
-        # out = ruamel.yaml.round_trip_dump_all(data)
+        # out = ruyaml.round_trip_dump_all(data)
         print(out)
         assert out == s
