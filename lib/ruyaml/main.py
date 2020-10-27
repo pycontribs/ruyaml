@@ -19,7 +19,7 @@ from ruyaml.nodes import *  # NOQA
 
 from ruyaml.loader import BaseLoader, SafeLoader, Loader, RoundTripLoader  # NOQA
 from ruyaml.dumper import BaseDumper, SafeDumper, Dumper, RoundTripDumper  # NOQA
-from ruyaml.compat import with_metaclass, nprint
+from ruyaml.compat import nprint
 from ruyaml.resolver import VersionedResolver, Resolver  # NOQA
 from ruyaml.representer import (
     BaseRepresenter,
@@ -1499,7 +1499,7 @@ class YAMLObjectMetaclass(type):
             cls.yaml_representer.add_representer(cls, cls.to_yaml)  # type: ignore
 
 
-class YAMLObject(with_metaclass(YAMLObjectMetaclass)):  # type: ignore
+class YAMLObject(metaclass=YAMLObjectMetaclass):  # type: ignore
     """
     An object that can dump itself to a YAML stream
     and load itself from a YAML stream.

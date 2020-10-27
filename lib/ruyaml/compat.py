@@ -66,13 +66,6 @@ builtins_module = 'builtins'
 
 UNICODE_SIZE = 4 if sys.maxunicode > 65535 else 2
 
-
-def with_metaclass(meta, *bases):
-    # type: (Any, Any) -> Any
-    """Create a base class with a metaclass."""
-    return meta('NewBase', bases, {})
-
-
 DBG_TOKEN = 1
 DBG_EVENT = 2
 DBG_NODE = 4
