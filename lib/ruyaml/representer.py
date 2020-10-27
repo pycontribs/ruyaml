@@ -5,7 +5,7 @@ from __future__ import print_function, absolute_import, division
 
 from ruyaml.error import *  # NOQA
 from ruyaml.nodes import *  # NOQA
-from ruyaml.compat import text_type, binary_type
+from ruyaml.compat import binary_type
 from ruyaml.compat import ordereddict  # type: ignore
 from ruyaml.compat import nprint, nprintf  # NOQA
 from ruyaml.scalarstring import (
@@ -104,7 +104,7 @@ class BaseRepresenter(object):
                 elif None in self.yaml_representers:
                     node = self.yaml_representers[None](self, data)
                 else:
-                    node = ScalarNode(None, text_type(data))
+                    node = ScalarNode(None, str(data))
         # if alias_key is not None:
         #     self.represented_objects[alias_key] = node
         return node
@@ -229,7 +229,7 @@ class SafeRepresenter(BaseRepresenter):
         # so "data is ()" should not be used
         if data is None or (isinstance(data, tuple) and data == ()):
             return True
-        if isinstance(data, (binary_type, text_type, bool, int, float)):
+        if isinstance(data, (binary_type, str, bool, int, float)):
             return True
         return False
 
@@ -262,7 +262,7 @@ class SafeRepresenter(BaseRepresenter):
 
     def represent_int(self, data):
         # type: (Any) -> Any
-        return self.represent_scalar(u'tag:yaml.org,2002:int', text_type(data))
+        return self.represent_scalar(u'tag:yaml.org,2002:int', str(data))
 
     inf_value = 1e300
     while repr(inf_value) != repr(inf_value * inf_value):

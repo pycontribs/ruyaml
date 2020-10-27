@@ -16,7 +16,7 @@ from ruyaml.error import (MarkedYAMLError, MarkedYAMLFutureWarning,
 from ruyaml.nodes import *                               # NOQA
 from ruyaml.nodes import (SequenceNode, MappingNode, ScalarNode)
 from ruyaml.compat import (builtins_module,  # NOQA
-                           text_type, nprint, nprintf, version_tnf)
+                           nprint, nprintf, version_tnf)
 from ruyaml.compat import ordereddict, Hashable, MutableSequence  # type: ignore
 from ruyaml.compat import MutableMapping  # type: ignore
 
@@ -1023,12 +1023,12 @@ class RoundTripConstructor(SafeConstructor):
                 None, None, 'expected a scalar node, but found %s' % node.id, node.start_mark
             )
 
-        if node.style == '|' and isinstance(node.value, text_type):
+        if node.style == '|' and isinstance(node.value, str):
             lss = LiteralScalarString(node.value, anchor=node.anchor)
             if node.comment and node.comment[1]:
                 lss.comment = node.comment[1][0]  # type: ignore
             return lss
-        if node.style == '>' and isinstance(node.value, text_type):
+        if node.style == '>' and isinstance(node.value, str):
             fold_positions = []  # type: List[int]
             idx = -1
             while True:
@@ -1042,7 +1042,7 @@ class RoundTripConstructor(SafeConstructor):
             if fold_positions:
                 fss.fold_pos = fold_positions  # type: ignore
             return fss
-        elif bool(self._preserve_quotes) and isinstance(node.value, text_type):
+        elif bool(self._preserve_quotes) and isinstance(node.value, str):
             if node.style == "'":
                 return SingleQuotedScalarString(node.value, anchor=node.anchor)
             if node.style == '"':

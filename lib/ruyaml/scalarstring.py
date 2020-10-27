@@ -2,7 +2,6 @@
 
 from __future__ import print_function, absolute_import, division, unicode_literals
 
-from ruyaml.compat import text_type
 from ruyaml.anchor import Anchor
 
 if False:  # MYPY
@@ -21,20 +20,20 @@ __all__ = [
 ]
 
 
-class ScalarString(text_type):
+class ScalarString(str):
     __slots__ = Anchor.attrib
 
     def __new__(cls, *args, **kw):
         # type: (Any, Any) -> Any
         anchor = kw.pop('anchor', None)  # type: ignore
-        ret_val = text_type.__new__(cls, *args, **kw)  # type: ignore
+        ret_val = str.__new__(cls, *args, **kw)  # type: ignore
         if anchor is not None:
             ret_val.yaml_set_anchor(anchor, always_dump=True)
         return ret_val
 
     def replace(self, old, new, maxreplace=-1):
         # type: (Any, Any, int) -> Any
-        return type(self)((text_type.replace(self, old, new, maxreplace)))
+        return type(self)((str.replace(self, old, new, maxreplace)))
 
     @property
     def anchor(self):
