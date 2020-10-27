@@ -42,7 +42,6 @@ _package_data = dict(
     supported=[(2, 7), (3, 5)],  # minimum
     tox=dict(
         env='*pn',  # also test narrow Python 2.7.15 for unicode patterns
-        deps='ruamel.std.pathlib',
         fl8excl='_test/lib',
     ),
     universal=True,
