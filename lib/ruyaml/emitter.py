@@ -15,7 +15,7 @@ from ruyaml.error import YAMLError, YAMLStreamError
 from ruyaml.events import *  # NOQA
 
 # fmt: off
-from ruyaml.compat import text_type, nprint, dbg, DBG_EVENT, \
+from ruyaml.compat import nprint, dbg, DBG_EVENT, \
     check_anchorname_char
 # fmt: on
 
@@ -1413,7 +1413,7 @@ class Emitter(object):
         if text:
             if text[0] in u' \n\x85\u2028\u2029':
                 indent = self.best_sequence_indent
-                hints += text_type(indent)
+                hints += str(indent)
             elif self.root_context:
                 for end in ['\n---', '\n...']:
                     pos = 0

@@ -242,7 +242,7 @@ def YAML(**kw):
         def round_trip(self, stream, **kw):
             from ruyaml.compat import StringIO, BytesIO  # NOQA
 
-            assert isinstance(stream, (ruyaml.compat.text_type, str))
+            assert isinstance(stream, str)
             lkw = kw.copy()
             if stream and stream[0] == '\n':
                 stream = stream[1:]
@@ -259,7 +259,7 @@ def YAML(**kw):
         def round_trip_all(self, stream, **kw):
             from ruyaml.compat import StringIO, BytesIO  # NOQA
 
-            assert isinstance(stream, (ruyaml.compat.text_type, str))
+            assert isinstance(stream, str)
             lkw = kw.copy()
             if stream and stream[0] == '\n':
                 stream = stream[1:]

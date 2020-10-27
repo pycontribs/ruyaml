@@ -24,7 +24,7 @@ from __future__ import absolute_import
 import codecs
 
 from ruyaml.error import YAMLError, FileMark, StringMark, YAMLStreamError
-from ruyaml.compat import text_type, binary_type, UNICODE_SIZE
+from ruyaml.compat import binary_type, UNICODE_SIZE
 from ruyaml.util import RegExp
 
 if False:  # MYPY
@@ -112,7 +112,7 @@ class Reader(object):
         if val is None:
             return
         self._stream = None
-        if isinstance(val, text_type):
+        if isinstance(val, str):
             self.name = '<unicode string>'
             self.check_printable(val)
             self.buffer = val + u'\0'  # type: ignore

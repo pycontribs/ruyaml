@@ -46,7 +46,6 @@ except:  # NOQA
                     self[old_key] = od[old_key]
 
 
-text_type = str
 binary_type = bytes
 
 MAXSIZE = sys.maxsize
