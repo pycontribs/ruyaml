@@ -50,11 +50,6 @@ def utf8(s):
     # type: (str) -> str
     return s
 
-def to_unicode(s):
-    # type: (str) -> str
-    return s
-
-
 string_types = str
 integer_types = int
 class_types = type
