@@ -21,7 +21,7 @@ Registering is done with ``YAML.register_class()``::
 --- !python |
 
 import sys
-import ruamel.yaml
+import ruyaml
 
 
 class User(object):
@@ -30,7 +30,7 @@ class User(object):
         self.age = age
 
 
-yaml = ruamel.yaml.YAML()
+yaml = ruyaml.YAML()
 yaml.register_class(User)
 yaml.dump([User('Anthon', 18)], sys.stdout)
 --- !stdout |
@@ -44,7 +44,7 @@ explicitly specify dump and/or load *classmethods* which have to be called
 
 --- !python |
 import sys
-import ruamel.yaml
+import ruyaml
 
 
 class User:
@@ -64,7 +64,7 @@ class User:
         return cls(*node.value.split('-'))
 
 
-yaml = ruamel.yaml.YAML()
+yaml = ruyaml.YAML()
 yaml.register_class(User)
 yaml.dump([User('Anthon', 18)], sys.stdout)
 --- !stdout |
@@ -77,7 +77,7 @@ the ``yaml = YAML()`` line needs to be moved up in the file::
 
 --- !python |
 import sys
-from ruamel.yaml import YAML, yaml_object
+from ruyaml import YAML, yaml_object
 
 yaml = YAML()
 

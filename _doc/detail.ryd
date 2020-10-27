@@ -14,7 +14,7 @@ Details
 - Tests whether the C yaml library is installed as well as the header
   files. That library  doesn't generate CommentTokens, so it cannot be used to
   do round trip editing on comments. It can be used to speed up normal
-  processing (so you don't need to install ``ruamel.yaml`` and ``PyYaml``).
+  processing (so you don't need to install ``ruyaml`` and ``PyYaml``).
   See the section *Optional requirements*.
 - Basic support for multiline strings with preserved newlines and
   chomping ( '``|``', '``|+``', '``|-``' ). As this subclasses the string type
@@ -33,7 +33,7 @@ Details
 
 *In the following examples it is assumed you have done something like:*::
 
-  from ruamel.yaml import YAML
+  from ruyaml import YAML
   yaml = YAML()
 
 *if not explicitly specified.*
@@ -41,7 +41,7 @@ Details
 Indentation of block sequences
 ==============================
 
-Although ruamel.yaml doesn't preserve individual indentations of block sequence
+Although ruyaml doesn't preserve individual indentations of block sequence
 items, it does properly dump::
 
   x:
@@ -57,7 +57,7 @@ back to::
 if you specify ``yaml.indent(sequence=4)`` (indentation is counted to the
 beginning of the sequence element).
 
-PyYAML (and older versions of ruamel.yaml) gives you non-indented
+PyYAML (and older versions of ruyaml) gives you non-indented
 scalars (when specifying default_flow_style=False)::
 
   x:
@@ -81,7 +81,7 @@ The defaults are as if you specified ``yaml.indent(mapping=2, sequence=2, offset
 If the ``offset`` equals ``sequence``, there is not enough
 room for the dash and the space that has to follow it. In that case the
 element itself would normally be pushed to the next line (and older versions
-of ruamel.yaml did so). But this is
+of ruyaml did so). But this is
 prevented from happening. However the ``indent`` level is what is used
 for calculating the cumulative indent for deeper levels and specifying
 ``sequence=3`` resp. ``offset=2``, might give correct, but counter
@@ -146,7 +146,7 @@ In YAML a document version can be explicitly set by using::
    %YAML 1.x
 
 before the document start (at the top or before a
-``---``). For ``ruamel.yaml``  x has to be 1 or 2. If no explicit
+``---``). For ``ruyaml``  x has to be 1 or 2. If no explicit
 version is set `version 1.2 <http://www.yaml.org/spec/1.2/spec.html>`_
 is assumed (which has been released in 2009).
 
@@ -161,10 +161,10 @@ If you cannot change your YAML files and you need them to load as 1.1
 you can load with ``yaml.version = (1, 1)``,
 or the equivalent (version can be a tuple, list or string)  ``yaml.version = "1.1"``
 
-*If you cannot change your code, stick with ruamel.yaml==0.10.23 and let
+*If you cannot change your code, stick with ruyaml==0.10.23 and let
 me know if it would help to be able to set an environment variable.*
 
-This does not affect dump as ruamel.yaml never emitted sexagesimals, nor
+This does not affect dump as ruyaml never emitted sexagesimals, nor
 octal numbers, and emitted booleans always as true resp. false
 
 Round trip including comments
@@ -184,9 +184,9 @@ for for this is::
   from __future__ import print_function
 
   import sys
-  import ruamel.yaml
+  import ruyaml
 
-  yaml = ruamel.yaml.YAML()  # defaults to round-trip
+  yaml = ruyaml.YAML()  # defaults to round-trip
 
   inp = """\
   abc:

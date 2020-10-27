@@ -15,21 +15,21 @@ not with 3.4.4. It is probably best to do::
     pip install -U pip setuptools wheel
 
 in your environment (``virtualenv``, (Docker) container, etc) before
-installing ``ruamel.yaml``.
+installing ``ruyaml``.
 
-``ruamel.yaml`` itself should be installed from PyPI_ using::
+``ruyaml`` itself should be installed from PyPI_ using::
 
-    pip install ruamel.yaml
+    pip install ruyaml
 
 If you want to process jinja2/YAML templates (which are not valid YAML
 with the default jinja2 markers), do ``pip install
-ruamel.yaml[jinja2]`` (you might need to quote the last argument
+ruyaml[jinja2]`` (you might need to quote the last argument
 because of the ``[]``)
 
 
 There also is a commandline utility ``yaml`` available after installing::
 
-   pip install ruamel.yaml.cmd
+   pip install ruyaml.cmd
 
 that allows for round-trip testing/re-indenting and conversion of YAML
 files (JSON,INI,HTML tables)
