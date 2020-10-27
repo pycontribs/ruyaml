@@ -113,7 +113,7 @@ class TestIssues:
         assert 'second' in dict(**child)
 
     def test_issue_160(self):
-        from ruyaml.compat import StringIO
+        from io import StringIO
         s = dedent("""\
         root:
             # a comment
@@ -297,7 +297,7 @@ class TestIssues:
 
     def test_issue_221_sort(self):
         from ruyaml import YAML
-        from ruyaml.compat import StringIO
+        from io import StringIO
 
         yaml = YAML()
         inp = dedent("""\
@@ -322,7 +322,7 @@ class TestIssues:
 
     def test_issue_221_sort_reverse(self):
         from ruyaml import YAML
-        from ruyaml.compat import StringIO
+        from io import StringIO
 
         yaml = YAML()
         inp = dedent("""\
@@ -347,7 +347,7 @@ class TestIssues:
 
     def test_issue_221_sort_key(self):
         from ruyaml import YAML
-        from ruyaml.compat import StringIO
+        from io import StringIO
 
         yaml = YAML()
         inp = dedent("""\
@@ -372,7 +372,7 @@ class TestIssues:
 
     def test_issue_221_sort_key_reverse(self):
         from ruyaml import YAML
-        from ruyaml.compat import StringIO
+        from io import StringIO
 
         yaml = YAML()
         inp = dedent("""\
@@ -397,7 +397,7 @@ class TestIssues:
 
     def test_issue_222(self):
         import ruyaml
-        from ruyaml.compat import StringIO
+        from io import StringIO
 
         buf = StringIO()
         ruyaml.safe_dump(['012923'], buf)
@@ -461,7 +461,7 @@ class TestIssues:
     def test_issue_238(self, tmpdir):
         program_src = r"""
         import ruyaml
-        from ruyaml.compat import StringIO
+        from io import StringIO
 
         yaml = ruyaml.YAML(typ='unsafe')
 
@@ -565,7 +565,7 @@ class TestIssues:
     # @pytest.mark.xfail(strict=True, reason='bla bla', raises=AssertionError)
     def test_issue_279(self):
         from ruyaml import YAML
-        from ruyaml.compat import StringIO
+        from io import StringIO
 
         yaml = YAML()
         yaml.indent(sequence=4, offset=2)
@@ -640,7 +640,7 @@ class TestIssues:
 
     def test_issue_286(self):
         from ruyaml import YAML
-        from ruyaml.compat import StringIO
+        from io import StringIO
 
         yaml = YAML()
         inp = dedent("""\
@@ -656,7 +656,7 @@ class TestIssues:
 
     def test_issue_288(self):
         import sys
-        from ruyaml.compat import StringIO
+        from io import StringIO
         from ruyaml import YAML
 
         yamldoc = dedent("""\
@@ -687,7 +687,7 @@ class TestIssues:
 
     def test_issue_288a(self):
         import sys
-        from ruyaml.compat import StringIO
+        from io import StringIO
         from ruyaml import YAML
 
         yamldoc = dedent("""\
@@ -718,7 +718,7 @@ class TestIssues:
 
     def test_issue_290(self):
         import sys
-        from ruyaml.compat import StringIO
+        from io import StringIO
         from ruyaml import YAML
 
         yamldoc = dedent("""\
@@ -754,7 +754,7 @@ class TestIssues:
 
     def test_issue_290a(self):
         import sys
-        from ruyaml.compat import StringIO
+        from io import StringIO
         from ruyaml import YAML
 
         yamldoc = dedent("""\

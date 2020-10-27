@@ -220,7 +220,7 @@ def YAML(**kw):
                 yield d
 
         def dump(self, data, **kw):
-            from ruyaml.compat import StringIO, BytesIO  # NOQA
+            from io import StringIO, BytesIO  # NOQA
 
             assert ('stream' in kw) ^ ('compare' in kw)
             if 'stream' in kw:
@@ -240,7 +240,7 @@ def YAML(**kw):
             assert res == expected
 
         def round_trip(self, stream, **kw):
-            from ruyaml.compat import StringIO, BytesIO  # NOQA
+            from io import StringIO, BytesIO  # NOQA
 
             assert isinstance(stream, str)
             lkw = kw.copy()
@@ -257,7 +257,7 @@ def YAML(**kw):
             assert res == outp
 
         def round_trip_all(self, stream, **kw):
-            from ruyaml.compat import StringIO, BytesIO  # NOQA
+            from io import StringIO, BytesIO  # NOQA
 
             assert isinstance(stream, str)
             lkw = kw.copy()

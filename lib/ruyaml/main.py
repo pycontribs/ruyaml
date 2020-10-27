@@ -7,6 +7,7 @@ import os
 import warnings
 import glob
 from importlib import import_module
+from io import StringIO, BytesIO
 
 
 import ruyaml
@@ -18,7 +19,7 @@ from ruyaml.nodes import *  # NOQA
 
 from ruyaml.loader import BaseLoader, SafeLoader, Loader, RoundTripLoader  # NOQA
 from ruyaml.dumper import BaseDumper, SafeDumper, Dumper, RoundTripDumper  # NOQA
-from ruyaml.compat import StringIO, BytesIO, with_metaclass, nprint
+from ruyaml.compat import with_metaclass, nprint
 from ruyaml.resolver import VersionedResolver, Resolver  # NOQA
 from ruyaml.representer import (
     BaseRepresenter,

@@ -50,7 +50,7 @@ def test_qualified_name00(tmpdir):
     """issue 214"""
     program_src = u"""\
     from ruyaml import YAML
-    from ruyaml.compat import StringIO
+    from io import StringIO
 
     class A:
         def f(self):
@@ -74,7 +74,7 @@ def test_qualified_name01(tmpdir):
     """issue 214"""
     from ruyaml import YAML
     import ruyaml.comments
-    from ruyaml.compat import StringIO
+    from io import StringIO
 
     yaml = YAML(typ='unsafe', pure=True)
     yaml.explicit_end = True
