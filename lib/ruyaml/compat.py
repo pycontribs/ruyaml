@@ -6,7 +6,6 @@ from __future__ import print_function
 
 import sys
 import os
-import types
 import traceback
 from abc import abstractmethod
 
@@ -48,7 +47,6 @@ except:  # NOQA
 
 MAXSIZE = sys.maxsize
 unichr = chr
-import io
 
 # have unlimited precision
 no_limit_int = int
