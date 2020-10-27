@@ -4,7 +4,7 @@ from __future__ import print_function
 import ruyaml as yaml
 import canonical  # NOQA
 import pprint
-from ruyaml.compat import text_type, PY3
+from ruyaml.compat import text_type
 
 
 def _convert_structure(loader):
@@ -40,7 +40,7 @@ def _convert_structure(loader):
 
 def test_structure(data_filename, structure_filename, verbose=False):
     nodes1 = []
-    with open(structure_filename, 'r' if PY3 else 'rb') as fp:
+    with open(structure_filename, 'r') as fp:
         nodes2 = eval(fp.read())
     try:
         with open(data_filename, 'rb') as fp:

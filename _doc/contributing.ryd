@@ -91,13 +91,10 @@ no longer fail, and neither should any other existing tests.
 Typing/mypy
 +++++++++++
 
-If you add methods or functions to ``ruyaml``, you will need to add Python
-2.7 compatible typing information in order for ``mypy`` to pass without error.
-
 I run ``mypy`` from the directory where the (link to) ruyaml directory is
 using::
 
-    mypy --py2 --strict --follow-imports silent ruyaml/*.py
+    mypy --strict --follow-imports silent ruyaml/*.py
 
 This should give no errors or warnings
 

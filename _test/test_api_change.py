@@ -227,12 +227,3 @@ class TestFlowStyle:
         assert out == 'b: 1\na:\n- [1, 2]\n- [3, 4]\n'
 
 
-class TestOldAPI:
-    @pytest.mark.skipif(sys.version_info >= (3, 0), reason='ok on Py3')
-    def test_duplicate_keys_02(self):
-        # Issue 165 unicode keys in error/warning
-        from ruyaml import safe_load
-        from ruyaml.constructor import DuplicateKeyError
-
-        with pytest.raises(DuplicateKeyError):
-            safe_load('type: Doméstica\ntype: International')

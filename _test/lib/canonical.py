@@ -3,7 +3,7 @@ import ruyaml
 from ruyaml.composer import Composer
 from ruyaml.constructor import Constructor
 from ruyaml.resolver import Resolver
-from ruyaml.compat import unichr, PY3
+from ruyaml.compat import unichr
 
 
 class CanonicalError(ruyaml.YAMLError):
@@ -13,11 +13,8 @@ class CanonicalError(ruyaml.YAMLError):
 class CanonicalScanner:
     def __init__(self, data):
         try:
-            if PY3:
-                if isinstance(data, bytes):
-                    data = data.decode('utf-8')
-            else:
-                data = unicode(data, 'utf-8')  # NOQA
+            if isinstance(data, bytes):
+                data = data.decode('utf-8')
         except UnicodeDecodeError:
             raise CanonicalError('utf-8 stream is expected')
         self.data = data + u'\0'

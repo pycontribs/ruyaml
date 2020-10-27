@@ -1,6 +1,7 @@
 [0, 90, 0]: 2020-10-27
   - UNRELEASED
   - Renaming the project to "ruyaml".
+  - Removed remains of Python 2 compatiblity
 
 [0, 16, 7]: 2020-01-30
   - fix typchecking issue on TaggedScalar (reported by Jens Nielsen)

@@ -377,7 +377,6 @@ class TestMergeKeysValues:
 
     def test_len_items_delete(self):
         from ruyaml import safe_load
-        from ruyaml.compat import PY3
 
         d = safe_load(self.yaml_str)
         data = round_trip_load(self.yaml_str)
@@ -387,16 +386,13 @@ class TestMergeKeysValues:
         print('ref', ref)
         assert len(x) == ref
         del data[2]['m']
-        if PY3:
-            ref -= 1
+        ref -= 1
         assert len(x) == ref
         del data[2]['d']
-        if PY3:
-            ref -= 1
+        ref -= 1
         assert len(x) == ref
         del data[2]['a']
-        if PY3:
-            ref -= 1
+        ref -= 1
         assert len(x) == ref
 
     def test_issue_196_cast_of_dict(self, capsys):
