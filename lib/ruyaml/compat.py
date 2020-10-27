@@ -50,10 +50,6 @@ def utf8(s):
     # type: (str) -> str
     return s
 
-def to_str(s):
-    # type: (str) -> str
-    return s
-
 def to_unicode(s):
     # type: (str) -> str
     return s
