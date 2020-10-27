@@ -46,7 +46,6 @@ except:  # NOQA
                     self[old_key] = od[old_key]
 
 
-class_types = type
 text_type = str
 binary_type = bytes
 
