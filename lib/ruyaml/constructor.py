@@ -15,7 +15,7 @@ from ruyaml.error import (MarkedYAMLError, MarkedYAMLFutureWarning,
                           MantissaNoDotYAML1_1Warning)
 from ruyaml.nodes import *                               # NOQA
 from ruyaml.nodes import (SequenceNode, MappingNode, ScalarNode)
-from ruyaml.compat import (utf8, builtins_module,  # NOQA
+from ruyaml.compat import (builtins_module,  # NOQA
                            text_type, nprint, nprintf, version_tnf)
 from ruyaml.compat import ordereddict, Hashable, MutableSequence  # type: ignore
 from ruyaml.compat import MutableMapping  # type: ignore
@@ -699,7 +699,7 @@ class SafeConstructor(BaseConstructor):
         raise ConstructorError(
             None,
             None,
-            'could not determine a constructor for the tag %r' % utf8(node.tag),
+            'could not determine a constructor for the tag %r' % node.tag,
             node.start_mark,
         )
 
@@ -742,7 +742,7 @@ SafeConstructor.add_constructor(None, SafeConstructor.construct_undefined)
 class Constructor(SafeConstructor):
     def construct_python_str(self, node):
         # type: (Any) -> Any
-        return utf8(self.construct_scalar(node))
+        return self.construct_scalar(node)
 
     def construct_python_unicode(self, node):
         # type: (Any) -> Any
@@ -797,7 +797,7 @@ class Constructor(SafeConstructor):
             raise ConstructorError(
                 'while constructing a Python module',
                 mark,
-                'cannot find module %r (%s)' % (utf8(name), exc),
+                'cannot find module %r (%s)' % (name, exc),
                 mark,
             )
         return sys.modules[name]
@@ -833,7 +833,7 @@ class Constructor(SafeConstructor):
             raise ConstructorError(
                 'while constructing a Python object',
                 mark,
-                'cannot find module %r (%s)' % (utf8(module_name), exc),
+                'cannot find module %r (%s)' % (module_name, exc),
                 mark,
             )
         module = sys.modules[module_name]
@@ -845,7 +845,7 @@ class Constructor(SafeConstructor):
                 raise ConstructorError(
                     'while constructing a Python object',
                     mark,
-                    'cannot find %r in the module %r' % (utf8(object_name), module.__name__),
+                    'cannot find %r in the module %r' % (object_name, module.__name__),
                     mark,
                 )
             obj = getattr(obj, lobject_name.pop(0))
@@ -858,7 +858,7 @@ class Constructor(SafeConstructor):
             raise ConstructorError(
                 'while constructing a Python name',
                 node.start_mark,
-                'expected the empty value, but found %r' % utf8(value),
+                'expected the empty value, but found %r' % value,
                 node.start_mark,
             )
         return self.find_python_name(suffix, node.start_mark)
@@ -870,7 +870,7 @@ class Constructor(SafeConstructor):
             raise ConstructorError(
                 'while constructing a Python module',
                 node.start_mark,
-                'expected the empty value, but found %r' % utf8(value),
+                'expected the empty value, but found %r' % value,
                 node.start_mark,
             )
         return self.find_python_module(suffix, node.start_mark)
@@ -1591,7 +1591,7 @@ class RoundTripConstructor(SafeConstructor):
         raise ConstructorError(
             None,
             None,
-            'could not determine a constructor for the tag %r' % utf8(node.tag),
+            'could not determine a constructor for the tag %r' % node.tag,
             node.start_mark,
         )
 

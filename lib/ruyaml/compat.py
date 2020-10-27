@@ -46,10 +46,6 @@ except:  # NOQA
                     self[old_key] = od[old_key]
 
 
-def utf8(s):
-    # type: (str) -> str
-    return s
-
 string_types = str
 integer_types = int
 class_types = type

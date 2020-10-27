@@ -5,8 +5,6 @@ from __future__ import absolute_import
 import warnings
 import textwrap
 
-from ruyaml.compat import utf8
-
 if False:  # MYPY
     from typing import Any, Dict, Optional, List, Text  # NOQA
 
@@ -85,7 +83,7 @@ class StringMark(StreamMark):
                 tail = ' ... '
                 end -= 5
                 break
-        snippet = utf8(self.buffer[start:end])
+        snippet = self.buffer[start:end]
         caret = '^'
         caret = '^ (line: {})'.format(self.line + 1)
         return (

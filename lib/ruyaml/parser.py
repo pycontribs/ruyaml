@@ -80,7 +80,7 @@ from ruyaml.error import MarkedYAMLError
 from ruyaml.tokens import *  # NOQA
 from ruyaml.events import *  # NOQA
 from ruyaml.scanner import Scanner, RoundTripScanner, ScannerError  # NOQA
-from ruyaml.compat import utf8, nprint, nprintf  # NOQA
+from ruyaml.compat import nprint, nprintf  # NOQA
 
 if False:  # MYPY
     from typing import Any, Dict, Optional, List  # NOQA
@@ -290,7 +290,7 @@ class Parser(object):
                 handle, prefix = token.value
                 if handle in self.tag_handles:
                     raise ParserError(
-                        None, None, 'duplicate tag handle %r' % utf8(handle), token.start_mark
+                        None, None, 'duplicate tag handle %r' % handle, token.start_mark
                     )
                 self.tag_handles[handle] = prefix
         if bool(self.tag_handles):
@@ -378,7 +378,7 @@ class Parser(object):
                     raise ParserError(
                         'while parsing a node',
                         start_mark,
-                        'found undefined tag handle %r' % utf8(handle),
+                        'found undefined tag handle %r' % handle,
                         tag_mark,
                     )
                 tag = self.transform_tag(handle, suffix)
