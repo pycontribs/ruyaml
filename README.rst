@@ -1,13 +1,14 @@
 ruyaml
 ======
 
-``ruyaml`` package is a fork of ``ruyaml`` aimed to made in order to
+``ruyaml`` package is a fork of ``ruamel.yaml`` aimed to made in order to
 secure the future of the library, mainly by having a pool of maintainers.
 
 Notes
 =====
 
-- Current version is a drop-in dependency replacement for "ruyaml"
-  package and will install `ruyaml` python module. As long this is still
-  true keep in mind not to install `ruyaml` package.
+- The current version has the same API as the "ruamel.yaml" package.
+  However, it will install the `ruyaml` python module. Thus, simply
+  replace ``from yuamel import yaml`` with ``import ruyaml as yaml``
+  (or equivalent) and you're all set.
 - python3.6 is the minimal version of python supported
