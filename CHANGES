@@ -121,23 +121,23 @@
     <https://bitbucket.org/%7Bd8850921-9145-4ad0-ac30-64c3bd9b036d%7D/>`__)
 
 [0, 15, 92]: 2019-04-16
-  - fix failure to parse empty implicit block mapping key (reported by 
+  - fix failure to parse empty implicit block mapping key (reported by
     `Nolan W <https://bitbucket.org/i2labs/>`__)
 
 [0, 15, 91]: 2019-04-05
   - allowing duplicate keys would not work for merge keys (reported by mamacdon on
-    `StackOverflow <https://stackoverflow.com/questions/55540686/>`__ 
+    `StackOverflow <https://stackoverflow.com/questions/55540686/>`__
 
 [0, 15, 91]: 2019-04-05
   - allowing duplicate keys would not work for merge keys (reported by mamacdon on
-    `StackOverflow <https://stackoverflow.com/questions/55540686/>`__ 
+    `StackOverflow <https://stackoverflow.com/questions/55540686/>`__
 
 [0, 15, 90]: 2019-04-04
-  - fix issue with updating `CommentedMap` from list of tuples (reported by 
+  - fix issue with updating `CommentedMap` from list of tuples (reported by
     `Peter Henry <https://bitbucket.org/mosbasik/>`__)
 
 [0, 15, 90]: 2019-04-04
-  - fix issue with updating `CommentedMap` from list of tuples (reported by 
+  - fix issue with updating `CommentedMap` from list of tuples (reported by
     `Peter Henry <https://bitbucket.org/mosbasik/>`__)
 
 [0, 15, 89]: 2019-02-27
@@ -155,11 +155,11 @@
     reported by `Florian Apolloner <https://bitbucket.org/apollo13/>`__)
 
 [0, 15, 87]: 2019-01-22
-  - fix problem with empty lists and the code to reinsert merge keys (reported via email 
+  - fix problem with empty lists and the code to reinsert merge keys (reported via email
      by Zaloo)
 
 [0, 15, 87]: 2019-01-22
-  - fix problem with empty lists and the code to reinsert merge keys (reported via email 
+  - fix problem with empty lists and the code to reinsert merge keys (reported via email
     by Zaloo)
 
 [0, 15, 86]: 2019-01-16
@@ -195,9 +195,9 @@
 
 [0, 15, 82]: 2018-12-28
   - anchors and aliases on scalar int, float, string and bool are now preserved. Anchors
-    do not need a referring alias for these (reported by 
+    do not need a referring alias for these (reported by
     `Alex Harvey <https://bitbucket.org/alexharv074/>`__)
-  - anchors no longer lost on tagged objects when roundtripping (reported by `Zaloo 
+  - anchors no longer lost on tagged objects when roundtripping (reported by `Zaloo
     <https://bitbucket.org/zaloo/>`__)
 
 [0, 15, 81]: 2018-12-06
@@ -207,7 +207,7 @@
 [0, 15, 80]: 2018-11-26
  - fix issue emitting BEL character when round-tripping invalid folded input
    (reported by Isaac on `StackOverflow <https://stackoverflow.com/a/53471217/1307905>`__)
-    
+
 [0, 15, 79]: 2018-11-21
   - fix issue with anchors nested deeper than alias (reported by gaFF on
     `StackOverflow <https://stackoverflow.com/a/53397781/1307905>`__)
@@ -217,7 +217,7 @@
     `StackOverflow <https://stackoverflow.com/a/53397781/1307905>`__)
 
 [0, 15, 78]: 2018-11-15
-  - fix setup issue for 3.8 (reported by `Sidney Kuyateh 
+  - fix setup issue for 3.8 (reported by `Sidney Kuyateh
     <https://bitbucket.org/autinerd/>`__)
 
 [0, 15, 77]: 2018-11-09
@@ -233,18 +233,18 @@
     by `Maged Ahmed <https://bitbucket.org/maged2/>`__)
 
 [0, 15, 75]: 2018-10-27
-  - fix issue with single '?' scalar (reported by `Terrance 
+  - fix issue with single '?' scalar (reported by `Terrance
     <https://bitbucket.org/OllieTerrance/>`__)
-  - fix issue with duplicate merge keys (prompted by `answering 
-    <https://stackoverflow.com/a/52852106/1307905>`__ a 
+  - fix issue with duplicate merge keys (prompted by `answering
+    <https://stackoverflow.com/a/52852106/1307905>`__ a
     `StackOverflow question <https://stackoverflow.com/q/52851168/1307905>`__
     by `math <https://stackoverflow.com/users/1355634/math>`__)
 
 [0, 15, 75]: 2018-10-27
-  - fix issue with single '?' scalar (reported by `Terrance 
+  - fix issue with single '?' scalar (reported by `Terrance
     <https://bitbucket.org/OllieTerrance/>`__)
-  - fix issue with duplicate merge keys (prompted by `answering 
-    <https://stackoverflow.com/a/52852106/1307905>`__ a 
+  - fix issue with duplicate merge keys (prompted by `answering
+    <https://stackoverflow.com/a/52852106/1307905>`__ a
     `StackOverflow question <https://stackoverflow.com/q/52851168/1307905>`__
     by `math <https://stackoverflow.com/users/1355634/math>`__)
 
@@ -266,7 +266,7 @@
     (reported by `Tomas Vavra <https://bitbucket.org/xtomik/>`__)
 
 [0, 15, 71]: 2018-09-26
-  - fix regression where handcrafted CommentedMaps could not be initiated (reported by 
+  - fix regression where handcrafted CommentedMaps could not be initiated (reported by
     `Dan Helfman <https://bitbucket.org/dhelfman/>`__)
   - fix regression with non-root literal scalars that needed indent indicator
     (reported by `Clark Breyman <https://bitbucket.org/clarkbreyman/>`__)
@@ -292,8 +292,8 @@
     (reported by `Douglas RAILLARD <https://bitbucket.org/DouglasRaillard/>`__)
 
 [0, 15, 67]: 2018-09-19
-  - fix issue with extra space inserted with non-root literal strings 
-    (Issue reported and PR with fix provided by 
+  - fix issue with extra space inserted with non-root literal strings
+    (Issue reported and PR with fix provided by
     `Naomi Seyfer <https://bitbucket.org/sixolet/>`__.)
 
 [0, 15, 66]: 2018-09-07
@@ -325,29 +325,29 @@
     YAML 1.2 and 1.1 (reported by `Ge Yang <https://bitbucket.org/yangge/>`__)
 
 [0, 15, 61]: 2018-08-23
-  - support for round-tripping folded style scalars (initially requested 
+  - support for round-tripping folded style scalars (initially requested
     by `Johnathan Viduchinsky <https://bitbucket.org/johnathanvidu/>`__)
   - update of C code
   - speed up of scanning (~30% depending on the input)
 
 [0, 15, 60]: 2018-08-18
-  - cleanup for mypy 
-  - spurious print in library (reported by 
-    `Lele Gaifax <https://bitbucket.org/lele/>`__), now automatically checked 
+  - cleanup for mypy
+  - spurious print in library (reported by
+    `Lele Gaifax <https://bitbucket.org/lele/>`__), now automatically checked
 
 [0, 15, 59]: 2018-08-17
-  - issue with C based loader and leading zeros (reported by 
+  - issue with C based loader and leading zeros (reported by
     `Tom Hamilton Stubber <https://bitbucket.org/TomHamiltonStubber/>`__)
 
 [0, 15, 59]: 2018-08-17
-  - issue with C based loader and leading zeros (reported by 
+  - issue with C based loader and leading zeros (reported by
     `Tom Hamilton Stubber <https://bitbucket.org/TomHamiltonStubber/>`__)
 
 [0, 15, 58]: 2018-08-17
   - simple mappings can now be used as keys when round-tripping::
 
       {a: 1, b: 2}: hello world
-      
+
     although using the obvious operations (del, popitem) on the key will
     fail, you can mutilate it by going through its attributes. If you load the
     above YAML in `d`, then changing the value is cumbersome:
@@ -361,9 +361,9 @@
 
     (you can use a `dict` instead of a list of tuples (or ordereddict), but that might result
     in a different order, of the keys of the key, in the output)
-  - check integers to dump with 1.2 patterns instead of 1.1 (reported by 
+  - check integers to dump with 1.2 patterns instead of 1.1 (reported by
     `Lele Gaifax <https://bitbucket.org/lele/>`__)
-  
+
 
 [0, 15, 57]: 2018-08-15
   - Fix that CommentedSeq could no longer be used in adding or do a copy
@@ -382,7 +382,7 @@
     list)``) anywhere in your code replace ``list`` with
     ``MutableSequence``.  Directly, ``CommentedSeq`` is a subclass of
     the abstract baseclass ``ruamel.yaml.compat.MutableScliceableSequence``,
-    with the result that *(extended) slicing is supported on 
+    with the result that *(extended) slicing is supported on
     ``CommentedSeq``*.
     (reported by `Stuart Berg <https://bitbucket.org/stuarteberg/>`__)
   - duplicate keys (or their values) with non-ascii now correctly
@@ -391,8 +391,8 @@
 
 [0, 15, 54]: 2018-08-13
 
-  - fix issue where a comment could pop-up twice in the output (reported by 
-    `Mike Kazantsev <https://bitbucket.org/mk_fg/>`__ and by 
+  - fix issue where a comment could pop-up twice in the output (reported by
+    `Mike Kazantsev <https://bitbucket.org/mk_fg/>`__ and by
     `Nate Peterson <https://bitbucket.org/ndpete21/>`__)
   - fix issue where JSON object (mapping) without spaces was not parsed
     properly (reported by `Marc Schmidt <https://bitbucket.org/marcj/>`__)
@@ -410,13 +410,13 @@
   - added `.copy()` mapping representation for round-tripping
     (``CommentedMap``) to fix incomplete copies of merged mappings
     (reported by `Will Richards
-    <https://bitbucket.org/will_richards/>`__) 
+    <https://bitbucket.org/will_richards/>`__)
   - Also unmade that class a subclass of ordereddict to solve incorrect behaviour
     for ``{**merged-mapping}`` and ``dict(**merged-mapping)`` (reported by
     `Filip Matzner <https://bitbucket.org/FloopCZ/>`__)
 
 [0, 15, 51]: 2018-08-08
-  - Fix method name dumps (were not dotted) and loads (reported by `Douglas Raillard 
+  - Fix method name dumps (were not dotted) and loads (reported by `Douglas Raillard
     <https://bitbucket.org/DouglasRaillard/>`__)
   - Fix spurious trailing white-space caused when the comment start
     column was no longer reached and there was no actual EOL comment
@@ -426,21 +426,21 @@
 
 [0, 15, 50]: 2018-08-05
   - Allow ``YAML()`` as a context manager for output, thereby making it much easier
-    to generate multi-documents in a stream. 
-  - Fix issue with incorrect type information for `load()` and `dump()` (reported 
+    to generate multi-documents in a stream.
+  - Fix issue with incorrect type information for `load()` and `dump()` (reported
     by `Jimbo Jim <https://bitbucket.org/jimbo1qaz/>`__)
 
 [0, 15, 49]: 2018-08-05
   - fix preservation of leading newlines in root level literal style scalar,
     and preserve comment after literal style indicator (``|  # some comment``)
-    Both needed for round-tripping multi-doc streams in 
+    Both needed for round-tripping multi-doc streams in
     `ryd <https://pypi.org/project/ryd/>`__.
 
 [0, 15, 48]: 2018-08-03
   - housekeeping: ``oitnb`` for formatting, mypy 0.620 upgrade and conformity
 
 [0, 15, 47]: 2018-07-31
-  - fix broken 3.6 manylinux1 (result of an unclean ``build`` (reported by 
+  - fix broken 3.6 manylinux1 (result of an unclean ``build`` (reported by
     `Roman Sichnyi <https://bitbucket.org/rsichnyi-gl/>`__)
 
 
@@ -472,12 +472,12 @@
     <https://stackoverflow.com/a/51573205/1307905>`__ the tests.
 
 [0, 15, 45]: 2018-07-26
-  - After adding failing test for ``YAML.load_all(Path())``, remove StopIteration 
+  - After adding failing test for ``YAML.load_all(Path())``, remove StopIteration
     (PR provided by `Zachary Buhman <https://bitbucket.org/buhman/>`__,
     also reported by `Steven Hiscocks <https://bitbucket.org/sdhiscocks/>`__.
 
 [0, 15, 45]: 2018-07-26
-  - After adding failing test for ``YAML.load_all(Path())``, remove StopIteration 
+  - After adding failing test for ``YAML.load_all(Path())``, remove StopIteration
     (PR provided by `Zachary Buhman <https://bitbucket.org/buhman/>`__,
     also reported by `Steven Hiscocks <https://bitbucket.org/sdhiscocks/>`__.
 
@@ -504,8 +504,8 @@
     3.4/3.5/3.6/3.7/pypy
 
 [0, 15, 41]: 2018-06-27
-  - add detection of C-compile failure (investigation prompted by 
-    `StackOverlow <https://stackoverflow.com/a/51057399/1307905>`__ by 
+  - add detection of C-compile failure (investigation prompted by
+    `StackOverlow <https://stackoverflow.com/a/51057399/1307905>`__ by
     `Emmanuel Blot <https://stackoverflow.com/users/8233409/emmanuel-blot>`__),
     which was removed while no longer dependent on ``libyaml``, C-extensions
     compilation still needs a compiler though.
@@ -517,8 +517,8 @@
     by `Dan Abolafia <https://bitbucket.org/danabo/>`__
 
 [0, 15, 39]: 2018-06-16
-  - merge PR27 improving package startup time (and loading when regexp not 
-    actually used), provided by 
+  - merge PR27 improving package startup time (and loading when regexp not
+    actually used), provided by
     `Marcel Bargull <https://bitbucket.org/mbargull/>`__
 
 [0, 15, 38]: 2018-06-13
@@ -566,9 +566,9 @@
     `mjalkio <https://stackoverflow.com/users/5130525/mjalkio>`_
 
 [0, 15, 29]: 2017-08-14
-  - fix issue #51: different indents for mappings and sequences (reported by 
+  - fix issue #51: different indents for mappings and sequences (reported by
     Alex Harvey)
-  - fix for flow sequence/mapping as element/value of block sequence with 
+  - fix for flow sequence/mapping as element/value of block sequence with
     sequence-indent minus dash-offset not equal two.
 
 [0, 15, 28]: 2017-08-13

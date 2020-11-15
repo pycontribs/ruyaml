@@ -178,11 +178,11 @@ yaml.dump(d, sys.stdout)
 giving::
 
 
---- | 
+--- |
 
 ------
 
-The following program uses three dumps on the same data, resulting in a stream with 
+The following program uses three dumps on the same data, resulting in a stream with
 three documents::
 
 --- !python |
@@ -227,7 +227,7 @@ yaml.dump(data, sys.stdout, transform=sequence_indent_four)
 --- !stdout |
 gives as output::
 
---- | 
+--- |
 
 The transform example, in the last document, was inspired by a
 `question posted by *nowox*

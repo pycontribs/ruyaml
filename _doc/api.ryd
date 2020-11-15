@@ -127,7 +127,7 @@ according to the `YAML 1.1 specification <http://yaml.org/spec/1.1/#id932806>`__
 Dumping a multi-documents YAML stream
 +++++++++++++++++++++++++++++++++++++
 
-The "normal" ``dump_all`` expected as first element a list of documents, or 
+The "normal" ``dump_all`` expected as first element a list of documents, or
 something else the internals of the method can iterate over. To read
 and write a multi-document you would either make a ``list``::
 
