@@ -4,15 +4,13 @@ on:
   create:  # is used for publishing to PyPI and TestPyPI
     tags:  # any tag regardless of its name, no branches
   push:  # only publishes pushes to the main branch to TestPyPI
-    branches:  # any branch but not tag
-    - >-
-      **
+    branches:  # any integration branch but not tag
+      - "master"
     tags-ignore:
-    - >-
-      **
+      - "**"
   pull_request:
   schedule:
-  - cron: 1 0 * * *  # Run daily at 0:01 UTC
+    - cron: 1 0 * * *  # Run daily at 0:01 UTC
   # Run every Friday at 18:02 UTC
   # https://crontab.guru/#2_18_*_*_5
   # - cron: 2 18 * * 5
@@ -39,7 +37,7 @@ jobs:
         - name: py38
           python-version: 3.8
         - name: py39
-          python-version: 3.9-dev
+          python-version: 3.9
     steps:
     - uses: actions/checkout@master
     - name: Get history and tags for SCM versioning to work
@@ -52,12 +50,6 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Set up Python ${{ matrix.python-version }} from deadsnakes
-      if: >-
-        endsWith(matrix.python-version, '-dev')
-      uses: deadsnakes/action@v1.0.0
-      with:
-        python-version: ${{ matrix.python-version }}
     - name: >-
         Log the currently selected Python
         version info (${{ matrix.python-version }})
@@ -65,7 +57,7 @@ jobs:
         python --version --version
         which python
     - name: Pip cache
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ env.PY_SHA256 }}-${{ hashFiles('setup.cfg') }}-${{ hashFiles('tox.ini') }}-${{ hashFiles('pyproject.toml') }}-${{ hashFiles('.pre-commit-config.yaml') }}-${{ hashFiles('pytest.ini') }}
