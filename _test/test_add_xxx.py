@@ -79,7 +79,7 @@ class Obj1(dict):
         return repr(self._node)
 
 
-class YAMLObj1(object):
+class YAMLObj1:
     yaml_tag = u'!obj:'
 
     @classmethod

@@ -11,7 +11,7 @@ if False:  # MYPY
 SHOWLINES = True
 
 
-class Token(object):
+class Token:
     __slots__ = 'start_mark', 'end_mark', '_comment'
 
     def __init__(self, start_mark, end_mark):

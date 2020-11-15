@@ -67,7 +67,7 @@ if 'RUAMELDEBUG' in os.environ:
 
 if bool(_debug):
 
-    class ObjectCounter(object):
+    class ObjectCounter:
         def __init__(self):
             # type: () -> None
             self.map = {}  # type: Dict[Any, Any]
@@ -100,7 +100,7 @@ def dbg(val=None):
     return _debug & val
 
 
-class Nprint(object):
+class Nprint:
     def __init__(self, file_name=None):
         # type: (Any) -> None
         self._max_print = None  # type: Any

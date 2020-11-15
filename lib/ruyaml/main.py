@@ -54,7 +54,7 @@ enforce = object()
 # subset of abbreviations, which should be all caps according to PEP8
 
 
-class YAML(object):
+class YAML:
     def __init__(
         self,
         _kw=enforce,
@@ -749,7 +749,7 @@ class YAML(object):
         self.compact_seq_map = seq_map
 
 
-class YAMLContextManager(object):
+class YAMLContextManager:
     def __init__(self, yaml, transform=None):
         # type: (Any, Any) -> None  # used to be: (Any, Optional[Callable]) -> None
         self._yaml = yaml

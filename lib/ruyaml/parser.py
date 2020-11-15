@@ -92,7 +92,7 @@ class ParserError(MarkedYAMLError):
     pass
 
 
-class Parser(object):
+class Parser:
     # Since writing a recursive-descendant parser is a straightforward task, we
     # do not give many comments here.
 

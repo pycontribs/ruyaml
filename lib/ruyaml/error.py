@@ -22,7 +22,7 @@ __all__ = [
 ]
 
 
-class StreamMark(object):
+class StreamMark:
     __slots__ = 'name', 'index', 'line', 'column'
 
     def __init__(self, name, index, line, column):
@@ -115,7 +115,7 @@ class StringMark(StreamMark):
         return where
 
 
-class CommentMark(object):
+class CommentMark:
     __slots__ = ('column',)
 
     def __init__(self, column):

@@ -36,7 +36,7 @@ class RepresenterError(YAMLError):
     pass
 
 
-class BaseRepresenter(object):
+class BaseRepresenter:
 
     yaml_representers = {}  # type: Dict[Any, Any]
     yaml_multi_representers = {}  # type: Dict[Any, Any]
