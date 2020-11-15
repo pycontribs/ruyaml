@@ -4,45 +4,33 @@ from __future__ import print_function
 
 # partially from package six by Benjamin Peterson
 
+from collections import OrderedDict
 import sys
 import os
 import traceback
 from abc import abstractmethod
 
 
-# fmt: off
-if False:  # MYPY
-    from typing import Any, Dict, Optional, List, Union, BinaryIO, IO, Text, Tuple  # NOQA
-    from typing import Optional  # NOQA
-# fmt: on
+from typing import Any, Dict, Optional, List, Union, Tuple
 
 _DEFAULT_YAML_VERSION = (1, 2)
 
-try:
-    from ruamel.ordereddict import ordereddict
-except:  # NOQA
-    try:
-        from collections import OrderedDict
-    except ImportError:
-        from ordereddict import OrderedDict  # type: ignore
-    # to get the right name import ... as ordereddict doesn't do that
 
-    class ordereddict(OrderedDict):  # type: ignore
-        if not hasattr(OrderedDict, 'insert'):
+class ordereddict(OrderedDict):
+    if not hasattr(OrderedDict, 'insert'):
 
-            def insert(self, pos, key, value):
-                # type: (int, Any, Any) -> None
-                if pos >= len(self):
+        def insert(self, pos: int, key: Any, value: Any):
+            if pos >= len(self):
+                self[key] = value
+                return
+            od = ordereddict()
+            od.update(self)
+            for k in od:
+                del self[k]
+            for index, old_key in enumerate(od):
+                if pos == index:
                     self[key] = value
-                    return
-                od = ordereddict()
-                od.update(self)
-                for k in od:
-                    del self[k]
-                for index, old_key in enumerate(od):
-                    if pos == index:
-                        self[key] = value
-                    self[old_key] = od[old_key]
+                self[old_key] = od[old_key]
 
 
 MAXSIZE = sys.maxsize
