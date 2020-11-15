@@ -3,7 +3,7 @@
 # Abstract classes.
 
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List  # NOQA
+    from typing import Any, Dict, List, Optional  # NOQA
 
 
 def CommentCheck():
@@ -30,7 +30,9 @@ class Event(object):
             for key in ['anchor', 'tag', 'implicit', 'value', 'flow_style', 'style']
             if hasattr(self, key)
         ]
-        arguments = ', '.join(['%s=%r' % (key, getattr(self, key)) for key in attributes])
+        arguments = ', '.join(
+            ['%s=%r' % (key, getattr(self, key)) for key in attributes]
+        )
         if self.comment not in [None, CommentCheck]:
             arguments += ', comment={!r}'.format(self.comment)
         return '%s(%s)' % (self.__class__.__name__, arguments)

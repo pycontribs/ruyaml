@@ -1,48 +1,47 @@
 # coding: utf-8
 
-from __future__ import absolute_import, unicode_literals, print_function
+from __future__ import absolute_import, print_function, unicode_literals
 
-import sys
-import os
-import warnings
 import glob
+import os
+import sys
+import warnings
 from importlib import import_module
-from io import StringIO, BytesIO
-
+from io import BytesIO, StringIO
 
 import ruyaml
-from ruyaml.error import UnsafeLoaderWarning, YAMLError  # NOQA
-
-from ruyaml.tokens import *  # NOQA
-from ruyaml.events import *  # NOQA
-from ruyaml.nodes import *  # NOQA
-
-from ruyaml.loader import BaseLoader, SafeLoader, Loader, RoundTripLoader  # NOQA
-from ruyaml.dumper import BaseDumper, SafeDumper, Dumper, RoundTripDumper  # NOQA
 from ruyaml.compat import nprint
-from ruyaml.resolver import VersionedResolver, Resolver  # NOQA
-from ruyaml.representer import (
-    BaseRepresenter,
-    SafeRepresenter,
-    Representer,
-    RoundTripRepresenter,
-)
 from ruyaml.constructor import (
     BaseConstructor,
-    SafeConstructor,
     Constructor,
     RoundTripConstructor,
+    SafeConstructor,
 )
+from ruyaml.dumper import BaseDumper, Dumper, RoundTripDumper, SafeDumper  # NOQA
+from ruyaml.error import UnsafeLoaderWarning, YAMLError  # NOQA
+from ruyaml.events import *  # NOQA
+from ruyaml.loader import BaseLoader  # NOQA; NOQA
+from ruyaml.loader import Loader
 from ruyaml.loader import Loader as UnsafeLoader
+from ruyaml.loader import RoundTripLoader, SafeLoader
+from ruyaml.nodes import *  # NOQA
+from ruyaml.representer import (
+    BaseRepresenter,
+    Representer,
+    RoundTripRepresenter,
+    SafeRepresenter,
+)
+from ruyaml.resolver import Resolver, VersionedResolver  # NOQA
+from ruyaml.tokens import *  # NOQA
 
 if False:  # MYPY
-    from typing import List, Set, Dict, Union, Any, Callable, Optional, Text  # NOQA
-    from ruyaml.compat import StreamType, StreamTextType, VersionType  # NOQA
-
     from pathlib import Path
+    from typing import Any, Callable, Dict, List, Optional, Set, Text, Union  # NOQA
+
+    from ruyaml.compat import StreamTextType, StreamType, VersionType  # NOQA
 
 try:
-    from _ruyaml import CParser, CEmitter  # type: ignore
+    from _ruyaml import CEmitter, CParser  # type: ignore
 except:  # NOQA
     CParser = CEmitter = None
 
@@ -57,7 +56,12 @@ enforce = object()
 
 class YAML(object):
     def __init__(
-        self, _kw=enforce, typ=None, pure=False, output=None, plug_ins=None  # input=None,
+        self,
+        _kw=enforce,
+        typ=None,
+        pure=False,
+        output=None,
+        plug_ins=None,  # input=None,
     ):
         # type: (Any, Optional[Text], Any, Any, Any) -> None
         """
@@ -306,7 +310,9 @@ class YAML(object):
                 dumper=self,
             )
             if self.sort_base_mapping_type_on_output is not None:
-                repres.sort_base_mapping_type_on_output = self.sort_base_mapping_type_on_output
+                repres.sort_base_mapping_type_on_output = (
+                    self.sort_base_mapping_type_on_output
+                )
             setattr(self, attr, repres)
         return getattr(self, attr)
 
@@ -414,7 +420,9 @@ class YAML(object):
                 #     rslvr = ruyaml.resolver.Resolver
 
                 class XLoader(self.Parser, self.Constructor, rslvr):  # type: ignore
-                    def __init__(selfx, stream, version=self.version, preserve_quotes=None):
+                    def __init__(
+                        selfx, stream, version=self.version, preserve_quotes=None
+                    ):
                         # type: (StreamTextType, Optional[VersionType], Optional[bool]) -> None  # NOQA
                         CParser.__init__(selfx, stream)
                         selfx._parser = selfx._composer = selfx
@@ -431,7 +439,9 @@ class YAML(object):
         # type: (Any, Union[Path, StreamType], Any, Any) -> Any
         if self._context_manager:
             if not self._output:
-                raise TypeError('Missing output stream while dumping from context manager')
+                raise TypeError(
+                    'Missing output stream while dumping from context manager'
+                )
             if _kw is not enforce:
                 raise TypeError(
                     '{}.dump() takes one positional argument but at least '
@@ -445,7 +455,9 @@ class YAML(object):
             self._context_manager.dump(data)
         else:  # old style
             if stream is None:
-                raise TypeError('Need a stream argument when not dumping from context manager')
+                raise TypeError(
+                    'Need a stream argument when not dumping from context manager'
+                )
             return self.dump_all([data], stream, _kw, transform=transform)
 
     def dump_all(self, documents, stream, _kw=enforce, transform=None):
@@ -584,7 +596,9 @@ class YAML(object):
                 )
                 selfx._emitter = selfx._serializer = selfx._representer = selfx
                 self.Representer.__init__(
-                    selfx, default_style=default_style, default_flow_style=default_flow_style
+                    selfx,
+                    default_style=default_style,
+                    default_flow_style=default_flow_style,
                 )
                 rslvr.__init__(selfx)
 
@@ -844,7 +858,7 @@ class YAMLContextManager(object):
 
 def yaml_object(yml):
     # type: (Any) -> Any
-    """ decorator for classes that needs to dump/load objects
+    """decorator for classes that needs to dump/load objects
     The tag for such objects is taken from the class attribute yaml_tag (or the
     class name in lowercase in case unavailable)
     If methods to_yaml and/or from_yaml are available, these are called for dumping resp.
@@ -1351,7 +1365,9 @@ def add_implicit_resolver(
 
 
 # this code currently not tested
-def add_path_resolver(tag, path, kind=None, Loader=None, Dumper=None, resolver=Resolver):
+def add_path_resolver(
+    tag, path, kind=None, Loader=None, Dumper=None, resolver=Resolver
+):
     # type: (Any, Any, Any, Any, Any, Any) -> None
     """
     Add a path based resolver for the given tag.
@@ -1407,7 +1423,9 @@ def add_constructor(tag, object_constructor, Loader=None, constructor=Constructo
             raise NotImplementedError
 
 
-def add_multi_constructor(tag_prefix, multi_constructor, Loader=None, constructor=Constructor):
+def add_multi_constructor(
+    tag_prefix, multi_constructor, Loader=None, constructor=Constructor
+):
     # type: (Any, Any, Any, Any) -> None
     """
     Add a multi-constructor for the given tag prefix.
@@ -1433,7 +1451,9 @@ def add_multi_constructor(tag_prefix, multi_constructor, Loader=None, constructo
             raise NotImplementedError
 
 
-def add_representer(data_type, object_representer, Dumper=None, representer=Representer):
+def add_representer(
+    data_type, object_representer, Dumper=None, representer=Representer
+):
     # type: (Any, Any, Any, Any) -> None
     """
     Add a representer for the given type.
@@ -1460,7 +1480,9 @@ def add_representer(data_type, object_representer, Dumper=None, representer=Repr
 
 
 # this code currently not tested
-def add_multi_representer(data_type, multi_representer, Dumper=None, representer=Representer):
+def add_multi_representer(
+    data_type, multi_representer, Dumper=None, representer=Representer
+):
     # type: (Any, Any, Any, Any) -> None
     """
     Add a representer for the given type.

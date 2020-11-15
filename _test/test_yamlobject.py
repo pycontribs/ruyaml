@@ -3,8 +3,8 @@
 from __future__ import print_function
 
 import sys
-import pytest  # NOQA
 
+import pytest  # NOQA
 from roundtrip import save_and_run  # NOQA
 
 
@@ -72,9 +72,10 @@ def test_qualified_name00(tmpdir):
 @pytest.mark.skipif(sys.version_info < (3, 0), reason='no __qualname__')
 def test_qualified_name01(tmpdir):
     """issue 214"""
-    from ruyaml import YAML
-    import ruyaml.comments
     from io import StringIO
+
+    import ruyaml.comments
+    from ruyaml import YAML
 
     yaml = YAML(typ='unsafe', pure=True)
     yaml.explicit_end = True

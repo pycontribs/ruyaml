@@ -5,7 +5,7 @@ from __future__ import print_function
 import sys
 
 if False:  # MYPY
-    from typing import Dict, Any, Text  # NOQA
+    from typing import Any, Dict, Text  # NOQA
 
 
 class Node(object):
@@ -47,7 +47,9 @@ class Node(object):
                 )
             )
             if self.comment:
-                sys.stdout.write('    {}comment: {})\n'.format('  ' * indent, self.comment))
+                sys.stdout.write(
+                    '    {}comment: {})\n'.format('  ' * indent, self.comment)
+                )
             return
         sys.stdout.write(
             '{}{}(tag={!r})\n'.format('  ' * indent, self.__class__.__name__, self.tag)
@@ -78,10 +80,19 @@ class ScalarNode(Node):
     id = 'scalar'
 
     def __init__(
-        self, tag, value, start_mark=None, end_mark=None, style=None, comment=None, anchor=None
+        self,
+        tag,
+        value,
+        start_mark=None,
+        end_mark=None,
+        style=None,
+        comment=None,
+        anchor=None,
     ):
         # type: (Any, Any, Any, Any, Any, Any, Any) -> None
-        Node.__init__(self, tag, value, start_mark, end_mark, comment=comment, anchor=anchor)
+        Node.__init__(
+            self, tag, value, start_mark, end_mark, comment=comment, anchor=anchor
+        )
         self.style = style
 
 

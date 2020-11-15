@@ -1,7 +1,13 @@
 # coding: utf-8
 
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
+
+import sys
+
+# fmt: off
+from ruyaml.compat import DBG_EVENT, check_anchorname_char, dbg, nprint
+from ruyaml.error import YAMLError, YAMLStreamError
+from ruyaml.events import *  # NOQA
 
 # Emitter expects events obeying the following grammar:
 # stream ::= STREAM-START document* STREAM-END
@@ -10,17 +16,12 @@ from __future__ import print_function
 # sequence ::= SEQUENCE-START node* SEQUENCE-END
 # mapping ::= MAPPING-START (node node)* MAPPING-END
 
-import sys
-from ruyaml.error import YAMLError, YAMLStreamError
-from ruyaml.events import *  # NOQA
 
-# fmt: off
-from ruyaml.compat import nprint, dbg, DBG_EVENT, \
-    check_anchorname_char
 # fmt: on
 
 if False:  # MYPY
-    from typing import Any, Dict, List, Union, Text, Tuple, Optional  # NOQA
+    from typing import Any, Dict, List, Optional, Text, Tuple, Union  # NOQA
+
     from ruyaml.compat import StreamType  # NOQA
 
 __all__ = ['Emitter', 'EmitterError']
@@ -166,16 +167,19 @@ class Emitter(object):
 
         # colon handling
         self.colon = u':'
-        self.prefixed_colon = self.colon if prefix_colon is None else prefix_colon + self.colon
+        self.prefixed_colon = (
+            self.colon if prefix_colon is None else prefix_colon + self.colon
+        )
         # single entry mappings in flow sequence
-        self.brace_single_entry_mapping_in_flow_sequence = \
+        self.brace_single_entry_mapping_in_flow_sequence = (
             brace_single_entry_mapping_in_flow_sequence
+        )
 
         # Formatting details.
         self.canonical = canonical
         self.allow_unicode = allow_unicode
         # set to False to get "\Uxxxxxxxx" for non-basic unicode like emojis
-        self.unicode_supplementary = sys.maxunicode > 0xffff
+        self.unicode_supplementary = sys.maxunicode > 0xFFFF
         self.sequence_dash_offset = block_seq_indent if block_seq_indent else 0
         self.top_level_colon_align = top_level_colon_align
         self.best_sequence_indent = 2
@@ -296,7 +300,9 @@ class Emitter(object):
                 self.indent = 0
         elif not indentless:
             self.indent += (
-                self.best_sequence_indent if self.indents.last_seq() else self.best_map_indent
+                self.best_sequence_indent
+                if self.indents.last_seq()
+                else self.best_map_indent
             )
             # if self.indents.last_seq():
             #     if self.indent == 0: # top level block sequence
@@ -369,7 +375,9 @@ class Emitter(object):
             self.write_stream_end()
             self.state = self.expect_nothing
         else:
-            raise EmitterError('expected DocumentStartEvent, but got %s' % (self.event,))
+            raise EmitterError(
+                'expected DocumentStartEvent, but got %s' % (self.event,)
+            )
 
     def expect_document_end(self):
         # type: () -> None
@@ -760,8 +768,14 @@ class Emitter(object):
             length += len(self.analysis.scalar)
         return length < self.MAX_SIMPLE_KEY_LENGTH and (
             isinstance(self.event, AliasEvent)
-            or (isinstance(self.event, SequenceStartEvent) and self.event.flow_style is True)
-            or (isinstance(self.event, MappingStartEvent) and self.event.flow_style is True)
+            or (
+                isinstance(self.event, SequenceStartEvent)
+                and self.event.flow_style is True
+            )
+            or (
+                isinstance(self.event, MappingStartEvent)
+                and self.event.flow_style is True
+            )
             or (
                 isinstance(self.event, ScalarEvent)
                 # if there is an explicit style for an empty string, it is a simple key
@@ -831,7 +845,8 @@ class Emitter(object):
             self.event.implicit[0] or not self.event.implicit[2]
         ):
             if not (
-                self.simple_key_context and (self.analysis.empty or self.analysis.multiline)
+                self.simple_key_context
+                and (self.analysis.empty or self.analysis.multiline)
             ) and (
                 self.flow_level
                 and self.analysis.allow_flow_plain
@@ -901,7 +916,10 @@ class Emitter(object):
             raise EmitterError("tag handle must start and end with '!': %r" % (handle))
         for ch in handle[1:-1]:
             if not (
-                u'0' <= ch <= u'9' or u'A' <= ch <= u'Z' or u'a' <= ch <= u'z' or ch in u'-_'
+                u'0' <= ch <= u'9'
+                or u'A' <= ch <= u'Z'
+                or u'a' <= ch <= u'z'
+                or ch in u'-_'
             ):
                 raise EmitterError(
                     'invalid character %r in the tag handle: %r' % (ch, handle)
@@ -923,7 +941,12 @@ class Emitter(object):
                 ch_set += u'#'
         while end < len(prefix):
             ch = prefix[end]
-            if u'0' <= ch <= u'9' or u'A' <= ch <= u'Z' or u'a' <= ch <= u'z' or ch in ch_set:
+            if (
+                u'0' <= ch <= u'9'
+                or u'A' <= ch <= u'Z'
+                or u'a' <= ch <= u'z'
+                or ch in ch_set
+            ):
                 end += 1
             else:
                 if start < end:
@@ -1030,7 +1053,9 @@ class Emitter(object):
         preceeded_by_whitespace = True
 
         # Last character or followed by a whitespace.
-        followed_by_whitespace = len(scalar) == 1 or scalar[1] in u'\0 \t\r\n\x85\u2028\u2029'
+        followed_by_whitespace = (
+            len(scalar) == 1 or scalar[1] in u'\0 \t\r\n\x85\u2028\u2029'
+        )
 
         # The previous character is a space.
         previous_space = False
@@ -1080,7 +1105,10 @@ class Emitter(object):
                     ch == u'\x85'
                     or u'\xA0' <= ch <= u'\uD7FF'
                     or u'\uE000' <= ch <= u'\uFFFD'
-                    or (self.unicode_supplementary and (u'\U00010000' <= ch <= u'\U0010FFFF'))
+                    or (
+                        self.unicode_supplementary
+                        and (u'\U00010000' <= ch <= u'\U0010FFFF')
+                    )
                 ) and ch != u'\uFEFF':
                     # unicode_characters = True
                     if not self.allow_unicode:
@@ -1115,7 +1143,8 @@ class Emitter(object):
             index += 1
             preceeded_by_whitespace = ch in u'\0 \t\r\n\x85\u2028\u2029'
             followed_by_whitespace = (
-                index + 1 >= len(scalar) or scalar[index + 1] in u'\0 \t\r\n\x85\u2028\u2029'
+                index + 1 >= len(scalar)
+                or scalar[index + 1] in u'\0 \t\r\n\x85\u2028\u2029'
             )
 
         # Let's decide what styles are allowed.
@@ -1141,7 +1170,9 @@ class Emitter(object):
         # Spaces followed by breaks, as well as special character are only
         # allowed for double quoted scalars.
         if special_characters:
-            allow_flow_plain = allow_block_plain = allow_single_quoted = allow_block = False
+            allow_flow_plain = (
+                allow_block_plain
+            ) = allow_single_quoted = allow_block = False
         elif space_break:
             allow_flow_plain = allow_block_plain = allow_single_quoted = False
             if not self.allow_space_break:
@@ -1188,7 +1219,9 @@ class Emitter(object):
         # type: () -> None
         self.flush_stream()
 
-    def write_indicator(self, indicator, need_whitespace, whitespace=False, indention=False):
+    def write_indicator(
+        self, indicator, need_whitespace, whitespace=False, indention=False
+    ):
         # type: (Any, Any, bool, bool) -> None
         if self.whitespace or not need_whitespace:
             data = indicator
@@ -1495,7 +1528,9 @@ class Emitter(object):
                             self.write_indent()
                             end += 2  # \a and the space that is inserted on the fold
                         else:
-                            raise EmitterError('unexcpected fold indicator \\a before space')
+                            raise EmitterError(
+                                'unexcpected fold indicator \\a before space'
+                            )
                     if ch is None:
                         self.write_line_break()
                     start = end
@@ -1663,7 +1698,9 @@ class Emitter(object):
         try:
             start_events = (MappingStartEvent, SequenceStartEvent)
             for comment in comments:
-                if isinstance(event, start_events) and getattr(comment, 'pre_done', None):
+                if isinstance(event, start_events) and getattr(
+                    comment, 'pre_done', None
+                ):
                     continue
                 if self.column != 0:
                     self.write_line_break()

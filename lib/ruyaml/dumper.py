@@ -3,17 +3,18 @@
 from __future__ import absolute_import
 
 from ruyaml.emitter import Emitter
-from ruyaml.serializer import Serializer
 from ruyaml.representer import (
-    Representer,
-    SafeRepresenter,
     BaseRepresenter,
+    Representer,
     RoundTripRepresenter,
+    SafeRepresenter,
 )
-from ruyaml.resolver import Resolver, BaseResolver, VersionedResolver
+from ruyaml.resolver import BaseResolver, Resolver, VersionedResolver
+from ruyaml.serializer import Serializer
 
 if False:  # MYPY
-    from typing import Any, Dict, List, Union, Optional  # NOQA
+    from typing import Any, Dict, List, Optional, Union  # NOQA
+
     from ruyaml.compat import StreamType, VersionType  # NOQA
 
 __all__ = ['BaseDumper', 'SafeDumper', 'Dumper', 'RoundTripDumper']

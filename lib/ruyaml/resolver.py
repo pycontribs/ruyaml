@@ -115,7 +115,10 @@ class BaseResolver(object):
     def __init__(self, loadumper=None):
         # type: (Any, Any) -> None
         self.loadumper = loadumper
-        if self.loadumper is not None and getattr(self.loadumper, '_resolver', None) is None:
+        if (
+            self.loadumper is not None
+            and getattr(self.loadumper, '_resolver', None) is None
+        ):
             self.loadumper._resolver = self.loadumper
         self._loader_version = None  # type: Any
         self.resolver_exact_paths = []  # type: List[Any]
@@ -136,7 +139,8 @@ class BaseResolver(object):
         if 'yaml_implicit_resolvers' not in cls.__dict__:
             # deepcopy doesn't work here
             cls.yaml_implicit_resolvers = dict(
-                (k, cls.yaml_implicit_resolvers[k][:]) for k in cls.yaml_implicit_resolvers
+                (k, cls.yaml_implicit_resolvers[k][:])
+                for k in cls.yaml_implicit_resolvers
             )
         if first is None:
             first = [None]
@@ -149,7 +153,8 @@ class BaseResolver(object):
         if 'yaml_implicit_resolvers' not in cls.__dict__:
             # deepcopy doesn't work here
             cls.yaml_implicit_resolvers = dict(
-                (k, cls.yaml_implicit_resolvers[k][:]) for k in cls.yaml_implicit_resolvers
+                (k, cls.yaml_implicit_resolvers[k][:])
+                for k in cls.yaml_implicit_resolvers
             )
         if first is None:
             first = [None]
@@ -224,7 +229,9 @@ class BaseResolver(object):
         if current_node:
             depth = len(self.resolver_prefix_paths)
             for path, kind in self.resolver_prefix_paths[-1]:
-                if self.check_resolver_prefix(depth, path, kind, current_node, current_index):
+                if self.check_resolver_prefix(
+                    depth, path, kind, current_node, current_index
+                ):
                     if len(path) > depth:
                         prefix_paths.append((path, kind))
                     else:
@@ -260,7 +267,8 @@ class BaseResolver(object):
             return False
         if isinstance(index_check, str):
             if not (
-                isinstance(current_index, ScalarNode) and index_check == current_index.value
+                isinstance(current_index, ScalarNode)
+                and index_check == current_index.value
             ):
                 return False
         elif isinstance(index_check, int) and not isinstance(index_check, bool):

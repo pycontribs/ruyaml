@@ -1,15 +1,15 @@
-from __future__ import absolute_import
-from __future__ import print_function
-
-import ruyaml
-import pprint
+from __future__ import absolute_import, print_function
 
 import datetime
+import pprint
+
+import ruyaml
 
 try:
     set
 except NameError:
     from sets import Set as set  # NOQA
+
 import ruyaml.tokens
 
 
@@ -325,7 +325,10 @@ def test_constructor_types(data_filename, code_filename, verbose=False):
             print(_serialize_value(native1))
             print('SERIALIZED NATIVE2:')
             print(_serialize_value(native2))
-        assert _serialize_value(native1) == _serialize_value(native2), (native1, native2)
+        assert _serialize_value(native1) == _serialize_value(native2), (
+            native1,
+            native2,
+        )
     finally:
         if verbose:
             print('NATIVE1:')
@@ -370,6 +373,7 @@ test_roundtrip_data.unittest = ['.data', '.roundtrip']
 
 if __name__ == '__main__':
     import sys
+
     import test_constructor  # NOQA
 
     sys.modules['test_constructor'] = sys.modules['__main__']

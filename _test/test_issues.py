@@ -2,26 +2,24 @@
 
 from __future__ import absolute_import, print_function, unicode_literals
 
-
 import pytest  # NOQA
-
-
-from roundtrip import (
-    round_trip,
-    na_round_trip,
-    round_trip_load,
-    round_trip_dump,
-    dedent,
-    save_and_run,
+from roundtrip import (  # NOQA
     YAML,
-)  # NOQA
+    dedent,
+    na_round_trip,
+    round_trip,
+    round_trip_dump,
+    round_trip_load,
+    save_and_run,
+)
 
 
 class TestIssues:
     def test_issue_61(self):
         import ruyaml
 
-        s = dedent("""
+        s = dedent(
+            """
         def1: &ANCHOR1
             key1: value1
         def: &ANCHOR
@@ -29,10 +27,13 @@ class TestIssues:
             key: value
         comb:
             <<: *ANCHOR
-        """)
+        """
+        )
         data = ruyaml.round_trip_load(s)
         assert str(data['comb']) == str(data['def'])
-        assert str(data['comb']) == "ordereddict([('key', 'value'), ('key1', 'value1')])"
+        assert (
+            str(data['comb']) == "ordereddict([('key', 'value'), ('key1', 'value1')])"
+        )
 
     def test_issue_82(self, tmpdir):
         program_src = r'''
@@ -86,13 +87,15 @@ class TestIssues:
         x = round_trip(yaml_str, preserve_quotes=True)  # NOQA
 
     def test_issue_102(self):
-        yaml_str = dedent("""
+        yaml_str = dedent(
+            """
         var1: #empty
         var2: something #notempty
         var3: {} #empty object
         var4: {a: 1} #filled object
         var5: [] #empty array
-        """)
+        """
+        )
         x = round_trip(yaml_str, preserve_quotes=True)  # NOQA
 
     def test_issue_150(self):
@@ -114,54 +117,65 @@ class TestIssues:
 
     def test_issue_160(self):
         from io import StringIO
-        s = dedent("""\
+
+        s = dedent(
+            """\
         root:
             # a comment
             - {some_key: "value"}
 
         foo: 32
         bar: 32
-        """)
+        """
+        )
         a = round_trip_load(s)
         del a['root'][0]['some_key']
         buf = StringIO()
         round_trip_dump(a, buf, block_seq_indent=4)
-        exp = dedent("""\
+        exp = dedent(
+            """\
         root:
             # a comment
             - {}
 
         foo: 32
         bar: 32
-        """)
+        """
+        )
         assert buf.getvalue() == exp
 
     def test_issue_161(self):
-        yaml_str = dedent("""\
+        yaml_str = dedent(
+            """\
         mapping-A:
           key-A:{}
         mapping-B:
-        """)
+        """
+        )
         for comment in ['', ' # no-newline', '  # some comment\n', '\n']:
             s = yaml_str.format(comment)
             res = round_trip(s)  # NOQA
 
     def test_issue_161a(self):
-        yaml_str = dedent("""\
+        yaml_str = dedent(
+            """\
         mapping-A:
           key-A:{}
         mapping-B:
-        """)
+        """
+        )
         for comment in ['\n# between']:
             s = yaml_str.format(comment)
             res = round_trip(s)  # NOQA
 
     def test_issue_163(self):
-        s = dedent("""\
+        s = dedent(
+            """\
         some-list:
         # List comment
         - {}
-        """)
+        """
+        )
         x = round_trip(s, preserve_quotes=True)  # NOQA
 
     json_str = (
@@ -185,7 +199,8 @@ class TestIssues:
         seq[:] = [1, 2, 3, 4]
 
     def test_issue_176_preserve_comments_on_extended_slice_assignment(self):
-        yaml_str = dedent("""\
+        yaml_str = dedent(
+            """\
         - a
         - b  # comment
         - c  # commment c
@@ -193,7 +208,8 @@ class TestIssues:
         - d
 
         - e # comment
-        """)
+        """
+        )
         seq = round_trip_load(yaml_str)
         seq[1::2] = ['B', 'D']
         res = round_trip_dump(seq)
@@ -250,28 +266,34 @@ class TestIssues:
         assert m == []
 
     def test_issue_184(self):
-        yaml_str = dedent("""\
+        yaml_str = dedent(
+            """\
         test::test:
           # test
           foo:
             bar: baz
-        """)
+        """
+        )
         d = round_trip_load(yaml_str)
         d['bar'] = 'foo'
         d.yaml_add_eol_comment('test1', 'bar')
         assert round_trip_dump(d) == yaml_str + 'bar: foo # test1\n'
 
     def test_issue_219(self):
-        yaml_str = dedent("""\
+        yaml_str = dedent(
+            """\
         [StackName: AWS::StackName]
-        """)
+        """
+        )
         d = round_trip_load(yaml_str)  # NOQA
 
     def test_issue_219a(self):
-        yaml_str = dedent("""\
+        yaml_str = dedent(
+            """\
         [StackName:
         AWS::StackName]
-        """)
+        """
+        )
         d = round_trip_load(yaml_str)  # NOQA
 
     def test_issue_220(self, tmpdir):
@@ -296,108 +318,129 @@ class TestIssues:
         a + [4, 5]
 
     def test_issue_221_sort(self):
-        from ruyaml import YAML
         from io import StringIO
 
+        from ruyaml import YAML
+
         yaml = YAML()
-        inp = dedent("""\
+        inp = dedent(
+            """\
         - d
         - a  # 1
         - c  # 3
         - e  # 5
         - b  # 2
-        """)
+        """
+        )
         a = yaml.load(dedent(inp))
         a.sort()
         buf = StringIO()
         yaml.dump(a, buf)
-        exp = dedent("""\
+        exp = dedent(
+            """\
         - a  # 1
         - b  # 2
         - c  # 3
         - d
         - e  # 5
-        """)
+        """
+        )
         assert buf.getvalue() == exp
 
     def test_issue_221_sort_reverse(self):
-        from ruyaml import YAML
         from io import StringIO
 
+        from ruyaml import YAML
+
         yaml = YAML()
-        inp = dedent("""\
+        inp = dedent(
+            """\
         - d
         - a  # 1
         - c  # 3
         - e  # 5
         - b  # 2
-        """)
+        """
+        )
         a = yaml.load(dedent(inp))
         a.sort(reverse=True)
         buf = StringIO()
         yaml.dump(a, buf)
-        exp = dedent("""\
+        exp = dedent(
+            """\
         - e  # 5
         - d
         - c  # 3
         - b  # 2
         - a  # 1
-        """)
+        """
+        )
         assert buf.getvalue() == exp
 
     def test_issue_221_sort_key(self):
-        from ruyaml import YAML
         from io import StringIO
 
+        from ruyaml import YAML
+
         yaml = YAML()
-        inp = dedent("""\
+        inp = dedent(
+            """\
         - four
         - One    # 1
         - Three  # 3
         - five   # 5
         - two    # 2
-        """)
+        """
+        )
         a = yaml.load(dedent(inp))
         a.sort(key=str.lower)
         buf = StringIO()
         yaml.dump(a, buf)
-        exp = dedent("""\
+        exp = dedent(
+            """\
         - five   # 5
         - four
         - One    # 1
         - Three  # 3
         - two    # 2
-        """)
+        """
+        )
         assert buf.getvalue() == exp
 
     def test_issue_221_sort_key_reverse(self):
-        from ruyaml import YAML
         from io import StringIO
 
+        from ruyaml import YAML
+
         yaml = YAML()
-        inp = dedent("""\
+        inp = dedent(
+            """\
         - four
         - One    # 1
         - Three  # 3
         - five   # 5
         - two    # 2
-        """)
+        """
+        )
         a = yaml.load(dedent(inp))
         a.sort(key=str.lower, reverse=True)
         buf = StringIO()
         yaml.dump(a, buf)
-        exp = dedent("""\
+        exp = dedent(
+            """\
         - two    # 2
         - Three  # 3
         - One    # 1
         - four
         - five   # 5
-        """)
+        """
+        )
         assert buf.getvalue() == exp
 
     def test_issue_222(self):
-        import ruyaml
         from io import StringIO
+
+        import ruyaml
 
         buf = StringIO()
         ruyaml.safe_dump(['012923'], buf)
@@ -418,16 +461,18 @@ class TestIssues:
             ruyaml.safe_load('{]')
 
     def test_issue_233(self):
-        from ruyaml import YAML
         import json
+
+        from ruyaml import YAML
 
         yaml = YAML()
         data = yaml.load('{}')
         json_str = json.dumps(data)  # NOQA
 
     def test_issue_233a(self):
-        from ruyaml import YAML
         import json
+
+        from ruyaml import YAML
 
         yaml = YAML()
         data = yaml.load('[]')
@@ -436,14 +481,16 @@ class TestIssues:
     def test_issue_234(self):
         from ruyaml import YAML
 
-        inp = dedent("""\
+        inp = dedent(
+            """\
         - key: key1
           ctx: [one, two]
           help: one
           cmd: >
             foo bar
             foo bar
-        """)
+        """
+        )
         yaml = YAML(typ='safe', pure=True)
         data = yaml.load(inp)
         fold = data[0]['cmd']
@@ -518,6 +565,7 @@ class TestIssues:
 
     def test_issue_245(self):
         from ruyaml import YAML
+
         inp = """
         d: yes
         """
@@ -536,19 +584,23 @@ class TestIssues:
 
     def test_issue_249(self):
         yaml = YAML()
-        inp = dedent("""\
+        inp = dedent(
+            """\
         # comment
         -
           - 1
           - 2
           - 3
-        """)
-        exp = dedent("""\
+        """
+        )
+        exp = dedent(
+            """\
         # comment
         - - 1
           - 2
           - 3
-        """)
+        """
+        )
         yaml.round_trip(inp, outp=exp)  # NOQA
 
     def test_issue_250(self):
@@ -564,18 +616,21 @@ class TestIssues:
 
     # @pytest.mark.xfail(strict=True, reason='bla bla', raises=AssertionError)
     def test_issue_279(self):
-        from ruyaml import YAML
         from io import StringIO
+
+        from ruyaml import YAML
 
         yaml = YAML()
         yaml.indent(sequence=4, offset=2)
-        inp = dedent("""\
+        inp = dedent(
+            """\
         experiments:
           - datasets:
         # ATLAS EWK
               - {dataset: ATLASWZRAP36PB, frac: 1.0}
               - {dataset: ATLASZHIGHMASS49FB, frac: 1.0}
-        """)
+        """
+        )
         a = yaml.load(inp)
         buf = StringIO()
         yaml.dump(a, buf)
@@ -583,10 +638,12 @@ class TestIssues:
         assert buf.getvalue() == inp
 
     def test_issue_280(self):
-        from ruyaml import YAML
-        from ruyaml.representer import RepresenterError
         from collections import namedtuple
         from sys import stdout
+
+        from ruyaml import YAML
+        from ruyaml.representer import RepresenterError
+
         T = namedtuple('T', ('a', 'b'))
         t = T(1, 2)
         yaml = YAML()
@@ -596,6 +653,7 @@ class TestIssues:
     def test_issue_282(self):
         # update from list of tuples caused AttributeError
         import ruyaml
+
         yaml_data = ruyaml.comments.CommentedMap([('a', 'apple'), ('b', 'banana')])
         yaml_data.update([('c', 'cantaloupe')])
         yaml_data.update({'d': 'date', 'k': 'kiwi'})
@@ -604,12 +662,15 @@ class TestIssues:
 
     def test_issue_284(self):
         import ruyaml
-        inp = dedent("""\
+
+        inp = dedent(
+            """\
         plain key: in-line value
         : # Both empty
         "quoted key":
         - entry
-        """)
+        """
+        )
         yaml = ruyaml.YAML(typ='rt')
         yaml.version = (1, 2)
         d = yaml.load(inp)
@@ -624,14 +685,16 @@ class TestIssues:
         from ruyaml import YAML
 
         yaml = YAML()
-        inp = dedent("""\
+        inp = dedent(
+            """\
         %YAML 1.1
         ---
         - y
         - n
         - Y
         - N
-        """)
+        """
+        )
         a = yaml.load(inp)
         assert a[0]
         assert a[2]
@@ -639,15 +702,18 @@ class TestIssues:
         assert not a[3]
 
     def test_issue_286(self):
-        from ruyaml import YAML
         from io import StringIO
 
+        from ruyaml import YAML
+
         yaml = YAML()
-        inp = dedent("""\
+        inp = dedent(
+            """\
         parent_key:
         - sub_key: sub_value
 
-        # xxx""")
+        # xxx"""
+        )
         a = yaml.load(inp)
         a['new_key'] = 'new_value'
         buf = StringIO()
@@ -657,9 +723,11 @@ class TestIssues:
     def test_issue_288(self):
         import sys
         from io import StringIO
+
         from ruyaml import YAML
 
-        yamldoc = dedent("""\
+        yamldoc = dedent(
+            """\
         ---
         # Reusable values
         aliases:
@@ -673,7 +741,8 @@ class TestIssues:
           - &thirdEntry Third entry
 
         # EOF Comment
-        """)
+        """
+        )
 
         yaml = YAML()
         yaml.indent(mapping=2, sequence=4, offset=2)
@@ -688,9 +757,11 @@ class TestIssues:
     def test_issue_288a(self):
         import sys
         from io import StringIO
+
         from ruyaml import YAML
 
-        yamldoc = dedent("""\
+        yamldoc = dedent(
+            """\
         ---
         # Reusable values
         aliases:
@@ -704,7 +775,8 @@ class TestIssues:
           - &thirdEntry Third entry
 
         # EOF Comment
-        """)
+        """
+        )
 
         yaml = YAML()
         yaml.indent(mapping=2, sequence=4, offset=2)
@@ -719,9 +791,11 @@ class TestIssues:
     def test_issue_290(self):
         import sys
         from io import StringIO
+
         from ruyaml import YAML
 
-        yamldoc = dedent("""\
+        yamldoc = dedent(
+            """\
         ---
         aliases:
           # Folded-element comment
@@ -740,7 +814,8 @@ class TestIssues:
 
           # Plain-element comment
           - &plainEntry Plain entry
-        """)
+        """
+        )
 
         yaml = YAML()
         yaml.indent(mapping=2, sequence=4, offset=2)
@@ -755,9 +830,11 @@ class TestIssues:
     def test_issue_290a(self):
         import sys
         from io import StringIO
+
         from ruyaml import YAML
 
-        yamldoc = dedent("""\
+        yamldoc = dedent(
+            """\
         ---
         aliases:
           # Folded-element comment
@@ -776,7 +853,8 @@ class TestIssues:
 
           # Plain-element comment
           - &plainEntry Plain entry
-        """)
+        """
+        )
 
         yaml = YAML()
         yaml.indent(mapping=2, sequence=4, offset=2)
@@ -795,7 +873,8 @@ class TestIssues:
         # some old merge_comment code
         import copy
 
-        inp = dedent("""
+        inp = dedent(
+            """
         A:
           b:
           # comment
@@ -809,7 +888,8 @@ class TestIssues:
           - - l31
             - l32
             - l33: '5'
-        """)
+        """
+        )
         data = round_trip_load(inp)  # NOQA
         dc = copy.deepcopy(data)
         assert round_trip_dump(dc) == inp
@@ -817,26 +897,31 @@ class TestIssues:
     def test_issue_300(self):
         from ruyaml import YAML
 
-        inp = dedent("""
+        inp = dedent(
+            """
         %YAML 1.2
         %TAG ! tag:example.com,2019/path#fragment
         ---
         null
-        """)
+        """
+        )
         YAML().load(inp)
 
     def test_issue_300a(self):
         import ruyaml
 
-        inp = dedent("""
+        inp = dedent(
+            """
         %YAML 1.1
         %TAG ! tag:example.com,2019/path#fragment
         ---
         null
-        """)
+        """
+        )
         yaml = YAML()
-        with pytest.raises(ruyaml.scanner.ScannerError,
-                           match='while scanning a directive'):
+        with pytest.raises(
+            ruyaml.scanner.ScannerError, match='while scanning a directive'
+        ):
             yaml.load(inp)
 
     def test_issue_304(self):
@@ -867,6 +952,7 @@ class TestIssues:
         ...
         """
         d = na_round_trip(inp)  # NOQA
+
 
 #    @pytest.mark.xfail(strict=True, reason='bla bla', raises=AssertionError)
 #    def test_issue_ xxx(self):

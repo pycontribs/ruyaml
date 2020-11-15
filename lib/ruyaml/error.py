@@ -2,11 +2,11 @@
 
 from __future__ import absolute_import
 
-import warnings
 import textwrap
+import warnings
 
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List, Text  # NOQA
+    from typing import Any, Dict, List, Optional, Text  # NOQA
 
 
 __all__ = [
@@ -34,7 +34,11 @@ class StreamMark(object):
 
     def __str__(self):
         # type: () -> Any
-        where = '  in "%s", line %d, column %d' % (self.name, self.line + 1, self.column + 1)
+        where = '  in "%s", line %d, column %d' % (
+            self.name,
+            self.line + 1,
+            self.column + 1,
+        )
         return where
 
     def __eq__(self, other):
@@ -77,7 +81,9 @@ class StringMark(StreamMark):
                 break
         tail = ""
         end = self.pointer
-        while end < len(self.buffer) and self.buffer[end] not in u'\0\r\n\x85\u2028\u2029':
+        while (
+            end < len(self.buffer) and self.buffer[end] not in u'\0\r\n\x85\u2028\u2029'
+        ):
             end += 1
             if end - self.pointer > max_length / 2 - 1:
                 tail = ' ... '
@@ -99,7 +105,11 @@ class StringMark(StreamMark):
     def __str__(self):
         # type: () -> Any
         snippet = self.get_snippet()
-        where = '  in "%s", line %d, column %d' % (self.name, self.line + 1, self.column + 1)
+        where = '  in "%s", line %d, column %d' % (
+            self.name,
+            self.line + 1,
+            self.column + 1,
+        )
         if snippet is not None:
             where += ':\n' + snippet
         return where

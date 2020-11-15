@@ -7,8 +7,8 @@ testing of anchors and the aliases referring to them
 """
 
 import sys
-import pytest
 
+import pytest
 
 single_doc = """\
 - a: 1

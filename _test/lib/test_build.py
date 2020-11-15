@@ -1,8 +1,7 @@
-
 if __name__ == '__main__':
-    import sys
-    import os
     import distutils.util
+    import os
+    import sys
 
     build_lib = 'build/lib'
     build_lib_ext = os.path.join(
@@ -10,7 +9,7 @@ if __name__ == '__main__':
     )
     sys.path.insert(0, build_lib)
     sys.path.insert(0, build_lib_ext)
-    import test_yaml
     import test_appliance
+    import test_yaml
 
     test_appliance.run(test_yaml)

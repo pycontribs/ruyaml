@@ -2,9 +2,9 @@
 
 from __future__ import print_function
 
-import pytest  # NOQA
-
 import json
+
+import pytest  # NOQA
 
 
 def load(s, typ=float):

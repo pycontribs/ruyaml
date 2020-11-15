@@ -1,15 +1,15 @@
 # coding: utf-8
 
-from __future__ import print_function, absolute_import, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
-import datetime
 import copy
+import datetime
 
 # ToDo: you could probably attach the tzinfo correctly to the object
 #       a more complete datetime might be used by safe loading as well
 
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List  # NOQA
+    from typing import Any, Dict, List, Optional  # NOQA
 
 
 class TimeStamp(datetime.datetime):
@@ -23,6 +23,8 @@ class TimeStamp(datetime.datetime):
 
     def __deepcopy__(self, memo):
         # type: (Any) -> Any
-        ts = TimeStamp(self.year, self.month, self.day, self.hour, self.minute, self.second)
+        ts = TimeStamp(
+            self.year, self.month, self.day, self.hour, self.minute, self.second
+        )
         ts._yaml = copy.deepcopy(self._yaml)
         return ts

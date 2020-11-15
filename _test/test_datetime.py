@@ -20,9 +20,9 @@ Please note that a fraction can only be included if not equal to 0
 """
 
 import copy
-import pytest  # NOQA
 
-from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump  # NOQA
+import pytest  # NOQA
+from roundtrip import dedent, round_trip, round_trip_dump, round_trip_load  # NOQA
 
 
 class TestDateTime:
@@ -80,12 +80,14 @@ class TestDateTime:
         round_trip(inp, exp)
 
     def test_normal_timezone(self):
-        round_trip("""
+        round_trip(
+            """
         - 2011-10-02T11:45:00-5
         - 2011-10-02 11:45:00-5
         - 2011-10-02T11:45:00-05:00
         - 2011-10-02 11:45:00-05:00
-        """)
+        """
+        )
 
     def test_no_timezone(self):
         inp = """
@@ -124,24 +126,32 @@ class TestDateTime:
         round_trip(inp, exp)
 
     def test_iso(self):
-        round_trip("""
+        round_trip(
+            """
         - 2011-10-02T15:45:00+01:00
-        """)
+        """
+        )
 
     def test_zero_tz(self):
-        round_trip("""
+        round_trip(
+            """
         - 2011-10-02T15:45:00+0
-        """)
+        """
+        )
 
     def test_issue_45(self):
-        round_trip("""
+        round_trip(
+            """
         dt: 2016-08-19T22:45:47Z
-        """)
+        """
+        )
 
     def test_deepcopy_datestring(self):
         # reported by Quuxplusone, http://stackoverflow.com/a/41577841/1307905
-        x = dedent("""\
+        x = dedent(
+            """\
         foo: 2016-10-12T12:34:56
-        """)
+        """
+        )
         data = copy.deepcopy(round_trip_load(x))
         assert round_trip_dump(data) == x

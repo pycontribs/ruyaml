@@ -1,8 +1,9 @@
 # from __future__ import absolute_import
 from __future__ import print_function
 
-import ruyaml
 import canonical  # NOQA
+
+import ruyaml
 
 
 def test_canonical_scanner(canonical_filename, verbose=False):

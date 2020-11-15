@@ -220,7 +220,7 @@ def YAML(**kw):
                 yield d
 
         def dump(self, data, **kw):
-            from io import StringIO, BytesIO  # NOQA
+            from io import BytesIO, StringIO  # NOQA
 
             assert ('stream' in kw) ^ ('compare' in kw)
             if 'stream' in kw:
@@ -240,7 +240,7 @@ def YAML(**kw):
             assert res == expected
 
         def round_trip(self, stream, **kw):
-            from io import StringIO, BytesIO  # NOQA
+            from io import BytesIO, StringIO  # NOQA
 
             assert isinstance(stream, str)
             lkw = kw.copy()
@@ -257,7 +257,7 @@ def YAML(**kw):
             assert res == outp
 
         def round_trip_all(self, stream, **kw):
-            from io import StringIO, BytesIO  # NOQA
+            from io import BytesIO, StringIO  # NOQA
 
             assert isinstance(stream, str)
             lkw = kw.copy()
@@ -281,7 +281,7 @@ def save_and_run(program, base_dir=None, output=None, file_name=None, optimized=
     safe and run a python program, thereby circumventing any restrictions on module level
     imports
     """
-    from subprocess import check_output, STDOUT, CalledProcessError
+    from subprocess import STDOUT, CalledProcessError, check_output
 
     if not hasattr(base_dir, 'hash'):
         base_dir = Path(str(base_dir))

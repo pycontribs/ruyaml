@@ -1,8 +1,8 @@
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
+
+import pprint
 
 import ruyaml as yaml
-import pprint
 
 
 def test_implicit_resolver(data_filename, detect_filename, verbose=False):
@@ -42,7 +42,9 @@ def _make_path_loader_and_dumper():
     yaml.add_path_resolver(
         u'!root/key11/key12/*', ['key11', 'key12'], Loader=MyLoader, Dumper=MyDumper
     )
-    yaml.add_path_resolver(u'!root/key21/1/*', ['key21', 1], Loader=MyLoader, Dumper=MyDumper)
+    yaml.add_path_resolver(
+        u'!root/key21/1/*', ['key21', 1], Loader=MyLoader, Dumper=MyDumper
+    )
     yaml.add_path_resolver(
         u'!root/key31/*/*/key14/map',
         ['key31', None, None, 'key14'],

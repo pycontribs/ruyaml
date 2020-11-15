@@ -2,17 +2,25 @@
 
 from __future__ import absolute_import
 
-from _ruyaml import CParser, CEmitter  # type: ignore
+from _ruyaml import CEmitter, CParser  # type: ignore
 
-from ruyaml.constructor import Constructor, BaseConstructor, SafeConstructor
-from ruyaml.representer import Representer, SafeRepresenter, BaseRepresenter
-from ruyaml.resolver import Resolver, BaseResolver
+from ruyaml.constructor import BaseConstructor, Constructor, SafeConstructor
+from ruyaml.representer import BaseRepresenter, Representer, SafeRepresenter
+from ruyaml.resolver import BaseResolver, Resolver
 
 if False:  # MYPY
-    from typing import Any, Union, Optional  # NOQA
+    from typing import Any, Optional, Union  # NOQA
+
     from ruyaml.compat import StreamTextType, StreamType, VersionType  # NOQA
 
-__all__ = ['CBaseLoader', 'CSafeLoader', 'CLoader', 'CBaseDumper', 'CSafeDumper', 'CDumper']
+__all__ = [
+    'CBaseLoader',
+    'CSafeLoader',
+    'CLoader',
+    'CBaseDumper',
+    'CSafeDumper',
+    'CDumper',
+]
 
 
 # this includes some hacks to solve the  usage of resolver by lower level

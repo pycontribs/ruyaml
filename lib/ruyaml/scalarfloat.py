@@ -1,13 +1,15 @@
 # coding: utf-8
 
-from __future__ import print_function, absolute_import, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import sys
-from .compat import no_limit_int  # NOQA
+
 from ruyaml.anchor import Anchor
 
+from .compat import no_limit_int  # NOQA
+
 if False:  # MYPY
-    from typing import Text, Any, Dict, List  # NOQA
+    from typing import Any, Dict, List, Text  # NOQA
 
 __all__ = ['ScalarFloat', 'ExponentialFloat', 'ExponentialCapsFloat']
 
@@ -42,7 +44,9 @@ class ScalarFloat(float):
         return float(self) + a
         x = type(self)(self + a)
         x._width = self._width
-        x._underscore = self._underscore[:] if self._underscore is not None else None  # NOQA
+        x._underscore = (
+            self._underscore[:] if self._underscore is not None else None
+        )  # NOQA
         return x
 
     def __ifloordiv__(self, a):  # type: ignore
@@ -50,7 +54,9 @@ class ScalarFloat(float):
         return float(self) // a
         x = type(self)(self // a)
         x._width = self._width
-        x._underscore = self._underscore[:] if self._underscore is not None else None  # NOQA
+        x._underscore = (
+            self._underscore[:] if self._underscore is not None else None
+        )  # NOQA
         return x
 
     def __imul__(self, a):  # type: ignore
@@ -58,7 +64,9 @@ class ScalarFloat(float):
         return float(self) * a
         x = type(self)(self * a)
         x._width = self._width
-        x._underscore = self._underscore[:] if self._underscore is not None else None  # NOQA
+        x._underscore = (
+            self._underscore[:] if self._underscore is not None else None
+        )  # NOQA
         x._prec = self._prec  # check for others
         return x
 
@@ -67,7 +75,9 @@ class ScalarFloat(float):
         return float(self) ** a
         x = type(self)(self ** a)
         x._width = self._width
-        x._underscore = self._underscore[:] if self._underscore is not None else None  # NOQA
+        x._underscore = (
+            self._underscore[:] if self._underscore is not None else None
+        )  # NOQA
         return x
 
     def __isub__(self, a):  # type: ignore
@@ -75,7 +85,9 @@ class ScalarFloat(float):
         return float(self) - a
         x = type(self)(self - a)
         x._width = self._width
-        x._underscore = self._underscore[:] if self._underscore is not None else None  # NOQA
+        x._underscore = (
+            self._underscore[:] if self._underscore is not None else None
+        )  # NOQA
         return x
 
     @property

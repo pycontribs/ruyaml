@@ -7,15 +7,15 @@
 # and remove remove the xyz_no_fail
 
 import pytest
-
-from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump
+from roundtrip import dedent, round_trip, round_trip_dump, round_trip_load
 
 
 class TestCommentFailures:
     @pytest.mark.xfail(strict=True)
     def test_set_comment_before_tag(self):
         # no comments before tags
-        round_trip("""
+        round_trip(
+            """
         # the beginning
         !!set
         # or this one?
@@ -24,7 +24,8 @@ class TestCommentFailures:
         ? b  #  You see? Promised you.
         ? c
         # this is the end
-        """)
+        """
+        )
 
     def test_set_comment_before_tag_no_fail(self):
         # no comments before tags
@@ -38,7 +39,8 @@ class TestCommentFailures:
         ? c
         # this is the end
         """
-        assert round_trip_dump(round_trip_load(inp)) == dedent("""
+        assert round_trip_dump(round_trip_load(inp)) == dedent(
+            """
         !!set
         # or this one?
         ? a
@@ -46,15 +48,18 @@ class TestCommentFailures:
         ? b  #  You see? Promised you.
         ? c
         # this is the end
-        """)
+        """
+        )
 
     @pytest.mark.xfail(strict=True)
     def test_comment_dash_line(self):
-        round_trip("""
+        round_trip(
+            """
         - # abc
            a: 1
            b: 2
-        """)
+        """
+        )
 
     def test_comment_dash_line_fail(self):
         x = """
@@ -64,17 +69,20 @@ class TestCommentFailures:
         """
         data = round_trip_load(x)
         # this is not nice
-        assert round_trip_dump(data) == dedent("""
+        assert round_trip_dump(data) == dedent(
+            """
           # abc
         - a: 1
           b: 2
-        """)
+        """
+        )
 
 
 class TestIndentFailures:
     @pytest.mark.xfail(strict=True)
     def test_indent_not_retained(self):
-        round_trip("""
+        round_trip(
+            """
         verbosity: 1                  # 0 is minimal output, -1 none
         base_url: http://gopher.net
         special_indices: [1, 5, 8]
@@ -95,7 +103,8 @@ class TestIndentFailures:
                 Italy: Rome
             Antarctica:
             -   too cold
-        """)
+        """
+        )
 
     def test_indent_not_retained_no_fail(self):
         inp = """
@@ -120,7 +129,8 @@ class TestIndentFailures:
             Antarctica:
             -   too cold
         """
-        assert round_trip_dump(round_trip_load(inp), indent=4) == dedent("""
+        assert round_trip_dump(round_trip_load(inp), indent=4) == dedent(
+            """
         verbosity: 1                  # 0 is minimal output, -1 none
         base_url: http://gopher.net
         special_indices: [1, 5, 8]
@@ -141,7 +151,8 @@ class TestIndentFailures:
                 Italy: Rome
             Antarctica:
             -   too cold
-        """)
+        """
+        )
 
     def Xtest_indent_top_level_no_fail(self):
         inp = """
@@ -154,12 +165,14 @@ class TestIndentFailures:
 class TestTagFailures:
     @pytest.mark.xfail(strict=True)
     def test_standard_short_tag(self):
-        round_trip("""\
+        round_trip(
+            """\
         !!map
         name: Anthon
         location: Germany
         language: python
-        """)
+        """
+        )
 
     def test_standard_short_tag_no_fail(self):
         inp = """
@@ -201,9 +214,11 @@ class TestMappingKey:
         from ruyaml.comments import CommentedKeyMap
 
         d = {CommentedKeyMap([('a', 1), ('b', 2)]): 'hello world'}
-        exp = dedent("""\
+        exp = dedent(
+            """\
         {a: 1, b: 2}: hello world
-        """)
+        """
+        )
         assert round_trip_dump(d) == exp
 
     def test_change_key_simple_mapping_key(self):
@@ -213,10 +228,14 @@ class TestMappingKey:
         {a: 1, b: 2}: hello world
         """
         d = round_trip_load(inp, preserve_quotes=True)
-        d[CommentedKeyMap([('b', 1), ('a', 2)])] = d.pop(CommentedKeyMap([('a', 1), ('b', 2)]))
-        exp = dedent("""\
+        d[CommentedKeyMap([('b', 1), ('a', 2)])] = d.pop(
+            CommentedKeyMap([('a', 1), ('b', 2)])
+        )
+        exp = dedent(
+            """\
         {b: 1, a: 2}: hello world
-        """)
+        """
+        )
         assert round_trip_dump(d) == exp
 
     def test_change_value_simple_mapping_key(self):
@@ -227,7 +246,9 @@ class TestMappingKey:
         """
         d = round_trip_load(inp, preserve_quotes=True)
         d = {CommentedKeyMap([('a', 1), ('b', 2)]): 'goodbye'}
-        exp = dedent("""\
+        exp = dedent(
+            """\
         {a: 1, b: 2}: goodbye
-        """)
+        """
+        )
         assert round_trip_dump(d) == exp

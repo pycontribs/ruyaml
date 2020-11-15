@@ -4,7 +4,8 @@
 from __future__ import unicode_literals
 
 if False:  # MYPY
-    from typing import Text, Any, Dict, Optional, List  # NOQA
+    from typing import Any, Dict, List, Optional, Text  # NOQA
+
     from .error import StreamMark  # NOQA
 
 SHOWLINES = True
@@ -24,7 +25,9 @@ class Token(object):
         #               hasattr('self', key)]
         attributes = [key for key in self.__slots__ if not key.endswith('_mark')]
         attributes.sort()
-        arguments = ', '.join(['%s=%r' % (key, getattr(self, key)) for key in attributes])
+        arguments = ', '.join(
+            ['%s=%r' % (key, getattr(self, key)) for key in attributes]
+        )
         if SHOWLINES:
             try:
                 arguments += ', line: ' + str(self.start_mark.line)
@@ -90,7 +93,7 @@ class Token(object):
 
     def split_comment(self):
         # type: () -> Any
-        """ split the post part of a comment, and return it
+        """split the post part of a comment, and return it
         as comment to be added. Delete second part if [None, None]
          abc:  # this goes to sequence
            # this goes to first element

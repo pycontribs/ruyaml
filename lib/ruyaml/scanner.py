@@ -1,6 +1,10 @@
 # coding: utf-8
 
-from __future__ import print_function, absolute_import, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+from ruyaml.compat import check_anchorname_char, nprint, unichr  # NOQA
+from ruyaml.error import MarkedYAMLError
+from ruyaml.tokens import *  # NOQA
 
 # Scanner produces tokens of the following types:
 # STREAM-START
@@ -30,12 +34,10 @@ from __future__ import print_function, absolute_import, division, unicode_litera
 # Read comments in the Scanner code for more details.
 #
 
-from ruyaml.error import MarkedYAMLError
-from ruyaml.tokens import *  # NOQA
-from ruyaml.compat import unichr, check_anchorname_char, nprint  # NOQA
 
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List, Union, Text  # NOQA
+    from typing import Any, Dict, List, Optional, Text, Union  # NOQA
+
     from ruyaml.compat import VersionType  # NOQA
 
 __all__ = ['Scanner', 'RoundTripScanner', 'ScannerError']
@@ -566,7 +568,10 @@ class Scanner(object):
             # Are we allowed to start a new entry?
             if not self.allow_simple_key:
                 raise ScannerError(
-                    None, None, 'sequence entries are not allowed here', self.reader.get_mark()
+                    None,
+                    None,
+                    'sequence entries are not allowed here',
+                    self.reader.get_mark(),
                 )
             # We may need to add BLOCK-SEQUENCE-START.
             if self.add_indent(self.reader.column):
@@ -595,7 +600,10 @@ class Scanner(object):
             # Are we allowed to start a key (not nessesary a simple)?
             if not self.allow_simple_key:
                 raise ScannerError(
-                    None, None, 'mapping keys are not allowed here', self.reader.get_mark()
+                    None,
+                    None,
+                    'mapping keys are not allowed here',
+                    self.reader.get_mark(),
                 )
 
             # We may need to add BLOCK-MAPPING-START.
@@ -762,7 +770,10 @@ class Scanner(object):
         # type: () -> Any
         # DOCUMENT-START:   ^ '---' (' '|'\n')
         if self.reader.column == 0:
-            if self.reader.prefix(3) == '---' and self.reader.peek(3) in _THE_END_SPACE_TAB:
+            if (
+                self.reader.prefix(3) == '---'
+                and self.reader.peek(3) in _THE_END_SPACE_TAB
+            ):
                 return True
         return None
 
@@ -770,7 +781,10 @@ class Scanner(object):
         # type: () -> Any
         # DOCUMENT-END:     ^ '...' (' '|'\n')
         if self.reader.column == 0:
-            if self.reader.prefix(3) == '...' and self.reader.peek(3) in _THE_END_SPACE_TAB:
+            if (
+                self.reader.prefix(3) == '...'
+                and self.reader.peek(3) in _THE_END_SPACE_TAB
+            ):
                 return True
         return None
 
@@ -1163,7 +1177,9 @@ class Scanner(object):
                 style not in '|>'
                 or (self.scanner_processing_version == (1, 1))
                 and getattr(
-                    self.loader, 'top_level_block_style_scalar_no_indent_error_1_1', False
+                    self.loader,
+                    'top_level_block_style_scalar_no_indent_error_1_1',
+                    False,
                 )
             ):
                 min_indent = 1
@@ -1200,7 +1216,12 @@ class Scanner(object):
 
                 if rt and folded and line_break == '\n':
                     chunks.append('\a')
-                if folded and line_break == '\n' and leading_non_space and srp() not in ' \t':
+                if (
+                    folded
+                    and line_break == '\n'
+                    and leading_non_space
+                    and srp() not in ' \t'
+                ):
                     if not breaks:
                         chunks.append(' ')
                 else:
@@ -1269,7 +1290,8 @@ class Scanner(object):
                     raise ScannerError(
                         'while scanning a block scalar',
                         start_mark,
-                        'expected indentation indicator in the range 1-9, ' 'but found 0',
+                        'expected indentation indicator in the range 1-9, '
+                        'but found 0',
                         self.reader.get_mark(),
                     )
                 self.reader.forward()
@@ -1620,7 +1642,9 @@ class Scanner(object):
                 else:
                     breaks.append(self.scan_line_break())
                     prefix = self.reader.prefix(3)
-                    if (prefix == '---' or prefix == '...') and srp(3) in _THE_END_SPACE_TAB:
+                    if (prefix == '---' or prefix == '...') and srp(
+                        3
+                    ) in _THE_END_SPACE_TAB:
                         return
             if line_break != '\n':
                 chunks.append(line_break)
@@ -1648,7 +1672,9 @@ class Scanner(object):
         length = 1
         ch = srp(length)
         if ch != ' ':
-            while '0' <= ch <= '9' or 'A' <= ch <= 'Z' or 'a' <= ch <= 'z' or ch in '-_':
+            while (
+                '0' <= ch <= '9' or 'A' <= ch <= 'Z' or 'a' <= ch <= 'z' or ch in '-_'
+            ):
                 length += 1
                 ch = srp(length)
             if ch != '!':
@@ -1723,7 +1749,9 @@ class Scanner(object):
         try:
             value = bytes(code_bytes).decode('utf-8')
         except UnicodeDecodeError as exc:
-            raise ScannerError('while scanning a %s' % (name,), start_mark, str(exc), mark)
+            raise ScannerError(
+                'while scanning a %s' % (name,), start_mark, str(exc), mark
+            )
         return value
 
     def scan_line_break(self):
@@ -1815,7 +1843,12 @@ class RoundTripScanner(Scanner):
                 len(self.tokens) > 1
                 and isinstance(
                     self.tokens[0],
-                    (ScalarToken, ValueToken, FlowSequenceEndToken, FlowMappingEndToken),
+                    (
+                        ScalarToken,
+                        ValueToken,
+                        FlowSequenceEndToken,
+                        FlowMappingEndToken,
+                    ),
                 )
                 and isinstance(self.tokens[1], CommentToken)
                 and self.tokens[0].end_mark.line == self.tokens[1].start_mark.line

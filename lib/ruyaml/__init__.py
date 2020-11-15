@@ -1,9 +1,9 @@
 # coding: utf-8
 
-from __future__ import print_function, absolute_import, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 if False:  # MYPY
-    from typing import Dict, Any  # NOQA
+    from typing import Any, Dict  # NOQA
 
 _package_data = dict(
     full_package_name='ruyaml',
@@ -22,7 +22,8 @@ _package_data = dict(
             'ruyaml.clib>=0.1.2',
         ],
         'jinja2': ['ruyaml.jinja2>=0.2'],
-        'docs': ['ryd']},
+        'docs': ['ryd'],
+    },
     # NOQA
     # test='#include "ext/yaml.h"\n\nint main(int argc, char* argv[])\n{\nyaml_parser_t parser;\nparser = parser;  /* prevent warning */\nreturn 0;\n}\n',  # NOQA
     classifiers=[

@@ -1,10 +1,9 @@
 # coding: utf-8
 
-from __future__ import print_function, absolute_import, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest  # NOQA
-
-from roundtrip import dedent, round_trip_load, round_trip_dump
+from roundtrip import dedent, round_trip_dump, round_trip_load
 
 # http://yaml.org/type/int.html is where underscores in integers are defined
 
@@ -12,13 +11,15 @@ from roundtrip import dedent, round_trip_load, round_trip_dump
 class TestBinHexOct:
     def test_calculate(self):
         # make sure type, leading zero(s) and underscore are preserved
-        s = dedent("""\
+        s = dedent(
+            """\
         - 42
         - 0b101010
         - 0x_2a
         - 0x2A
         - 0o00_52
-        """)
+        """
+        )
         d = round_trip_load(s)
         for idx, elem in enumerate(d):
             elem -= 21

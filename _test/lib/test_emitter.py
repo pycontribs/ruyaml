@@ -1,5 +1,4 @@
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
 
 import ruyaml as yaml
 
@@ -57,15 +56,25 @@ def test_emitter_styles(data_filename, canonical_filename, verbose=False):
                 for event in events:
                     if isinstance(event, yaml.ScalarEvent):
                         event = yaml.ScalarEvent(
-                            event.anchor, event.tag, event.implicit, event.value, style=style
+                            event.anchor,
+                            event.tag,
+                            event.implicit,
+                            event.value,
+                            style=style,
                         )
                     elif isinstance(event, yaml.SequenceStartEvent):
                         event = yaml.SequenceStartEvent(
-                            event.anchor, event.tag, event.implicit, flow_style=flow_style
+                            event.anchor,
+                            event.tag,
+                            event.implicit,
+                            flow_style=flow_style,
                         )
                     elif isinstance(event, yaml.MappingStartEvent):
                         event = yaml.MappingStartEvent(
-                            event.anchor, event.tag, event.implicit, flow_style=flow_style
+                            event.anchor,
+                            event.tag,
+                            event.implicit,
+                            flow_style=flow_style,
                         )
                     styled_events.append(event)
                 output = yaml.emit(styled_events)

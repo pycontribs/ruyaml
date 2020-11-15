@@ -6,11 +6,12 @@ some helper functions that might be generally useful
 
 from __future__ import absolute_import, print_function
 
-from functools import partial
 import re
+from functools import partial
 
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List, Text  # NOQA
+    from typing import Any, Dict, List, Optional, Text  # NOQA
+
     from .compat import StreamTextType  # NOQA
 
 

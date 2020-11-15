@@ -1,13 +1,9 @@
 # coding: utf-8
 
-from __future__ import absolute_import
-from __future__ import print_function
-from __future__ import unicode_literals
-
+from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest  # NOQA
-
-from roundtrip import round_trip, round_trip_load, round_trip_dump, dedent, YAML
+from roundtrip import YAML, dedent, round_trip, round_trip_dump, round_trip_load
 
 
 def rt(s):
@@ -27,29 +23,35 @@ class TestIndent:
         assert s == output
 
     def test_roundtrip_mapping_of_inline_lists(self):
-        s = dedent("""\
+        s = dedent(
+            """\
         a: [a, b, c]
         j: [k, l, m]
-        """)
+        """
+        )
         output = rt(s)
         assert s == output
 
     def test_roundtrip_mapping_of_inline_lists_comments(self):
-        s = dedent("""\
+        s = dedent(
+            """\
         # comment A
         a: [a, b, c]
         # comment B
         j: [k, l, m]
-        """)
+        """
+        )
         output = rt(s)
         assert s == output
 
     def test_roundtrip_mapping_of_inline_sequence_eol_comments(self):
-        s = dedent("""\
+        s = dedent(
+            """\
         # comment A
         a: [a, b, c]  # comment B
         j: [k, l, m]  # comment C
-        """)
+        """
+        )
         output = rt(s)
         assert s == output
 
@@ -57,12 +59,14 @@ class TestIndent:
     def test_added_inline_list(self):
         import ruyaml
 
-        s1 = dedent("""
+        s1 = dedent(
+            """
         a:
         - b
         - c
         - d
-        """)
+        """
+        )
         s = 'a: [b, c, d]\n'
         data = ruyaml.load(s1, Loader=ruyaml.RoundTripLoader)
         val = data['a']
@@ -76,20 +80,24 @@ class TestIndent:
     def test_roundtrip_flow_mapping(self):
         import ruyaml
 
-        s = dedent("""\
+        s = dedent(
+            """\
         - {a: 1, b: hallo}
         - {j: fka, k: 42}
-        """)
+        """
+        )
         data = ruyaml.load(s, Loader=ruyaml.RoundTripLoader)
         output = ruyaml.dump(data, Dumper=ruyaml.RoundTripDumper)
         assert s == output
 
     def test_roundtrip_sequence_of_inline_mappings_eol_comments(self):
-        s = dedent("""\
+        s = dedent(
+            """\
         # comment A
         - {a: 1, b: hallo}  # comment B
         - {j: fka, k: 42}  # comment C
-        """)
+        """
+        )
         output = rt(s)
         assert s == output
 
@@ -223,7 +231,11 @@ class TestYpkgIndent:
             package Pine (itself now available under the Apache License as Alpine).
         """
         round_trip(
-            inp, indent=4, block_seq_indent=2, top_level_colon_align=True, prefix_colon=' '
+            inp,
+            indent=4,
+            block_seq_indent=2,
+            top_level_colon_align=True,
+            prefix_colon=' ',
         )
 
 
@@ -330,7 +342,8 @@ class TestSeparateMapSeqIndents:
         # yaml.map_indent = 2 # the default
         yaml.indent(sequence=4, offset=2)
         yaml.preserve_quotes = True
-        yaml.round_trip("""
+        yaml.round_trip(
+            """
         role::startup::author::rsyslog_inputs:
           imfile:
             - ruleset: 'AEM-slinglog'
@@ -341,7 +354,8 @@ class TestSeparateMapSeqIndents:
               File: '/opt/aem/author/crx-quickstart/logs/stdout.log'
               startmsg.regex: '^[-+T.:[:digit:]]*'
               tag: 'stdout'
-        """)
+        """
+        )
 
 
 # ############ indentation

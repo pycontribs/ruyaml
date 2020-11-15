@@ -1,9 +1,10 @@
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
+
+import pprint
+
+import canonical  # NOQA
 
 import ruyaml as yaml
-import canonical  # NOQA
-import pprint
 
 
 def _convert_structure(loader):
@@ -75,7 +76,9 @@ def _compare_events(events1, events2, full=False):
         if isinstance(event1, yaml.AliasEvent) and full:
             assert event1.anchor == event2.anchor, (event1, event2)
         if isinstance(event1, (yaml.ScalarEvent, yaml.CollectionStartEvent)):
-            if (event1.tag not in [None, u'!'] and event2.tag not in [None, u'!']) or full:
+            if (
+                event1.tag not in [None, u'!'] and event2.tag not in [None, u'!']
+            ) or full:
                 assert event1.tag == event2.tag, (event1, event2)
         if isinstance(event1, yaml.ScalarEvent):
             assert event1.value == event2.value, (event1, event2)
