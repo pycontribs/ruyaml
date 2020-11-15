@@ -8,6 +8,7 @@ import os
 import os.path
 from io import StringIO, BytesIO
 
+
 def test_unicode_input(unicode_filename, verbose=False):
     with open(unicode_filename, 'rb') as fp:
         data = fp.read().decode('utf-8')
@@ -61,6 +62,7 @@ def test_unicode_input_errors(unicode_filename, verbose=False):
 
 
 test_unicode_input_errors.unittest = ['.unicode']
+
 
 def test_unicode_output(unicode_filename, verbose=False):
     with open(unicode_filename, 'rb') as fp:

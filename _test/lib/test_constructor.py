@@ -13,6 +13,10 @@ except NameError:
 import ruyaml.tokens
 
 
+def cmp(a, b):
+    return (a > b) - (a < b)
+
+
 def execute(code):
     global value
     exec(code)
@@ -20,7 +24,11 @@ def execute(code):
 
 
 def _make_objects():
-    global MyLoader, MyDumper, MyTestClass1, MyTestClass2, MyTestClass3, YAMLobject1, YAMLobject2, AnObject, AnInstance, AState, ACustomState, InitArgs, InitArgsWithState, NewArgs, NewArgsWithState, Reduce, ReduceWithState, MyInt, MyList, MyDict, FixedOffset, today, execute
+    global MyLoader, MyDumper, MyTestClass1, MyTestClass2, MyTestClass3
+    global YAMLobject1, YAMLobject2, AnObject, AnInstance, AState, ACustomState
+    global InitArgs, InitArgsWithState
+    global NewArgs, NewArgsWithState, Reduce, ReduceWithState, MyInt, MyList, MyDict
+    global FixedOffset, today, execute
 
     class MyLoader(ruyaml.Loader):
         pass
