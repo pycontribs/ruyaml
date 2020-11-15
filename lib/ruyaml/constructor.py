@@ -94,12 +94,12 @@ class BaseConstructor:
     def composer(self):
         # type: () -> Any
         if hasattr(self.loader, 'typ'):
-            return self.loader.composer
+            return self.loader.composer  # type: ignore
         try:
-            return self.loader._composer
+            return self.loader._composer  # type: ignore
         except AttributeError:
             sys.stdout.write('slt {}\n'.format(type(self)))
-            sys.stdout.write('slc {}\n'.format(self.loader._composer))
+            sys.stdout.write('slc {}\n'.format(self.loader._composer))  # type: ignore
             sys.stdout.write('{}\n'.format(dir(self)))
             raise
 
@@ -107,8 +107,8 @@ class BaseConstructor:
     def resolver(self):
         # type: () -> Any
         if hasattr(self.loader, 'typ'):
-            return self.loader.resolver
-        return self.loader._resolver
+            return self.loader.resolver  # type: ignore
+        return self.loader._resolver  # type: ignore
 
     def check_data(self):
         # type: () -> Any

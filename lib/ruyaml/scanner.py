@@ -66,8 +66,7 @@ class SimpleKey:
 
 
 class Scanner:
-    def __init__(self, loader=None):
-        # type: (Any) -> None
+    def __init__(self, loader: Any = None) -> None:
         """Initialize the scanner."""
         # It is assumed that Scanner and Reader will have a common descendant.
         # Reader do the dirty work of checking for BOM and converting the
@@ -151,17 +150,17 @@ class Scanner:
             return self._scanner_reader  # type: ignore
         except AttributeError:
             if hasattr(self.loader, 'typ'):
-                self._scanner_reader = self.loader.reader
+                self._scanner_reader = self.loader.reader  # type: ignore
             else:
-                self._scanner_reader = self.loader._reader
+                self._scanner_reader = self.loader._reader  # type: ignore
             return self._scanner_reader
 
     @property
     def scanner_processing_version(self):  # prefix until un-composited
         # type: () -> Any
         if hasattr(self.loader, 'typ'):
-            return self.loader.resolver.processing_version
-        return self.loader.processing_version
+            return self.loader.resolver.processing_version  # type: ignore
+        return self.loader.processing_version  # type: ignore
 
     # Public methods.
 

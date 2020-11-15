@@ -3,10 +3,9 @@
 
 from __future__ import unicode_literals
 
-if False:  # MYPY
-    from typing import Any, Dict, List, Optional, Text  # NOQA
+from typing import Any
 
-    from .error import StreamMark  # NOQA
+from ruyaml.error import StreamMark
 
 SHOWLINES = True
 
@@ -14,8 +13,11 @@ SHOWLINES = True
 class Token:
     __slots__ = 'start_mark', 'end_mark', '_comment'
 
-    def __init__(self, start_mark, end_mark):
-        # type: (StreamMark, StreamMark) -> None
+    def __init__(
+        self,
+        start_mark: StreamMark,
+        end_mark: StreamMark,
+    ) -> None:
         self.start_mark = start_mark
         self.end_mark = end_mark
 
@@ -137,8 +139,12 @@ class StreamStartToken(Token):
     __slots__ = ('encoding',)
     id = '<stream start>'
 
-    def __init__(self, start_mark=None, end_mark=None, encoding=None):
-        # type: (Any, Any, Any) -> None
+    def __init__(
+        self,
+        start_mark: StreamMark,
+        end_mark: StreamMark,
+        encoding: Any = None,
+    ) -> None:
         Token.__init__(self, start_mark, end_mark)
         self.encoding = encoding
 
