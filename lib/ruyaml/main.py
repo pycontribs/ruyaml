@@ -8,9 +8,11 @@ import sys
 import warnings
 from importlib import import_module
 from io import BytesIO, StringIO
+from pathlib import Path
+from typing import Any, List, Optional, Text, Union
 
 import ruyaml
-from ruyaml.compat import nprint
+from ruyaml.compat import StreamTextType, StreamType, VersionType, nprint
 from ruyaml.constructor import (
     BaseConstructor,
     Constructor,
@@ -33,12 +35,6 @@ from ruyaml.representer import (
 )
 from ruyaml.resolver import Resolver, VersionedResolver  # NOQA
 from ruyaml.tokens import *  # NOQA
-
-if False:  # MYPY
-    from pathlib import Path
-    from typing import Any, Callable, Dict, List, Optional, Set, Text, Union  # NOQA
-
-    from ruyaml.compat import StreamTextType, StreamType, VersionType  # NOQA
 
 try:
     from _ruyaml import CEmitter, CParser  # type: ignore
@@ -523,13 +519,13 @@ class YAML:
             delattr(self, '_serializer')
             delattr(self, '_emitter')
         if transform:
-            val = stream.getvalue()
+            val = stream.getvalue()  # type: ignore
             if self.encoding:
                 val = val.decode(self.encoding)
             if fstream is None:
                 transform(val)
             else:
-                fstream.write(transform(val))
+                fstream.write(transform(val))  # type: ignore
         return None
 
     def get_serializer_representer_emitter(self, stream, tlca):
@@ -960,15 +956,15 @@ def load(stream, Loader=None, version=None, preserve_quotes=None):
         Loader = UnsafeLoader
     loader = Loader(stream, version, preserve_quotes=preserve_quotes)
     try:
-        return loader._constructor.get_single_data()
+        return loader._constructor.get_single_data()  # type: ignore
     finally:
-        loader._parser.dispose()
+        loader._parser.dispose()  # type: ignore
         try:
-            loader._reader.reset_reader()
+            loader._reader.reset_reader()  # type: ignore
         except AttributeError:
             pass
         try:
-            loader._scanner.reset_scanner()
+            loader._scanner.reset_scanner()  # type: ignore
         except AttributeError:
             pass
 
@@ -984,16 +980,16 @@ def load_all(stream, Loader=None, version=None, preserve_quotes=None):
         Loader = UnsafeLoader
     loader = Loader(stream, version, preserve_quotes=preserve_quotes)
     try:
-        while loader._constructor.check_data():
-            yield loader._constructor.get_data()
+        while loader._constructor.check_data():  # type: ignore
+            yield loader._constructor.get_data()  # type: ignore
     finally:
-        loader._parser.dispose()
+        loader._parser.dispose()  # type: ignore
         try:
-            loader._reader.reset_reader()
+            loader._reader.reset_reader()  # type: ignore
         except AttributeError:
             pass
         try:
-            loader._scanner.reset_scanner()
+            loader._scanner.reset_scanner()  # type: ignore
         except AttributeError:
             pass
 
@@ -1213,7 +1209,7 @@ def dump_all(
             raise
             dumper.dispose()  # cyaml
     if getvalue is not None:
-        return getvalue()
+        return getvalue()  # type: ignore
     return None
 
 

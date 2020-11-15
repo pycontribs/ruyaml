@@ -3,12 +3,10 @@
 from __future__ import absolute_import
 
 import re
-
-if False:  # MYPY
-    from typing import Any, Dict, List, Union, Text, Optional  # NOQA
-    from ruyaml.compat import VersionType  # NOQA
+from typing import Any, Dict, List, Optional, Text, Union  # NOQA
 
 from ruyaml.compat import _DEFAULT_YAML_VERSION  # NOQA
+from ruyaml.compat import VersionType  # NOQA
 from ruyaml.error import *  # NOQA
 from ruyaml.nodes import MappingNode, ScalarNode, SequenceNode  # NOQA
 from ruyaml.util import RegExp  # NOQA
@@ -254,25 +252,29 @@ class BaseResolver:
 
     def check_resolver_prefix(self, depth, path, kind, current_node, current_index):
         # type: (int, Text, Any, Any, Any) -> bool
-        node_check, index_check = path[depth - 1]
-        if isinstance(node_check, str):
-            if current_node.tag != node_check:
+        node_check, index_check = path[depth - 1]  # type: ignore
+        if isinstance(node_check, str):  # type: ignore
+            if current_node.tag != node_check:  # type: ignore
                 return False
-        elif node_check is not None:
-            if not isinstance(current_node, node_check):
+        elif node_check is not None:  # type: ignore
+            if not isinstance(current_node, node_check):  # type: ignore
                 return False
-        if index_check is True and current_index is not None:
+        if index_check is True and current_index is not None:  # type: ignore
             return False
-        if (index_check is False or index_check is None) and current_index is None:
+        if (
+            index_check is False or index_check is None  # type: ignore
+        ) and current_index is None:  # type: ignore
             return False
-        if isinstance(index_check, str):
+        if isinstance(index_check, str):  # type: ignore
             if not (
                 isinstance(current_index, ScalarNode)
-                and index_check == current_index.value
+                and index_check == current_index.value  # type: ignore
             ):
                 return False
-        elif isinstance(index_check, int) and not isinstance(index_check, bool):
-            if index_check != current_index:
+        elif isinstance(index_check, int) and not isinstance(  # type: ignore
+            index_check, bool  # type: ignore
+        ):
+            if index_check != current_index:  # type: ignore
                 return False
         return True
 
@@ -391,13 +393,13 @@ class VersionedResolver(BaseResolver):
     def processing_version(self):
         # type: () -> Any
         try:
-            version = self.loadumper._scanner.yaml_version
+            version = self.loadumper._scanner.yaml_version  # type: ignore
         except AttributeError:
             try:
                 if hasattr(self.loadumper, 'typ'):
-                    version = self.loadumper.version
+                    version = self.loadumper.version  # type: ignore
                 else:
-                    version = self.loadumper._serializer.use_version  # dumping
+                    version = self.loadumper._serializer.use_version  # type: ignore # dumping
             except AttributeError:
                 version = None
         if version is None:

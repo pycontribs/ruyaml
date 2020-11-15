@@ -58,8 +58,8 @@ class BaseRepresenter:
         # type: () -> Any
         try:
             if hasattr(self.dumper, 'typ'):
-                return self.dumper.serializer
-            return self.dumper._serializer
+                return self.dumper.serializer  # type: ignore
+            return self.dumper._serializer  # type: ignore
         except AttributeError:
             return self  # cyaml
 
@@ -248,7 +248,7 @@ class SafeRepresenter(BaseRepresenter):
     def represent_bool(self, data, anchor=None):
         # type: (Any, Optional[Any]) -> Any
         try:
-            value = self.dumper.boolean_representation[bool(data)]
+            value = self.dumper.boolean_representation[bool(data)]  # type: ignore
         except AttributeError:
             if data:
                 value = u'true'
@@ -428,8 +428,8 @@ class Representer(SafeRepresenter):
         # !!python/object/apply node.
 
         cls = type(data)
-        if cls in copyreg.dispatch_table:
-            reduce = copyreg.dispatch_table[cls](data)
+        if cls in copyreg.dispatch_table:  # type: ignore
+            reduce = copyreg.dispatch_table[cls](data)  # type: ignore
         elif hasattr(data, '__reduce_ex__'):
             reduce = data.__reduce_ex__(2)
         elif hasattr(data, '__reduce__'):

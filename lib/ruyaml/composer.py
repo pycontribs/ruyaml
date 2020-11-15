@@ -3,6 +3,7 @@
 from __future__ import absolute_import, print_function
 
 import warnings
+from typing import Any, Dict
 
 from ruyaml.compat import nprint, nprintf  # NOQA
 from ruyaml.error import MarkedYAMLError, ReusedAnchorWarning
@@ -17,9 +18,6 @@ from ruyaml.events import (
     StreamStartEvent,
 )
 from ruyaml.nodes import MappingNode, ScalarNode, SequenceNode
-
-if False:  # MYPY
-    from typing import Any, Dict, List, Optional  # NOQA
 
 __all__ = ['Composer', 'ComposerError']
 
@@ -40,16 +38,16 @@ class Composer:
     def parser(self):
         # type: () -> Any
         if hasattr(self.loader, 'typ'):
-            self.loader.parser
-        return self.loader._parser
+            self.loader.parser  # type: ignore
+        return self.loader._parser  # type: ignore
 
     @property
     def resolver(self):
         # type: () -> Any
         # assert self.loader._resolver is not None
         if hasattr(self.loader, 'typ'):
-            self.loader.resolver
-        return self.loader._resolver
+            self.loader.resolver  # type: ignore
+        return self.loader._resolver  # type: ignore
 
     def check_node(self):
         # type: () -> Any

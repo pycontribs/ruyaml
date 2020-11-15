@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 
 import codecs
+from typing import Any, Optional, Text, Tuple
 
 from ruyaml.compat import UNICODE_SIZE
 from ruyaml.error import FileMark, StringMark, YAMLError, YAMLStreamError
@@ -28,8 +29,6 @@ from ruyaml.util import RegExp
 #      character.
 
 
-if False:  # MYPY
-    from typing import Any, Dict, List, Optional, Text, Tuple, Union  # NOQA
 #    from ruyaml.compat import StreamTextType  # NOQA
 
 __all__ = ['Reader', 'ReaderError']
@@ -223,8 +222,7 @@ class Reader:
     )
 
     @classmethod
-    def _get_non_printable_ascii(cls, data):  # type: ignore
-        # type: (Text, bytes) -> Optional[Tuple[int, Text]]
+    def _get_non_printable_ascii(cls, data: Text) -> Optional[Tuple[int, Text]]:
         ascii_bytes = data.encode('ascii')
         non_printables = ascii_bytes.translate(None, cls._printable_ascii)  # type: ignore
         if not non_printables:

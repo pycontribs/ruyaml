@@ -39,13 +39,12 @@ unichr = chr
 no_limit_int = int
 from collections.abc import Hashable, Mapping, MutableMapping, MutableSequence  # NOQA
 
-if False:  # MYPY
-    # StreamType = Union[BinaryIO, IO[str], IO[unicode],  StringIO]
-    # StreamType = Union[BinaryIO, IO[str], StringIO]  # type: ignore
-    StreamType = Any
+# StreamType = Union[BinaryIO, IO[str], IO[unicode],  StringIO]
+# StreamType = Union[BinaryIO, IO[str], StringIO]  # type: ignore
+StreamType = Any
 
-    StreamTextType = StreamType  # Union[Text, StreamType]
-    VersionType = Union[List[int], str, Tuple[int, int]]
+StreamTextType = StreamType  # Union[Text, StreamType]
+VersionType = Union[List[int], str, Tuple[int, int]]
 
 builtins_module = 'builtins'
 

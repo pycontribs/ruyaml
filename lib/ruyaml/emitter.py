@@ -231,8 +231,8 @@ class Emitter:
         # type: () -> Any
         try:
             if hasattr(self.dumper, 'typ'):
-                return self.dumper.serializer
-            return self.dumper._serializer
+                return self.dumper.serializer  # type: ignore
+            return self.dumper._serializer  # type: ignore
         except AttributeError:
             return self  # cyaml
 
@@ -1252,7 +1252,7 @@ class Emitter:
             data = u' ' * (indent - self.column)
             self.column = indent
             if self.encoding:
-                data = data.encode(self.encoding)
+                data = data.encode(self.encoding)  # type: ignore
             self.stream.write(data)
 
     def write_line_break(self, data=None):
@@ -1271,7 +1271,7 @@ class Emitter:
         # type: (Any) -> None
         data = u'%%YAML %s' % version_text
         if self.encoding:
-            data = data.encode(self.encoding)
+            data = data.encode(self.encoding)  # type: ignore
         self.stream.write(data)
         self.write_line_break()
 
@@ -1279,7 +1279,7 @@ class Emitter:
         # type: (Any, Any) -> None
         data = u'%%TAG %s %s' % (handle_text, prefix_text)
         if self.encoding:
-            data = data.encode(self.encoding)
+            data = data.encode(self.encoding)  # type: ignore
         self.stream.write(data)
         self.write_line_break()
 
@@ -1544,7 +1544,7 @@ class Emitter:
         hints, _indent, _indicator = self.determine_block_hints(text)
         self.write_indicator(u'|' + hints, True)
         try:
-            comment = comment[1][0]
+            comment = comment[1][0]  # type: ignore
             if comment:
                 self.stream.write(comment)
         except (TypeError, IndexError):
@@ -1600,7 +1600,7 @@ class Emitter:
             data = u' '
             self.column += len(data)
             if self.encoding:
-                data = data.encode(self.encoding)
+                data = data.encode(self.encoding)  # type: ignore
             self.stream.write(data)
         self.whitespace = False
         self.indention = False
@@ -1621,7 +1621,7 @@ class Emitter:
                         data = text[start:end]
                         self.column += len(data)
                         if self.encoding:
-                            data = data.encode(self.encoding)
+                            data = data.encode(self.encoding)  # type: ignore
                         self.stream.write(data)
                     start = end
             elif breaks:
@@ -1642,7 +1642,7 @@ class Emitter:
                     data = text[start:end]
                     self.column += len(data)
                     if self.encoding:
-                        data = data.encode(self.encoding)
+                        data = data.encode(self.encoding)  # type: ignore
                     try:
                         self.stream.write(data)
                     except:  # NOQA

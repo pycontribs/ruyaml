@@ -11,14 +11,11 @@ a separate base
 import copy
 import sys
 from collections.abc import Mapping, MutableSet, Set, Sized
+from typing import Any, Dict, Iterator, List, Optional
 
 from ruyaml.anchor import Anchor
-from ruyaml.compat import ordereddict  # type: ignore
-from ruyaml.compat import MutableSliceableSequence
+from ruyaml.compat import MutableSliceableSequence, ordereddict
 from ruyaml.scalarstring import ScalarString
-
-if False:  # MYPY
-    from typing import Any, Dict, Iterator, List, Optional, Union  # NOQA
 
 # fmt: off
 __all__ = ['CommentedSeq', 'CommentedKeySeq',
@@ -398,7 +395,7 @@ class CommentedSeq(MutableSliceableSequence, list, CommentedBase):  # type: igno
 
     def __delsingleitem__(self, idx=None):
         # type: (Any) -> Any
-        list.__delitem__(self, idx)
+        list.__delitem__(self, idx)  # type: ignore
         self.ca.items.pop(idx, None)  # might not be there -> default value
         for list_index in sorted(self.ca.items):
             if list_index < idx:
@@ -693,8 +690,7 @@ class CommentedMap(ordereddict, CommentedBase):  # type: ignore
             self.ca.comment[1] = pre_comments
         return pre_comments
 
-    def update(self, vals):
-        # type: (Any) -> None
+    def update(self, vals: Any) -> None:  # type: ignore
         try:
             ordereddict.update(self, vals)
         except TypeError:

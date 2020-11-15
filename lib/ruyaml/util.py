@@ -8,11 +8,9 @@ from __future__ import absolute_import, print_function
 
 import re
 from functools import partial
+from typing import Any
 
-if False:  # MYPY
-    from typing import Any, Dict, List, Optional, Text  # NOQA
-
-    from .compat import StreamTextType  # NOQA
+from ruyaml.compat import StreamTextType
 
 
 class LazyEval:
