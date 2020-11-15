@@ -64,7 +64,7 @@ def load_yaml_guess_indent(stream, **kw):
     - if there are no block sequences, indent is taken from nested mappings, block sequence
       indent is unset (None) in that case
     """
-    from .main import round_trip_load
+    from ruyaml.main import round_trip_load
 
     # load a yaml file guess the indentation, if you use TABs ...
     def leading_spaces(line):

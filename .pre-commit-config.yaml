@@ -1,0 +1,16 @@
+---
+exclude: |
+    (?x)(
+        ^docs/conf.py$
+    )
+repos:
+  - repo: https://gitlab.com/pycqa/flake8.git
+    rev: 3.8.4
+    hooks:
+      - id: flake8
+        additional_dependencies:
+          - pydocstyle>=5.1.1
+          - flake8-absolute-import
+          # - flake8-black>=0.1.1
+          - flake8-bugbear
+        language_version: python3

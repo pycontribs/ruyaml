@@ -219,8 +219,8 @@ class CommentedBase(object):
         """overwrites any preceding comment lines on an object
         expects comment to be without `#` and possible have multiple lines
         """
-        from .error import CommentMark
-        from .tokens import CommentToken
+        from ruyaml.error import CommentMark
+        from ruyaml.tokens import CommentToken
 
         pre_comments = self._yaml_get_pre_comment()
         if comment[-1] == '\n':
@@ -281,8 +281,8 @@ class CommentedBase(object):
         (but at the beginning of the line the space doesn't have to be before
         the #. The column index is for the # mark
         """
-        from .tokens import CommentToken
-        from .error import CommentMark
+        from ruyaml.tokens import CommentToken
+        from ruyaml.error import CommentMark
 
         if column is None:
             try:
