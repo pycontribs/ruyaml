@@ -73,7 +73,7 @@ supported Python versions, on PyPI as well as flake8/pep8
 API
 +++
 
-Starting with 0.15 the API for using ``ruyaml`` has diverged allowing 
+Starting with 0.15 the API for using ``ruyaml`` has diverged allowing
 easier addition of new features.
 
 --- !incraw |
