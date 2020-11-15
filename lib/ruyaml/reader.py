@@ -2,6 +2,12 @@
 
 from __future__ import absolute_import
 
+import codecs
+
+from ruyaml.compat import UNICODE_SIZE
+from ruyaml.error import FileMark, StringMark, YAMLError, YAMLStreamError
+from ruyaml.util import RegExp
+
 # This module contains abstractions for the input stream. You don't have to
 # looks further, there are no pretty code.
 #
@@ -21,14 +27,9 @@ from __future__ import absolute_import
 #   reader.line, stream.column - the line and the column of the current
 #      character.
 
-import codecs
-
-from ruyaml.error import YAMLError, FileMark, StringMark, YAMLStreamError
-from ruyaml.compat import UNICODE_SIZE
-from ruyaml.util import RegExp
 
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List, Union, Text, Tuple, Optional  # NOQA
+    from typing import Any, Dict, List, Optional, Text, Tuple, Union  # NOQA
 #    from ruyaml.compat import StreamTextType  # NOQA
 
 __all__ = ['Reader', 'ReaderError']
@@ -46,12 +47,16 @@ class ReaderError(YAMLError):
     def __str__(self):
         # type: () -> str
         if isinstance(self.character, bytes):
-            return "'%s' codec can't decode byte #x%02x: %s\n" '  in "%s", position %d' % (
-                self.encoding,
-                ord(self.character),
-                self.reason,
-                self.name,
-                self.position,
+            return (
+                "'%s' codec can't decode byte #x%02x: %s\n"
+                '  in "%s", position %d'
+                % (
+                    self.encoding,
+                    ord(self.character),
+                    self.reason,
+                    self.name,
+                    self.position,
+                )
             )
         else:
             return 'unacceptable character #x%04x: %s\n' '  in "%s", position %d' % (
@@ -213,7 +218,9 @@ class Reader(object):
             u']'
         )
 
-    _printable_ascii = ('\x09\x0A\x0D' + "".join(map(chr, range(0x20, 0x7F)))).encode('ascii')
+    _printable_ascii = ('\x09\x0A\x0D' + "".join(map(chr, range(0x20, 0x7F)))).encode(
+        'ascii'
+    )
 
     @classmethod
     def _get_non_printable_ascii(cls, data):  # type: ignore
@@ -266,16 +273,24 @@ class Reader(object):
                 self.update_raw()
             if self.raw_decode is not None:
                 try:
-                    data, converted = self.raw_decode(self.raw_buffer, 'strict', self.eof)
+                    data, converted = self.raw_decode(
+                        self.raw_buffer, 'strict', self.eof
+                    )
                 except UnicodeDecodeError as exc:
                     character = self.raw_buffer[exc.start]
                     if self.stream is not None:
-                        position = self.stream_pointer - len(self.raw_buffer) + exc.start
+                        position = (
+                            self.stream_pointer - len(self.raw_buffer) + exc.start
+                        )
                     elif self.stream is not None:
-                        position = self.stream_pointer - len(self.raw_buffer) + exc.start
+                        position = (
+                            self.stream_pointer - len(self.raw_buffer) + exc.start
+                        )
                     else:
                         position = exc.start
-                    raise ReaderError(self.name, position, character, exc.encoding, exc.reason)
+                    raise ReaderError(
+                        self.name, position, character, exc.encoding, exc.reason
+                    )
             else:
                 data = self.raw_buffer
                 converted = len(data)

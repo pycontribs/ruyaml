@@ -22,7 +22,9 @@ class User1(object):
 
     @classmethod
     def to_yaml(cls, representer, node):
-        return representer.represent_scalar(cls.yaml_tag, u'{.name}-{.age}'.format(node, node))
+        return representer.represent_scalar(
+            cls.yaml_tag, u'{.name}-{.age}'.format(node, node)
+        )
 
     @classmethod
     def from_yaml(cls, constructor, node):

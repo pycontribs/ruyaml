@@ -1,12 +1,12 @@
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
 
-import ruyaml as yaml
 import codecs
-import tempfile
 import os
 import os.path
-from io import StringIO, BytesIO
+import tempfile
+from io import BytesIO, StringIO
+
+import ruyaml as yaml
 
 
 def test_unicode_input(unicode_filename, verbose=False):

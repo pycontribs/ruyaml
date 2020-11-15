@@ -2,14 +2,14 @@
 
 from __future__ import print_function
 
-import sys
 import os
+import sys
+
 import pytest  # NOQA
 
 sys.path.insert(0, os.path.dirname(__file__) + '/lib')
 
 import warnings  # NOQA
-
 
 args = []
 
@@ -30,8 +30,9 @@ def test_data():
 
 def test_data_ext():
     collections = []
-    import ruyaml  # NOQA
     import test_appliance  # NOQA
+
+    import ruyaml  # NOQA
 
     warnings.simplefilter('ignore', ruyaml.error.UnsafeLoaderWarning)
     if ruyaml.__with_libyaml__:

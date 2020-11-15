@@ -1,12 +1,13 @@
 # coding: utf-8
 
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
+
+import pprint
+import types
 
 import _ruyaml
+
 import ruyaml
-import types
-import pprint
 
 ruyaml.PyBaseLoader = ruyaml.BaseLoader
 ruyaml.PySafeLoader = ruyaml.SafeLoader
@@ -206,7 +207,11 @@ def _compare_scanners(py_data, c_data, verbose):
                 c_token.start_mark.line,
                 c_token.start_mark.column,
             )
-            c_end = (c_token.end_mark.index, c_token.end_mark.line, c_token.end_mark.column)
+            c_end = (
+                c_token.end_mark.index,
+                c_token.end_mark.line,
+                c_token.end_mark.column,
+            )
             assert py_start == c_start, (py_start, c_start)
             assert py_end == c_end, (py_end, c_end)
     finally:
@@ -370,15 +375,15 @@ def wrap_ext(collections):
         globals()[function.__name__] = function
 
 
-import test_tokens  # NOQA
-import test_structure  # NOQA
-import test_errors  # NOQA
-import test_resolver  # NOQA
 import test_constructor  # NOQA
 import test_emitter  # NOQA
-import test_representer  # NOQA
-import test_recursive  # NOQA
+import test_errors  # NOQA
 import test_input_output  # NOQA
+import test_recursive  # NOQA
+import test_representer  # NOQA
+import test_resolver  # NOQA
+import test_structure  # NOQA
+import test_tokens  # NOQA
 
 wrap_ext(
     [
@@ -396,6 +401,7 @@ wrap_ext(
 
 if __name__ == '__main__':
     import sys
+
     import test_appliance
 
     sys.exit(test_appliance.run(globals()))

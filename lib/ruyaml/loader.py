@@ -2,21 +2,21 @@
 
 from __future__ import absolute_import
 
-
-from ruyaml.reader import Reader
-from ruyaml.scanner import Scanner, RoundTripScanner
-from ruyaml.parser import Parser, RoundTripParser
 from ruyaml.composer import Composer
 from ruyaml.constructor import (
     BaseConstructor,
-    SafeConstructor,
     Constructor,
     RoundTripConstructor,
+    SafeConstructor,
 )
+from ruyaml.parser import Parser, RoundTripParser
+from ruyaml.reader import Reader
 from ruyaml.resolver import VersionedResolver
+from ruyaml.scanner import RoundTripScanner, Scanner
 
 if False:  # MYPY
-    from typing import Any, Dict, List, Union, Optional  # NOQA
+    from typing import Any, Dict, List, Optional, Union  # NOQA
+
     from ruyaml.compat import StreamTextType, VersionType  # NOQA
 
 __all__ = ['BaseLoader', 'SafeLoader', 'Loader', 'RoundTripLoader']
@@ -70,5 +70,7 @@ class RoundTripLoader(
         RoundTripScanner.__init__(self, loader=self)
         RoundTripParser.__init__(self, loader=self)
         Composer.__init__(self, loader=self)
-        RoundTripConstructor.__init__(self, preserve_quotes=preserve_quotes, loader=self)
+        RoundTripConstructor.__init__(
+            self, preserve_quotes=preserve_quotes, loader=self
+        )
         VersionedResolver.__init__(self, version, loader=self)

@@ -2,16 +2,15 @@
 
 from __future__ import print_function
 
-# partially from package six by Benjamin Peterson
-
-from collections import OrderedDict
-import sys
 import os
+import sys
 import traceback
 from abc import abstractmethod
+from collections import OrderedDict
+from typing import Any, Dict, List, Optional, Tuple, Union
 
+# partially from package six by Benjamin Peterson
 
-from typing import Any, Dict, Optional, List, Union, Tuple
 
 _DEFAULT_YAML_VERSION = (1, 2)
 
@@ -38,7 +37,7 @@ unichr = chr
 
 # have unlimited precision
 no_limit_int = int
-from collections.abc import Hashable, MutableSequence, MutableMapping, Mapping  # NOQA
+from collections.abc import Hashable, Mapping, MutableMapping, MutableSequence  # NOQA
 
 if False:  # MYPY
     # StreamType = Union[BinaryIO, IO[str], IO[unicode],  StringIO]
@@ -197,11 +196,15 @@ class MutableSliceableSequence(MutableSequence):  # type: ignore
                 self.insert(0 if index.start is None else index.start, elem)
         else:
             range_parms = index.indices(len(self))
-            nr_assigned_items = (range_parms[1] - range_parms[0] - 1) // range_parms[2] + 1
+            nr_assigned_items = (range_parms[1] - range_parms[0] - 1) // range_parms[
+                2
+            ] + 1
             # need to test before changing, in case TypeError is caught
             if nr_assigned_items < len(value):
                 raise TypeError(
-                    'too many elements in value {} < {}'.format(nr_assigned_items, len(value))
+                    'too many elements in value {} < {}'.format(
+                        nr_assigned_items, len(value)
+                    )
                 )
             elif nr_assigned_items > len(value):
                 raise TypeError(

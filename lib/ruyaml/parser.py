@@ -2,6 +2,12 @@
 
 from __future__ import absolute_import
 
+from ruyaml.compat import nprint, nprintf  # NOQA
+from ruyaml.error import MarkedYAMLError
+from ruyaml.events import *  # NOQA
+from ruyaml.scanner import RoundTripScanner, Scanner, ScannerError  # NOQA
+from ruyaml.tokens import *  # NOQA
+
 # The following YAML grammar is LL(1) and is parsed by a recursive descent
 # parser.
 #
@@ -76,14 +82,8 @@ from __future__ import absolute_import
 # and for Jython too
 
 
-from ruyaml.error import MarkedYAMLError
-from ruyaml.tokens import *  # NOQA
-from ruyaml.events import *  # NOQA
-from ruyaml.scanner import Scanner, RoundTripScanner, ScannerError  # NOQA
-from ruyaml.compat import nprint, nprintf  # NOQA
-
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List  # NOQA
+    from typing import Any, Dict, List, Optional  # NOQA
 
 __all__ = ['Parser', 'RoundTripParser', 'ParserError']
 
@@ -174,7 +174,9 @@ class Parser(object):
         # Parse the stream start.
         token = self.scanner.get_token()
         token.move_comment(self.scanner.peek_token())
-        event = StreamStartEvent(token.start_mark, token.end_mark, encoding=token.encoding)
+        event = StreamStartEvent(
+            token.start_mark, token.end_mark, encoding=token.encoding
+        )
 
         # Prepare the next state.
         self.state = self.parse_implicit_document_start
@@ -184,7 +186,9 @@ class Parser(object):
     def parse_implicit_document_start(self):
         # type: () -> Any
         # Parse an implicit document.
-        if not self.scanner.check_token(DirectiveToken, DocumentStartToken, StreamEndToken):
+        if not self.scanner.check_token(
+            DirectiveToken, DocumentStartToken, StreamEndToken
+        ):
             self.tag_handles = self.DEFAULT_TAGS
             token = self.scanner.peek_token()
             start_mark = end_mark = token.start_mark
@@ -213,7 +217,8 @@ class Parser(object):
                 raise ParserError(
                     None,
                     None,
-                    "expected '<document start>', but found %r" % self.scanner.peek_token().id,
+                    "expected '<document start>', but found %r"
+                    % self.scanner.peek_token().id,
                     self.scanner.peek_token().start_mark,
                 )
             token = self.scanner.get_token()
@@ -229,7 +234,9 @@ class Parser(object):
         else:
             # Parse the end of the stream.
             token = self.scanner.get_token()
-            event = StreamEndEvent(token.start_mark, token.end_mark, comment=token.comment)
+            event = StreamEndEvent(
+                token.start_mark, token.end_mark, comment=token.comment
+            )
             assert not self.states
             assert not self.marks
             self.state = None
@@ -344,7 +351,9 @@ class Parser(object):
         # type: (bool, bool) -> Any
         if self.scanner.check_token(AliasToken):
             token = self.scanner.get_token()
-            event = AliasEvent(token.value, token.start_mark, token.end_mark)  # type: Any
+            event = AliasEvent(
+                token.value, token.start_mark, token.end_mark
+            )  # type: Any
             self.state = self.states.pop()
             return event
 
@@ -401,7 +410,13 @@ class Parser(object):
                 pt.comment[0] = None
             end_mark = self.scanner.peek_token().end_mark
             event = SequenceStartEvent(
-                anchor, tag, implicit, start_mark, end_mark, flow_style=False, comment=comment
+                anchor,
+                tag,
+                implicit,
+                start_mark,
+                end_mark,
+                flow_style=False,
+                comment=comment,
             )
             self.state = self.parse_indentless_sequence_entry
             return event
@@ -465,20 +480,34 @@ class Parser(object):
                 comment = pt.split_comment()
             # nprint('pt1', comment)
             event = SequenceStartEvent(
-                anchor, tag, implicit, start_mark, end_mark, flow_style=False, comment=comment
+                anchor,
+                tag,
+                implicit,
+                start_mark,
+                end_mark,
+                flow_style=False,
+                comment=comment,
             )
             self.state = self.parse_block_sequence_first_entry
         elif block and self.scanner.check_token(BlockMappingStartToken):
             end_mark = self.scanner.peek_token().start_mark
             comment = self.scanner.peek_token().comment
             event = MappingStartEvent(
-                anchor, tag, implicit, start_mark, end_mark, flow_style=False, comment=comment
+                anchor,
+                tag,
+                implicit,
+                start_mark,
+                end_mark,
+                flow_style=False,
+                comment=comment,
             )
             self.state = self.parse_block_mapping_first_key
         elif anchor is not None or tag is not None:
             # Empty scalars are allowed even if a tag or an anchor is
             # specified.
-            event = ScalarEvent(anchor, tag, (implicit, False), "", start_mark, end_mark)
+            event = ScalarEvent(
+                anchor, tag, (implicit, False), "", start_mark, end_mark
+            )
             self.state = self.states.pop()
         else:
             if block:
@@ -525,7 +554,9 @@ class Parser(object):
                 token.start_mark,
             )
         token = self.scanner.get_token()  # BlockEndToken
-        event = SequenceEndEvent(token.start_mark, token.end_mark, comment=token.comment)
+        event = SequenceEndEvent(
+            token.start_mark, token.end_mark, comment=token.comment
+        )
         self.state = self.states.pop()
         self.marks.pop()
         return event
@@ -551,7 +582,9 @@ class Parser(object):
                 self.state = self.parse_indentless_sequence_entry
                 return self.process_empty_scalar(token.end_mark)
         token = self.scanner.peek_token()
-        event = SequenceEndEvent(token.start_mark, token.start_mark, comment=token.comment)
+        event = SequenceEndEvent(
+            token.start_mark, token.start_mark, comment=token.comment
+        )
         self.state = self.states.pop()
         return event
 
@@ -577,7 +610,9 @@ class Parser(object):
             else:
                 self.state = self.parse_block_mapping_value
                 return self.process_empty_scalar(token.end_mark)
-        if self.resolver.processing_version > (1, 1) and self.scanner.check_token(ValueToken):
+        if self.resolver.processing_version > (1, 1) and self.scanner.check_token(
+            ValueToken
+        ):
             self.state = self.parse_block_mapping_value
             return self.process_empty_scalar(self.scanner.peek_token().start_mark)
         if not self.scanner.check_token(BlockEndToken):
@@ -667,7 +702,9 @@ class Parser(object):
                 self.states.append(self.parse_flow_sequence_entry)
                 return self.parse_flow_node()
         token = self.scanner.get_token()
-        event = SequenceEndEvent(token.start_mark, token.end_mark, comment=token.comment)
+        event = SequenceEndEvent(
+            token.start_mark, token.end_mark, comment=token.comment
+        )
         self.state = self.states.pop()
         self.marks.pop()
         return event
@@ -675,7 +712,9 @@ class Parser(object):
     def parse_flow_sequence_entry_mapping_key(self):
         # type: () -> Any
         token = self.scanner.get_token()
-        if not self.scanner.check_token(ValueToken, FlowEntryToken, FlowSequenceEndToken):
+        if not self.scanner.check_token(
+            ValueToken, FlowEntryToken, FlowSequenceEndToken
+        ):
             self.states.append(self.parse_flow_sequence_entry_mapping_value)
             return self.parse_flow_node()
         else:

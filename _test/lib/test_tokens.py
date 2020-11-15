@@ -1,8 +1,8 @@
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
+
+import pprint
 
 import ruyaml as yaml
-import pprint
 
 # Tokens mnemonic:
 # directive:            %

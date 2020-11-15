@@ -1,9 +1,8 @@
-
 import ruyaml
+from ruyaml.compat import unichr
 from ruyaml.composer import Composer
 from ruyaml.constructor import Constructor
 from ruyaml.resolver import Resolver
-from ruyaml.compat import unichr
 
 
 class CanonicalError(ruyaml.YAMLError):
@@ -226,7 +225,9 @@ class CanonicalParser:
             if self.check_token(ruyaml.DirectiveToken, ruyaml.DocumentStartToken):
                 self.parse_document()
             else:
-                raise CanonicalError('document is expected, got ' + repr(self.tokens[0]))
+                raise CanonicalError(
+                    'document is expected, got ' + repr(self.tokens[0])
+                )
         self.get_token(ruyaml.StreamEndToken)
         self.events.append(ruyaml.StreamEndEvent(None, None))
 
@@ -325,7 +326,9 @@ class CanonicalParser:
         return self.events[0]
 
 
-class CanonicalLoader(CanonicalScanner, CanonicalParser, Composer, Constructor, Resolver):
+class CanonicalLoader(
+    CanonicalScanner, CanonicalParser, Composer, Constructor, Resolver
+):
     def __init__(self, stream):
         if hasattr(stream, 'read'):
             stream = stream.read()

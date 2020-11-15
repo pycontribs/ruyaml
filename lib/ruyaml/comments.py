@@ -8,19 +8,17 @@ these are not really related, formatting could be factored out as
 a separate base
 """
 
-import sys
 import copy
+import sys
+from collections.abc import Mapping, MutableSet, Set, Sized
 
-
+from ruyaml.anchor import Anchor
 from ruyaml.compat import ordereddict  # type: ignore
 from ruyaml.compat import MutableSliceableSequence
 from ruyaml.scalarstring import ScalarString
-from ruyaml.anchor import Anchor
-
-from collections.abc import MutableSet, Sized, Set, Mapping
 
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List, Union, Optional, Iterator  # NOQA
+    from typing import Any, Dict, Iterator, List, Optional, Union  # NOQA
 
 # fmt: off
 __all__ = ['CommentedSeq', 'CommentedKeySeq',
@@ -57,7 +55,9 @@ class Comment(object):
             end = ',\n  end=' + str(self._end)
         else:
             end = ""
-        return 'Comment(comment={0},\n  items={1}{2})'.format(self.comment, self._items, end)
+        return 'Comment(comment={0},\n  items={1}{2})'.format(
+            self.comment, self._items, end
+        )
 
     @property
     def items(self):
@@ -281,8 +281,8 @@ class CommentedBase(object):
         (but at the beginning of the line the space doesn't have to be before
         the #. The column index is for the # mark
         """
-        from ruyaml.tokens import CommentToken
         from ruyaml.error import CommentMark
+        from ruyaml.tokens import CommentToken
 
         if column is None:
             try:
@@ -916,7 +916,9 @@ class CommentedKeyMap(CommentedBase, Mapping):  # type: ignore
             raise_immutable(self)
         self._od = ordereddict(*args, **kw)
 
-    __delitem__ = __setitem__ = clear = pop = popitem = setdefault = update = raise_immutable
+    __delitem__ = (
+        __setitem__
+    ) = clear = pop = popitem = setdefault = update = raise_immutable
 
     # need to implement __getitem__, __iter__ and __len__
     def __getitem__(self, index):

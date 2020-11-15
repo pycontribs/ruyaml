@@ -4,23 +4,22 @@ from __future__ import absolute_import, print_function
 
 import warnings
 
-from ruyaml.error import MarkedYAMLError, ReusedAnchorWarning
 from ruyaml.compat import nprint, nprintf  # NOQA
-
+from ruyaml.error import MarkedYAMLError, ReusedAnchorWarning
 from ruyaml.events import (
-    StreamStartEvent,
-    StreamEndEvent,
-    MappingStartEvent,
-    MappingEndEvent,
-    SequenceStartEvent,
-    SequenceEndEvent,
     AliasEvent,
+    MappingEndEvent,
+    MappingStartEvent,
     ScalarEvent,
+    SequenceEndEvent,
+    SequenceStartEvent,
+    StreamEndEvent,
+    StreamStartEvent,
 )
 from ruyaml.nodes import MappingNode, ScalarNode, SequenceNode
 
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List  # NOQA
+    from typing import Any, Dict, List, Optional  # NOQA
 
 __all__ = ['Composer', 'ComposerError']
 
@@ -126,7 +125,9 @@ class Composer(object):
                 #     "second occurrence", event.start_mark)
                 ws = (
                     '\nfound duplicate anchor {!r}\nfirst occurrence {}\nsecond occurrence '
-                    '{}'.format((anchor), self.anchors[anchor].start_mark, event.start_mark)
+                    '{}'.format(
+                        (anchor), self.anchors[anchor].start_mark, event.start_mark
+                    )
                 )
                 warnings.warn(ws, ReusedAnchorWarning)
         self.resolver.descend_resolver(parent, index)

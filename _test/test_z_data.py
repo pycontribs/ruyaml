@@ -3,10 +3,10 @@
 from __future__ import print_function, unicode_literals
 
 import sys
-import pytest  # NOQA
 import warnings  # NOQA
-
 from pathlib import Path
+
+import pytest  # NOQA
 
 base_path = Path('data')  # that is ruyaml.data
 

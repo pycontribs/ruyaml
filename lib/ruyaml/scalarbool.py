@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from __future__ import print_function, absolute_import, division, unicode_literals
+from __future__ import absolute_import, division, print_function, unicode_literals
 
 """
 You cannot subclass bool, and this is necessary for round-tripping anchored
@@ -14,7 +14,7 @@ You can use these in an if statement, but not when testing equivalence
 from ruyaml.anchor import Anchor
 
 if False:  # MYPY
-    from typing import Text, Any, Dict, List  # NOQA
+    from typing import Any, Dict, List, Text  # NOQA
 
 __all__ = ['ScalarBoolean']
 

@@ -8,8 +8,9 @@ testing of anchors and the aliases referring to them
 
 import sys
 import textwrap
-import pytest
 from pathlib import Path
+
+import pytest
 
 
 class TestNewAPI:
@@ -158,13 +159,15 @@ class TestLoadAll:
 
         fn = Path(str(tmpdir)) / 'test.yaml'
         fn.write_text(
-            textwrap.dedent(u"""\
+            textwrap.dedent(
+                u"""\
             ---
             - a
             ---
             - b
             ...
-            """)
+            """
+            )
         )
         yaml = YAML()
         assert list(yaml.load_all(fn)) == [['a'], ['b']]
@@ -179,13 +182,15 @@ class TestDuplSet:
         yaml = YAML()
         with pytest.raises(DuplicateKeyError):
             yaml.load(
-                textwrap.dedent("""\
+                textwrap.dedent(
+                    """\
                 !!set
                 ? a
                 ? b
                 ? c
                 ? a
-                """)
+                """
+                )
             )
 
 

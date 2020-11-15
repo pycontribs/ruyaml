@@ -2,26 +2,26 @@
 
 from __future__ import absolute_import
 
+from ruyaml.compat import DBG_NODE, dbg, nprint, nprintf  # NOQA
 from ruyaml.error import YAMLError
-from ruyaml.compat import nprint, DBG_NODE, dbg, nprintf  # NOQA
-from ruyaml.util import RegExp
-
 from ruyaml.events import (
-    StreamStartEvent,
-    StreamEndEvent,
-    MappingStartEvent,
-    MappingEndEvent,
-    SequenceStartEvent,
-    SequenceEndEvent,
     AliasEvent,
-    ScalarEvent,
-    DocumentStartEvent,
     DocumentEndEvent,
+    DocumentStartEvent,
+    MappingEndEvent,
+    MappingStartEvent,
+    ScalarEvent,
+    SequenceEndEvent,
+    SequenceStartEvent,
+    StreamEndEvent,
+    StreamStartEvent,
 )
 from ruyaml.nodes import MappingNode, ScalarNode, SequenceNode
+from ruyaml.util import RegExp
 
 if False:  # MYPY
-    from typing import Any, Dict, Union, Text, Optional  # NOQA
+    from typing import Any, Dict, Optional, Text, Union  # NOQA
+
     from ruyaml.compat import VersionType  # NOQA
 
 __all__ = ['Serializer', 'SerializerError']
@@ -110,7 +110,9 @@ class Serializer(object):
             raise SerializerError('serializer is closed')
         self.emitter.emit(
             DocumentStartEvent(
-                explicit=self.use_explicit_start, version=self.use_version, tags=self.use_tags
+                explicit=self.use_explicit_start,
+                version=self.use_version,
+                tags=self.use_tags,
             )
         )
         self.anchor_node(node)
@@ -163,8 +165,12 @@ class Serializer(object):
             if isinstance(node, ScalarNode):
                 # here check if the node.tag equals the one that would result from parsing
                 # if not equal quoting is necessary for strings
-                detected_tag = self.resolver.resolve(ScalarNode, node.value, (True, False))
-                default_tag = self.resolver.resolve(ScalarNode, node.value, (False, True))
+                detected_tag = self.resolver.resolve(
+                    ScalarNode, node.value, (True, False)
+                )
+                default_tag = self.resolver.resolve(
+                    ScalarNode, node.value, (False, True)
+                )
                 implicit = (
                     (node.tag == detected_tag),
                     (node.tag == default_tag),
@@ -181,7 +187,9 @@ class Serializer(object):
                     )
                 )
             elif isinstance(node, SequenceNode):
-                implicit = node.tag == self.resolver.resolve(SequenceNode, node.value, True)
+                implicit = node.tag == self.resolver.resolve(
+                    SequenceNode, node.value, True
+                )
                 comment = node.comment
                 end_comment = None
                 seq_comment = None
@@ -208,7 +216,9 @@ class Serializer(object):
                     index += 1
                 self.emitter.emit(SequenceEndEvent(comment=[seq_comment, end_comment]))
             elif isinstance(node, MappingNode):
-                implicit = node.tag == self.resolver.resolve(MappingNode, node.value, True)
+                implicit = node.tag == self.resolver.resolve(
+                    MappingNode, node.value, True
+                )
                 comment = node.comment
                 end_comment = None
                 map_comment = None

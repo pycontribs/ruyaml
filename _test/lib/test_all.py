@@ -1,7 +1,8 @@
-
 import sys  # NOQA
-import ruyaml
+
 import test_appliance
+
+import ruyaml
 
 
 def main(args=None):

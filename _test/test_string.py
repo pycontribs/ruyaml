@@ -15,26 +15,32 @@ and the chomping modifiers:
 
 """
 
-import pytest
 import platform
 
+import pytest
+
 # from ruyaml.compat import ordereddict
-from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump  # NOQA
+from roundtrip import dedent, round_trip, round_trip_dump, round_trip_load  # NOQA
 
 
 class TestLiteralScalarString:
     def test_basic_string(self):
-        round_trip("""
+        round_trip(
+            """
         a: abcdefg
-        """)
+        """
+        )
 
     def test_quoted_integer_string(self):
-        round_trip("""
+        round_trip(
+            """
         a: '12345'
-        """)
+        """
+        )
 
     @pytest.mark.skipif(
-        platform.python_implementation() == 'Jython', reason='Jython throws RepresenterError'
+        platform.python_implementation() == 'Jython',
+        reason='Jython throws RepresenterError',
     )
     def test_preserve_string(self):
         inp = """
@@ -45,7 +51,8 @@ class TestLiteralScalarString:
         round_trip(inp, intermediate=dict(a='abc\ndef\n'))
 
     @pytest.mark.skipif(
-        platform.python_implementation() == 'Jython', reason='Jython throws RepresenterError'
+        platform.python_implementation() == 'Jython',
+        reason='Jython throws RepresenterError',
     )
     def test_preserve_string_strip(self):
         s = """
@@ -57,7 +64,8 @@ class TestLiteralScalarString:
         round_trip(s, intermediate=dict(a='abc\ndef'))
 
     @pytest.mark.skipif(
-        platform.python_implementation() == 'Jython', reason='Jython throws RepresenterError'
+        platform.python_implementation() == 'Jython',
+        reason='Jython throws RepresenterError',
     )
     def test_preserve_string_keep(self):
         # with pytest.raises(AssertionError) as excinfo:
@@ -72,7 +80,8 @@ class TestLiteralScalarString:
         round_trip(inp, intermediate=dict(a='ghi\njkl\n\n\n', b='x'))
 
     @pytest.mark.skipif(
-        platform.python_implementation() == 'Jython', reason='Jython throws RepresenterError'
+        platform.python_implementation() == 'Jython',
+        reason='Jython throws RepresenterError',
     )
     def test_preserve_string_keep_at_end(self):
         # at EOF you have to specify the ... to get proper "closure"
@@ -144,29 +153,35 @@ class TestReplace:
     def test_replace_preserved_scalar_string(self):
         import ruyaml
 
-        s = dedent("""\
+        s = dedent(
+            """\
         foo: |
           foo
           foo
           bar
           foo
-        """)
+        """
+        )
         data = round_trip_load(s, preserve_quotes=True)
         so = data['foo'].replace('foo', 'bar', 2)
         assert isinstance(so, ruyaml.scalarstring.LiteralScalarString)
-        assert so == dedent("""
+        assert so == dedent(
+            """
         bar
         bar
         bar
         foo
-        """)
+        """
+        )
 
     def test_replace_double_quoted_scalar_string(self):
         import ruyaml
 
-        s = dedent("""\
+        s = dedent(
+            """\
         foo: "foo foo bar foo"
-        """)
+        """
+        )
         data = round_trip_load(s, preserve_quotes=True)
         so = data['foo'].replace('foo', 'bar', 2)
         assert isinstance(so, ruyaml.scalarstring.DoubleQuotedScalarString)
@@ -191,11 +206,11 @@ class TestWalkTree:
         assert round_trip_dump(data) == dedent(exp)
 
     def test_map(self):
-        from ruyaml.compat import ordereddict
         from ruyaml.comments import CommentedMap
-        from ruyaml.scalarstring import walk_tree, preserve_literal
+        from ruyaml.compat import ordereddict
         from ruyaml.scalarstring import DoubleQuotedScalarString as dq
         from ruyaml.scalarstring import SingleQuotedScalarString as sq
+        from ruyaml.scalarstring import preserve_literal, walk_tree
 
         data = CommentedMap()
         data[1] = 'a'

@@ -1,8 +1,8 @@
 # coding: utf-8
 
 import re
-import pytest  # NOQA
 
+import pytest  # NOQA
 from roundtrip import dedent
 
 
@@ -61,9 +61,7 @@ def test_dice_implicit_resolver():
         ruyaml.dump(dict(treasure=Dice(10, 20)), default_flow_style=False)
         == 'treasure: 10d20\n'
     )
-    assert ruyaml.load('damage: 5d10', Loader=ruyaml.Loader) == dict(
-        damage=Dice(5, 10)
-    )
+    assert ruyaml.load('damage: 5d10', Loader=ruyaml.Loader) == dict(damage=Dice(5, 10))
 
 
 class Obj1(dict):
@@ -152,7 +150,8 @@ def test_issue_127():
                 style = None
             return dumper.represent_scalar(cls.yaml_tag, data.logical_id, style=style)
 
-    document = dedent("""\
+    document = dedent(
+        """\
     AList:
       - !Ref One
       - !Ref 'Two'
@@ -162,8 +161,9 @@ def test_issue_127():
     CList:
       - Five Six
       - 'Seven Eight'
-    """)
-    data = ruyaml.round_trip_load(document, preserve_quotes=True)
-    assert ruyaml.round_trip_dump(data, indent=4, block_seq_indent=2) == document.replace(
-        '\n    Two and', ' Two and'
+    """
     )
+    data = ruyaml.round_trip_load(document, preserve_quotes=True)
+    assert ruyaml.round_trip_dump(
+        data, indent=4, block_seq_indent=2
+    ) == document.replace('\n    Two and', ' Two and')
