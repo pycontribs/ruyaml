@@ -31,7 +31,7 @@ class EmitterError(YAMLError):
     pass
 
 
-class ScalarAnalysis(object):
+class ScalarAnalysis:
     def __init__(
         self,
         scalar,
@@ -54,7 +54,7 @@ class ScalarAnalysis(object):
         self.allow_block = allow_block
 
 
-class Indents(object):
+class Indents:
     # replacement for the list based stack of None/int
     def __init__(self):
         # type: () -> None
@@ -91,7 +91,7 @@ class Indents(object):
         return len(self.values)
 
 
-class Emitter(object):
+class Emitter:
     # fmt: off
     DEFAULT_TAG_PREFIXES = {
         u'!': u'!',

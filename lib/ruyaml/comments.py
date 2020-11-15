@@ -33,7 +33,7 @@ merge_attrib = '_yaml_merge'
 tag_attrib = '_yaml_tag'
 
 
-class Comment(object):
+class Comment:
     # sys.getsize tested the Comment objects, __slots__ makes them bigger
     # and adding self.end did not matter
     __slots__ = 'comment', '_items', '_end', '_start'
@@ -91,7 +91,7 @@ def NoComment():
     pass
 
 
-class Format(object):
+class Format:
     __slots__ = ('_flow_style',)
     attrib = format_attrib
 
@@ -118,7 +118,7 @@ class Format(object):
         return self._flow_style
 
 
-class LineCol(object):
+class LineCol:
     attrib = line_col_attrib
 
     def __init__(self):
@@ -161,7 +161,7 @@ class LineCol(object):
         self.data[key] = data
 
 
-class Tag(object):
+class Tag:
     """store tag information for roundtripping"""
 
     __slots__ = ('value',)
@@ -176,7 +176,7 @@ class Tag(object):
         return '{0.__class__.__name__}({0.value!r})'.format(self)
 
 
-class CommentedBase(object):
+class CommentedBase:
     @property
     def ca(self):
         # type: () -> Any

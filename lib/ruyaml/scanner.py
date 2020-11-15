@@ -52,7 +52,7 @@ class ScannerError(MarkedYAMLError):
     pass
 
 
-class SimpleKey(object):
+class SimpleKey:
     # See below simple keys treatment.
 
     def __init__(self, token_number, required, index, line, column, mark):
@@ -65,7 +65,7 @@ class SimpleKey(object):
         self.mark = mark
 
 
-class Scanner(object):
+class Scanner:
     def __init__(self, loader=None):
         # type: (Any) -> None
         """Initialize the scanner."""

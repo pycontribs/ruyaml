@@ -11,7 +11,7 @@ import pytest  # NOQA
 base_path = Path('data')  # that is ruyaml.data
 
 
-class YAMLData(object):
+class YAMLData:
     yaml_tag = '!YAML'
 
     def __init__(self, s):
@@ -92,7 +92,7 @@ def pytest_generate_tests(metafunc):
     metafunc.parametrize(['yaml'], test_yaml, ids=idlist, scope='class')
 
 
-class TestYAMLData(object):
+class TestYAMLData:
     def yaml(self, yaml_version=None):
         from ruyaml import YAML
 

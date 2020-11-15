@@ -78,7 +78,7 @@ class TestFloat:
             )
 
 
-class TestCalculations(object):
+class TestCalculations:
     def test_mul_00(self):
         # issue 149 reported by jan.brezina@tul.cz
         d = round_trip_load(

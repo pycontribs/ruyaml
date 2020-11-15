@@ -31,7 +31,7 @@ class SerializerError(YAMLError):
     pass
 
 
-class Serializer(object):
+class Serializer:
 
     # 'id' and 3+ numbers, but not 000
     ANCHOR_TEMPLATE = u'id%03d'

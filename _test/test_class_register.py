@@ -7,13 +7,13 @@ testing of YAML.register_class and @yaml_object
 from roundtrip import YAML
 
 
-class User0(object):
+class User0:
     def __init__(self, name, age):
         self.name = name
         self.age = age
 
 
-class User1(object):
+class User1:
     yaml_tag = u'!user'
 
     def __init__(self, name, age):
@@ -31,7 +31,7 @@ class User1(object):
         return cls(*node.value.split('-'))
 
 
-class TestRegisterClass(object):
+class TestRegisterClass:
     def test_register_0_rt(self):
         yaml = YAML()
         yaml.register_class(User0)
@@ -91,14 +91,14 @@ class TestRegisterClass(object):
         yaml.dump(d, compare=ys)
 
 
-class TestDecorator(object):
+class TestDecorator:
     def test_decorator_implicit(self):
         from ruyaml import yaml_object
 
         yml = YAML()
 
         @yaml_object(yml)
-        class User2(object):
+        class User2:
             def __init__(self, name, age):
                 self.name = name
                 self.age = age
@@ -117,7 +117,7 @@ class TestDecorator(object):
         yml = YAML()
 
         @yaml_object(yml)
-        class User3(object):
+        class User3:
             yaml_tag = u'!USER'
 
             def __init__(self, name, age):

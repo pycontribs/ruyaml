@@ -11,7 +11,7 @@ def CommentCheck():
     pass
 
 
-class Event(object):
+class Event:
     __slots__ = 'start_mark', 'end_mark', 'comment'
 
     def __init__(self, start_mark=None, end_mark=None, comment=CommentCheck):

@@ -24,7 +24,7 @@ import sys
 import ruyaml
 
 
-class User(object):
+class User:
     def __init__(self, name, age):
         self.name = name
         self.age = age
