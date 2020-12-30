@@ -636,3 +636,88 @@ class TestCommentsManipulation:
             test3: 3
         """
         compare(data, exp)
+
+    # issue 32
+    @pytest.mark.xfail(reason="open issue", raises=TypeError)
+    def test_yaml_add_eol_comment_issue_32(self):
+        data = load(
+            """
+        items:
+        - one: 1
+          uno: '1'
+        -  # item 2
+          two: 2
+          duo: '2'
+        - three: 3
+        """
+        )
+
+        data['items'].yaml_add_eol_comment('second pass', key=1)
+
+        exp = """
+        items:
+        - one: 1
+          uno: '1'
+        -  # second pass
+          two: 2
+          duo: '2'
+        - three: 3
+        """
+
+        compare(data, exp)
+
+    def test_yaml_add_eol_comment_issue_32_ok(self):
+        data = load(
+            """
+        items:
+        - one
+        - two  # item 2
+        - three
+        """
+        )
+
+        data['items'].yaml_add_eol_comment('second pass', key=1)
+
+        exp = """
+        items:
+        - one
+        - two  # second pass
+        - three
+        """
+
+        compare(data, exp)
+
+    # issue 33
+    @pytest.mark.xfail(reason="open issue", raises=AttributeError)
+    def test_yaml_set_start_comment_issue_33(self):
+        data = load(
+            """
+        items:
+        # item 1
+        - one: 1
+          uno: '1'
+        # item 2
+        - two: 2
+          duo: '2'
+        # item 3
+        - three: 3
+        """
+        )
+
+        data['items'][0].yaml_set_start_comment('uno')
+        data['items'][1].yaml_set_start_comment('duo')
+        data['items'][2].yaml_set_start_comment('tre')
+
+        exp = """
+        items:
+        # uno
+        - one: 1
+          uno: '1'
+        # duo
+        - two: 2
+          duo: '2'
+        # tre
+        - three: 3
+        """
+
+        compare(data, exp)
