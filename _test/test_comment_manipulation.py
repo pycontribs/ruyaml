@@ -638,7 +638,6 @@ class TestCommentsManipulation:
         compare(data, exp)
 
     # issue 32
-    @pytest.mark.xfail(reason="open issue", raises=TypeError)
     def test_yaml_add_eol_comment_issue_32(self):
         data = load(
             """
