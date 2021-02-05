@@ -1,4 +1,4 @@
-from roundtrip import dedent
+from .roundtrip import dedent
 
 
 class TestDedent:

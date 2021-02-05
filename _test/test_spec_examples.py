@@ -1,5 +1,5 @@
 import pytest  # NOQA
-from roundtrip import YAML
+from .roundtrip import YAML
 
 
 def test_example_2_1():
