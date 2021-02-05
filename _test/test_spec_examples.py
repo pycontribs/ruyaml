@@ -1,4 +1,5 @@
 import pytest  # NOQA
+
 from .roundtrip import YAML
 
 
