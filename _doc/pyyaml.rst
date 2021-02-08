@@ -1,7 +1,3 @@
-version: 0.1
-output: rst
-fix_inline_single_backquotes: true
---- |
 ***********************
 Differences with PyYAML
 ***********************
@@ -76,5 +72,9 @@ API
 Starting with 0.15 the API for using ``ruyaml`` has diverged allowing
 easier addition of new features.
 
---- !incraw |
-links.rydinc
+.. _tox: https://pypi.python.org/pypi/tox
+.. _py.test: http://pytest.org/latest/
+.. _YAML 1.1: http://www.yaml.org/spec/1.1/spec.html
+.. _YAML 1.2: http://www.yaml.org/spec/1.2/spec.html
+.. _PyPI: https://pypi.python.org/pypi
+.. _ruyaml: https://pypi.python.org/pypi/ruyaml

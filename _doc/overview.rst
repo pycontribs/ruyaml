@@ -1,7 +1,3 @@
-version: 0.1
-output: rst
-fix_inline_single_backquotes: true
---- |
 ********
 Overview
 ********
@@ -45,6 +41,9 @@ error in 0.N+1.0
 Many of the bugs filed against PyYAML, but that were never
 acted upon, have been fixed in ``ruyaml``
 
-
---- !incraw |
-links.rydinc
+.. _tox: https://pypi.python.org/pypi/tox
+.. _py.test: http://pytest.org/latest/
+.. _YAML 1.1: http://www.yaml.org/spec/1.1/spec.html
+.. _YAML 1.2: http://www.yaml.org/spec/1.2/spec.html
+.. _PyPI: https://pypi.python.org/pypi
+.. _ruyaml: https://pypi.python.org/pypi/ruyaml

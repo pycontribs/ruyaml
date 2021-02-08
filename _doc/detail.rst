@@ -1,7 +1,3 @@
-version: 0.1
-output: rst
-fix_inline_single_backquotes: true
---- |
 *******
 Details
 *******
@@ -180,7 +176,7 @@ adding/replacing comments
 Starting with version 0.8, you can add/replace comments on block style
 collections (mappings/sequences resuting in Python dict/list). The basic
 for for this is::
---- !python |
+
   from __future__ import print_function
 
   import sys
@@ -208,9 +204,9 @@ for for this is::
   data['xyz'].yaml_add_eol_comment('comment 7', 'd', column=20)
 
   yaml.dump(data, sys.stdout)
---- !stdout |
+
 Resulting in::
---- !comment |
+
   abc:
   - a       # comment 1
   - b       # comment 4
@@ -222,7 +218,6 @@ Resulting in::
     e: 5 # comment 6
     f: 6 # comment 3
 
---- |
 If the comment doesn't start with '#', this will be added. The key is
 the element index for list, the actual key for dictionaries. As can be seen
 from the example, the column to choose for a comment is derived

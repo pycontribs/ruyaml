@@ -1,15 +1,10 @@
-version: 0.1
-output: rst
-fix_inline_single_backquotes: true
-pdf: true
---- |
 ********
 Examples
 ********
 
 Basic round trip of parsing YAML to Python objects, modifying
 and generating YAML::
---- !python |
+
   import sys
   from ruyaml import YAML
 
@@ -27,11 +22,16 @@ and generating YAML::
 
   yaml.dump(code, sys.stdout)
 
---- !stdout |
 Resulting in::
---- |
+
+  # example
+  name:
+    # details
+    family: Smith   # very common
+    given: Bob      # one of the siblings
+
 with the old API::
---- !python |
+
   from __future__ import print_function
 
   import sys
@@ -53,15 +53,21 @@ with the old API::
   # the last statement can be done less efficient in time and memory with
   # leaving out the end='' would cause a double newline at the end
   # print(ruyaml.dump(code, Dumper=ruyaml.RoundTripDumper), end='')
---- !stdout |
+
 Resulting in ::
---- |
+
+  # example
+  name:
+    # details
+    family: Smith   # very common
+    given: Bob      # one of the siblings
+
 ----
 
 YAML handcrafted anchors and references as well as key merging
 are preserved. The merged keys can transparently be accessed
 using ``[]`` and ``.get()``::
---- !python |
+
   from ruyaml import YAML
 
   inp = """\
@@ -91,11 +97,11 @@ using ``[]`` and ``.get()``::
   yaml = YAML()
   data = yaml.load(inp)
   assert data[7]['y'] == 2
---- |
+
 
 The ``CommentedMap``, which is the ``dict`` like construct one gets when round-trip loading,
 supports insertion of a key into a particular position, while optionally adding a comment::
---- !python |
+
   import sys
   from ruyaml import YAML
 
@@ -110,9 +116,13 @@ supports insertion of a key into a particular position, while optionally adding 
   data.insert(1, 'last name', 'Vandelay', comment="new key")
   yaml.dump(data, sys.stdout)
 
---- !stdout |
 gives::
---- |
+
+  first_name: Art
+  last name: Vandelay    # new key
+  occupation: Architect  # This is an occupation comment
+  about: Art Vandelay is a fictional character that George invents...
+
 Please note that the comment is aligned with that of its neighbour (if available).
 
 The above was inspired by a `question <http://stackoverflow.com/a/36970608/1307905>`_
@@ -127,28 +137,34 @@ indented "space".
 
 You can change this default indentation by e.g. using ``yaml.indent()``::
 
+  import sys
+  from ruyaml import YAML
 
---- !python |
+  d = dict(a=dict(b=2),c=[3, 4])
+  yaml = YAML()
+  yaml.dump(d, sys.stdout)
+  print('0123456789')
+  yaml = YAML()
+  yaml.indent(mapping=4, sequence=6, offset=3)
+  yaml.dump(d, sys.stdout)
+  print('0123456789')
 
-import sys
-from ruyaml import YAML
-
-d = dict(a=dict(b=2),c=[3, 4])
-yaml = YAML()
-yaml.dump(d, sys.stdout)
-print('0123456789')
-yaml = YAML()
-yaml.indent(mapping=4, sequence=6, offset=3)
-yaml.dump(d, sys.stdout)
-print('0123456789')
-
-
---- !stdout |
 
 giving::
 
+  a:
+    b: 2
+  c:
+  - 3
+  - 4
+  0123456789
+  a:
+      b: 2
+  c:
+     -  3
+     -  4
+  0123456789
 
---- |
 
 If a block sequence or block mapping is the element of a sequence, the
 are, by default, displayed `compact
@@ -159,75 +175,104 @@ first element resp. first key/value pair of the child collection.
 If you want either or both of these (sequence within sequence, mapping
 within sequence) to begin on the next line use ``yaml.compact()``::
 
---- !python |
+  import sys
+  from ruyaml import YAML
 
-import sys
-from ruyaml import YAML
+  d = [dict(b=2), [3, 4]]
+  yaml = YAML()
+  yaml.dump(d, sys.stdout)
+  print('='*15)
+  yaml = YAML()
+  yaml.compact(seq_seq=False, seq_map=False)
+  yaml.dump(d, sys.stdout)
 
-d = [dict(b=2), [3, 4]]
-yaml = YAML()
-yaml.dump(d, sys.stdout)
-print('='*15)
-yaml = YAML()
-yaml.compact(seq_seq=False, seq_map=False)
-yaml.dump(d, sys.stdout)
-
-
---- !stdout |
 
 giving::
 
+  - b: 2
+  - - 3
+    - 4
+  ===============
+  -
+    b: 2
+  -
+    - 3
+    - 4
 
---- |
 
 ------
 
 The following program uses three dumps on the same data, resulting in a stream with
 three documents::
 
---- !python |
-import sys
-from ruyaml import YAML
+  import sys
+  from ruyaml import YAML
 
-data = {1: {1: [{1: 1, 2: 2}, {1: 1, 2: 2}], 2: 2}, 2: 42}
+  data = {1: {1: [{1: 1, 2: 2}, {1: 1, 2: 2}], 2: 2}, 2: 42}
 
-yaml = YAML()
-yaml.explicit_start = True
-yaml.dump(data, sys.stdout)
-yaml.indent(sequence=4, offset=2)
-yaml.dump(data, sys.stdout)
+  yaml = YAML()
+  yaml.explicit_start = True
+  yaml.dump(data, sys.stdout)
+  yaml.indent(sequence=4, offset=2)
+  yaml.dump(data, sys.stdout)
 
 
-def sequence_indent_four(s):
-    # this will fail on direclty nested lists: {1; [[2, 3], 4]}
-    levels = []
-    ret_val = ''
-    for line in s.splitlines(True):
-        ls = line.lstrip()
-        indent = len(line) - len(ls)
-        if ls.startswith('- '):
-            if not levels or indent > levels[-1]:
-                levels.append(indent)
-            elif levels:
-                if indent < levels[-1]:
-                    levels = levels[:-1]
-            # same -> do nothing
-        else:
-            if levels:
-                if indent <= levels[-1]:
-                    while levels and indent <= levels[-1]:
-                        levels = levels[:-1]
-        ret_val += '  ' * len(levels) + line
-    return ret_val
+  def sequence_indent_four(s):
+      # this will fail on direclty nested lists: {1; [[2, 3], 4]}
+      levels = []
+      ret_val = ''
+      for line in s.splitlines(True):
+          ls = line.lstrip()
+          indent = len(line) - len(ls)
+          if ls.startswith('- '):
+              if not levels or indent > levels[-1]:
+                  levels.append(indent)
+              elif levels:
+                  if indent < levels[-1]:
+                      levels = levels[:-1]
+              # same -> do nothing
+          else:
+              if levels:
+                  if indent <= levels[-1]:
+                      while levels and indent <= levels[-1]:
+                          levels = levels[:-1]
+          ret_val += '  ' * len(levels) + line
+      return ret_val
 
-yaml = YAML()
-yaml.explicit_start = True
-yaml.dump(data, sys.stdout, transform=sequence_indent_four)
+  yaml = YAML()
+  yaml.explicit_start = True
+  yaml.dump(data, sys.stdout, transform=sequence_indent_four)
 
---- !stdout |
 gives as output::
 
---- |
+  ---
+  1:
+    1:
+    - 1: 1
+      2: 2
+    - 1: 1
+      2: 2
+    2: 2
+  2: 42
+  ---
+  1:
+    1:
+      - 1: 1
+        2: 2
+      - 1: 1
+        2: 2
+    2: 2
+  2: 42
+  ---
+  1:
+    1:
+      - 1: 1
+        2: 2
+      - 1: 1
+        2: 2
+    2: 2
+  2: 42
+
 
 The transform example, in the last document, was inspired by a
 `question posted by *nowox*
@@ -261,28 +306,27 @@ the ``transform=`` parameter of dump, being able to handle most of the rest. But
 it is also much easier in the new API to provide that YAML output as a string if
 you really need to have it (or think you do)::
 
---- !python |
-import sys
-from ruyaml import YAML
-from io import StringIO
+  import sys
+  from ruyaml import YAML
+  from io import StringIO
 
-class MyYAML(YAML):
-    def dump(self, data, stream=None, **kw):
-        inefficient = False
-        if stream is None:
-            inefficient = True
-            stream = StringIO()
-        YAML.dump(self, data, stream, **kw)
-        if inefficient:
-            return stream.getvalue()
+  class MyYAML(YAML):
+      def dump(self, data, stream=None, **kw):
+          inefficient = False
+          if stream is None:
+              inefficient = True
+              stream = StringIO()
+          YAML.dump(self, data, stream, **kw)
+          if inefficient:
+              return stream.getvalue()
 
-yaml = MyYAML()   # or typ='safe'/'unsafe' etc
---- |
+  yaml = MyYAML()   # or typ='safe'/'unsafe' etc
+
 with about one tenth of the lines needed for the old interface, you can once more do::
---- !code |
-print(yaml.dump(dict(a=1, b=2)))
---- |
+
+  print(yaml.dump(dict(a=1, b=2)))
+
 instead of::
---- !code |
-yaml.dump((dict(a=1, b=2)), sys.stdout)
-print()  # or sys.stdout.write('\n')
+
+  yaml.dump((dict(a=1, b=2)), sys.stdout)
+  print()  # or sys.stdout.write('\n')
