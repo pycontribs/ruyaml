@@ -1,4 +1,9 @@
-.tox
-build
-dist
-.eggs
+/.tox/
+/build/
+/dist/
+/.eggs/
+/.pybuild/
+*.egg-info/
+
+__pycache__
+/_doc/_build/

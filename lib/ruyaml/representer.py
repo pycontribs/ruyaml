@@ -3,9 +3,9 @@
 from __future__ import absolute_import, division, print_function
 
 import base64
+import collections
 import copyreg
 import datetime
-import sys
 import types
 
 from ruyaml.compat import ordereddict  # NOQA; type: ignore
@@ -239,10 +239,7 @@ class SafeRepresenter(BaseRepresenter):
 
     def represent_binary(self, data):
         # type: (Any) -> Any
-        if hasattr(base64, 'encodebytes'):
-            data = base64.encodebytes(data).decode('ascii')
-        else:
-            data = base64.encodestring(data).decode('ascii')
+        data = base64.encodebytes(data).decode('ascii')
         return self.represent_scalar(u'tag:yaml.org,2002:binary', data, style='|')
 
     def represent_bool(self, data, anchor=None):
@@ -363,12 +360,9 @@ SafeRepresenter.add_representer(set, SafeRepresenter.represent_set)
 
 SafeRepresenter.add_representer(ordereddict, SafeRepresenter.represent_ordereddict)
 
-if sys.version_info >= (2, 7):
-    import collections
-
-    SafeRepresenter.add_representer(
-        collections.OrderedDict, SafeRepresenter.represent_ordereddict
-    )
+SafeRepresenter.add_representer(
+    collections.OrderedDict, SafeRepresenter.represent_ordereddict
+)
 
 SafeRepresenter.add_representer(datetime.date, SafeRepresenter.represent_date)
 
@@ -1148,12 +1142,9 @@ RoundTripRepresenter.add_representer(
     CommentedOrderedMap, RoundTripRepresenter.represent_ordereddict
 )
 
-if sys.version_info >= (2, 7):
-    import collections
-
-    RoundTripRepresenter.add_representer(
-        collections.OrderedDict, RoundTripRepresenter.represent_ordereddict
-    )
+RoundTripRepresenter.add_representer(
+    collections.OrderedDict, RoundTripRepresenter.represent_ordereddict
+)
 
 RoundTripRepresenter.add_representer(CommentedSet, RoundTripRepresenter.represent_set)
 

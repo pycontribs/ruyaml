@@ -10,8 +10,6 @@ roundtrip changes
 
 """
 
-import sys
-
 import pytest
 from roundtrip import dedent, round_trip, round_trip_dump, round_trip_load
 
@@ -795,7 +793,6 @@ class TestEmptyLines:
 
 
 class TestUnicodeComments:
-    @pytest.mark.skipif(sys.version_info < (2, 7), reason='wide unicode')
     def test_issue_55(self):  # reported by Haraguroicha Hsu
         round_trip(
             """\

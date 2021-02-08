@@ -1,8 +1,3 @@
-version: 0.1
-output: rst
-fix_inline_single_backquotes: true
-# pdf: true
---- |
 **********
 Installing
 **********
@@ -29,7 +24,7 @@ because of the ``[]``)
 
 There also is a commandline utility ``yaml`` available after installing::
 
-   pip install ruyaml.cmd
+    pip install ruyaml.cmd
 
 that allows for round-trip testing/re-indenting and conversion of YAML
 files (JSON,INI,HTML tables)
@@ -48,7 +43,11 @@ you can leave out ``python3-dev`` if you don't use python3
 
 For CentOS (7) based systems you should do::
 
-   sudo yum install python-devel
+    sudo yum install python-devel
 
---- !incraw |
-links.rydinc
+.. _tox: https://pypi.python.org/pypi/tox
+.. _py.test: http://pytest.org/latest/
+.. _YAML 1.1: http://www.yaml.org/spec/1.1/spec.html
+.. _YAML 1.2: http://www.yaml.org/spec/1.2/spec.html
+.. _PyPI: https://pypi.python.org/pypi
+.. _ruyaml: https://pypi.python.org/pypi/ruyaml

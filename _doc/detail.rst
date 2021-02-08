@@ -1,7 +1,3 @@
-version: 0.1
-output: rst
-fix_inline_single_backquotes: true
---- |
 *******
 Details
 *******
@@ -12,7 +8,7 @@ Details
 - ``!!omap`` generates ordereddict (C) on Python 2, collections.OrderedDict
   on Python 3, and ``!!omap`` is generated for these types.
 - Tests whether the C yaml library is installed as well as the header
-  files. That library  doesn't generate CommentTokens, so it cannot be used to
+  files. That library doesn't generate CommentTokens, so it cannot be used to
   do round trip editing on comments. It can be used to speed up normal
   processing (so you don't need to install ``ruyaml`` and ``PyYaml``).
   See the section *Optional requirements*.
@@ -33,8 +29,8 @@ Details
 
 *In the following examples it is assumed you have done something like:*::
 
-  from ruyaml import YAML
-  yaml = YAML()
+    from ruyaml import YAML
+    yaml = YAML()
 
 *if not explicitly specified.*
 
@@ -44,15 +40,15 @@ Indentation of block sequences
 Although ruyaml doesn't preserve individual indentations of block sequence
 items, it does properly dump::
 
-  x:
-  - b: 1
-  - 2
+    x:
+    - b: 1
+    - 2
 
 back to::
 
-  x:
-  -   b: 1
-  -   2
+    x:
+    -   b: 1
+    -   2
 
 if you specify ``yaml.indent(sequence=4)`` (indentation is counted to the
 beginning of the sequence element).
@@ -60,9 +56,9 @@ beginning of the sequence element).
 PyYAML (and older versions of ruyaml) gives you non-indented
 scalars (when specifying default_flow_style=False)::
 
-  x:
-  -   b: 1
-  - 2
+    x:
+    -  b: 1
+    - 2
 
 You can use ``mapping=4`` to also have the mappings values indented.
 The dump also observes an additional ``offset=2`` setting that
@@ -71,10 +67,10 @@ can be used to push the dash inwards, *within the space defined by* ``sequence``
 The above example with the often seen ``yaml.indent(mapping=2, sequence=4, offset=2)``
 indentation::
 
-  x:
-    y:
-      - b: 1
-      - 2
+    x:
+      y:
+        - b: 1
+        - 2
 
 The defaults are as if you specified ``yaml.indent(mapping=2, sequence=2, offset=0)``.
 
@@ -100,16 +96,15 @@ inconsistently indented YAML examples.
 
 ``b`` indented 3, ``c`` indented 4 positions::
 
-  a:
-     b:
-         c: 1
+    a:
+       b:
+           c: 1
 
 Top level sequence is indented 2 without offset, the other sequence 4 (with offset 2)::
 
-  - key:
-      - foo
-      - bar
-
+    - key:
+        - foo
+        - bar
 
 
 Positioning ':' in top level mappings, prefixing ':'
@@ -117,9 +112,9 @@ Positioning ':' in top level mappings, prefixing ':'
 
 If you want your toplevel mappings to look like::
 
-  library version: 1
-  comment        : |
-      this is just a first try
+    library version: 1
+    comment        : |
+        this is just a first try
 
 then set ``yaml.top_level_colon_align = True``
 (and ``yaml.indent = 4``). ``True`` causes calculation based on the longest key,
@@ -128,9 +123,9 @@ but you can also explicitly set a number.
 If you want an extra space between a mapping key and the colon specify
 ``yaml.prefix_colon = ' '``::
 
-  - https://myurl/abc.tar.xz : 23445
-  #                         ^ extra space here
-  - https://myurl/def.tar.xz : 944
+    - https://myurl/abc.tar.xz : 23445
+    #                         ^ extra space here
+    - https://myurl/def.tar.xz : 944
 
 If you combine ``prefix_colon`` with ``top_level_colon_align``, the
 top level mapping doesn't get the extra prefix. If you want that
@@ -143,10 +138,10 @@ Document version support
 
 In YAML a document version can be explicitly set by using::
 
-   %YAML 1.x
+    %YAML 1.x
 
 before the document start (at the top or before a
-``---``). For ``ruyaml``  x has to be 1 or 2. If no explicit
+``---``). For ``ruyaml`` x has to be 1 or 2. If no explicit
 version is set `version 1.2 <http://www.yaml.org/spec/1.2/spec.html>`_
 is assumed (which has been released in 2009).
 
@@ -159,7 +154,7 @@ The 1.2 version does **not** support:
 
 If you cannot change your YAML files and you need them to load as 1.1
 you can load with ``yaml.version = (1, 1)``,
-or the equivalent (version can be a tuple, list or string)  ``yaml.version = "1.1"``
+or the equivalent (version can be a tuple, list or string) ``yaml.version = "1.1"``
 
 *If you cannot change your code, stick with ruyaml==0.10.23 and let
 me know if it would help to be able to set an environment variable.*
@@ -180,49 +175,48 @@ adding/replacing comments
 Starting with version 0.8, you can add/replace comments on block style
 collections (mappings/sequences resuting in Python dict/list). The basic
 for for this is::
---- !python |
-  from __future__ import print_function
 
-  import sys
-  import ruyaml
+    from __future__ import print_function
 
-  yaml = ruyaml.YAML()  # defaults to round-trip
+    import sys
+    import ruyaml
 
-  inp = """\
-  abc:
-    - a     # comment 1
-  xyz:
-    a: 1    # comment 2
-    b: 2
-    c: 3
-    d: 4
-    e: 5
-    f: 6 # comment 3
-  """
+    yaml = ruyaml.YAML()  # defaults to round-trip
 
-  data = yaml.load(inp)
-  data['abc'].append('b')
-  data['abc'].yaml_add_eol_comment('comment 4', 1)  # takes column of comment 1
-  data['xyz'].yaml_add_eol_comment('comment 5', 'c')  # takes column of comment 2
-  data['xyz'].yaml_add_eol_comment('comment 6', 'e')  # takes column of comment 3
-  data['xyz'].yaml_add_eol_comment('comment 7', 'd', column=20)
+    inp = """\
+    abc:
+      - a     # comment 1
+    xyz:
+      a: 1    # comment 2
+      b: 2
+      c: 3
+      d: 4
+      e: 5
+      f: 6 # comment 3
+    """
 
-  yaml.dump(data, sys.stdout)
---- !stdout |
+    data = yaml.load(inp)
+    data['abc'].append('b')
+    data['abc'].yaml_add_eol_comment('comment 4', 1)  # takes column of comment 1
+    data['xyz'].yaml_add_eol_comment('comment 5', 'c')  # takes column of comment 2
+    data['xyz'].yaml_add_eol_comment('comment 6', 'e')  # takes column of comment 3
+    data['xyz'].yaml_add_eol_comment('comment 7', 'd', column=20)
+
+    yaml.dump(data, sys.stdout)
+
 Resulting in::
---- !comment |
-  abc:
-  - a       # comment 1
-  - b       # comment 4
-  xyz:
-    a: 1    # comment 2
-    b: 2
-    c: 3    # comment 5
-    d: 4              # comment 7
-    e: 5 # comment 6
-    f: 6 # comment 3
 
---- |
+    abc:
+    - a       # comment 1
+    - b       # comment 4
+    xyz:
+      a: 1    # comment 2
+      b: 2
+      c: 3    # comment 5
+      d: 4              # comment 7
+      e: 5 # comment 6
+      f: 6 # comment 3
+
 If the comment doesn't start with '#', this will be added. The key is
 the element index for list, the actual key for dictionaries. As can be seen
 from the example, the column to choose for a comment is derived

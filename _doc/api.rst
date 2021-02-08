@@ -1,24 +1,9 @@
-version: 0.1
-output: rst
-fix_inline_single_backquotes: true
-pdf: true
---- !python-pre |
-import sys
-from io import StringIO
-import ruyaml
-from ruyaml import YAML
-yaml=YAML()
-ostream = s = StringIO()
-istream = stream = doc = "a: 1"
-data = dict(a=1)
-from pathlib import Path
---- |
 +++++++++++++++++++++++++++
 Departure from previous API
 +++++++++++++++++++++++++++
 
 With version 0.15.0 ``ruyaml`` starts to depart from the previous (PyYAML) way
-of loading and dumping.  During a transition period the original
+of loading and dumping. During a transition period the original
 ``load()`` and ``dump()`` in its various formats will still be supported,
 but this is not guaranteed to be so with the transition to 1.0.
 
@@ -48,30 +33,30 @@ resp. the data and stream argument. All other parameters are set on the instance
 of ``YAML`` before calling ``load()`` or ``dump()``
 
 Before 0.15.0::
---- !python |
-from pathlib import Path
-import ruyaml
 
-data = ruyaml.safe_load("abc: 1")
-out = Path('/tmp/out.yaml')
-with out.open('w') as fp:
-    ruyaml.safe_dump(data, fp, default_flow_style=False)
---- |
+    from pathlib import Path
+    import ruyaml
+
+    data = ruyaml.safe_load("abc: 1")
+    out = Path('/tmp/out.yaml')
+    with out.open('w') as fp:
+        ruyaml.safe_dump(data, fp, default_flow_style=False)
+
 after::
---- !python |
-from pathlib import Path
-from ruyaml import YAML
 
-yaml = YAML(typ='safe')
-yaml.default_flow_style = False
-data = yaml.load("abc: 1")
-out = Path('/tmp/out.yaml')
-yaml.dump(data, out)
---- |
+    from pathlib import Path
+    from ruyaml import YAML
+
+    yaml = YAML(typ='safe')
+    yaml.default_flow_style = False
+    data = yaml.load("abc: 1")
+    out = Path('/tmp/out.yaml')
+    yaml.dump(data, out)
+
 If you previously used a keyword argument ``explicit_start=True`` you
 now do ``yaml.explicit_start = True`` before calling ``dump()``. The
 ``Loader`` and ``Dumper`` keyword arguments are not supported that
-way. You can provide the ``typ`` keyword to ``rt``  (default),
+way. You can provide the ``typ`` keyword to ``rt`` (default),
 ``safe``, ``unsafe`` or ``base`` (for round-trip load/dump, safe_load/dump,
 load/dump resp. using the BaseLoader / BaseDumper. More fine-control
 is possible by setting the attributes ``.Parser``, ``.Constructor``,
@@ -113,11 +98,10 @@ required this.
 In the new API (starting 0.15.1) duplicate keys in mappings are no longer allowed by
 default. To allow duplicate keys in mappings::
 
---- !python |
-yaml = ruyaml.YAML()
-yaml.allow_duplicate_keys = True
-yaml.load(stream)
---- |
+    yaml = ruyaml.YAML()
+    yaml.allow_duplicate_keys = True
+    yaml.load(stream)
+
 In the old API this is a warning starting with 0.15.2 and an error in
 0.16.0.
 
@@ -131,12 +115,11 @@ The "normal" ``dump_all`` expected as first element a list of documents, or
 something else the internals of the method can iterate over. To read
 and write a multi-document you would either make a ``list``::
 
---- !code |
-   yaml = YAML()
-   data = list(yaml.load_all(in_path))
-   # do something on data[0], data[1], etc.
-   yaml.dump_all(data, out_path)
---- |
+    yaml = YAML()
+    data = list(yaml.load_all(in_path))
+    # do something on data[0], data[1], etc.
+    yaml.dump_all(data, out_path)
+
 
 or create some function/object that would yield the ``data`` values.
 
@@ -147,13 +130,12 @@ works for output (dumping) only, requires you to specify the output
 
 ::
 
---- !code |
     with YAML(output=sys.stdout) as yaml:
-            yaml.explicit_start = True
-            for data in yaml.load_all(Path(multi_document_filename)):
-                # do something on data
-                yaml.dump(data)
---- |
+        yaml.explicit_start = True
+        for data in yaml.load_all(Path(multi_document_filename)):
+            # do something on data
+            yaml.dump(data)
+
 
 Within the context manager, you cannot use the ``dump()`` with a
 second (stream) argument, nor can you use ``dump_all()``. The
@@ -164,14 +146,13 @@ To combine multiple YAML documents from multiple files:
 
 ::
 
---- !code |
     list_of_filenames = ['x.yaml', 'y.yaml', ]
     with YAML(output=sys.stdout) as yaml:
-            yaml.explicit_start = True
-            for path in list_of_filename:
-                with open(path) as fp:
-                    yaml.dump(yaml.load(fp))
---- |
+        yaml.explicit_start = True
+        for path in list_of_filename:
+            with open(path) as fp:
+                yaml.dump(yaml.load(fp))
+
 
 The output will be a valid, uniformly indented YAML file. Doing
 ``cat {x,y}.yaml`` might result in a single document if there is not
@@ -188,8 +169,8 @@ Controls
 
 On your ``YAML()`` instance you can set attributes e.g with::
 
-  yaml = YAML(typ='safe', pure=True)
-  yaml.allow_unicode = False
+    yaml = YAML(typ='safe', pure=True)
+    yaml.allow_unicode = False
 
 available attributes include:
 
@@ -208,76 +189,74 @@ Depending on your usage you might be able to "version" your usage to
 be compatible with both the old and the new. The following are some
 examples all assuming ``import ruyaml`` somewhere at the top
 of your file and some ``istream`` and ``ostream`` apropriately opened
-for reading resp.  writing.
+for reading resp. writing.
 
 
 Loading and dumping using the ``SafeLoader``::
 
---- !python |
-if ruyaml.version_info < (0, 15):
-    data = yaml.safe_load(istream)
-    yaml.safe_dump(data, ostream)
-else:
-    yml = ruyaml.YAML(typ='safe', pure=True)  # 'safe' load and dump
-    data = yml.load(istream)
-    yml.dump(data, ostream)
---- |
+    if ruyaml.version_info < (0, 15):
+        data = yaml.safe_load(istream)
+        yaml.safe_dump(data, ostream)
+    else:
+        yml = ruyaml.YAML(typ='safe', pure=True)  # 'safe' load and dump
+        data = yml.load(istream)
+        yml.dump(data, ostream)
+
 Loading with the ``CSafeLoader``, dumping with
 ``RoundTripLoader``. You need two ``YAML`` instances, but each of them
 can be re-used::
---- !python |
-if ruyaml.version_info < (0, 15):
-    data = yaml.load(istream, Loader=yaml.CSafeLoader)
-    yaml.round_trip_dump(data, ostream, width=1000, explicit_start=True)
-else:
-    yml = ruyaml.YAML(typ='safe')
-    data = yml.load(istream)
-    ymlo = ruyaml.YAML()   # or yaml.YAML(typ='rt')
-    ymlo.width = 1000
-    ymlo.explicit_start = True
-    ymlo.dump(data, ostream)
---- |
-Loading and dumping from  ``pathlib.Path`` instances using the
+
+    if ruyaml.version_info < (0, 15):
+        data = yaml.load(istream, Loader=yaml.CSafeLoader)
+        yaml.round_trip_dump(data, ostream, width=1000, explicit_start=True)
+    else:
+        yml = ruyaml.YAML(typ='safe')
+        data = yml.load(istream)
+        ymlo = ruyaml.YAML()  # or yaml.YAML(typ='rt')
+        ymlo.width = 1000
+        ymlo.explicit_start = True
+        ymlo.dump(data, ostream)
+
+Loading and dumping from ``pathlib.Path`` instances using the
 round-trip-loader::
 
---- !code |
-# in myyaml.py
-if ruyaml.version_info < (0, 15):
-    class MyYAML(yaml.YAML):
-        def __init__(self):
-            yaml.YAML.__init__(self)
-            self.preserve_quotes = True
-            self.indent(mapping=4, sequence=4, offset=2)
-# in your code
-try:
-    from myyaml import MyYAML
-except (ModuleNotFoundError, ImportError):
-    if ruyaml.version_info >= (0, 15):
-        raise
+    # in myyaml.py
+    if ruyaml.version_info < (0, 15):
+        class MyYAML(yaml.YAML):
+            def __init__(self):
+                yaml.YAML.__init__(self)
+                self.preserve_quotes = True
+                self.indent(mapping=4, sequence=4, offset=2)
+    # in your code
+    try:
+        from myyaml import MyYAML
+    except (ModuleNotFoundError, ImportError):
+        if ruyaml.version_info >= (0, 15):
+            raise
 
-# some pathlib.Path
-from pathlib import Path
-inf = Path('/tmp/in.yaml')
-outf = Path('/tmp/out.yaml')
+    # some pathlib.Path
+    from pathlib import Path
+    inf = Path('/tmp/in.yaml')
+    outf = Path('/tmp/out.yaml')
 
-if ruyaml.version_info < (0, 15):
-    with inf.open() as ifp:
-         data = yaml.round_trip_load(ifp, preserve_quotes=True)
-    with outf.open('w') as ofp:
-         yaml.round_trip_dump(data, ofp, indent=4, block_seq_indent=2)
-else:
-    yml = MyYAML()
-    # no need for with statement when using pathlib.Path instances
-    data = yml.load(inf)
-    yml.dump(data, outf)
---- |
+    if ruyaml.version_info < (0, 15):
+        with inf.open() as ifp:
+             data = yaml.round_trip_load(ifp, preserve_quotes=True)
+        with outf.open('w') as ofp:
+             yaml.round_trip_dump(data, ofp, indent=4, block_seq_indent=2)
+    else:
+        yml = MyYAML()
+        # no need for with statement when using pathlib.Path instances
+        data = yml.load(inf)
+        yml.dump(data, outf)
+
 +++++++++++++++++++++
 Reason for API change
 +++++++++++++++++++++
 
 ``ruyaml`` inherited the way of doing things from ``PyYAML``. In
 particular when calling the function ``load()`` or ``dump()``
-temporary instances of  ``Loader()`` resp. ``Dumper()``  were
+temporary instances of ``Loader()`` resp. ``Dumper()`` were
 created that were discarded on termination of the function.
 
 This way of doing things leads to several problems:
