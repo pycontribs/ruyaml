@@ -3,7 +3,8 @@
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pytest  # NOQA
-from roundtrip import dedent, round_trip_dump, round_trip_load
+
+from .roundtrip import dedent, round_trip_dump, round_trip_load
 
 # http://yaml.org/type/int.html is where underscores in integers are defined
 

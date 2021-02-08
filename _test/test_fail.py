@@ -7,7 +7,8 @@
 # and remove remove the xyz_no_fail
 
 import pytest
-from roundtrip import dedent, round_trip, round_trip_dump, round_trip_load
+
+from .roundtrip import dedent, round_trip, round_trip_dump, round_trip_load
 
 
 class TestCommentFailures:

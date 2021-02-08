@@ -2,7 +2,8 @@
 from __future__ import print_function
 
 import pytest  # NOQA
-from roundtrip import YAML  # does an automatic dedent on load
+
+from .roundtrip import YAML  # does an automatic dedent on load
 
 """
 YAML 1.0 allowed root level literal style without indentation:

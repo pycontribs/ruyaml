@@ -3,7 +3,8 @@
 from __future__ import print_function
 
 import pytest  # NOQA
-from roundtrip import save_and_run  # NOQA
+
+from .roundtrip import save_and_run  # NOQA
 
 
 def test_monster(tmpdir):
