@@ -24,7 +24,7 @@ because of the ``[]``)
 
 There also is a commandline utility ``yaml`` available after installing::
 
-   pip install ruyaml.cmd
+    pip install ruyaml.cmd
 
 that allows for round-trip testing/re-indenting and conversion of YAML
 files (JSON,INI,HTML tables)
@@ -43,7 +43,7 @@ you can leave out ``python3-dev`` if you don't use python3
 
 For CentOS (7) based systems you should do::
 
-   sudo yum install python-devel
+    sudo yum install python-devel
 
 .. _tox: https://pypi.python.org/pypi/tox
 .. _py.test: http://pytest.org/latest/

@@ -10,17 +10,17 @@ ruyaml
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   overview
-   install
-   basicuse
-   dumpcls
-   detail
-   example
-   api
-   pyyaml
-   contributing
+    overview
+    install
+    basicuse
+    dumpcls
+    detail
+    example
+    api
+    pyyaml
+    contributing
 
 .. image:: https://readthedocs.org/projects/ruyaml/badge/?version=stable
-   :target: https://ruyaml.readthedocs.org/en/stable
+    :target: https://ruyaml.readthedocs.org/en/stable

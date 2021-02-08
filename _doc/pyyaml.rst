@@ -4,7 +4,7 @@ Differences with PyYAML
 
 .. parsed-literal::
 
-  *If I have seen further, it is by standing on the shoulders of giants*.
+    *If I have seen further, it is by standing on the shoulders of giants*.
                                                     Isaac Newton (1676)
 
 
@@ -37,7 +37,7 @@ PyYAML supports the `YAML 1.1`_ standard, ``ruyaml`` supports
 unless the YAML document is loaded with an explicit ``version==1.1`` or
 the document starts with::
 
-  % YAML 1.1
+    % YAML 1.1
 
 , ``ruyaml`` will load the document as version 1.2.
 

@@ -64,10 +64,10 @@ Flake
 
 My ``~/.config/flake8`` file::
 
-  [flake8]
-  show-source = True
-  max-line-length = 95
-  ignore = F405
+    [flake8]
+    show-source = True
+    max-line-length = 95
+    ignore = F405
 
 The suppress of F405 is necessary to allow ``from xxx import *``, which I have
 not removed in all places (yet).
@@ -106,11 +106,11 @@ automatically be reverted, even assuming your PR is accepted as is.
 Consider the following files **read-only** (if you think changes need to made these,
 contact me)::
 
-   setup.py
-   tox.ini
-   LICENSE
-   _ryd/conf.py
-   -ryd/Makefile
+     setup.py
+     tox.ini
+     LICENSE
+     _ryd/conf.py
+     -ryd/Makefile
 
 
 Vulnerabilities

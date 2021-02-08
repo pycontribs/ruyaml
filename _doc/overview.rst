@@ -2,11 +2,11 @@
 Overview
 ********
 
-``ruyaml`` is a YAML 1.2  loader/dumper package for Python. It is a
+``ruyaml`` is a YAML 1.2 loader/dumper package for Python. It is a
 derivative of Kirill Simonov's `PyYAML 3.11
 <https://bitbucket.org/xi/pyyaml>`_.
 
-``ruyaml`` supports `YAML 1.2`_ and has  round-trip loaders and dumpers
+``ruyaml`` supports `YAML 1.2`_ and has round-trip loaders and dumpers
 that preserves, among others:
 
 - comments
@@ -31,7 +31,7 @@ block sequence dashes within that indentation.
 
 Although ``ruyaml`` still allows most of the PyYAML way of doing
 things, adding features required a different API then the transient
-nature of PyYAML's ``Loader`` and ``Dumper``.  Starting with
+nature of PyYAML's ``Loader`` and ``Dumper``. Starting with
 ``ruyaml`` version 0.15.0 this new API gets introduced. Old ways
 that get in the way will be removed, after first generating warnings
 on use, then generating an error. In general a warning in version 0.N.x will become an

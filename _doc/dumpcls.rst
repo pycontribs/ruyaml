@@ -12,25 +12,25 @@ class with the ``YAML`` instance or decorate the class.
 
 Registering is done with ``YAML.register_class()``::
 
-  import sys
-  import ruyaml
+    import sys
+    import ruyaml
 
 
-  class User:
-      def __init__(self, name, age):
-          self.name = name
-          self.age = age
+    class User:
+        def __init__(self, name, age):
+            self.name = name
+            self.age = age
 
 
-  yaml = ruyaml.YAML()
-  yaml.register_class(User)
-  yaml.dump([User('Anthon', 18)], sys.stdout)
+    yaml = ruyaml.YAML()
+    yaml.register_class(User)
+    yaml.dump([User('Anthon', 18)], sys.stdout)
 
 which gives as output::
 
-  - !User
-    name: Anthon
-    age: 18
+    - !User
+      name: Anthon
+      age: 18
 
 The tag ``!User`` originates from the name of the class.
 
@@ -38,64 +38,64 @@ You can specify a different tag by adding the attribute ``yaml_tag``, and
 explicitly specify dump and/or load *classmethods* which have to be called
 ``from_yaml`` resp. ``from_yaml``::
 
-  import sys
-  import ruyaml
+    import sys
+    import ruyaml
 
 
-  class User:
-      yaml_tag = u'!user'
+    class User:
+        yaml_tag = u'!user'
 
-      def __init__(self, name, age):
-          self.name = name
-          self.age = age
+        def __init__(self, name, age):
+            self.name = name
+            self.age = age
 
-      @classmethod
-      def to_yaml(cls, representer, node):
-          return representer.represent_scalar(cls.yaml_tag,
-                                              u'{.name}-{.age}'.format(node, node))
+        @classmethod
+        def to_yaml(cls, representer, node):
+            return representer.represent_scalar(cls.yaml_tag,
+                                                u'{.name}-{.age}'.format(node, node))
 
-      @classmethod
-      def from_yaml(cls, constructor, node):
-          return cls(*node.value.split('-'))
+        @classmethod
+        def from_yaml(cls, constructor, node):
+            return cls(*node.value.split('-'))
 
 
-  yaml = ruyaml.YAML()
-  yaml.register_class(User)
-  yaml.dump([User('Anthon', 18)], sys.stdout)
+    yaml = ruyaml.YAML()
+    yaml.register_class(User)
+    yaml.dump([User('Anthon', 18)], sys.stdout)
 
 which gives as output::
 
-  - !user Anthon-18
+    - !user Anthon-18
 
 
 When using the decorator, which takes the ``YAML()`` instance as a parameter,
 the ``yaml = YAML()`` line needs to be moved up in the file::
 
-  import sys
-  from ruyaml import YAML, yaml_object
+    import sys
+    from ruyaml import YAML, yaml_object
 
-  yaml = YAML()
-
-
-  @yaml_object(yaml)
-  class User:
-      yaml_tag = u'!user'
-
-      def __init__(self, name, age):
-          self.name = name
-          self.age = age
-
-      @classmethod
-      def to_yaml(cls, representer, node):
-          return representer.represent_scalar(cls.yaml_tag,
-                                              u'{.name}-{.age}'.format(node, node))
-
-      @classmethod
-      def from_yaml(cls, constructor, node):
-          return cls(*node.value.split('-'))
+    yaml = YAML()
 
 
-  yaml.dump([User('Anthon', 18)], sys.stdout)
+    @yaml_object(yaml)
+    class User:
+        yaml_tag = u'!user'
+
+        def __init__(self, name, age):
+            self.name = name
+            self.age = age
+
+        @classmethod
+        def to_yaml(cls, representer, node):
+            return representer.represent_scalar(cls.yaml_tag,
+                                                u'{.name}-{.age}'.format(node, node))
+
+        @classmethod
+        def from_yaml(cls, constructor, node):
+            return cls(*node.value.split('-'))
+
+
+    yaml.dump([User('Anthon', 18)], sys.stdout)
 
 The ``yaml_tag``, ``from_yaml`` and ``to_yaml`` work in the same way as when using
 ``.register_class()``.
