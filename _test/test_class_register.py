@@ -4,7 +4,7 @@
 testing of YAML.register_class and @yaml_object
 """
 
-from roundtrip import YAML
+from .roundtrip import YAML
 
 
 class User0:

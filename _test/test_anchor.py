@@ -10,7 +10,14 @@ import platform
 from textwrap import dedent
 
 import pytest
-from roundtrip import YAML, dedent, round_trip, round_trip_dump, round_trip_load  # NOQA
+
+from .roundtrip import (  # NOQA
+    YAML,
+    dedent,
+    round_trip,
+    round_trip_dump,
+    round_trip_load,
+)
 
 
 def load(s):

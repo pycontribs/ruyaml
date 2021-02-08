@@ -1,7 +1,8 @@
 # coding: utf-8
 
 import pytest  # NOQA
-from roundtrip import round_trip, round_trip_load_all
+
+from .roundtrip import round_trip, round_trip_load_all
 
 
 class TestDocument:

@@ -20,7 +20,7 @@ import platform
 import pytest
 
 # from ruyaml.compat import ordereddict
-from roundtrip import dedent, round_trip, round_trip_dump, round_trip_load  # NOQA
+from .roundtrip import dedent, round_trip, round_trip_dump, round_trip_load  # NOQA
 
 
 class TestLiteralScalarString:
