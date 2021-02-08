@@ -2,43 +2,19 @@
 Contributing
 ************
 
-Any contribution to ``ruyaml`` is welcome, be it in the form of an
-email, a question on stackoverflow (I'll get notified of that when you tag it
-with ``ruyaml``), an issue or pull-request (PR) on bitbucket.
+All contributions to ``ruyaml`` are welcome.
+Please post an issue or, if possible, a pull request (PR) on github.
 
-Contributing via stackoverflow is, for most, easiest to make. When I answer your
-question there and the answer warrants an extension to the documentation or
-code, I will include it in a documnetation update and/or future (normally the
-next) release of ``ruyaml``.
+Please don't use issues to post support questions.
 
-Please don't post support questions as an issue on Bitbucket.
+TODO:: The maintainers of ruyaml don't have an official support channel yet.
 
 Documentation
 =============
 
-The documentation for ``ruyaml`` is in YAML, more specifically in `ryd
-<https://pypi.python.org/pypi/ryd>`_ ( /rɑɪt/, pronounced like the verb “write”
-). This is reStructuredText mixed with Python, each in separate YAML documents
-within a single file. If you know a bit of YAML, Python and reStructuredText it
-will be clear how that works.
-
-If you want to contribute to the documentation, you can sent me a clear
-description of the needed changes, e.g. as a unified diff. If the changes
-encompass multiple documents in a ``.ryd`` file, it is best to install ``ryd``
-(use a virtualenv!), clone the ``ruyaml`` repository on Bitbucket, edit
-documentation, run ``ryd``::
-
-      ryd --pdf '**/*.ryd'
-
-(quoting might not be necessary depending on your shell), and once the PDF(s)
-look acceptable, submit a pull-request.
-
-``ryd`` will check your file for single backquotes (my most common mistake going
-back and forth between reStructuredText and other mark up).
-
-If you contribute example programs, note that ``ryd`` will automatically run you
-program (so it should be correct) and can include the output of the program in
-the resulting ``.rst`` (and PDF) file.
+The documentation for ``ruyaml`` is written in the `ReStructured Text
+<http://docutils.sourceforge.net/rst.html>`_ format and follows the `Sphinx
+Document Generator <https://www.sphinx-doc.org/>`_'s conventions.
 
 Code
 ====
@@ -62,17 +38,16 @@ pass without warning/error, you can create your pull-request.
 Flake
 +++++
 
-My ``~/.config/flake8`` file::
+The `Flake8 <https://flake8.pycqa.org>`_ configuration is part of ``setup.py``::
 
     [flake8]
     show-source = True
     max-line-length = 95
     ignore = F405
 
-The suppress of F405 is necessary to allow ``from xxx import *``, which I have
-not removed in all places (yet).
+The suppress of F405 is necessary to allow ``from xxx import *``.
 
-First make sure your checked out source passes ``flake8`` without test (it should).
+Please make sure your checked out source passes ``flake8`` without test (it should).
 Then make your changes pass without any warnings/errors.
 
 Tox/pytest
@@ -86,41 +61,20 @@ no longer fail, and neither should any other existing tests.
 Typing/mypy
 +++++++++++
 
-I run ``mypy`` from the directory where the (link to) ruyaml directory is
-using::
+You should run ``mypy`` from ``ruyaml``'s source directory::
 
-    mypy --strict --follow-imports silent ruyaml/*.py
+    mypy --strict --follow-imports silent lib/ruyaml/*.py
 
-This should give no errors or warnings
-
-
-Generated files
-===============
-
-I use a minimal environment when developing, void of most artifacts needed for
-packaging, testing etc. These artifact files are *generated*, just before committing to
-Bitbucket and pushing to PyPI, with nuances coming from the ``_package_data``
-information in ``__init__.py``. Including changes in these files will
-automatically be reverted, even assuming your PR is accepted as is.
-
-Consider the following files **read-only** (if you think changes need to made these,
-contact me)::
-
-     setup.py
-     tox.ini
-     LICENSE
-     _ryd/conf.py
-     -ryd/Makefile
+This command should give no errors or warnings.
 
 
 Vulnerabilities
 ===============
 
 If you find a vulnerability in ``ruyaml`` (e.g. that would show the ``safe``
-and ``rt`` loader are not safe due to a bug in the software)), please contact me
-directly via email, or by leaving a comment on StackOverflow (below any of my
-posts), without going into the details of the vulnerability. After contact is
-estabilished I will work to eliminate the vulnerability in a timely fashion.
+and ``rt`` loader are not safe due to a bug in the software)), please contact
+the maintainers directly via email.
+
 After the vulnerability is removed, and affected parties notified to allow them
 to update versions, the vulnerability will be published, and your role in
 finding/resolving this properly attributed.
