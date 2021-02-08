@@ -2,6 +2,7 @@
   - UNRELEASED
   - Renaming the project to "ruyaml".
   - Removed remains of Python 2 compatiblity
+  - Removed documentation's dependency on "ryd" tool
 
 [0, 16, 7]: 2020-01-30
   - fix typchecking issue on TaggedScalar (reported by Jens Nielsen)

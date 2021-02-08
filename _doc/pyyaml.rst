@@ -1,14 +1,10 @@
-version: 0.1
-output: rst
-fix_inline_single_backquotes: true
---- |
 ***********************
 Differences with PyYAML
 ***********************
 
 .. parsed-literal::
 
-  *If I have seen further, it is by standing on the shoulders of giants*.
+    *If I have seen further, it is by standing on the shoulders of giants*.
                                                     Isaac Newton (1676)
 
 
@@ -41,7 +37,7 @@ PyYAML supports the `YAML 1.1`_ standard, ``ruyaml`` supports
 unless the YAML document is loaded with an explicit ``version==1.1`` or
 the document starts with::
 
-  % YAML 1.1
+    % YAML 1.1
 
 , ``ruyaml`` will load the document as version 1.2.
 
@@ -76,5 +72,9 @@ API
 Starting with 0.15 the API for using ``ruyaml`` has diverged allowing
 easier addition of new features.
 
---- !incraw |
-links.rydinc
+.. _tox: https://pypi.python.org/pypi/tox
+.. _py.test: http://pytest.org/latest/
+.. _YAML 1.1: http://www.yaml.org/spec/1.1/spec.html
+.. _YAML 1.2: http://www.yaml.org/spec/1.2/spec.html
+.. _PyPI: https://pypi.python.org/pypi
+.. _ruyaml: https://pypi.python.org/pypi/ruyaml

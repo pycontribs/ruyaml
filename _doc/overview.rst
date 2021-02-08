@@ -1,16 +1,12 @@
-version: 0.1
-output: rst
-fix_inline_single_backquotes: true
---- |
 ********
 Overview
 ********
 
-``ruyaml`` is a YAML 1.2  loader/dumper package for Python. It is a
+``ruyaml`` is a YAML 1.2 loader/dumper package for Python. It is a
 derivative of Kirill Simonov's `PyYAML 3.11
 <https://bitbucket.org/xi/pyyaml>`_.
 
-``ruyaml`` supports `YAML 1.2`_ and has  round-trip loaders and dumpers
+``ruyaml`` supports `YAML 1.2`_ and has round-trip loaders and dumpers
 that preserves, among others:
 
 - comments
@@ -35,7 +31,7 @@ block sequence dashes within that indentation.
 
 Although ``ruyaml`` still allows most of the PyYAML way of doing
 things, adding features required a different API then the transient
-nature of PyYAML's ``Loader`` and ``Dumper``.  Starting with
+nature of PyYAML's ``Loader`` and ``Dumper``. Starting with
 ``ruyaml`` version 0.15.0 this new API gets introduced. Old ways
 that get in the way will be removed, after first generating warnings
 on use, then generating an error. In general a warning in version 0.N.x will become an
@@ -45,6 +41,9 @@ error in 0.N+1.0
 Many of the bugs filed against PyYAML, but that were never
 acted upon, have been fixed in ``ruyaml``
 
-
---- !incraw |
-links.rydinc
+.. _tox: https://pypi.python.org/pypi/tox
+.. _py.test: http://pytest.org/latest/
+.. _YAML 1.1: http://www.yaml.org/spec/1.1/spec.html
+.. _YAML 1.2: http://www.yaml.org/spec/1.2/spec.html
+.. _PyPI: https://pypi.python.org/pypi
+.. _ruyaml: https://pypi.python.org/pypi/ruyaml

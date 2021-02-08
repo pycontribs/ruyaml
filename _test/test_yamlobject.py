@@ -2,8 +2,6 @@
 
 from __future__ import print_function
 
-import sys
-
 import pytest  # NOQA
 from roundtrip import save_and_run  # NOQA
 
@@ -45,7 +43,6 @@ def test_monster(tmpdir):
     assert save_and_run(program_src, tmpdir) == 0
 
 
-@pytest.mark.skipif(sys.version_info < (3, 0), reason='no __qualname__')
 def test_qualified_name00(tmpdir):
     """issue 214"""
     program_src = u"""\
@@ -69,7 +66,6 @@ def test_qualified_name00(tmpdir):
     assert save_and_run(program_src, tmpdir) == 0
 
 
-@pytest.mark.skipif(sys.version_info < (3, 0), reason='no __qualname__')
 def test_qualified_name01(tmpdir):
     """issue 214"""
     from io import StringIO

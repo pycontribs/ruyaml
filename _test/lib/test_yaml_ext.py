@@ -5,9 +5,20 @@ from __future__ import absolute_import, print_function
 import pprint
 import types
 
-import _ruyaml
-
 import ruyaml
+
+try:
+    import _ruyaml
+except ImportError:
+    import pytest
+
+    pytestmark = pytest.mark.skip
+
+    class DummyLoader(type):
+        pass
+
+    ruyaml.CLoader = DummyLoader
+    ruyaml.CDumper = DummyLoader
 
 ruyaml.PyBaseLoader = ruyaml.BaseLoader
 ruyaml.PySafeLoader = ruyaml.SafeLoader
