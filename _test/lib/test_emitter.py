@@ -2,6 +2,10 @@ from __future__ import absolute_import, print_function
 
 import ruyaml as yaml
 
+# Skipped because we have no idea where all those fixtures originate
+import pytest
+pytestmark = pytest.mark.skip
+
 
 def _compare_events(events1, events2):
     assert len(events1) == len(events2), (events1, events2)
