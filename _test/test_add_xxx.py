@@ -3,7 +3,8 @@
 import re
 
 import pytest  # NOQA
-from roundtrip import dedent
+
+from .roundtrip import dedent
 
 
 # from PyYAML docs

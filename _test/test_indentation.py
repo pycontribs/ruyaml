@@ -3,7 +3,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest  # NOQA
-from roundtrip import YAML, dedent, round_trip, round_trip_dump, round_trip_load
+
+from .roundtrip import YAML, dedent, round_trip, round_trip_dump, round_trip_load
 
 
 def rt(s):

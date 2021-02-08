@@ -1,7 +1,7 @@
 import pytest  # NOQA
 
 # import ruyaml
-from roundtrip import round_trip
+from .roundtrip import round_trip
 
 
 class TestProgramConfig:

@@ -3,7 +3,8 @@
 from __future__ import print_function
 
 import pytest  # NOQA
-from roundtrip import dedent, round_trip, round_trip_dump, round_trip_load  # NOQA
+
+from .roundtrip import dedent, round_trip, round_trip_dump, round_trip_load  # NOQA
 
 
 def load(s):
