@@ -6,12 +6,14 @@ import os.path
 import tempfile
 from io import BytesIO, StringIO
 
-import ruyaml as yaml
-
 # Skipped because we have no idea where the "unicode_filename"
 # fixture is supposed to come from
 import pytest
+
+import ruyaml as yaml
+
 pytestmark = pytest.mark.skip
+
 
 def test_unicode_input(unicode_filename, verbose=False):
     with open(unicode_filename, 'rb') as fp:

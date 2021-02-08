@@ -1,9 +1,10 @@
 from __future__ import absolute_import, print_function
 
-import ruyaml as yaml
-
 # Skipped because we have no idea where all those fixtures originate
 import pytest
+
+import ruyaml as yaml
+
 pytestmark = pytest.mark.skip
 
 

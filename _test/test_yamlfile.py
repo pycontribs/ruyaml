@@ -5,7 +5,6 @@ various test cases for YAML files
 """
 
 import platform
-import sys
 
 import pytest  # NOQA
 from roundtrip import dedent, round_trip, round_trip_dump, round_trip_load  # NOQA

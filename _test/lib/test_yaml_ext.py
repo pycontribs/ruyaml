@@ -11,9 +11,12 @@ try:
     import _ruyaml
 except ImportError:
     import pytest
+
     pytestmark = pytest.mark.skip
+
     class DummyLoader(type):
         pass
+
     ruyaml.CLoader = DummyLoader
     ruyaml.CDumper = DummyLoader
 

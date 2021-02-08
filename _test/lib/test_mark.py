@@ -1,11 +1,13 @@
 from __future__ import absolute_import, print_function
 
-import ruyaml as yaml
-
 # Skipped because we have no idea where the "marks_filename"
 # fixture is supposed to come from
 import pytest
+
+import ruyaml as yaml
+
 pytestmark = pytest.mark.skip
+
 
 def test_marks(marks_filename, verbose=False):
     with open(marks_filename, 'r') as fp0:

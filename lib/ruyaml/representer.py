@@ -3,11 +3,10 @@
 from __future__ import absolute_import, division, print_function
 
 import base64
+import collections
 import copyreg
 import datetime
-import sys
 import types
-import collections
 
 from ruyaml.compat import ordereddict  # NOQA; type: ignore
 from ruyaml.error import *  # NOQA
