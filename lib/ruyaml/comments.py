@@ -426,7 +426,7 @@ class CommentedSeq(MutableSliceableSequence, list, CommentedBase):  # type: igno
     def _yaml_add_comment(self, comment, key=NoComment):
         # type: (Any, Optional[Any]) -> None
         if key is not NoComment:
-            self.yaml_key_comment_extend(key, comment)
+            self.yaml_key_comment_extend(key, comment, clear=True)
         else:
             self.ca.comment = comment
 
