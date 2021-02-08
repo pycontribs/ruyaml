@@ -549,10 +549,7 @@ class SafeConstructor(BaseConstructor):
                 node.start_mark,
             )
         try:
-            if hasattr(base64, 'decodebytes'):
-                return base64.decodebytes(value)
-            else:
-                return base64.decodestring(value)
+            return base64.decodebytes(value)
         except binascii.Error as exc:
             raise ConstructorError(
                 None, None, 'failed to decode base64 data: %s' % exc, node.start_mark
@@ -809,10 +806,7 @@ class Constructor(SafeConstructor):
                 node.start_mark,
             )
         try:
-            if hasattr(base64, 'decodebytes'):
-                return base64.decodebytes(value)
-            else:
-                return base64.decodestring(value)
+            return base64.decodebytes(value)
         except binascii.Error as exc:
             raise ConstructorError(
                 None, None, 'failed to decode base64 data: %s' % exc, node.start_mark
