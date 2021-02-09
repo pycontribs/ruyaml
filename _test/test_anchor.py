@@ -494,7 +494,7 @@ class TestMergeKeysValues:
 
 class TestDuplicateKeyThroughAnchor:
     def test_duplicate_key_00(self):
-        from ruyaml import round_trip_load, safe_load, version_info
+        from ruyaml import round_trip_load, safe_load
         from ruyaml.constructor import DuplicateKeyError, DuplicateKeyFutureWarning
 
         s = dedent(
@@ -506,22 +506,13 @@ class TestDuplicateKeyThroughAnchor:
             *anchor : duplicate key
         """
         )
-        if version_info < (0, 15, 1):
-            pass
-        elif version_info < (0, 16, 0):
-            with pytest.warns(DuplicateKeyFutureWarning):
-                safe_load(s)
-            with pytest.warns(DuplicateKeyFutureWarning):
-                round_trip_load(s)
-        else:
-            with pytest.raises(DuplicateKeyError):
-                safe_load(s)
-            with pytest.raises(DuplicateKeyError):
-                round_trip_load(s)
+        with pytest.raises(DuplicateKeyError):
+            safe_load(s)
+        with pytest.raises(DuplicateKeyError):
+            round_trip_load(s)
 
     def test_duplicate_key_01(self):
         # so issue https://stackoverflow.com/a/52852106/1307905
-        from ruyaml import version_info
         from ruyaml.constructor import DuplicateKeyError
 
         s = dedent(
@@ -534,15 +525,12 @@ class TestDuplicateKeyThroughAnchor:
           <<: *help-name
         """
         )
-        if version_info < (0, 15, 1):
-            pass
-        else:
-            with pytest.raises(DuplicateKeyError):
-                yaml = YAML(typ='safe')
-                yaml.load(s)
-            with pytest.raises(DuplicateKeyError):
-                yaml = YAML()
-                yaml.load(s)
+        with pytest.raises(DuplicateKeyError):
+            yaml = YAML(typ='safe')
+            yaml.load(s)
+        with pytest.raises(DuplicateKeyError):
+            yaml = YAML()
+            yaml.load(s)
 
 
 class TestFullCharSetAnchors:
