@@ -378,11 +378,7 @@ class SafeConstructor(BaseConstructor):
         while index < len(node.value):
             key_node, value_node = node.value[index]
             if key_node.tag == u'tag:yaml.org,2002:merge':
-                if merge:  # double << key
-                    if self.allow_duplicate_keys:
-                        del node.value[index]
-                        index += 1
-                        continue
+                if merge and not self.allow_duplicate_keys:
                     args = [
                         'while constructing a mapping',
                         node.start_mark,
@@ -390,7 +386,7 @@ class SafeConstructor(BaseConstructor):
                         key_node.start_mark,
                         """
                         To suppress this check see:
-                           http://yaml.readthedocs.io/en/latest/api.html#duplicate-keys
+                        http://yaml.readthedocs.io/en/latest/api.html#duplicate-keys
                         """,
                         """\
                         Duplicate keys will become an error in future releases, and are errors
@@ -1346,11 +1342,7 @@ class RoundTripConstructor(SafeConstructor):
         while index < len(node.value):
             key_node, value_node = node.value[index]
             if key_node.tag == u'tag:yaml.org,2002:merge':
-                if merge_map_list:  # double << key
-                    if self.allow_duplicate_keys:
-                        del node.value[index]
-                        index += 1
-                        continue
+                if merge_map_list and not self.allow_duplicate_keys:
                     args = [
                         'while constructing a mapping',
                         node.start_mark,
