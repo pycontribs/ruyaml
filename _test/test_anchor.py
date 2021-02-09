@@ -491,6 +491,43 @@ class TestMergeKeysValues:
         assert 'a' not in d
         assert 'a' in d2
 
+    def test_dup_merge(self):
+        from ruyaml import YAML
+
+        yaml = YAML()
+        yaml.allow_duplicate_keys = True
+        d = yaml.load(
+            """\
+        foo: &f
+          a: a
+        foo2: &g
+          b: b
+        all:
+          <<: *f
+          <<: *g
+        """
+        )['all']
+        assert d == {'a': 'a', 'b': 'b'}
+
+    def test_dup_merge_fail(self):
+        from ruyaml import YAML
+        from ruyaml.constructor import DuplicateKeyError
+
+        yaml = YAML()
+        yaml.allow_duplicate_keys = False
+        with pytest.raises(DuplicateKeyError):
+            yaml.load(
+                """\
+            foo: &f
+              a: a
+            foo2: &g
+              b: b
+            all:
+              <<: *f
+              <<: *g
+            """
+            )
+
 
 class TestDuplicateKeyThroughAnchor:
     def test_duplicate_key_00(self):
