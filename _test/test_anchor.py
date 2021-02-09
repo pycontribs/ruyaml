@@ -495,7 +495,7 @@ class TestMergeKeysValues:
 class TestDuplicateKeyThroughAnchor:
     def test_duplicate_key_00(self):
         from ruyaml import round_trip_load, safe_load
-        from ruyaml.constructor import DuplicateKeyError, DuplicateKeyFutureWarning
+        from ruyaml.constructor import DuplicateKeyError
 
         s = dedent(
             """\
