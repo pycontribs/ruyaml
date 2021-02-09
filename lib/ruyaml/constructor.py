@@ -22,7 +22,7 @@ from ruyaml.comments import (
 )
 from ruyaml.compat import MutableMapping  # noqa; type: ignore; type: ignore
 from ruyaml.compat import builtins_module  # NOQA
-from ruyaml.compat import Hashable, MutableSequence, ordereddict, version_tnf
+from ruyaml.compat import Hashable, MutableSequence, ordereddict
 
 # fmt: off
 from ruyaml.error import (
@@ -88,7 +88,7 @@ class BaseConstructor:
         self.state_generators = []  # type: List[Any]
         self.deep_construct = False
         self._preserve_quotes = preserve_quotes
-        self.allow_duplicate_keys = version_tnf((0, 15, 1), (0, 16))
+        self.allow_duplicate_keys = False
 
     @property
     def composer(self):
