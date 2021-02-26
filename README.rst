@@ -9,6 +9,6 @@ Notes
 
 - The current version has the same API as the "ruamel.yaml" package.
   However, it will install the `ruyaml` python module. Thus, simply
-  replace ``from yuamel import yaml`` with ``import ruyaml as yaml``
+  replace ``from ruamel import yaml`` with ``import ruyaml as yaml``
   (or equivalent) and you're all set.
 - python3.6 is the minimal version of python supported
