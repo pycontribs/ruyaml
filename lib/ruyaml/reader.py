@@ -20,6 +20,7 @@
 #      character.
 
 import codecs
+from typing import Text,Optional,Tuple
 
 from ruyaml.error import YAMLError, FileMark, StringMark, YAMLStreamError
 from ruyaml.compat import _F  # NOQA

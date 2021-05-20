@@ -92,9 +92,9 @@ def round_trip_dump_all(
     version=None,
     allow_unicode=None,
 ):
-    import ruamel.yaml  # NOQA
+    import ruyaml as yaml # NOQA
 
-    yaml = ruamel.yaml.YAML()
+    yaml = ruyaml.YAML()
     yaml.indent(mapping=indent, sequence=indent, offset=block_seq_indent)
     if default_flow_style is not unset:
         yaml.default_flow_style = default_flow_style

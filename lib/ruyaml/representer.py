@@ -1,5 +1,7 @@
 # coding: utf-8
 
+from  collections import OrderedDict
+
 from ruyaml.error import *  # NOQA
 from ruyaml.nodes import *  # NOQA
 from ruyaml.compat import ordereddict  # type: ignore
@@ -379,7 +381,7 @@ SafeRepresenter.add_representer(set, SafeRepresenter.represent_set)
 SafeRepresenter.add_representer(ordereddict, SafeRepresenter.represent_ordereddict)
 
 SafeRepresenter.add_representer(
-    collections.OrderedDict, SafeRepresenter.represent_ordereddict
+    OrderedDict, SafeRepresenter.represent_ordereddict
 )
 
 SafeRepresenter.add_representer(datetime.date, SafeRepresenter.represent_date)
@@ -1139,7 +1141,7 @@ RoundTripRepresenter.add_representer(
 )
 
 RoundTripRepresenter.add_representer(
-    collections.OrderedDict, RoundTripRepresenter.represent_ordereddict
+    OrderedDict, RoundTripRepresenter.represent_ordereddict
 )
 
 RoundTripRepresenter.add_representer(CommentedSet, RoundTripRepresenter.represent_set)

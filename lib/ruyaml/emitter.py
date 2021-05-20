@@ -7,10 +7,13 @@
 # sequence ::= SEQUENCE-START node* SEQUENCE-END
 # mapping ::= MAPPING-START (node node)* MAPPING-END
 
+import sys
 
 # fmt: off
 from ruyaml.compat import _F, nprint, dbg, DBG_EVENT, \
     check_anchorname_char
+from ruyaml.error import YAMLError
+from ruyaml.events import *
 # fmt: on
 
 if False:  # MYPY

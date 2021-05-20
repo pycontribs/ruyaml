@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from ruamel.yaml.compat import _F
+from ruyaml.compat import _F
 
 from typing import Any
 

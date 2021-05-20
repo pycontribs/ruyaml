@@ -1,5 +1,5 @@
 
-import ruamel.yaml as yaml
+import ruyaml as yaml
 YAML = yaml.YAML
 import codecs
 import os

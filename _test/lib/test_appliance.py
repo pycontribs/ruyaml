@@ -3,6 +3,8 @@ import sys
 import os
 import pprint
 import argparse
+import types
+import traceback
 
 # DATA = 'tests/data'
 # determine the position of data dynamically relative to program

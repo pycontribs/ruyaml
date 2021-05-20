@@ -1,5 +1,5 @@
 
-import ruyaml as yaml
+import ruyaml
 import canonical  # NOQA
 import pprint
 
@@ -12,29 +12,29 @@ pytestmark = pytest.mark.skip
 
 
 def _convert_structure(loader):
-    if loader.check_event(ruamel.yaml.ScalarEvent):
+    if loader.check_event(ruyaml.ScalarEvent):
         event = loader.get_event()
         if event.tag or event.anchor or event.value:
             return True
         else:
             return None
-    elif loader.check_event(ruamel.yaml.SequenceStartEvent):
+    elif loader.check_event(ruyaml.SequenceStartEvent):
         loader.get_event()
         sequence = []
-        while not loader.check_event(ruamel.yaml.SequenceEndEvent):
+        while not loader.check_event(ruyaml.SequenceEndEvent):
             sequence.append(_convert_structure(loader))
         loader.get_event()
         return sequence
-    elif loader.check_event(ruamel.yaml.MappingStartEvent):
+    elif loader.check_event(ruyaml.MappingStartEvent):
         loader.get_event()
         mapping = []
-        while not loader.check_event(ruamel.yaml.MappingEndEvent):
+        while not loader.check_event(ruyaml.MappingEndEvent):
             key = _convert_structure(loader)
             value = _convert_structure(loader)
             mapping.append((key, value))
         loader.get_event()
         return mapping
-    elif loader.check_event(ruamel.yaml.AliasEvent):
+    elif loader.check_event(ruyaml.AliasEvent):
         loader.get_event()
         return '*'
     else:
@@ -48,13 +48,13 @@ def test_structure(data_filename, structure_filename, verbose=False):
         nodes2 = eval(fp.read())
     try:
         with open(data_filename, 'rb') as fp:
-            loader = ruamel.yaml.Loader(fp)
+            loader = ruyaml.Loader(fp)
         while loader.check_event():
             if loader.check_event(
-                ruamel.yaml.StreamStartEvent,
-                ruamel.yaml.StreamEndEvent,
-                ruamel.yaml.DocumentStartEvent,
-                ruamel.yaml.DocumentEndEvent,
+                ruyaml.StreamStartEvent,
+                ruyaml.StreamEndEvent,
+                ruyaml.DocumentStartEvent,
+                ruyaml.DocumentEndEvent,
             ):
                 loader.get_event()
                 continue
@@ -77,12 +77,12 @@ def _compare_events(events1, events2, full=False):
     assert len(events1) == len(events2), (len(events1), len(events2))
     for event1, event2 in zip(events1, events2):
         assert event1.__class__ == event2.__class__, (event1, event2)
-        if isinstance(event1, ruamel.yaml.AliasEvent) and full:
+        if isinstance(event1, ruyaml.AliasEvent) and full:
             assert event1.anchor == event2.anchor, (event1, event2)
         if isinstance(event1, (yaml.ScalarEvent, yaml.CollectionStartEvent)):
             if (event1.tag not in [None, '!'] and event2.tag not in [None, '!']) or full:
                 assert event1.tag == event2.tag, (event1, event2)
-        if isinstance(event1, ruamel.yaml.ScalarEvent):
+        if isinstance(event1, ruyaml.ScalarEvent):
             assert event1.value == event2.value, (event1, event2)
 
 
@@ -91,9 +91,9 @@ def test_parser(data_filename, canonical_filename, verbose=False):
     events2 = None
     try:
         with open(data_filename, 'rb') as fp0:
-            events1 = list(ruamel.yaml.parse(fp0))
+            events1 = list(ruyaml.parse(fp0))
         with open(canonical_filename, 'rb') as fp0:
-            events2 = list(ruamel.yaml.canonical_parse(fp0))
+            events2 = list(ruyaml.canonical_parse(fp0))
         _compare_events(events1, events2)
     finally:
         if verbose:
@@ -111,9 +111,9 @@ def test_parser_on_canonical(canonical_filename, verbose=False):
     events2 = None
     try:
         with open(canonical_filename, 'rb') as fp0:
-            events1 = list(ruamel.yaml.parse(fp0))
+            events1 = list(ruyaml.parse(fp0))
         with open(canonical_filename, 'rb') as fp0:
-            events2 = list(ruamel.yaml.canonical_parse(fp0))
+            events2 = list(ruyaml.canonical_parse(fp0))
         _compare_events(events1, events2, full=True)
     finally:
         if verbose:
@@ -129,7 +129,7 @@ test_parser_on_canonical.unittest = ['.canonical']
 def _compare_nodes(node1, node2):
     assert node1.__class__ == node2.__class__, (node1, node2)
     assert node1.tag == node2.tag, (node1, node2)
-    if isinstance(node1, ruamel.yaml.ScalarNode):
+    if isinstance(node1, ruyaml.ScalarNode):
         assert node1.value == node2.value, (node1, node2)
     else:
         assert len(node1.value) == len(node2.value), (node1, node2)
@@ -146,9 +146,9 @@ def test_composer(data_filename, canonical_filename, verbose=False):
     nodes2 = None
     try:
         with open(data_filename, 'rb') as fp0:
-            nodes1 = list(ruamel.yaml.compose_all(fp0))
+            nodes1 = list(ruyaml.compose_all(fp0))
         with open(canonical_filename, 'rb') as fp0:
-            nodes2 = list(ruamel.yaml.canonical_compose_all(fp0))
+            nodes2 = list(ruyaml.canonical_compose_all(fp0))
         assert len(nodes1) == len(nodes2), (len(nodes1), len(nodes2))
         for node1, node2 in zip(nodes1, nodes2):
             _compare_nodes(node1, node2)
@@ -166,9 +166,9 @@ test_composer.unittest = ['.data', '.canonical']
 def _make_loader():
     global MyLoader
 
-    class MyLoader(ruamel.yaml.Loader):
+    class MyLoader(ruyaml.Loader):
         def construct_sequence(self, node):
-            return tuple(ruamel.yaml.Loader.construct_sequence(self, node))
+            return tuple(ruyaml.Loader.construct_sequence(self, node))
 
         def construct_mapping(self, node):
             pairs = self.construct_pairs(node)
@@ -185,9 +185,9 @@ def _make_loader():
 def _make_canonical_loader():
     global MyCanonicalLoader
 
-    class MyCanonicalLoader(ruamel.yaml.CanonicalLoader):
+    class MyCanonicalLoader(ruyaml.CanonicalLoader):
         def construct_sequence(self, node):
-            return tuple(ruamel.yaml.CanonicalLoader.construct_sequence(self, node))
+            return tuple(ruyaml.CanonicalLoader.construct_sequence(self, node))
 
         def construct_mapping(self, node):
             pairs = self.construct_pairs(node)

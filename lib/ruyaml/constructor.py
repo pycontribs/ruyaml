@@ -20,31 +20,29 @@ from ruyaml.comments import (
     CommentedSet,
     TaggedScalar,
 )
-from ruyaml.compat import MutableMapping  # noqa; type: ignore; type: ignore
 from ruyaml.compat import builtins_module  # NOQA
-from ruyaml.compat import Hashable, MutableSequence, ordereddict
 
 # fmt: off
-from ruamel.yaml.error import (MarkedYAMLError, MarkedYAMLFutureWarning,
-                               MantissaNoDotYAML1_1Warning)
-from ruamel.yaml.nodes import *                               # NOQA
-from ruamel.yaml.nodes import (SequenceNode, MappingNode, ScalarNode)
-from ruamel.yaml.compat import (_F, builtins_module, # NOQA
-                                nprint, nprintf, version_tnf)
-from ruamel.yaml.compat import ordereddict  # type: ignore
+from ruyaml.error import (MarkedYAMLError, MarkedYAMLFutureWarning,
+                          MantissaNoDotYAML1_1Warning)
+from ruyaml.nodes import *                               # NOQA
+from ruyaml.nodes import (SequenceNode, MappingNode, ScalarNode)
+from ruyaml.compat import (_F, builtins_module, # NOQA
+                           nprint, nprintf, version_tnf)
+from ruyaml.compat import ordereddict  # type: ignore
 
-from ruamel.yaml.comments import *                               # NOQA
-from ruamel.yaml.comments import (CommentedMap, CommentedOrderedMap, CommentedSet,
-                                  CommentedKeySeq, CommentedSeq, TaggedScalar,
-                                  CommentedKeyMap)
-from ruamel.yaml.scalarstring import (SingleQuotedScalarString, DoubleQuotedScalarString,
-                                      LiteralScalarString, FoldedScalarString,
-                                      PlainScalarString, ScalarString,)
-from ruamel.yaml.scalarint import ScalarInt, BinaryInt, OctalInt, HexInt, HexCapsInt
-from ruamel.yaml.scalarfloat import ScalarFloat
-from ruamel.yaml.scalarbool import ScalarBoolean
-from ruamel.yaml.timestamp import TimeStamp
-from ruamel.yaml.util import RegExp
+from ruyaml.comments import *                               # NOQA
+from ruyaml.comments import (CommentedMap, CommentedOrderedMap, CommentedSet,
+                             CommentedKeySeq, CommentedSeq, TaggedScalar,
+                             CommentedKeyMap)
+from ruyaml.scalarstring import (SingleQuotedScalarString, DoubleQuotedScalarString,
+                                 LiteralScalarString, FoldedScalarString,
+                                 PlainScalarString, ScalarString,)
+from ruyaml.scalarint import ScalarInt, BinaryInt, OctalInt, HexInt, HexCapsInt
+from ruyaml.scalarfloat import ScalarFloat
+from ruyaml.scalarbool import ScalarBoolean
+from ruyaml.timestamp import TimeStamp
+from ruyaml.util import RegExp
 
 if False:  # MYPY
     from typing import Any, Dict, Generator, List, Optional, Set, Union  # NOQA

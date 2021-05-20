@@ -320,7 +320,7 @@ def test_constructor_types(data_filename, code_filename, verbose=False):
     yaml.loader = MyLoader
     try:
         with open(data_filename, 'rb') as fp0:
-            native1 = list(ruyaml.load_all(fp0)
+            native1 = list(ruyaml.load_all(fp0))
         if len(native1) == 1:
             native1 = native1[0]
         with open(code_filename, 'rb') as fp0:

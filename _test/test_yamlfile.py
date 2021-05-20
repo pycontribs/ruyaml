@@ -52,7 +52,7 @@ class TestYAML:
         import ruyaml  # NOQA
 
         # OrderedDict mapped to !!omap
-        x = ordereddict([('a', 1), ('b', 2)])
+        x = OrderedDict([('a', 1), ('b', 2)])
         res = round_trip_dump(x, default_flow_style=False)
         assert res == dedent("""
         !!omap

@@ -11,7 +11,7 @@ def test_monster(tmpdir):
     import ruyaml
     from textwrap import dedent
 
-    class Monster(ruamel.yaml.YAMLObject):
+    class Monster(ruyaml.YAMLObject):
         yaml_tag = '!Monster'
 
         def __init__(self, name, hp, ac, attacks):
@@ -46,21 +46,21 @@ def test_monster(tmpdir):
 def test_qualified_name00(tmpdir):
     """issue 214"""
     program_src = """\
-    from ruyaml import YAML
-    from ruyaml.compat import StringIO
+    import ruyaml
+    from io import StringIO
 
     class A:
         def f(self):
             pass
 
-    yaml = YAML(typ='unsafe', pure=True)
+    yaml = ruyaml.YAML(typ='unsafe', pure=True)
     yaml.explicit_end = True
     buf = StringIO()
     yaml.dump(A.f, buf)
     res = buf.getvalue()
     print('res', repr(res))
     assert res == "!!python/name:__main__.A.f ''\\n...\\n"
-    x = yaml.load(res)
+    x = ruyaml.load(res)
     assert x == A.f
     """
     assert save_and_run(program_src, tmpdir) == 0

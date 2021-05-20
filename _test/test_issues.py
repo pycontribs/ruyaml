@@ -63,11 +63,11 @@ class TestIssues:
                 return int(self.value*self.PREFIXES[self.prefix])
 
         # This fails:
-        ruyaml.add_implicit_resolver(SINumber.yaml_tag, SINumber.yaml_implicit_pattern)
+        yaml.add_implicit_resolver(SINumber.yaml_tag, SINumber.yaml_implicit_pattern)
 
-        ret = ruyaml.load("""
+        ret = yaml.load("""
         [1,2,3, !si 10k, 100G]
-        """, Loader=ruyaml.Loader)
+        """, Loader=yaml.Loader)
         for idx, l in enumerate([1, 2, 3, 10000, 100000000000]):
             assert int(ret[idx]) == l
         '''

@@ -2,7 +2,7 @@
 
 import sys
 
-from ruamel.yaml.compat import _F
+from ruyaml.compat import _F
 
 if False:  # MYPY
     from typing import Any, Dict, Text  # NOQA

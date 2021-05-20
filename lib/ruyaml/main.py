@@ -749,7 +749,7 @@ class YAML:
         single file installers that are not properly emulating a file-system (issue 324)
         no plug-ins will be found. If any are packaged, you know which file that are
         and you can explicitly provide it during instantiation:
-            yaml = ruamel.yaml.YAML(plug_ins=['ruamel/yaml/jinja2/__plug_in__'])
+            yaml = ruyaml.YAML(plug_ins=['ruyaml/jinja2/__plug_in__'])
         """
         try:
             bd = os.path.dirname(__file__)
@@ -987,7 +987,7 @@ def yaml_object(yml):
 
 ########################################################################################
 def warn_deprecation(fun, method, arg=''):
-    from ruamel.yaml.compat import _F
+    from ruyaml.compat import _F
 
     warnings.warn(
         _F(
