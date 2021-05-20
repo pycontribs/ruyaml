@@ -552,10 +552,7 @@ class SafeConstructor(BaseConstructor):
                 node.start_mark,
             )
         try:
-            if hasattr(base64, 'decodebytes'):
-                return base64.decodebytes(value)
-            else:
-                return base64.decodestring(value)
+            return base64.decodebytes(value)
         except binascii.Error as exc:
             raise ConstructorError(
                 None,
@@ -811,10 +808,7 @@ class Constructor(SafeConstructor):
                 node.start_mark,
             )
         try:
-            if hasattr(base64, 'decodebytes'):
-                return base64.decodebytes(value)
-            else:
-                return base64.decodestring(value)
+            return base64.decodebytes(value)
         except binascii.Error as exc:
             raise ConstructorError(
                 None,
