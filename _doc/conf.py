@@ -45,11 +45,11 @@ source_suffix = {".rst": "restructuredtext"}
 master_doc = "index"
 
 # General information about the project.
-project = u"yaml"
-copyright = u"2017-2019, Anthon van der Neut, Ruamel bvba"
-author = u"Anthon van der Neut"
+project = u"ruyaml"
+copyright = u"2017-2021, Anthon van der Neut and other contributors"
+author = u"Anthon van der Neut et al."
 
-# The version info for the project you're documenting, acts as replacement for
+# The version info for the project you are documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
@@ -57,7 +57,7 @@ try:
     from ruyaml import __version__, version_info  # NOQA
 
     # The short X.Y version.
-    version = ".".join([str(x) for x in version_info[:3]])
+    version = '.'.join([str(ch) for ch in version_info[:3]])
     # The full version, including alpha/beta/rc tags.
     release = version  # = __version__
 except Exception as e:
@@ -230,10 +230,10 @@ latex_elements = {
 latex_documents = [
     (
         master_doc,
-        "yaml.tex",
-        u"Python YAML package documentation",
-        u"Anthon van der Neut",
-        "manual",
+        'yaml.tex',
+        'Python YAML package documentation',
+        'Anthon van der Neut',
+        'manual',
     )
 ]
 
@@ -262,7 +262,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "yaml", u"yaml Documentation", [author], 1)]
+man_pages = [(master_doc, 'yaml', 'yaml Documentation', [author], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -276,8 +276,8 @@ man_pages = [(master_doc, "yaml", u"yaml Documentation", [author], 1)]
 texinfo_documents = [
     (
         master_doc,
-        "yaml",
-        u"yaml Documentation",
+        'yaml',
+        'yaml Documentation',
         author,
         "yaml",
         "One line description of project.",

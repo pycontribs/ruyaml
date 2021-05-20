@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import print_function
-
 """
 testing of anchors and the aliases referring to them
 """
@@ -55,20 +53,20 @@ class TestAnchorsAliases:
         """test if id matches the anchor template"""
         from ruyaml.serializer import templated_id
 
-        assert templated_id(u'id001')
-        assert templated_id(u'id999')
-        assert templated_id(u'id1000')
-        assert templated_id(u'id0001')
-        assert templated_id(u'id0000')
-        assert not templated_id(u'id02')
-        assert not templated_id(u'id000')
-        assert not templated_id(u'x000')
+        assert templated_id('id001')
+        assert templated_id('id999')
+        assert templated_id('id1000')
+        assert templated_id('id0001')
+        assert templated_id('id0000')
+        assert not templated_id('id02')
+        assert not templated_id('id000')
+        assert not templated_id('x000')
 
     # def test_re_matcher(self):
     #     import re
-    #     assert re.compile(u'id(?!000)\\d{3,}').match('id001')
-    #     assert not re.compile(u'id(?!000\\d*)\\d{3,}').match('id000')
-    #     assert re.compile(u'id(?!000$)\\d{3,}').match('id0001')
+    #     assert re.compile('id(?!000)\\d{3,}').match('id001')
+    #     assert not re.compile('id(?!000\\d*)\\d{3,}').match('id000')
+    #     assert re.compile('id(?!000$)\\d{3,}').match('id0001')
 
     def test_anchor_assigned(self):
         from ruyaml.comments import CommentedMap
@@ -305,9 +303,9 @@ class TestAnchorsAliases:
             <<: *shell_component
             components:
               server: {<<: *server_service}
-        """
-        )
-        data = ruyaml.safe_load(ys)
+        """)
+        yaml = ruyaml.YAML(typ='safe', pure=True)
+        data = yaml.load(ys)
         assert data['services']['shell']['components']['server']['port'] == 8000
 
     def test_issue_130a(self):
@@ -332,9 +330,9 @@ class TestAnchorsAliases:
             <<: *shell_component
             components:
               server: {<<: *server_service}
-        """
-        )
-        data = ruyaml.safe_load(ys)
+        """)
+        yaml = ruyaml.YAML(typ='safe', pure=True)
+        data = yaml.load(ys)
         assert data['services']['shell']['components']['server']['port'] == 4000
 
 
@@ -360,9 +358,9 @@ class TestMergeKeysValues:
     # in the following d always has "expanded" the merges
 
     def test_merge_for(self):
-        from ruyaml import safe_load
+        from ruyaml import YAML
 
-        d = safe_load(self.yaml_str)
+        d = YAML(typ='safe', pure=True).load(self.yaml_str)
         data = round_trip_load(self.yaml_str)
         count = 0
         for x in data[2]:
@@ -371,9 +369,9 @@ class TestMergeKeysValues:
         assert count == len(d[2])
 
     def test_merge_keys(self):
-        from ruyaml import safe_load
+        from ruyaml import YAML
 
-        d = safe_load(self.yaml_str)
+        d = YAML(typ='safe', pure=True).load(self.yaml_str)
         data = round_trip_load(self.yaml_str)
         count = 0
         for x in data[2].keys():
@@ -382,9 +380,9 @@ class TestMergeKeysValues:
         assert count == len(d[2])
 
     def test_merge_values(self):
-        from ruyaml import safe_load
+        from ruyaml import YAML
 
-        d = safe_load(self.yaml_str)
+        d = YAML(typ='safe', pure=True).load(self.yaml_str)
         data = round_trip_load(self.yaml_str)
         count = 0
         for x in data[2].values():
@@ -393,9 +391,9 @@ class TestMergeKeysValues:
         assert count == len(d[2])
 
     def test_merge_items(self):
-        from ruyaml import safe_load
+        from ruyaml import YAML
 
-        d = safe_load(self.yaml_str)
+        d = YAML(typ='safe', pure=True).load(self.yaml_str)
         data = round_trip_load(self.yaml_str)
         count = 0
         for x in data[2].items():
@@ -404,9 +402,9 @@ class TestMergeKeysValues:
         assert count == len(d[2])
 
     def test_len_items_delete(self):
-        from ruyaml import safe_load
+        from ruyaml import YAML
 
-        d = safe_load(self.yaml_str)
+        d = YAML(typ='safe', pure=True).load(self.yaml_str)
         data = round_trip_load(self.yaml_str)
         x = data[2].items()
         print('d2 items', d[2].items(), len(d[2].items()), x, len(x))
@@ -491,11 +489,49 @@ class TestMergeKeysValues:
         assert 'a' not in d
         assert 'a' in d2
 
+    def test_dup_merge(self):
+        from ruyaml import YAML
+
+        yaml = YAML()
+        yaml.allow_duplicate_keys = True
+        d = yaml.load(
+            """\
+        foo: &f
+          a: a
+        foo2: &g
+          b: b
+        all:
+          <<: *f
+          <<: *g
+        """
+        )['all']
+        assert d == {'a': 'a', 'b': 'b'}
+
+    def test_dup_merge_fail(self):
+        from ruyaml import YAML
+        from ruyaml.constructor import DuplicateKeyError
+
+        yaml = YAML()
+        yaml.allow_duplicate_keys = False
+        with pytest.raises(DuplicateKeyError):
+            yaml.load(
+                """\
+            foo: &f
+              a: a
+            foo2: &g
+              b: b
+            all:
+              <<: *f
+              <<: *g
+            """
+            )
+
 
 class TestDuplicateKeyThroughAnchor:
     def test_duplicate_key_00(self):
-        from ruyaml import round_trip_load, safe_load, version_info
-        from ruyaml.constructor import DuplicateKeyError, DuplicateKeyFutureWarning
+        from ruyaml import version_info
+        from ruyaml import YAML
+        from ruyaml.constructor import DuplicateKeyFutureWarning, DuplicateKeyError
 
         s = dedent(
             """\
@@ -504,24 +540,22 @@ class TestDuplicateKeyThroughAnchor:
             *anchor : duplicate key
             baz: bat
             *anchor : duplicate key
-        """
-        )
+        """)
         if version_info < (0, 15, 1):
             pass
         elif version_info < (0, 16, 0):
             with pytest.warns(DuplicateKeyFutureWarning):
-                safe_load(s)
+                YAML(typ='safe', pure=True).load(s)
             with pytest.warns(DuplicateKeyFutureWarning):
-                round_trip_load(s)
+                YAML(typ='rt').load(s)
         else:
             with pytest.raises(DuplicateKeyError):
-                safe_load(s)
+                YAML(typ='safe', pure=True).load(s)
             with pytest.raises(DuplicateKeyError):
-                round_trip_load(s)
+                YAML(typ='rt').load(s)
 
     def test_duplicate_key_01(self):
         # so issue https://stackoverflow.com/a/52852106/1307905
-        from ruyaml import version_info
         from ruyaml.constructor import DuplicateKeyError
 
         s = dedent(
@@ -534,15 +568,12 @@ class TestDuplicateKeyThroughAnchor:
           <<: *help-name
         """
         )
-        if version_info < (0, 15, 1):
-            pass
-        else:
-            with pytest.raises(DuplicateKeyError):
-                yaml = YAML(typ='safe')
-                yaml.load(s)
-            with pytest.raises(DuplicateKeyError):
-                yaml = YAML()
-                yaml.load(s)
+        with pytest.raises(DuplicateKeyError):
+            yaml = YAML(typ='safe')
+            yaml.load(s)
+        with pytest.raises(DuplicateKeyError):
+            yaml = YAML()
+            yaml.load(s)
 
 
 class TestFullCharSetAnchors:

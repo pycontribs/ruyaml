@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from __future__ import print_function
+import pytest  # NOQA
 
 import json
 
@@ -10,12 +10,13 @@ import pytest  # NOQA
 def load(s, typ=float):
     import ruyaml
 
+    yaml = ruyaml.YAML()
     x = '{"low": %s }' % (s)
     print('input: [%s]' % (s), repr(x))
     # just to check it is loadable json
     res = json.loads(x)
     assert isinstance(res['low'], typ)
-    ret_val = ruyaml.load(x, ruyaml.RoundTripLoader)
+    ret_val = yaml.load(x)
     print(ret_val)
     return ret_val['low']
 

@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import print_function
-
 """
 testing of anchors and the aliases referring to them
 """
@@ -11,6 +9,7 @@ import textwrap
 from pathlib import Path
 
 import pytest
+from pathlib import Path
 
 
 class TestNewAPI:
@@ -159,8 +158,7 @@ class TestLoadAll:
 
         fn = Path(str(tmpdir)) / 'test.yaml'
         fn.write_text(
-            textwrap.dedent(
-                u"""\
+            textwrap.dedent("""\
             ---
             - a
             ---
@@ -201,10 +199,10 @@ class TestDumpLoadUnicode:
         from ruyaml import YAML
 
         yaml = YAML()
-        text_dict = {'text': u'HELLO_WORLD©'}
+        text_dict = {'text': 'HELLO_WORLD©'}
         file_name = str(tmpdir) + '/tstFile.yaml'
         yaml.dump(text_dict, open(file_name, 'w'))
-        assert open(file_name, 'rb').read().decode('utf-8') == u'text: HELLO_WORLD©\n'
+        assert open(file_name, 'rb').read().decode('utf-8') == 'text: HELLO_WORLD©\n'
 
     def test_read_unicode(self, tmpdir):
         from ruyaml import YAML
@@ -212,9 +210,9 @@ class TestDumpLoadUnicode:
         yaml = YAML()
         file_name = str(tmpdir) + '/tstFile.yaml'
         with open(file_name, 'wb') as fp:
-            fp.write(u'text: HELLO_WORLD©\n'.encode('utf-8'))
+            fp.write('text: HELLO_WORLD©\n'.encode('utf-8'))
         text_dict = yaml.load(open(file_name, 'r'))
-        assert text_dict['text'] == u'HELLO_WORLD©'
+        assert text_dict['text'] == 'HELLO_WORLD©'
 
 
 class TestFlowStyle:

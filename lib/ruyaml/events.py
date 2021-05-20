@@ -1,5 +1,7 @@
 # coding: utf-8
 
+from ruyaml.compat import _F
+
 # Abstract classes.
 
 if False:  # MYPY
@@ -31,11 +33,15 @@ class Event:
             if hasattr(self, key)
         ]
         arguments = ', '.join(
-            ['%s=%r' % (key, getattr(self, key)) for key in attributes]
+            [_F('{key!s}={attr!r}', key=key, attr=getattr(self, key)) for key in attributes]
         )
         if self.comment not in [None, CommentCheck]:
             arguments += ', comment={!r}'.format(self.comment)
-        return '%s(%s)' % (self.__class__.__name__, arguments)
+        return _F(
+            '{self_class_name!s}{arguments!s}',
+            self_class_name=self.__class__.__name__,
+            arguments=arguments,
+        )
 
 
 class NodeEvent(Event):

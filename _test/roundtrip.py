@@ -1,15 +1,16 @@
 # coding: utf-8
 
-from __future__ import print_function
-
 """
 helper routines for testing round trip of commented YAML data
 """
 import sys
 import textwrap
+import io
 from pathlib import Path
 
-enforce = object()
+import ruyaml
+
+unset = object()
 
 
 def dedent(data):
@@ -29,50 +30,86 @@ def round_trip_load(inp, preserve_quotes=None, version=None):
     import ruyaml  # NOQA
 
     dinp = dedent(inp)
-    return ruyaml.load(
-        dinp,
-        Loader=ruyaml.RoundTripLoader,
-        preserve_quotes=preserve_quotes,
-        version=version,
-    )
+    yaml = ruyaml.YAML()
+    yaml.preserve_quotes = preserve_quotes
+    yaml.version = version
+    return yaml.load(dinp)
 
 
 def round_trip_load_all(inp, preserve_quotes=None, version=None):
     import ruyaml  # NOQA
 
     dinp = dedent(inp)
-    return ruyaml.load_all(
-        dinp,
-        Loader=ruyaml.RoundTripLoader,
-        preserve_quotes=preserve_quotes,
-        version=version,
-    )
+    yaml = ruyaml.YAML()
+    yaml.preserve_quotes = preserve_quotes
+    yaml.version = version
+    return yaml.load_all(dinp)
 
 
 def round_trip_dump(
     data,
-    stream=None,
+    stream=None,  # *,
     indent=None,
     block_seq_indent=None,
+    default_flow_style=unset,
     top_level_colon_align=None,
     prefix_colon=None,
     explicit_start=None,
     explicit_end=None,
     version=None,
+    allow_unicode=True,
 ):
     import ruyaml  # NOQA
 
-    return ruyaml.round_trip_dump(
-        data,
-        stream=stream,
-        indent=indent,
-        block_seq_indent=block_seq_indent,
-        top_level_colon_align=top_level_colon_align,
-        prefix_colon=prefix_colon,
-        explicit_start=explicit_start,
-        explicit_end=explicit_end,
-        version=version,
-    )
+    yaml = ruyaml.YAML()
+    yaml.indent(mapping=indent, sequence=indent, offset=block_seq_indent)
+    if default_flow_style is not unset:
+        yaml.default_flow_style = default_flow_style
+    yaml.top_level_colon_align = top_level_colon_align
+    yaml.prefix_colon = prefix_colon
+    yaml.explicit_start = explicit_start
+    yaml.explicit_end = explicit_end
+    yaml.version = version
+    yaml.allow_unicode = allow_unicode
+    if stream is not None:
+        yaml.dump(data, stream=stream)
+        return
+    buf = io.StringIO()
+    yaml.dump(data, stream=buf)
+    return buf.getvalue()
+
+
+def round_trip_dump_all(
+    data,
+    stream=None,  # *,
+    indent=None,
+    block_seq_indent=None,
+    default_flow_style=unset,
+    top_level_colon_align=None,
+    prefix_colon=None,
+    explicit_start=None,
+    explicit_end=None,
+    version=None,
+    allow_unicode=None,
+):
+    import ruyaml as yaml # NOQA
+
+    yaml = ruyaml.YAML()
+    yaml.indent(mapping=indent, sequence=indent, offset=block_seq_indent)
+    if default_flow_style is not unset:
+        yaml.default_flow_style = default_flow_style
+    yaml.top_level_colon_align = top_level_colon_align
+    yaml.prefix_colon = prefix_colon
+    yaml.explicit_start = explicit_start
+    yaml.explicit_end = explicit_end
+    yaml.version = version
+    yaml.allow_unicode = allow_unicode
+    if stream is not None:
+        yaml.dump(data, stream=stream)
+        return
+    buf = io.StringIO()
+    yaml.dump_all(data, stream=buf)
+    return buf.getvalue()
 
 
 def diff(inp, outp, file_name='stdin'):
@@ -287,12 +324,13 @@ def save_and_run(program, base_dir=None, output=None, file_name=None, optimized=
     file_name.write_text(dedent(program))
 
     try:
-        cmd = [sys.executable]
+        cmd = [sys.executable, '-Wd']
         if optimized:
             cmd.append('-O')
         cmd.append(str(file_name))
         print('running:', *cmd)
-        res = check_output(cmd, stderr=STDOUT, universal_newlines=True)
+        # 3.5 needs strings
+        res = check_output(cmd, stderr=STDOUT, universal_newlines=True, cwd=str(base_dir))
         if output is not None:
             if '__pypy__' in sys.builtin_module_names:
                 res = res.splitlines(True)

@@ -1,20 +1,15 @@
 # coding: utf-8
 
-from __future__ import absolute_import, division, print_function
+from  collections import OrderedDict
 
-import base64
-import collections
-import copyreg
-import datetime
-import types
-
-from ruyaml.compat import ordereddict  # NOQA; type: ignore
 from ruyaml.error import *  # NOQA
 from ruyaml.nodes import *  # NOQA
-from ruyaml.scalarbool import ScalarBoolean
-from ruyaml.scalarfloat import ScalarFloat
-from ruyaml.scalarint import BinaryInt, HexCapsInt, HexInt, OctalInt, ScalarInt
+from ruyaml.compat import ordereddict  # type: ignore
+from ruyaml.compat import _F, nprint, nprintf  # NOQA
 from ruyaml.scalarstring import (
+    LiteralScalarString,
+    FoldedScalarString,
+    SingleQuotedScalarString,
     DoubleQuotedScalarString,
     FoldedScalarString,
     LiteralScalarString,
@@ -22,6 +17,28 @@ from ruyaml.scalarstring import (
     SingleQuotedScalarString,
 )
 from ruyaml.timestamp import TimeStamp
+from ruyaml.comments import (
+    CommentedMap,
+    CommentedOrderedMap,
+    CommentedSeq,
+    CommentedKeySeq,
+    CommentedKeyMap,
+    CommentedSet,
+    comment_attrib,
+    merge_attrib,
+    TaggedScalar,
+)
+from ruyaml.scalarint import ScalarInt, BinaryInt, OctalInt, HexInt, HexCapsInt
+from ruyaml.scalarfloat import ScalarFloat
+from ruyaml.scalarbool import ScalarBoolean
+from ruyaml.timestamp import TimeStamp
+
+import datetime
+import sys
+import types
+
+import copyreg
+import base64
 
 if False:  # MYPY
     from typing import Any, Dict, List, Optional, Text, Union  # NOQA
@@ -36,7 +53,7 @@ class RepresenterError(YAMLError):
     pass
 
 
-class BaseRepresenter:
+class BaseRepresenter(object):
 
     yaml_representers = {}  # type: Dict[Any, Any]
     yaml_multi_representers = {}  # type: Dict[Any, Any]
@@ -82,7 +99,7 @@ class BaseRepresenter:
                 node = self.represented_objects[self.alias_key]
                 # if node is None:
                 #     raise RepresenterError(
-                #          "recursive objects are not allowed: %r" % data)
+                #          f"recursive objects are not allowed: {data!r}")
                 return node
             # self.represented_objects[alias_key] = None
             self.object_keeper.append(data)
@@ -231,16 +248,19 @@ class SafeRepresenter(BaseRepresenter):
 
     def represent_none(self, data):
         # type: (Any) -> Any
-        return self.represent_scalar(u'tag:yaml.org,2002:null', u'null')
+        return self.represent_scalar('tag:yaml.org,2002:null', 'null')
 
     def represent_str(self, data):
         # type: (Any) -> Any
-        return self.represent_scalar(u'tag:yaml.org,2002:str', data)
+        return self.represent_scalar('tag:yaml.org,2002:str', data)
 
     def represent_binary(self, data):
         # type: (Any) -> Any
-        data = base64.encodebytes(data).decode('ascii')
-        return self.represent_scalar(u'tag:yaml.org,2002:binary', data, style='|')
+        if hasattr(base64, 'encodebytes'):
+            data = base64.encodebytes(data).decode('ascii')
+        else:
+            data = base64.encodestring(data).decode('ascii')
+        return self.represent_scalar('tag:yaml.org,2002:binary', data, style='|')
 
     def represent_bool(self, data, anchor=None):
         # type: (Any, Optional[Any]) -> Any
@@ -248,14 +268,14 @@ class SafeRepresenter(BaseRepresenter):
             value = self.dumper.boolean_representation[bool(data)]  # type: ignore
         except AttributeError:
             if data:
-                value = u'true'
+                value = 'true'
             else:
-                value = u'false'
-        return self.represent_scalar(u'tag:yaml.org,2002:bool', value, anchor=anchor)
+                value = 'false'
+        return self.represent_scalar('tag:yaml.org,2002:bool', value, anchor=anchor)
 
     def represent_int(self, data):
         # type: (Any) -> Any
-        return self.represent_scalar(u'tag:yaml.org,2002:int', str(data))
+        return self.represent_scalar('tag:yaml.org,2002:int', str(data))
 
     inf_value = 1e300
     while repr(inf_value) != repr(inf_value * inf_value):
@@ -264,15 +284,15 @@ class SafeRepresenter(BaseRepresenter):
     def represent_float(self, data):
         # type: (Any) -> Any
         if data != data or (data == 0.0 and data == 1.0):
-            value = u'.nan'
+            value = '.nan'
         elif data == self.inf_value:
-            value = u'.inf'
+            value = '.inf'
         elif data == -self.inf_value:
-            value = u'-.inf'
+            value = '-.inf'
         else:
             value = repr(data).lower()
             if getattr(self.serializer, 'use_version', None) == (1, 1):
-                if u'.' not in value and u'e' in value:
+                if '.' not in value and 'e' in value:
                     # Note that in some cases `repr(data)` represents a float number
                     # without the decimal parts.  For instance:
                     #   >>> repr(1e17)
@@ -280,8 +300,8 @@ class SafeRepresenter(BaseRepresenter):
                     # Unfortunately, this is not a valid float representation according
                     # to the definition of the `!!float` tag in YAML 1.1.  We fix
                     # this by adding '.0' before the 'e' symbol.
-                    value = value.replace(u'e', u'.0e', 1)
-        return self.represent_scalar(u'tag:yaml.org,2002:float', value)
+                    value = value.replace('e', '.0e', 1)
+        return self.represent_scalar('tag:yaml.org,2002:float', value)
 
     def represent_list(self, data):
         # type: (Any) -> Any
@@ -292,38 +312,38 @@ class SafeRepresenter(BaseRepresenter):
         #             pairs = False
         #             break
         # if not pairs:
-        return self.represent_sequence(u'tag:yaml.org,2002:seq', data)
+        return self.represent_sequence('tag:yaml.org,2002:seq', data)
 
     # value = []
     # for item_key, item_value in data:
-    #     value.append(self.represent_mapping(u'tag:yaml.org,2002:map',
+    #     value.append(self.represent_mapping('tag:yaml.org,2002:map',
     #         [(item_key, item_value)]))
-    # return SequenceNode(u'tag:yaml.org,2002:pairs', value)
+    # return SequenceNode('tag:yaml.org,2002:pairs', value)
 
     def represent_dict(self, data):
         # type: (Any) -> Any
-        return self.represent_mapping(u'tag:yaml.org,2002:map', data)
+        return self.represent_mapping('tag:yaml.org,2002:map', data)
 
     def represent_ordereddict(self, data):
         # type: (Any) -> Any
-        return self.represent_omap(u'tag:yaml.org,2002:omap', data)
+        return self.represent_omap('tag:yaml.org,2002:omap', data)
 
     def represent_set(self, data):
         # type: (Any) -> Any
         value = {}  # type: Dict[Any, None]
         for key in data:
             value[key] = None
-        return self.represent_mapping(u'tag:yaml.org,2002:set', value)
+        return self.represent_mapping('tag:yaml.org,2002:set', value)
 
     def represent_date(self, data):
         # type: (Any) -> Any
         value = data.isoformat()
-        return self.represent_scalar(u'tag:yaml.org,2002:timestamp', value)
+        return self.represent_scalar('tag:yaml.org,2002:timestamp', value)
 
     def represent_datetime(self, data):
         # type: (Any) -> Any
         value = data.isoformat(' ')
-        return self.represent_scalar(u'tag:yaml.org,2002:timestamp', value)
+        return self.represent_scalar('tag:yaml.org,2002:timestamp', value)
 
     def represent_yaml_object(self, tag, data, cls, flow_style=None):
         # type: (Any, Any, Any, Any) -> Any
@@ -335,7 +355,7 @@ class SafeRepresenter(BaseRepresenter):
 
     def represent_undefined(self, data):
         # type: (Any) -> None
-        raise RepresenterError('cannot represent an object: %s' % (data,))
+        raise RepresenterError(_F('cannot represent an object: {data!s}', data=data))
 
 
 SafeRepresenter.add_representer(type(None), SafeRepresenter.represent_none)
@@ -361,7 +381,7 @@ SafeRepresenter.add_representer(set, SafeRepresenter.represent_set)
 SafeRepresenter.add_representer(ordereddict, SafeRepresenter.represent_ordereddict)
 
 SafeRepresenter.add_representer(
-    collections.OrderedDict, SafeRepresenter.represent_ordereddict
+    OrderedDict, SafeRepresenter.represent_ordereddict
 )
 
 SafeRepresenter.add_representer(datetime.date, SafeRepresenter.represent_date)
@@ -375,33 +395,33 @@ class Representer(SafeRepresenter):
     def represent_complex(self, data):
         # type: (Any) -> Any
         if data.imag == 0.0:
-            data = u'%r' % data.real
+            data = repr(data.real)
         elif data.real == 0.0:
-            data = u'%rj' % data.imag
+            data = _F('{data_imag!r}j', data_imag=data.imag)
         elif data.imag > 0:
-            data = u'%r+%rj' % (data.real, data.imag)
+            data = _F('{data_real!r}+{data_imag!r}j', data_real=data.real, data_imag=data.imag)
         else:
-            data = u'%r%rj' % (data.real, data.imag)
-        return self.represent_scalar(u'tag:yaml.org,2002:python/complex', data)
+            data = _F('{data_real!r}{data_imag!r}j', data_real=data.real, data_imag=data.imag)
+        return self.represent_scalar('tag:yaml.org,2002:python/complex', data)
 
     def represent_tuple(self, data):
         # type: (Any) -> Any
-        return self.represent_sequence(u'tag:yaml.org,2002:python/tuple', data)
+        return self.represent_sequence('tag:yaml.org,2002:python/tuple', data)
 
     def represent_name(self, data):
         # type: (Any) -> Any
         try:
-            name = u'%s.%s' % (data.__module__, data.__qualname__)
+            name = _F(
+                '{modname!s}.{qualname!s}', modname=data.__module__, qualname=data.__qualname__
+            )
         except AttributeError:
-            # PY2?
-            name = u'%s.%s' % (data.__module__, data.__name__)
-        return self.represent_scalar(u'tag:yaml.org,2002:python/name:' + name, "")
+            # ToDo: check if this can be reached in Py3
+            name = _F('{modname!s}.{name!s}', modname=data.__module__, name=data.__name__)
+        return self.represent_scalar('tag:yaml.org,2002:python/name:' + name, "")
 
     def represent_module(self, data):
         # type: (Any) -> Any
-        return self.represent_scalar(
-            u'tag:yaml.org,2002:python/module:' + data.__name__, ""
-        )
+        return self.represent_scalar('tag:yaml.org,2002:python/module:' + data.__name__, "")
 
     def represent_object(self, data):
         # type: (Any) -> Any
@@ -429,7 +449,7 @@ class Representer(SafeRepresenter):
         elif hasattr(data, '__reduce__'):
             reduce = data.__reduce__()
         else:
-            raise RepresenterError('cannot represent object: %r' % (data,))
+            raise RepresenterError(_F('cannot represent object: {data!r}', data=data))
         reduce = (list(reduce) + [None] * 5)[:5]
         function, args, state, listitems, dictitems = reduce
         args = list(args)
@@ -442,25 +462,23 @@ class Representer(SafeRepresenter):
         if function.__name__ == '__newobj__':
             function = args[0]
             args = args[1:]
-            tag = u'tag:yaml.org,2002:python/object/new:'
+            tag = 'tag:yaml.org,2002:python/object/new:'
             newobj = True
         else:
-            tag = u'tag:yaml.org,2002:python/object/apply:'
+            tag = 'tag:yaml.org,2002:python/object/apply:'
             newobj = False
         try:
-            function_name = u'%s.%s' % (function.__module__, function.__qualname__)
+            function_name = _F(
+                '{fun!s}.{qualname!s}', fun=function.__module__, qualname=function.__qualname__
+            )
         except AttributeError:
-            # PY2?
-            function_name = u'%s.%s' % (function.__module__, function.__name__)
-        if (
-            not args
-            and not listitems
-            and not dictitems
-            and isinstance(state, dict)
-            and newobj
-        ):
+            # ToDo: check if this can be reached in Py3
+            function_name = _F(
+                '{fun!s}.{name!s}', fun=function.__module__, name=function.__name__
+            )
+        if not args and not listitems and not dictitems and isinstance(state, dict) and newobj:
             return self.represent_mapping(
-                u'tag:yaml.org,2002:python/object:' + function_name, state
+                'tag:yaml.org,2002:python/object:' + function_name, state
             )
         if not listitems and not dictitems and isinstance(state, dict) and not state:
             return self.represent_sequence(tag + function_name, args)
@@ -491,18 +509,6 @@ Representer.add_representer(types.ModuleType, Representer.represent_module)
 Representer.add_multi_representer(object, Representer.represent_object)
 
 Representer.add_multi_representer(type, Representer.represent_name)
-
-from ruyaml.comments import (  # noqa: E402
-    CommentedKeyMap,
-    CommentedKeySeq,
-    CommentedMap,
-    CommentedOrderedMap,
-    CommentedSeq,
-    CommentedSet,
-    TaggedScalar,
-    comment_attrib,
-    merge_attrib,
-)
 
 
 class RoundTripRepresenter(SafeRepresenter):
@@ -536,15 +542,15 @@ class RoundTripRepresenter(SafeRepresenter):
             and not self.serializer.use_explicit_start
         ):
             # this will be open ended (although it is not yet)
-            return self.represent_scalar(u'tag:yaml.org,2002:null', u'null')
-        return self.represent_scalar(u'tag:yaml.org,2002:null', "")
+            return self.represent_scalar('tag:yaml.org,2002:null', 'null')
+        return self.represent_scalar('tag:yaml.org,2002:null', "")
 
     def represent_literal_scalarstring(self, data):
         # type: (Any) -> Any
         tag = None
         style = '|'
         anchor = data.yaml_anchor(any=True)
-        tag = u'tag:yaml.org,2002:str'
+        tag = 'tag:yaml.org,2002:str'
         return self.represent_scalar(tag, data, style=style, anchor=anchor)
 
     represent_preserved_scalarstring = represent_literal_scalarstring
@@ -561,7 +567,7 @@ class RoundTripRepresenter(SafeRepresenter):
                 and (fold_pos < len(data) and not data[fold_pos + 1].isspace())
             ):
                 data = data[:fold_pos] + '\a' + data[fold_pos:]
-        tag = u'tag:yaml.org,2002:str'
+        tag = 'tag:yaml.org,2002:str'
         return self.represent_scalar(tag, data, style=style, anchor=anchor)
 
     def represent_single_quoted_scalarstring(self, data):
@@ -569,7 +575,7 @@ class RoundTripRepresenter(SafeRepresenter):
         tag = None
         style = "'"
         anchor = data.yaml_anchor(any=True)
-        tag = u'tag:yaml.org,2002:str'
+        tag = 'tag:yaml.org,2002:str'
         return self.represent_scalar(tag, data, style=style, anchor=anchor)
 
     def represent_double_quoted_scalarstring(self, data):
@@ -577,7 +583,7 @@ class RoundTripRepresenter(SafeRepresenter):
         tag = None
         style = '"'
         anchor = data.yaml_anchor(any=True)
-        tag = u'tag:yaml.org,2002:str'
+        tag = 'tag:yaml.org,2002:str'
         return self.represent_scalar(tag, data, style=style, anchor=anchor)
 
     def represent_plain_scalarstring(self, data):
@@ -585,15 +591,13 @@ class RoundTripRepresenter(SafeRepresenter):
         tag = None
         style = ''
         anchor = data.yaml_anchor(any=True)
-        tag = u'tag:yaml.org,2002:str'
+        tag = 'tag:yaml.org,2002:str'
         return self.represent_scalar(tag, data, style=style, anchor=anchor)
 
     def insert_underscore(self, prefix, s, underscore, anchor=None):
         # type: (Any, Any, Any, Any) -> Any
         if underscore is None:
-            return self.represent_scalar(
-                u'tag:yaml.org,2002:int', prefix + s, anchor=anchor
-            )
+            return self.represent_scalar('tag:yaml.org,2002:int', prefix + s, anchor=anchor)
         if underscore[0]:
             sl = list(s)
             pos = len(s) - underscore[0]
@@ -605,9 +609,7 @@ class RoundTripRepresenter(SafeRepresenter):
             s = '_' + s
         if underscore[2]:
             s += '_'
-        return self.represent_scalar(
-            u'tag:yaml.org,2002:int', prefix + s, anchor=anchor
-        )
+        return self.represent_scalar('tag:yaml.org,2002:int', prefix + s, anchor=anchor)
 
     def represent_scalar_int(self, data):
         # type: (Any) -> Any
@@ -664,35 +666,31 @@ class RoundTripRepresenter(SafeRepresenter):
         value = None
         anchor = data.yaml_anchor(any=True)
         if data != data or (data == 0.0 and data == 1.0):
-            value = u'.nan'
+            value = '.nan'
         elif data == self.inf_value:
-            value = u'.inf'
+            value = '.inf'
         elif data == -self.inf_value:
-            value = u'-.inf'
+            value = '-.inf'
         if value:
-            return self.represent_scalar(
-                u'tag:yaml.org,2002:float', value, anchor=anchor
-            )
+            return self.represent_scalar('tag:yaml.org,2002:float', value, anchor=anchor)
         if data._exp is None and data._prec > 0 and data._prec == data._width - 1:
             # no exponent, but trailing dot
-            value = u'{}{:d}.'.format(
-                data._m_sign if data._m_sign else "", abs(int(data))
-            )
+            value = '{}{:d}.'.format(data._m_sign if data._m_sign else "", abs(int(data)))
         elif data._exp is None:
             # no exponent, "normal" dot
             prec = data._prec
             ms = data._m_sign if data._m_sign else ""
             # -1 for the dot
-            value = u'{}{:0{}.{}f}'.format(
+            value = '{}{:0{}.{}f}'.format(
                 ms, abs(data), data._width - len(ms), data._width - prec - 1
             )
             if prec == 0 or (prec == 1 and ms != ""):
-                value = value.replace(u'0.', u'.')
+                value = value.replace('0.', '.')
             while len(value) < data._width:
-                value += u'0'
+                value += '0'
         else:
             # exponent
-            m, es = u'{:{}.{}e}'.format(
+            m, es = '{:{}.{}e}'.format(
                 # data, data._width, data._width - data._prec + (1 if data._m_sign else 0)
                 data,
                 data._width,
@@ -705,51 +703,37 @@ class RoundTripRepresenter(SafeRepresenter):
             e = int(es)
             m1, m2 = m.split('.')  # always second?
             while len(m1) + len(m2) < data._width - (1 if data._prec >= 0 else 0):
-                m2 += u'0'
+                m2 += '0'
             if data._m_sign and data > 0:
                 m1 = '+' + m1
-            esgn = u'+' if data._e_sign else ""
+            esgn = '+' if data._e_sign else ""
             if data._prec < 0:  # mantissa without dot
-                if m2 != u'0':
+                if m2 != '0':
                     e -= len(m2)
                 else:
                     m2 = ""
                 while (len(m1) + len(m2) - (1 if data._m_sign else 0)) < data._width:
-                    m2 += u'0'
+                    m2 += '0'
                     e -= 1
-                value = (
-                    m1 + m2 + data._exp + u'{:{}0{}d}'.format(e, esgn, data._e_width)
-                )
+                value = m1 + m2 + data._exp + '{:{}0{}d}'.format(e, esgn, data._e_width)
             elif data._prec == 0:  # mantissa with trailing dot
                 e -= len(m2)
-                value = (
-                    m1
-                    + m2
-                    + u'.'
-                    + data._exp
-                    + u'{:{}0{}d}'.format(e, esgn, data._e_width)
-                )
+                value = m1 + m2 + '.' + data._exp + '{:{}0{}d}'.format(e, esgn, data._e_width)
             else:
                 if data._m_lead0 > 0:
-                    m2 = u'0' * (data._m_lead0 - 1) + m1 + m2
-                    m1 = u'0'
+                    m2 = '0' * (data._m_lead0 - 1) + m1 + m2
+                    m1 = '0'
                     m2 = m2[: -data._m_lead0]  # these should be zeros
                     e += data._m_lead0
                 while len(m1) < data._prec:
                     m1 += m2[0]
                     m2 = m2[1:]
                     e -= 1
-                value = (
-                    m1
-                    + u'.'
-                    + m2
-                    + data._exp
-                    + u'{:{}0{}d}'.format(e, esgn, data._e_width)
-                )
+                value = m1 + '.' + m2 + data._exp + '{:{}0{}d}'.format(e, esgn, data._e_width)
 
         if value is None:
             value = repr(data).lower()
-        return self.represent_scalar(u'tag:yaml.org,2002:float', value, anchor=anchor)
+        return self.represent_scalar('tag:yaml.org,2002:float', value, anchor=anchor)
 
     def represent_sequence(self, tag, sequence, flow_style=None):
         # type: (Any, Any, Any) -> Any
@@ -782,7 +766,11 @@ class RoundTripRepresenter(SafeRepresenter):
                     for ct in v[1]:
                         ct.reset()
             item_comments = comment.items
-            node.comment = comment.comment
+            if node.comment is None:
+                node.comment = comment.comment
+            else:
+                # as we are potentially going to extend this, make a new list
+                node.comment = comment.comment[:]
             try:
                 node.comment.append(comment.end)
             except AttributeError:
@@ -822,14 +810,10 @@ class RoundTripRepresenter(SafeRepresenter):
         # type: (Any) -> Any
         if isinstance(data, CommentedKeySeq):
             self.alias_key = None
-            return self.represent_sequence(
-                u'tag:yaml.org,2002:seq', data, flow_style=True
-            )
+            return self.represent_sequence('tag:yaml.org,2002:seq', data, flow_style=True)
         if isinstance(data, CommentedKeyMap):
             self.alias_key = None
-            return self.represent_mapping(
-                u'tag:yaml.org,2002:map', data, flow_style=True
-            )
+            return self.represent_mapping('tag:yaml.org,2002:map', data, flow_style=True)
         return SafeRepresenter.represent_key(self, data)
 
     def represent_mapping(self, tag, mapping, flow_style=None):
@@ -850,7 +834,11 @@ class RoundTripRepresenter(SafeRepresenter):
         # no sorting! !!
         try:
             comment = getattr(mapping, comment_attrib)
-            node.comment = comment.comment
+            if node.comment is None:
+                node.comment = comment.comment
+            else:
+                # as we are potentially going to extend this, make a new list
+                node.comment = comment.comment[:]
             if node.comment and node.comment[1]:
                 for ct in node.comment[1]:
                     ct.reset()
@@ -881,7 +869,9 @@ class RoundTripRepresenter(SafeRepresenter):
             node_value = self.represent_data(item_value)
             item_comment = item_comments.get(item_key)
             if item_comment:
-                assert getattr(node_key, 'comment', None) is None
+                # assert getattr(node_key, 'comment', None) is None
+                # issue 351 did throw this because the comment from the list item was
+                # moved to the dict
                 node_key.comment = item_comment[:2]
                 nvc = getattr(node_value, 'comment', None)
                 if nvc is not None:  # end comment already there
@@ -909,7 +899,7 @@ class RoundTripRepresenter(SafeRepresenter):
             else:
                 arg = self.represent_data(merge_list)
                 arg.flow_style = True
-            value.insert(merge_pos, (ScalarNode(u'tag:yaml.org,2002:merge', '<<'), arg))
+            value.insert(merge_pos, (ScalarNode('tag:yaml.org,2002:merge', '<<'), arg))
         return node
 
     def represent_omap(self, tag, omap, flow_style=None):
@@ -929,7 +919,11 @@ class RoundTripRepresenter(SafeRepresenter):
         best_style = True
         try:
             comment = getattr(omap, comment_attrib)
-            node.comment = comment.comment
+            if node.comment is None:
+                node.comment = comment.comment
+            else:
+                # as we are potentially going to extend this, make a new list
+                node.comment = comment.comment[:]
             if node.comment and node.comment[1]:
                 for ct in node.comment[1]:
                     ct.reset()
@@ -975,7 +969,7 @@ class RoundTripRepresenter(SafeRepresenter):
     def represent_set(self, setting):
         # type: (Any) -> Any
         flow_style = False
-        tag = u'tag:yaml.org,2002:set'
+        tag = 'tag:yaml.org,2002:set'
         # return self.represent_mapping(tag, value)
         value = []  # type: List[Any]
         flow_style = setting.fa.flow_style(flow_style)
@@ -990,7 +984,11 @@ class RoundTripRepresenter(SafeRepresenter):
         # no sorting! !!
         try:
             comment = getattr(setting, comment_attrib)
-            node.comment = comment.comment
+            if node.comment is None:
+                node.comment = comment.comment
+            else:
+                # as we are potentially going to extend this, make a new list
+                node.comment = comment.comment[:]
             if node.comment and node.comment[1]:
                 for ct in node.comment[1]:
                     ct.reset()
@@ -1034,7 +1032,7 @@ class RoundTripRepresenter(SafeRepresenter):
             else:
                 tag = t
         else:
-            tag = u'tag:yaml.org,2002:map'
+            tag = 'tag:yaml.org,2002:map'
         return self.represent_mapping(tag, data)
 
     def represent_list(self, data):
@@ -1049,7 +1047,7 @@ class RoundTripRepresenter(SafeRepresenter):
             else:
                 tag = t
         else:
-            tag = u'tag:yaml.org,2002:seq'
+            tag = 'tag:yaml.org,2002:seq'
         return self.represent_sequence(tag, data)
 
     def represent_datetime(self, data):
@@ -1063,7 +1061,7 @@ class RoundTripRepresenter(SafeRepresenter):
             value = data.isoformat(inter)
         if _yaml['tz']:
             value += _yaml['tz']
-        return self.represent_scalar(u'tag:yaml.org,2002:timestamp', value)
+        return self.represent_scalar('tag:yaml.org,2002:timestamp', value)
 
     def represent_tagged_scalar(self, data):
         # type: (Any) -> Any
@@ -1143,7 +1141,7 @@ RoundTripRepresenter.add_representer(
 )
 
 RoundTripRepresenter.add_representer(
-    collections.OrderedDict, RoundTripRepresenter.represent_ordereddict
+    OrderedDict, RoundTripRepresenter.represent_ordereddict
 )
 
 RoundTripRepresenter.add_representer(CommentedSet, RoundTripRepresenter.represent_set)

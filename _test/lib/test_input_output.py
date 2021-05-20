@@ -1,5 +1,6 @@
-from __future__ import absolute_import, print_function
 
+import ruyaml as yaml
+YAML = yaml.YAML
 import codecs
 import os
 import os.path
@@ -16,6 +17,7 @@ pytestmark = pytest.mark.skip
 
 
 def test_unicode_input(unicode_filename, verbose=False):
+    yaml = YAML(typ='safe', pure=True)
     with open(unicode_filename, 'rb') as fp:
         data = fp.read().decode('utf-8')
     value = ' '.join(data.split())
@@ -41,6 +43,7 @@ test_unicode_input.unittest = ['.unicode']
 
 
 def test_unicode_input_errors(unicode_filename, verbose=False):
+    yaml = YAML(typ='safe', pure=True)
     with open(unicode_filename, 'rb') as fp:
         data = fp.read().decode('utf-8')
     for input in [
@@ -71,6 +74,7 @@ test_unicode_input_errors.unittest = ['.unicode']
 
 
 def test_unicode_output(unicode_filename, verbose=False):
+    yaml = YAML(typ='safe', pure=True)
     with open(unicode_filename, 'rb') as fp:
         data = fp.read().decode('utf-8')
     value = ' '.join(data.split())
@@ -124,6 +128,7 @@ test_unicode_output.unittest = ['.unicode']
 
 
 def test_file_output(unicode_filename, verbose=False):
+    yaml = YAML(typ='safe', pure=True)
     with open(unicode_filename, 'rb') as fp:
         data = fp.read().decode('utf-8')
     handle, filename = tempfile.mkstemp()
@@ -155,6 +160,7 @@ test_file_output.unittest = ['.unicode']
 
 
 def test_unicode_transfer(unicode_filename, verbose=False):
+    yaml = YAML(typ='safe', pure=True)
     with open(unicode_filename, 'rb') as fp:
         data = fp.read().decode('utf-8')
     for encoding in [None, 'utf-8', 'utf-16-be', 'utf-16-le']:

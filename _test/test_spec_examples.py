@@ -1,6 +1,8 @@
-import pytest  # NOQA
+# coding: utf-8
 
 from .roundtrip import YAML
+
+import pytest  # NOQA
 
 
 def test_example_2_1():

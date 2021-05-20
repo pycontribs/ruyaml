@@ -1,11 +1,10 @@
-from __future__ import print_function
 
-import argparse
+import sys
 import os
 import pprint
-import sys
-import traceback
+import argparse
 import types
+import traceback
 
 # DATA = 'tests/data'
 # determine the position of data dynamically relative to program

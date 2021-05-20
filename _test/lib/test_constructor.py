@@ -1,9 +1,13 @@
-from __future__ import absolute_import, print_function
 
 # Skipped because we have no idea where all those fixtures originate
 import pytest
 
 pytestmark = pytest.mark.skip
+
+import ruyaml as yaml
+YAML = yaml.YAML
+
+import pprint
 
 import datetime
 import pprint
@@ -312,9 +316,11 @@ def test_constructor_types(data_filename, code_filename, verbose=False):
     _make_objects()
     native1 = None
     native2 = None
+    yaml = ruyaml.YAML(typ='safe', pure=True)
+    yaml.loader = MyLoader
     try:
         with open(data_filename, 'rb') as fp0:
-            native1 = list(ruyaml.load_all(fp0, Loader=MyLoader))
+            native1 = list(ruyaml.load_all(fp0))
         if len(native1) == 1:
             native1 = native1[0]
         with open(code_filename, 'rb') as fp0:
@@ -349,7 +355,9 @@ def test_roundtrip_data(code_filename, roundtrip_filename, verbose=False):
     _make_objects()
     with open(code_filename, 'rb') as fp0:
         value1 = fp0.read()
-    native2 = list(ruyaml.load_all(value1, Loader=MyLoader))
+    yaml = YAML(typ='safe', pure=True)
+    yaml.Loader = MyLoader
+    native2 = list(yaml.load_all(value1))
     if len(native2) == 1:
         native2 = native2[0]
     try:

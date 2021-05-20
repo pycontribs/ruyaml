@@ -1,4 +1,3 @@
-from __future__ import absolute_import, print_function
 
 # Skipped because we have no idea where the "recursive_filename"
 # fixture is supposed to come from
@@ -30,6 +29,7 @@ class AnInstanceWithState(AnInstance):
 
 
 def test_recursive(recursive_filename, verbose=False):
+    yaml = ruamel.yaml.YAML(typ='safe', pure=True)
     context = globals().copy()
     with open(recursive_filename, 'rb') as fp0:
         exec(fp0.read(), context)
@@ -38,9 +38,13 @@ def test_recursive(recursive_filename, verbose=False):
     value2 = None
     output2 = None
     try:
-        output1 = yaml.dump(value1)
-        value2 = yaml.load(output1)
-        output2 = yaml.dump(value2)
+        buf = ruamel.yaml.compat.StringIO()
+        output1 = yaml.dump(value1, buf)
+        yaml.load(output1)
+        value2 = buf.getvalue()
+        buf = ruamel.yaml.compat.StringIO()
+        yaml.dump(value2, buf)
+        output2 = buf.getvalue()
         assert output1 == output2, (output1, output2)
     finally:
         if verbose:

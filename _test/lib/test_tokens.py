@@ -1,5 +1,3 @@
-from __future__ import absolute_import, print_function
-
 # Skipped because we have no idea where all those fixtures originate
 import pytest
 
@@ -7,7 +5,7 @@ pytestmark = pytest.mark.skip
 
 import pprint
 
-import ruyaml as yaml
+import ruyaml
 
 # Tokens mnemonic:
 # directive:            %
@@ -29,24 +27,24 @@ import ruyaml as yaml
 # value:                :
 
 _replaces = {
-    yaml.DirectiveToken: '%',
-    yaml.DocumentStartToken: '---',
-    yaml.DocumentEndToken: '...',
-    yaml.AliasToken: '*',
-    yaml.AnchorToken: '&',
-    yaml.TagToken: '!',
-    yaml.ScalarToken: '_',
-    yaml.BlockSequenceStartToken: '[[',
-    yaml.BlockMappingStartToken: '{{',
-    yaml.BlockEndToken: ']}',
-    yaml.FlowSequenceStartToken: '[',
-    yaml.FlowSequenceEndToken: ']',
-    yaml.FlowMappingStartToken: '{',
-    yaml.FlowMappingEndToken: '}',
-    yaml.BlockEntryToken: ',',
-    yaml.FlowEntryToken: ',',
-    yaml.KeyToken: '?',
-    yaml.ValueToken: ':',
+    ruyaml.DirectiveToken: '%',
+    ruyaml.DocumentStartToken: '---',
+    ruyaml.DocumentEndToken: '...',
+    ruyaml.AliasToken: '*',
+    ruyaml.AnchorToken: '&',
+    ruyaml.TagToken: '!',
+    ruyaml.ScalarToken: '_',
+    ruyaml.BlockSequenceStartToken: '[[',
+    ruyaml.BlockMappingStartToken: '{{',
+    ruyaml.BlockEndToken: ']}',
+    ruyaml.FlowSequenceStartToken: '[',
+    ruyaml.FlowSequenceEndToken: ']',
+    ruyaml.FlowMappingStartToken: '{',
+    ruyaml.FlowMappingEndToken: '}',
+    ruyaml.BlockEntryToken: ',',
+    ruyaml.FlowEntryToken: ',',
+    ruyaml.KeyToken: '?',
+    ruyaml.ValueToken: ':',
 }
 
 
@@ -55,9 +53,10 @@ def test_tokens(data_filename, tokens_filename, verbose=False):
     with open(tokens_filename, 'r') as fp:
         tokens2 = fp.read().split()
     try:
+        yaml = ruyaml.YAML(typ='unsafe', pure=True)
         with open(data_filename, 'rb') as fp1:
             for token in yaml.scan(fp1):
-                if not isinstance(token, (yaml.StreamStartToken, yaml.StreamEndToken)):
+                if not isinstance(token, (ruyaml.StreamStartToken, ruyaml.StreamEndToken)):
                     tokens1.append(_replaces[token.__class__])
     finally:
         if verbose:
@@ -75,6 +74,7 @@ def test_scanner(data_filename, canonical_filename, verbose=False):
     for filename in [data_filename, canonical_filename]:
         tokens = []
         try:
+            yaml = ruyaml.YAML(typ='unsafe', pure=False)
             with open(filename, 'rb') as fp:
                 for token in yaml.scan(fp):
                     tokens.append(token.__class__.__name__)

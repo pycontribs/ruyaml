@@ -1,14 +1,14 @@
 # coding: utf-8
 
-from __future__ import print_function, unicode_literals
-
 import sys
+import os
+import pytest  # NOQA
 import warnings  # NOQA
 from pathlib import Path
 
-import pytest  # NOQA
+from ruyaml.compat import _F
 
-base_path = Path('data')  # that is ruyaml.data
+base_path = Path('data')  # that is ruamel.yaml.data
 
 
 class YAMLData:
@@ -69,7 +69,7 @@ class Assert(YAMLData):
 
     @property
     def value(self):
-        from ruyaml.compat import Mapping
+        from collections.abc import Mapping
 
         if hasattr(self, '_pa'):
             return self._pa
@@ -84,6 +84,11 @@ def pytest_generate_tests(metafunc):
     paths = sorted(base_path.glob('**/*.yaml'))
     idlist = []
     for path in paths:
+        # while developing tests put them in data/debug and run:
+        #   auto -c "pytest _test/test_z_data.py" data/debug/*.yaml *.py _test/*.py
+        if os.environ.get('RUAMELAUTOTEST') == '1':
+            if path.parent.stem != 'debug':
+                continue
         stem = path.stem
         if stem.startswith('.#'):  # skip emacs temporary file
             continue
@@ -128,7 +133,7 @@ class TestYAMLData:
         assert value == expected
 
     def load_assert(self, input, confirm, yaml_version=None):
-        from ruyaml.compat import Mapping
+        from collections.abc import Mapping
 
         d = self.yaml_load(input.value, yaml_version=yaml_version)[1]  # NOQA
         print('confirm.value', confirm.value, type(confirm.value))
@@ -146,15 +151,34 @@ class TestYAMLData:
                 print(line)
                 exec(line)
 
-    def run_python(self, python, data, tmpdir):
+    def run_python(self, python, data, tmpdir, input=None):
         from roundtrip import save_and_run
 
+        if input is not None:
+            (tmpdir / 'input.yaml').write_text(input.value, encoding='utf-8')
         assert save_and_run(python.value, base_dir=tmpdir, output=data.value) == 0
 
-    # this is executed by pytest the methods with names not starting with test_
-    # are helpers
+    def insert_comments(self, data, actions):
+        """this is to automatically insert based on:
+          path (a.1.b),
+          position (before, after, between), and
+          offset (absolute/relative)
+        """
+        raise NotImplementedError
+        expected = []
+        for line in data.value.splitlines(True):
+            idx = line.index['?']
+            if idx < 0:
+                expected.append(line)
+                continue
+            assert line.lstrip()[0] == '#'  # it has to be comment line
+        print(data)
+        assert ''.join(expected) == data.value
+
+    # this is executed by pytest the methods with names not starting with
+    # test_ are helper methods
     def test_yaml_data(self, yaml, tmpdir):
-        from ruyaml.compat import Mapping
+        from collections.abc import Mapping
 
         idx = 0
         typ = None
@@ -199,11 +223,15 @@ class TestYAMLData:
         if typ == 'rt':
             self.round_trip(data, output, yaml_version=yaml_version)
         elif typ == 'python_run':
-            self.run_python(python, output if output is not None else data, tmpdir)
+            inp = None if output is None or data is None else data
+            self.run_python(python, output if output is not None else data, tmpdir, input=inp)
         elif typ == 'load_assert':
             self.load_assert(data, confirm, yaml_version=yaml_version)
+        elif typ == 'comment':
+            actions = []
+            self.insert_comments(data, actions)
         else:
-            print('\nrun type unknown:', typ)
+            _F('\n>>>>>> run type unknown: "{typ}" <<<<<<\n')
             raise AssertionError()
 
 

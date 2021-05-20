@@ -1,14 +1,5 @@
 # coding: utf-8
 
-from __future__ import absolute_import
-
-import codecs
-from typing import Any, Optional, Text, Tuple
-
-from ruyaml.compat import UNICODE_SIZE
-from ruyaml.error import FileMark, StringMark, YAMLError, YAMLStreamError
-from ruyaml.util import RegExp
-
 # This module contains abstractions for the input stream. You don't have to
 # looks further, there are no pretty code.
 #
@@ -28,6 +19,12 @@ from ruyaml.util import RegExp
 #   reader.line, stream.column - the line and the column of the current
 #      character.
 
+import codecs
+from typing import Text,Optional,Tuple
+
+from ruyaml.error import YAMLError, FileMark, StringMark, YAMLStreamError
+from ruyaml.compat import _F  # NOQA
+from ruyaml.util import RegExp
 
 #    from ruyaml.compat import StreamTextType  # NOQA
 
@@ -46,23 +43,24 @@ class ReaderError(YAMLError):
     def __str__(self):
         # type: () -> str
         if isinstance(self.character, bytes):
-            return (
-                "'%s' codec can't decode byte #x%02x: %s\n"
-                '  in "%s", position %d'
-                % (
-                    self.encoding,
-                    ord(self.character),
-                    self.reason,
-                    self.name,
-                    self.position,
-                )
+            return _F(
+                "'{self_encoding!s}' codec can't decode byte #x{ord_self_character:02x}: "
+                '{self_reason!s}\n'
+                '  in "{self_name!s}", position {self_position:d}',
+                self_encoding=self.encoding,
+                ord_self_character=ord(self.character),
+                self_reason=self.reason,
+                self_name=self.name,
+                self_position=self.position,
             )
         else:
-            return 'unacceptable character #x%04x: %s\n' '  in "%s", position %d' % (
-                self.character,
-                self.reason,
-                self.name,
-                self.position,
+            return _F(
+                'unacceptable character #x{self_character:04x}: {self._reason!s}\n'
+                '  in "{self_name!s}", position {self_position:d}',
+                self_character=self.character,
+                self_reason=self.reason,
+                self_name=self.name,
+                self_position=self.position,
             )
 
 
@@ -73,8 +71,8 @@ class Reader:
     # - adds '\0' to the end.
 
     # Reader accepts
-    #  - a a `bytes` object,
-    #  - a a `str` object,
+    #  - a `bytes` object,
+    #  - a `str` object,
     #  - a file-like object with its `read` method returning `str`,
     #  - a file-like object with its `read` method returning `unicode`.
 
@@ -119,7 +117,7 @@ class Reader:
         if isinstance(val, str):
             self.name = '<unicode string>'
             self.check_printable(val)
-            self.buffer = val + u'\0'  # type: ignore
+            self.buffer = val + '\0'  # type: ignore
         elif isinstance(val, bytes):
             self.name = '<byte string>'
             self.raw_buffer = val
@@ -155,12 +153,12 @@ class Reader:
             ch = self.buffer[self.pointer]
             self.pointer += 1
             self.index += 1
-            if ch in u'\n\x85\u2028\u2029' or (
-                ch == u'\r' and self.buffer[self.pointer] != u'\n'
+            if ch in '\n\x85\u2028\u2029' or (
+                ch == '\r' and self.buffer[self.pointer] != '\n'
             ):
                 self.line += 1
                 self.column = 0
-            elif ch != u'\uFEFF':
+            elif ch != '\uFEFF':
                 self.column += 1
             length -= 1
 
@@ -172,10 +170,10 @@ class Reader:
             ch = self.buffer[self.pointer]
             self.pointer += 1
             self.index += 1
-            if ch == u'\n' or (ch == u'\r' and self.buffer[self.pointer] != u'\n'):
+            if ch == '\n' or (ch == '\r' and self.buffer[self.pointer] != '\n'):
                 self.line += 1
                 self.column = 0
-            elif ch != u'\uFEFF':
+            elif ch != '\uFEFF':
                 self.column += 1
             length -= 1
 
@@ -204,18 +202,9 @@ class Reader:
                 self.encoding = 'utf-8'
         self.update(1)
 
-    if UNICODE_SIZE == 2:
-        NON_PRINTABLE = RegExp(
-            u'[^\x09\x0A\x0D\x20-\x7E\x85' u'\xA0-\uD7FF' u'\uE000-\uFFFD' u']'
-        )
-    else:
-        NON_PRINTABLE = RegExp(
-            u'[^\x09\x0A\x0D\x20-\x7E\x85'
-            u'\xA0-\uD7FF'
-            u'\uE000-\uFFFD'
-            u'\U00010000-\U0010FFFF'
-            u']'
-        )
+    NON_PRINTABLE = RegExp(
+        '[^\x09\x0A\x0D\x20-\x7E\x85' '\xA0-\uD7FF' '\uE000-\uFFFD' '\U00010000-\U0010FFFF' ']'
+    )
 
     _printable_ascii = ('\x09\x0A\x0D' + "".join(map(chr, range(0x20, 0x7F)))).encode(
         'ascii'

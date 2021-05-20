@@ -1,13 +1,18 @@
 # coding: utf-8
 
-from __future__ import absolute_import, print_function
-
 import warnings
 from typing import Any, Dict
 
-from ruyaml.compat import nprint, nprintf  # NOQA
 from ruyaml.error import MarkedYAMLError, ReusedAnchorWarning
+from ruyaml.compat import _F, nprint, nprintf  # NOQA
+
 from ruyaml.events import (
+    StreamStartEvent,
+    StreamEndEvent,
+    MappingStartEvent,
+    MappingEndEvent,
+    SequenceStartEvent,
+    SequenceEndEvent,
     AliasEvent,
     MappingEndEvent,
     MappingStartEvent,
@@ -103,6 +108,9 @@ class Composer:
         self.anchors = {}
         return node
 
+    def return_alias(self, a):
+        return a
+
     def compose_node(self, parent, index):
         # type: (Any, Any) -> Any
         if self.parser.check_event(AliasEvent):
@@ -110,16 +118,19 @@ class Composer:
             alias = event.anchor
             if alias not in self.anchors:
                 raise ComposerError(
-                    None, None, 'found undefined alias %r' % alias, event.start_mark
+                    None,
+                    None,
+                    _F('found undefined alias {alias!r}', alias=alias),
+                    event.start_mark,
                 )
-            return self.anchors[alias]
+            return self.return_alias(self.anchors[alias])
         event = self.parser.peek_event()
         anchor = event.anchor
         if anchor is not None:  # have an anchor
             if anchor in self.anchors:
                 # raise ComposerError(
                 #     "found duplicate anchor %r; first occurrence"
-                #     % anchor, self.anchors[anchor].start_mark,
+                #     % (anchor), self.anchors[anchor].start_mark,
                 #     "second occurrence", event.start_mark)
                 ws = (
                     '\nfound duplicate anchor {!r}\nfirst occurrence {}\nsecond occurrence '
@@ -142,7 +153,7 @@ class Composer:
         # type: (Any) -> Any
         event = self.parser.get_event()
         tag = event.tag
-        if tag is None or tag == u'!':
+        if tag is None or tag == '!':
             tag = self.resolver.resolve(ScalarNode, event.value, event.implicit)
         node = ScalarNode(
             tag,
@@ -161,7 +172,7 @@ class Composer:
         # type: (Any) -> Any
         start_event = self.parser.get_event()
         tag = start_event.tag
-        if tag is None or tag == u'!':
+        if tag is None or tag == '!':
             tag = self.resolver.resolve(SequenceNode, None, start_event.implicit)
         node = SequenceNode(
             tag,
@@ -194,7 +205,7 @@ class Composer:
         # type: (Any) -> Any
         start_event = self.parser.get_event()
         tag = start_event.tag
-        if tag is None or tag == u'!':
+        if tag is None or tag == '!':
             tag = self.resolver.resolve(MappingNode, None, start_event.implicit)
         node = MappingNode(
             tag,

@@ -6,8 +6,7 @@ Overview
 derivative of Kirill Simonov's `PyYAML 3.11
 <https://bitbucket.org/xi/pyyaml>`_.
 
-``ruyaml`` supports `YAML 1.2`_ and has round-trip loaders and dumpers
-that preserves, among others:
+``ruyaml`` supports `YAML 1.2`_ and has round-trip loaders and dumpers. 
 
 - comments
 - block style and key ordering are kept, so you can diff the round-tripped

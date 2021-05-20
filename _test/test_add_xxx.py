@@ -4,7 +4,7 @@ import re
 
 import pytest  # NOQA
 
-from .roundtrip import dedent
+from .roundtrip import dedent, round_trip_dump  # NOQA
 
 
 # from PyYAML docs
@@ -23,46 +23,50 @@ def dice_constructor(loader, node):
 
 
 def dice_representer(dumper, data):
-    return dumper.represent_scalar(u'!dice', u'{}d{}'.format(*data))
+    return dumper.represent_scalar('!dice', '{}d{}'.format(*data))
 
 
 def test_dice_constructor():
     import ruyaml  # NOQA
 
-    ruyaml.add_constructor(u'!dice', dice_constructor)
-    data = ruyaml.load('initial hit points: !dice 8d4', Loader=ruyaml.Loader)
+    yaml = ruyaml.YAML(typ='unsafe', pure=True)
+    ruyaml.add_constructor('!dice', dice_constructor)
+    data = yaml.load('initial hit points: !dice 8d4')
     assert str(data) == "{'initial hit points': Dice(8,4)}"
 
 
 def test_dice_constructor_with_loader():
     import ruyaml  # NOQA
 
-    ruyaml.add_constructor(u'!dice', dice_constructor, Loader=ruyaml.Loader)
-    data = ruyaml.load('initial hit points: !dice 8d4', Loader=ruyaml.Loader)
+    yaml = ruyaml.YAML(typ='unsafe', pure=True)
+    ruyaml.add_constructor('!dice', dice_constructor, Loader=ruyaml.Loader)
+    data = yaml.load('initial hit points: !dice 8d4')
     assert str(data) == "{'initial hit points': Dice(8,4)}"
 
 
 def test_dice_representer():
     import ruyaml  # NOQA
 
+    yaml = ruyaml.YAML(typ='unsafe', pure=True)
+    yaml.default_flow_style = False
     ruyaml.add_representer(Dice, dice_representer)
     # ruyaml 0.15.8+ no longer forces quotes tagged scalars
-    assert (
-        ruyaml.dump(dict(gold=Dice(10, 6)), default_flow_style=False)
-        == 'gold: !dice 10d6\n'
-    )
+    buf = ruyaml.compat.StringIO()
+    yaml.dump(dict(gold=Dice(10, 6)), buf)
+    assert buf.getvalue() == 'gold: !dice 10d6\n'
 
 
 def test_dice_implicit_resolver():
     import ruyaml  # NOQA
 
+    yaml = ruyaml.YAML(typ='unsafe', pure=True)
+    yaml.default_flow_style = False
     pattern = re.compile(r'^\d+d\d+$')
-    ruyaml.add_implicit_resolver(u'!dice', pattern)
-    assert (
-        ruyaml.dump(dict(treasure=Dice(10, 20)), default_flow_style=False)
-        == 'treasure: 10d20\n'
-    )
-    assert ruyaml.load('damage: 5d10', Loader=ruyaml.Loader) == dict(damage=Dice(5, 10))
+    ruyaml.add_implicit_resolver('!dice', pattern)
+    buf = ruyaml.compat.StringIO()
+    yaml.dump(dict(treasure=Dice(10, 20)), buf)
+    assert buf.getvalue() == 'treasure: 10d20\n'
+    assert yaml.load('damage: 5d10') == dict(damage=Dice(5, 10))
 
 
 class Obj1(dict):
@@ -80,8 +84,8 @@ class Obj1(dict):
         return repr(self._node)
 
 
-class YAMLObj1:
-    yaml_tag = u'!obj:'
+class YAMLObj1(object):
+    yaml_tag = '!obj:'
 
     @classmethod
     def from_yaml(cls, loader, suffix, node):
@@ -102,24 +106,30 @@ class YAMLObj1:
 def test_yaml_obj():
     import ruyaml  # NOQA
 
+    yaml = ruyaml.YAML(typ='unsafe', pure=True)
     ruyaml.add_representer(Obj1, YAMLObj1.to_yaml)
     ruyaml.add_multi_constructor(YAMLObj1.yaml_tag, YAMLObj1.from_yaml)
-    x = ruyaml.load('!obj:x.2\na: 1', Loader=ruyaml.Loader)
+    x = yaml.load('!obj:x.2\na: 1')
     print(x)
-    assert ruyaml.dump(x) == """!obj:x.2 "{'a': 1}"\n"""
+    buf = ruyaml.compat.StringIO()
+    yaml.dump(x, buf)
+    assert buf.getvalue() == """!obj:x.2 "{'a': 1}"\n"""
 
 
 def test_yaml_obj_with_loader_and_dumper():
     import ruyaml  # NOQA
 
+    yaml = ruyaml.YAML(typ='unsafe', pure=True)
     ruyaml.add_representer(Obj1, YAMLObj1.to_yaml, Dumper=ruyaml.Dumper)
     ruyaml.add_multi_constructor(
         YAMLObj1.yaml_tag, YAMLObj1.from_yaml, Loader=ruyaml.Loader
     )
-    x = ruyaml.load('!obj:x.2\na: 1', Loader=ruyaml.Loader)
+    x = yaml.load('!obj:x.2\na: 1')
     # x = ruyaml.load('!obj:x.2\na: 1')
     print(x)
-    assert ruyaml.dump(x) == """!obj:x.2 "{'a': 1}"\n"""
+    buf = ruyaml.compat.StringIO()
+    yaml.dump(x, buf)
+    assert buf.getvalue() == """!obj:x.2 "{'a': 1}"\n"""
 
 
 # ToDo use nullege to search add_multi_representer and add_path_resolver
@@ -134,7 +144,7 @@ def test_issue_127():
     class Ref(ruyaml.YAMLObject):
         yaml_constructor = ruyaml.RoundTripConstructor
         yaml_representer = ruyaml.RoundTripRepresenter
-        yaml_tag = u'!Ref'
+        yaml_tag = '!Ref'
 
         def __init__(self, logical_id):
             self.logical_id = logical_id
@@ -162,9 +172,12 @@ def test_issue_127():
     CList:
       - Five Six
       - 'Seven Eight'
-    """
-    )
-    data = ruyaml.round_trip_load(document, preserve_quotes=True)
-    assert ruyaml.round_trip_dump(
-        data, indent=4, block_seq_indent=2
-    ) == document.replace('\n    Two and', ' Two and')
+    """)
+    yaml = ruyaml.YAML()
+    yaml.preserve_quotes = True
+    yaml.default_flow_style = None
+    yaml.indent(sequence=4, offset=2)
+    data = yaml.load(document)
+    buf = ruyaml.compat.StringIO()
+    yaml.dump(data, buf)
+    assert buf.getvalue() == document.replace('\n    Two and', ' Two and')

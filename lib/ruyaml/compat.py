@@ -1,43 +1,65 @@
 # coding: utf-8
 
-from __future__ import print_function
+# partially from package six by Benjamin Peterson
 
-import os
 import sys
+import os
+import types
+import io
 import traceback
 from abc import abstractmethod
-from collections import OrderedDict
-from typing import Any, Dict, List, Optional, Tuple, Union
+import collections.abc
+
+from typing import Any,Union,List,Tuple
 
 # partially from package six by Benjamin Peterson
 
 
 _DEFAULT_YAML_VERSION = (1, 2)
 
+try:
+    from ruamel.ordereddict import ordereddict
+except:  # NOQA
+    try:
+        from collections import OrderedDict
+    except ImportError:
+        from ordereddict import OrderedDict  # type: ignore
+    # to get the right name import ... as ordereddict doesn't do that
 
-class ordereddict(OrderedDict):
-    if not hasattr(OrderedDict, 'insert'):
+    class ordereddict(OrderedDict):  # type: ignore
+        if not hasattr(OrderedDict, 'insert'):
 
-        def insert(self, pos: int, key: Any, value: Any):
-            if pos >= len(self):
-                self[key] = value
-                return
-            od = ordereddict()
-            od.update(self)
-            for k in od:
-                del self[k]
-            for index, old_key in enumerate(od):
-                if pos == index:
+            def insert(self, pos, key, value):
+                # type: (int, Any, Any) -> None
+                if pos >= len(self):
                     self[key] = value
-                self[old_key] = od[old_key]
+                    return
+                od = ordereddict()
+                od.update(self)
+                for k in od:
+                    del self[k]
+                for index, old_key in enumerate(od):
+                    if pos == index:
+                        self[key] = value
+                    self[old_key] = od[old_key]
 
 
-MAXSIZE = sys.maxsize
-unichr = chr
+PY2 = sys.version_info[0] == 2
+PY3 = sys.version_info[0] == 3
 
-# have unlimited precision
-no_limit_int = int
-from collections.abc import Hashable, Mapping, MutableMapping, MutableSequence  # NOQA
+
+# replace with f-strings when 3.5 support is dropped
+# ft = '42'
+# assert _F('abc {ft!r}', ft=ft) == 'abc %r' % ft
+# 'abc %r' % ft -> _F('abc {ft!r}' -> f'abc {ft!r}'
+def _F(s, *superfluous, **kw):
+    if superfluous:
+        raise TypeError
+    return s.format(**kw)
+
+
+StringIO = io.StringIO
+BytesIO = io.BytesIO
 
 # StreamType = Union[BinaryIO, IO[str], IO[unicode],  StringIO]
 # StreamType = Union[BinaryIO, IO[str], StringIO]  # type: ignore
@@ -142,20 +164,20 @@ nprintf = Nprint('/var/tmp/ruyaml.log')
 
 def check_namespace_char(ch):
     # type: (Any) -> bool
-    if u'\x21' <= ch <= u'\x7E':  # ! to ~
+    if '\x21' <= ch <= '\x7E':  # ! to ~
         return True
-    if u'\xA0' <= ch <= u'\uD7FF':
+    if '\xA0' <= ch <= '\uD7FF':
         return True
-    if (u'\uE000' <= ch <= u'\uFFFD') and ch != u'\uFEFF':  # excl. byte order mark
+    if ('\uE000' <= ch <= '\uFFFD') and ch != '\uFEFF':  # excl. byte order mark
         return True
-    if u'\U00010000' <= ch <= u'\U0010FFFF':
+    if '\U00010000' <= ch <= '\U0010FFFF':
         return True
     return False
 
 
 def check_anchorname_char(ch):
     # type: (Any) -> bool
-    if ch in u',[]{}':
+    if ch in ',[]{}':
         return False
     return check_namespace_char(ch)
 
@@ -174,7 +196,7 @@ def version_tnf(t1, t2=None):
     return False
 
 
-class MutableSliceableSequence(MutableSequence):  # type: ignore
+class MutableSliceableSequence(collections.abc.MutableSequence):  # type: ignore
     __slots__ = ()
 
     def __getitem__(self, index):

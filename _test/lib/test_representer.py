@@ -1,4 +1,6 @@
-from __future__ import absolute_import, print_function
+
+import ruyaml as yaml
+YAML = yaml.YAML
 
 import pprint
 
@@ -7,12 +9,11 @@ import pprint
 import pytest
 import test_constructor
 
-import ruyaml as yaml
-
 pytestmark = pytest.mark.skip
 
 
 def test_representer_types(code_filename, verbose=False):
+    yaml = YAML(typ='safe', pure=True)
     test_constructor._make_objects()
     for allow_unicode in [False, True]:
         for encoding in ['utf-8', 'utf-16-be', 'utf-16-le']:

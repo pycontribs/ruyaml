@@ -194,61 +194,42 @@ for reading resp. writing.
 
 Loading and dumping using the ``SafeLoader``::
 
-    if ruyaml.version_info < (0, 15):
-        data = yaml.safe_load(istream)
-        yaml.safe_dump(data, ostream)
-    else:
-        yml = ruyaml.YAML(typ='safe', pure=True)  # 'safe' load and dump
-        data = yml.load(istream)
-        yml.dump(data, ostream)
+    yml = ruyaml.YAML(typ='safe', pure=True)  # 'safe' load and dump
+    data = yml.load(istream)
+    yml.dump(data, ostream)
 
 Loading with the ``CSafeLoader``, dumping with
 ``RoundTripLoader``. You need two ``YAML`` instances, but each of them
 can be re-used::
 
-    if ruyaml.version_info < (0, 15):
-        data = yaml.load(istream, Loader=yaml.CSafeLoader)
-        yaml.round_trip_dump(data, ostream, width=1000, explicit_start=True)
-    else:
-        yml = ruyaml.YAML(typ='safe')
-        data = yml.load(istream)
-        ymlo = ruyaml.YAML()  # or yaml.YAML(typ='rt')
-        ymlo.width = 1000
-        ymlo.explicit_start = True
-        ymlo.dump(data, ostream)
+    yml = ruyaml.YAML(typ='safe')
+    data = yml.load(istream)
+    ymlo = ruyaml.YAML()  # or yaml.YAML(typ='rt')
+    ymlo.width = 1000
+    ymlo.explicit_start = True
+    ymlo.dump(data, ostream)
 
 Loading and dumping from ``pathlib.Path`` instances using the
 round-trip-loader::
 
     # in myyaml.py
-    if ruyaml.version_info < (0, 15):
-        class MyYAML(yaml.YAML):
-            def __init__(self):
-                yaml.YAML.__init__(self)
-                self.preserve_quotes = True
-                self.indent(mapping=4, sequence=4, offset=2)
+    class MyYAML(yaml.YAML):
+        def __init__(self):
+            yaml.YAML.__init__(self)
+            self.preserve_quotes = True
+            self.indent(mapping=4, sequence=4, offset=2)
     # in your code
-    try:
-        from myyaml import MyYAML
-    except (ModuleNotFoundError, ImportError):
-        if ruyaml.version_info >= (0, 15):
-            raise
+    from myyaml import MyYAML
 
     # some pathlib.Path
     from pathlib import Path
     inf = Path('/tmp/in.yaml')
     outf = Path('/tmp/out.yaml')
 
-    if ruyaml.version_info < (0, 15):
-        with inf.open() as ifp:
-             data = yaml.round_trip_load(ifp, preserve_quotes=True)
-        with outf.open('w') as ofp:
-             yaml.round_trip_dump(data, ofp, indent=4, block_seq_indent=2)
-    else:
-        yml = MyYAML()
-        # no need for with statement when using pathlib.Path instances
-        data = yml.load(inf)
-        yml.dump(data, outf)
+    yml = MyYAML()
+    # no need for with statement when using pathlib.Path instances
+    data = yml.load(inf)
+    yml.dump(data, outf)
 
 +++++++++++++++++++++
 Reason for API change

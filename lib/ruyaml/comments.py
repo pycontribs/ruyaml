@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import absolute_import, print_function
-
 """
 stuff to deal with comments and formatting on dict/list/ordereddict/set
 these are not really related, formatting could be factored out as
@@ -13,9 +11,16 @@ import sys
 from collections.abc import Mapping, MutableSet, Set, Sized
 from typing import Any, Dict, Iterator, List, Optional
 
-from ruyaml.anchor import Anchor
-from ruyaml.compat import MutableSliceableSequence, ordereddict
+
+from ruyaml.compat import ordereddict  # type: ignore
+from ruyaml.compat import MutableSliceableSequence, _F
 from ruyaml.scalarstring import ScalarString
+from ruyaml.anchor import Anchor
+
+from collections.abc import MutableSet, Sized, Set, Mapping
+
+if False:  # MYPY
+    from typing import Any, Dict, Optional, List, Union, Optional, Iterator  # NOQA
 
 # fmt: off
 __all__ = ['CommentedSeq', 'CommentedKeySeq',
@@ -30,8 +35,8 @@ merge_attrib = '_yaml_merge'
 tag_attrib = '_yaml_tag'
 
 
-class Comment:
-    # sys.getsize tested the Comment objects, __slots__ makes them bigger
+class Comment(object):
+    # using sys.getsize tested the Comment objects, __slots__ makes them bigger
     # and adding self.end did not matter
     __slots__ = 'comment', '_items', '_end', '_start'
     attrib = comment_attrib
@@ -55,6 +60,23 @@ class Comment:
         return 'Comment(comment={0},\n  items={1}{2})'.format(
             self.comment, self._items, end
         )
+
+    def __repr__(self):
+        # type: () -> str
+        if bool(self._end):
+            end = ',\n  end=' + str(self._end)
+        else:
+            end = ""
+        try:
+            ln = max([len(str(k)) for k in self._items]) + 1
+        except ValueError:
+            ln = ''
+        it = '    '.join(
+            ['{:{}} {}\n'.format(str(k) + ':', ln, v) for k, v in self._items.items()]
+        )
+        if it:
+            it = '\n    ' + it + '  '
+        return 'Comment(\n  start={},\n  items={{{}}}{})'.format(self.comment, it, end)
 
     @property
     def items(self):
@@ -80,6 +102,27 @@ class Comment:
     def start(self, value):
         # type: (Any) -> None
         self._start = value
+
+    def __contains__(self, x):
+        # test if a substring is in any of the attached comments
+        if self.comment:
+            if self.comment[0] and x in self.comment[0].value:
+                return True
+            if self.comment[1]:
+                for c in self.comment[1]:
+                    if x in c.value:
+                        return True
+        for value in self.items.values():
+            if not value:
+                continue
+            for c in value:
+                if c and x in c.value:
+                    return True
+        if self.end:
+            for c in self.end:
+                if x in c.value:
+                    return True
+        return False
 
 
 # to distinguish key from None
@@ -115,7 +158,11 @@ class Format:
         return self._flow_style
 
 
-class LineCol:
+class LineCol(object):
+    """
+    line and column information wrt document, values start at zero (0)
+    """
+
     attrib = line_col_attrib
 
     def __init__(self):
@@ -156,6 +203,10 @@ class LineCol:
         if self.data is None:
             self.data = {}
         self.data[key] = data
+
+    def __repr__(self):
+        # type: () -> str
+        return _F('LineCol({line}, {col})', line=self.line, col=self.col)
 
 
 class Tag:
@@ -219,12 +270,15 @@ class CommentedBase:
         from ruyaml.error import CommentMark
         from ruyaml.tokens import CommentToken
 
-        pre_comments = self._yaml_get_pre_comment()
+        pre_comments = self._yaml_clear_pre_comment()
         if comment[-1] == '\n':
             comment = comment[:-1]  # strip final newline if there
         start_mark = CommentMark(indent)
         for com in comment.split('\n'):
-            pre_comments.append(CommentToken('# ' + com + '\n', start_mark, None))
+            c = com.strip()
+            if len(c) > 0 and c[0] != '#':
+                com = '# ' + com
+            pre_comments.append(CommentToken(com + '\n', start_mark, None))
 
     def yaml_set_comment_before_after_key(
         self, key, before=None, indent=0, after=None, after_indent=None
@@ -426,7 +480,7 @@ class CommentedSeq(MutableSliceableSequence, list, CommentedBase):  # type: igno
     def _yaml_add_comment(self, comment, key=NoComment):
         # type: (Any, Optional[Any]) -> None
         if key is not NoComment:
-            self.yaml_key_comment_extend(key, comment)
+            self.yaml_key_comment_extend(key, comment, clear=True)
         else:
             self.ca.comment = comment
 
@@ -460,6 +514,15 @@ class CommentedSeq(MutableSliceableSequence, list, CommentedBase):  # type: igno
         return column
 
     def _yaml_get_pre_comment(self):
+        # type: () -> Any
+        pre_comments = []  # type: List[Any]
+        if self.ca.comment is None:
+            self.ca.comment = [None, pre_comments]
+        else:
+            pre_comments = self.ca.comment[1]
+        return pre_comments
+
+    def _yaml_clear_pre_comment(self):
         # type: () -> Any
         pre_comments = []  # type: List[Any]
         if self.ca.comment is None:
@@ -543,6 +606,15 @@ class CommentedKeySeq(tuple, CommentedBase):  # type: ignore
         return column
 
     def _yaml_get_pre_comment(self):
+        # type: () -> Any
+        pre_comments = []  # type: List[Any]
+        if self.ca.comment is None:
+            self.ca.comment = [None, pre_comments]
+        else:
+            pre_comments = self.ca.comment[1]
+        return pre_comments
+
+    def _yaml_clear_pre_comment(self):
         # type: () -> Any
         pre_comments = []  # type: List[Any]
         if self.ca.comment is None:
@@ -687,22 +759,34 @@ class CommentedMap(ordereddict, CommentedBase):  # type: ignore
         if self.ca.comment is None:
             self.ca.comment = [None, pre_comments]
         else:
+            pre_comments = self.ca.comment[1]
+        return pre_comments
+
+    def _yaml_clear_pre_comment(self):
+        # type: () -> Any
+        pre_comments = []  # type: List[Any]
+        if self.ca.comment is None:
+            self.ca.comment = [None, pre_comments]
+        else:
             self.ca.comment[1] = pre_comments
         return pre_comments
 
-    def update(self, vals: Any) -> None:  # type: ignore
+    def update(self, *vals, **kw):
+        # type: (Any, Any) -> None
         try:
-            ordereddict.update(self, vals)
+            ordereddict.update(self, *vals, **kw)
         except TypeError:
             # probably a dict that is used
-            for x in vals:
-                self[x] = vals[x]
+            for x in vals[0]:
+                self[x] = vals[0][x]
         try:
             self._ok.update(vals.keys())  # type: ignore
         except AttributeError:
-            # assume a list/tuple of two element lists/tuples
-            for x in vals:
+            # assume one argument that is a list/tuple of two element lists/tuples
+            for x in vals[0]:
                 self._ok.add(x[0])
+        if kw:
+            self._ok.add(*kw.keys())
 
     def insert(self, pos, key, value, comment=None):
         # type: (Any, Any, Any, Optional[Any]) -> None
@@ -910,7 +994,10 @@ class CommentedKeyMap(CommentedBase, Mapping):  # type: ignore
         # type: (Any, Any) -> None
         if hasattr(self, '_od'):
             raise_immutable(self)
-        self._od = ordereddict(*args, **kw)
+        try:
+            self._od = ordereddict(*args, **kw)
+        except TypeError:
+            raise
 
     __delitem__ = (
         __setitem__
@@ -1071,14 +1158,14 @@ def dump_comments(d, name="", sep='.', out=sys.stdout):
     """
     if isinstance(d, dict) and hasattr(d, 'ca'):
         if name:
-            sys.stdout.write('{}\n'.format(name))
-        out.write('{}\n'.format(d.ca))  # type: ignore
+            out.write('{} {}\n'.format(name, type(d)))
+        out.write('{!r}\n'.format(d.ca))  # type: ignore
         for k in d:
-            dump_comments(d[k], name=(name + sep + k) if name else k, sep=sep, out=out)
+            dump_comments(d[k], name=(name + sep + str(k)) if name else k, sep=sep, out=out)
     elif isinstance(d, list) and hasattr(d, 'ca'):
         if name:
-            sys.stdout.write('{}\n'.format(name))
-        out.write('{}\n'.format(d.ca))  # type: ignore
+            out.write('{} {}\n'.format(name, type(d)))
+        out.write('{!r}\n'.format(d.ca))  # type: ignore
         for idx, k in enumerate(d):
             dump_comments(
                 k, name=(name + sep + str(idx)) if name else str(idx), sep=sep, out=out

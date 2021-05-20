@@ -6,6 +6,8 @@ from textwrap import dedent
 
 import pytest
 
+NO_CLIB_VER = (3, 10)
+
 
 @pytest.mark.skipif(
     platform.python_implementation() in ['Jython', 'PyPy'],
@@ -16,33 +18,29 @@ def test_load_cyaml():
     print("???????????????????????", platform.python_implementation())
     import ruyaml
 
-    if sys.version_info >= (3, 8):
+    if sys.version_info >= NO_CLIB_VER:
         return
+    yaml = ruyaml.YAML(typ='safe', pure=False)
     assert ruyaml.__with_libyaml__
-    from ruyaml.cyaml import CLoader
 
-    ruyaml.load('abc: 1', Loader=CLoader)
+    yaml.load('abc: 1')
 
 
-@pytest.mark.skipif(
-    sys.version_info >= (3, 8)
-    or platform.python_implementation() in ['Jython', 'PyPy'],
-    reason='no _PyGC_FINALIZED',
-)
-@pytest.mark.xfail(reason="cyaml not ported yet")
+@pytest.mark.skipif(sys.version_info >= NO_CLIB_VER
+                    or platform.python_implementation() in ['Jython', 'PyPy'],
+                    reason='no _PyGC_FINALIZED')
 def test_dump_cyaml():
     import ruyaml
 
-    if sys.version_info >= (3, 8):
+    if sys.version_info >= NO_CLIB_VER:
         return
     data = {'a': 1, 'b': 2}
-    res = ruyaml.dump(
-        data,
-        Dumper=ruyaml.cyaml.CSafeDumper,
-        default_flow_style=False,
-        allow_unicode=True,
-    )
-    assert res == 'a: 1\nb: 2\n'
+    yaml = ruyaml.YAML(typ='safe', pure=False)
+    yaml.default_flow_style = False
+    yaml.allow_unicode = True
+    buf = ruyaml.compat.StringIO()
+    yaml.dump(data, buf)
+    assert buf.getvalue() == 'a: 1\nb: 2\n'
 
 
 @pytest.mark.skipif(
@@ -53,7 +51,7 @@ def test_load_cyaml_1_2():
     # issue 155
     import ruyaml
 
-    if sys.version_info >= (3, 8):
+    if sys.version_info >= NO_CLIB_VER:
         return
     assert ruyaml.__with_libyaml__
     inp = dedent(
@@ -77,7 +75,7 @@ def test_dump_cyaml_1_2():
 
     import ruyaml
 
-    if sys.version_info >= (3, 8):
+    if sys.version_info >= NO_CLIB_VER:
         return
     assert ruyaml.__with_libyaml__
     yaml = ruyaml.YAML(typ='safe')

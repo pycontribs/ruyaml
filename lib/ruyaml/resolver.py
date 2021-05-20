@@ -1,12 +1,13 @@
 # coding: utf-8
 
-from __future__ import absolute_import
-
 import re
 from typing import Any, Dict, List, Optional, Text, Union  # NOQA
 
-from ruyaml.compat import _DEFAULT_YAML_VERSION  # NOQA
-from ruyaml.compat import VersionType  # NOQA
+if False:  # MYPY
+    from typing import Any, Dict, List, Union, Text, Optional  # NOQA
+    from ruyaml.compat import VersionType  # NOQA
+
+from ruyaml.compat import _DEFAULT_YAML_VERSION, _F  # NOQA
 from ruyaml.error import *  # NOQA
 from ruyaml.nodes import MappingNode, ScalarNode, SequenceNode  # NOQA
 from ruyaml.util import RegExp  # NOQA
@@ -22,77 +23,77 @@ __all__ = ['BaseResolver', 'Resolver', 'VersionedResolver']
 # - a list of first characters to match
 implicit_resolvers = [
     ([(1, 2)],
-        u'tag:yaml.org,2002:bool',
-        RegExp(u'''^(?:true|True|TRUE|false|False|FALSE)$''', re.X),
-        list(u'tTfF')),
+        'tag:yaml.org,2002:bool',
+        RegExp('''^(?:true|True|TRUE|false|False|FALSE)$''', re.X),
+        list('tTfF')),
     ([(1, 1)],
-        u'tag:yaml.org,2002:bool',
-        RegExp(u'''^(?:y|Y|yes|Yes|YES|n|N|no|No|NO
+        'tag:yaml.org,2002:bool',
+        RegExp('''^(?:y|Y|yes|Yes|YES|n|N|no|No|NO
         |true|True|TRUE|false|False|FALSE
         |on|On|ON|off|Off|OFF)$''', re.X),
-        list(u'yYnNtTfFoO')),
+        list('yYnNtTfFoO')),
     ([(1, 2)],
-        u'tag:yaml.org,2002:float',
-        RegExp(u'''^(?:
+        'tag:yaml.org,2002:float',
+        RegExp('''^(?:
          [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?
         |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)
         |[-+]?\\.[0-9_]+(?:[eE][-+][0-9]+)?
         |[-+]?\\.(?:inf|Inf|INF)
         |\\.(?:nan|NaN|NAN))$''', re.X),
-        list(u'-+0123456789.')),
+        list('-+0123456789.')),
     ([(1, 1)],
-        u'tag:yaml.org,2002:float',
-        RegExp(u'''^(?:
+        'tag:yaml.org,2002:float',
+        RegExp('''^(?:
          [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?
         |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)
         |\\.[0-9_]+(?:[eE][-+][0-9]+)?
         |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*  # sexagesimal float
         |[-+]?\\.(?:inf|Inf|INF)
         |\\.(?:nan|NaN|NAN))$''', re.X),
-        list(u'-+0123456789.')),
+        list('-+0123456789.')),
     ([(1, 2)],
-        u'tag:yaml.org,2002:int',
-        RegExp(u'''^(?:[-+]?0b[0-1_]+
+        'tag:yaml.org,2002:int',
+        RegExp('''^(?:[-+]?0b[0-1_]+
         |[-+]?0o?[0-7_]+
         |[-+]?[0-9_]+
         |[-+]?0x[0-9a-fA-F_]+)$''', re.X),
-        list(u'-+0123456789')),
+        list('-+0123456789')),
     ([(1, 1)],
-        u'tag:yaml.org,2002:int',
-        RegExp(u'''^(?:[-+]?0b[0-1_]+
+        'tag:yaml.org,2002:int',
+        RegExp('''^(?:[-+]?0b[0-1_]+
         |[-+]?0?[0-7_]+
         |[-+]?(?:0|[1-9][0-9_]*)
         |[-+]?0x[0-9a-fA-F_]+
         |[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$''', re.X),  # sexagesimal int
-        list(u'-+0123456789')),
+        list('-+0123456789')),
     ([(1, 2), (1, 1)],
-        u'tag:yaml.org,2002:merge',
-        RegExp(u'^(?:<<)$'),
-        [u'<']),
+        'tag:yaml.org,2002:merge',
+        RegExp('^(?:<<)$'),
+        ['<']),
     ([(1, 2), (1, 1)],
-        u'tag:yaml.org,2002:null',
-        RegExp(u'''^(?: ~
+        'tag:yaml.org,2002:null',
+        RegExp('''^(?: ~
         |null|Null|NULL
         | )$''', re.X),
-        [u'~', u'n', u'N', u'']),
+        ['~', 'n', 'N', '']),
     ([(1, 2), (1, 1)],
-        u'tag:yaml.org,2002:timestamp',
-        RegExp(u'''^(?:[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]
+        'tag:yaml.org,2002:timestamp',
+        RegExp('''^(?:[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]
         |[0-9][0-9][0-9][0-9] -[0-9][0-9]? -[0-9][0-9]?
         (?:[Tt]|[ \\t]+)[0-9][0-9]?
         :[0-9][0-9] :[0-9][0-9] (?:\\.[0-9]*)?
         (?:[ \\t]*(?:Z|[-+][0-9][0-9]?(?::[0-9][0-9])?))?)$''', re.X),
-        list(u'0123456789')),
+        list('0123456789')),
     ([(1, 2), (1, 1)],
-        u'tag:yaml.org,2002:value',
-        RegExp(u'^(?:=)$'),
-        [u'=']),
+        'tag:yaml.org,2002:value',
+        RegExp('^(?:=)$'),
+        ['=']),
     # The following resolver is only for documentation purposes. It cannot work
     # because plain scalars cannot start with '!', '&', or '*'.
     ([(1, 2), (1, 1)],
-        u'tag:yaml.org,2002:yaml',
-        RegExp(u'^(?:!|&|\\*)$'),
-        list(u'!&*')),
+        'tag:yaml.org,2002:yaml',
+        RegExp('^(?:!|&|\\*)$'),
+        list('!&*')),
 ]
 # fmt: on
 
@@ -103,9 +104,9 @@ class ResolverError(YAMLError):
 
 class BaseResolver:
 
-    DEFAULT_SCALAR_TAG = u'tag:yaml.org,2002:str'
-    DEFAULT_SEQUENCE_TAG = u'tag:yaml.org,2002:seq'
-    DEFAULT_MAPPING_TAG = u'tag:yaml.org,2002:map'
+    DEFAULT_SCALAR_TAG = 'tag:yaml.org,2002:str'
+    DEFAULT_SEQUENCE_TAG = 'tag:yaml.org,2002:seq'
+    DEFAULT_MAPPING_TAG = 'tag:yaml.org,2002:map'
 
     yaml_implicit_resolvers = {}  # type: Dict[Any, Any]
     yaml_path_resolvers = {}  # type: Dict[Any, Any]
@@ -189,7 +190,9 @@ class BaseResolver:
                     node_check = element[0]
                     index_check = True
                 else:
-                    raise ResolverError('Invalid path element: %s' % (element,))
+                    raise ResolverError(
+                        _F('Invalid path element: {element!s}', element=element)
+                    )
             else:
                 node_check = None
                 index_check = element
@@ -204,9 +207,13 @@ class BaseResolver:
                 and not isinstance(node_check, str)
                 and node_check is not None
             ):
-                raise ResolverError('Invalid node checker: %s' % (node_check,))
+                raise ResolverError(
+                    _F('Invalid node checker: {node_check!s}', node_check=node_check)
+                )
             if not isinstance(index_check, (str, int)) and index_check is not None:
-                raise ResolverError('Invalid index checker: %s' % (index_check,))
+                raise ResolverError(
+                    _F('Invalid index checker: {index_check!s}', index_check=index_check)
+                )
             new_path.append((node_check, index_check))
         if kind is str:
             kind = ScalarNode
@@ -215,7 +222,7 @@ class BaseResolver:
         elif kind is dict:
             kind = MappingNode
         elif kind not in [ScalarNode, SequenceNode, MappingNode] and kind is not None:
-            raise ResolverError('Invalid node kind: %s' % (kind,))
+            raise ResolverError(_F('Invalid node kind: {kind!s}', kind=kind))
         cls.yaml_path_resolvers[tuple(new_path), kind] = tag
 
     def descend_resolver(self, current_node, current_index):
@@ -252,9 +259,9 @@ class BaseResolver:
 
     def check_resolver_prefix(self, depth, path, kind, current_node, current_index):
         # type: (int, Text, Any, Any, Any) -> bool
-        node_check, index_check = path[depth - 1]  # type: ignore
-        if isinstance(node_check, str):  # type: ignore
-            if current_node.tag != node_check:  # type: ignore
+        node_check, index_check = path[depth - 1]
+        if isinstance(node_check, str):
+            if current_node.tag != node_check:
                 return False
         elif node_check is not None:  # type: ignore
             if not isinstance(current_node, node_check):  # type: ignore
@@ -265,7 +272,7 @@ class BaseResolver:
             index_check is False or index_check is None  # type: ignore
         ) and current_index is None:  # type: ignore
             return False
-        if isinstance(index_check, str):  # type: ignore
+        if isinstance(index_check, str):
             if not (
                 isinstance(current_index, ScalarNode)
                 and index_check == current_index.value  # type: ignore
@@ -349,7 +356,7 @@ class VersionedResolver(BaseResolver):
         if isinstance(version, list):
             return tuple(version)
         # assume string
-        return tuple(map(int, version.split(u'.')))
+        return tuple(map(int, version.split('.')))
 
     @property
     def versioned_resolver(self):
@@ -358,6 +365,8 @@ class VersionedResolver(BaseResolver):
         select the resolver based on the version we are parsing
         """
         version = self.processing_version
+        if isinstance(version, str):
+            version = tuple(map(int, version.split('.')))
         if version not in self._version_implicit_resolver:
             for x in implicit_resolvers:
                 if version in x[0]:

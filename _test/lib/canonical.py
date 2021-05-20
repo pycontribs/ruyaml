@@ -1,9 +1,7 @@
 import ruyaml
-from ruyaml.compat import unichr
 from ruyaml.composer import Composer
 from ruyaml.constructor import Constructor
 from ruyaml.resolver import Resolver
-
 
 class CanonicalError(ruyaml.YAMLError):
     pass
@@ -16,7 +14,7 @@ class CanonicalScanner:
                 data = data.decode('utf-8')
         except UnicodeDecodeError:
             raise CanonicalError('utf-8 stream is expected')
-        self.data = data + u'\0'
+        self.data = data + '\0'
         self.index = 0
         self.tokens = []
         self.scanned = False
@@ -55,51 +53,51 @@ class CanonicalScanner:
         while True:
             self.find_token()
             ch = self.data[self.index]
-            if ch == u'\0':
-                self.tokens.append(ruyaml.StreamEndToken(None, None))
+            if ch == '\0':
+                self.tokens.append(ruamel.yaml.StreamEndToken(None, None))
                 break
-            elif ch == u'%':
+            elif ch == '%':
                 self.tokens.append(self.scan_directive())
-            elif ch == u'-' and self.data[self.index : self.index + 3] == u'---':
+            elif ch == '-' and self.data[self.index : self.index + 3] == '---':
                 self.index += 3
                 self.tokens.append(ruyaml.DocumentStartToken(None, None))
-            elif ch == u'[':
+            elif ch == '[':
                 self.index += 1
                 self.tokens.append(ruyaml.FlowSequenceStartToken(None, None))
-            elif ch == u'{':
+            elif ch == '{':
                 self.index += 1
                 self.tokens.append(ruyaml.FlowMappingStartToken(None, None))
-            elif ch == u']':
+            elif ch == ']':
                 self.index += 1
                 self.tokens.append(ruyaml.FlowSequenceEndToken(None, None))
-            elif ch == u'}':
+            elif ch == '}':
                 self.index += 1
                 self.tokens.append(ruyaml.FlowMappingEndToken(None, None))
-            elif ch == u'?':
+            elif ch == '?':
                 self.index += 1
                 self.tokens.append(ruyaml.KeyToken(None, None))
-            elif ch == u':':
+            elif ch == ':':
                 self.index += 1
                 self.tokens.append(ruyaml.ValueToken(None, None))
-            elif ch == u',':
+            elif ch == ',':
                 self.index += 1
                 self.tokens.append(ruyaml.FlowEntryToken(None, None))
-            elif ch == u'*' or ch == u'&':
+            elif ch == '*' or ch == '&':
                 self.tokens.append(self.scan_alias())
-            elif ch == u'!':
+            elif ch == '!':
                 self.tokens.append(self.scan_tag())
-            elif ch == u'"':
+            elif ch == '"':
                 self.tokens.append(self.scan_scalar())
             else:
                 raise CanonicalError('invalid token')
         self.scanned = True
 
-    DIRECTIVE = u'%YAML 1.1'
+    DIRECTIVE = '%YAML 1.1'
 
     def scan_directive(self):
         if (
             self.data[self.index : self.index + len(self.DIRECTIVE)] == self.DIRECTIVE
-            and self.data[self.index + len(self.DIRECTIVE)] in u' \n\0'
+            and self.data[self.index + len(self.DIRECTIVE)] in ' \n\0'
         ):
             self.index += len(self.DIRECTIVE)
             return ruyaml.DirectiveToken('YAML', (1, 1), None, None)
@@ -107,13 +105,13 @@ class CanonicalScanner:
             raise CanonicalError('invalid directive')
 
     def scan_alias(self):
-        if self.data[self.index] == u'*':
+        if self.data[self.index] == '*':
             TokenClass = ruyaml.AliasToken
         else:
             TokenClass = ruyaml.AnchorToken
         self.index += 1
         start = self.index
-        while self.data[self.index] not in u', \n\0':
+        while self.data[self.index] not in ', \n\0':
             self.index += 1
         value = self.data[start : self.index]
         return TokenClass(value, None, None)
@@ -121,38 +119,38 @@ class CanonicalScanner:
     def scan_tag(self):
         self.index += 1
         start = self.index
-        while self.data[self.index] not in u' \n\0':
+        while self.data[self.index] not in ' \n\0':
             self.index += 1
         value = self.data[start : self.index]
         if not value:
-            value = u'!'
-        elif value[0] == u'!':
+            value = '!'
+        elif value[0] == '!':
             value = 'tag:yaml.org,2002:' + value[1:]
-        elif value[0] == u'<' and value[-1] == u'>':
+        elif value[0] == '<' and value[-1] == '>':
             value = value[1:-1]
         else:
-            value = u'!' + value
+            value = '!' + value
         return ruyaml.TagToken(value, None, None)
 
     QUOTE_CODES = {'x': 2, 'u': 4, 'U': 8}
 
     QUOTE_REPLACES = {
-        u'\\': u'\\',
-        u'"': u'"',
-        u' ': u' ',
-        u'a': u'\x07',
-        u'b': u'\x08',
-        u'e': u'\x1B',
-        u'f': u'\x0C',
-        u'n': u'\x0A',
-        u'r': u'\x0D',
-        u't': u'\x09',
-        u'v': u'\x0B',
-        u'N': u'\u0085',
-        u'L': u'\u2028',
-        u'P': u'\u2029',
-        u'_': u'_',
-        u'0': u'\x00',
+        '\\': '\\',
+        '"': '"',
+        ' ': ' ',
+        'a': '\x07',
+        'b': '\x08',
+        'e': '\x1B',
+        'f': '\x0C',
+        'n': '\x0A',
+        'r': '\x0D',
+        't': '\x09',
+        'v': '\x0B',
+        'N': '\u0085',
+        'L': '\u2028',
+        'P': '\u2029',
+        '_': '_',
+        '0': '\x00',
     }
 
     def scan_scalar(self):
@@ -160,32 +158,32 @@ class CanonicalScanner:
         chunks = []
         start = self.index
         ignore_spaces = False
-        while self.data[self.index] != u'"':
-            if self.data[self.index] == u'\\':
+        while self.data[self.index] != '"':
+            if self.data[self.index] == '\\':
                 ignore_spaces = False
                 chunks.append(self.data[start : self.index])
                 self.index += 1
                 ch = self.data[self.index]
                 self.index += 1
-                if ch == u'\n':
+                if ch == '\n':
                     ignore_spaces = True
                 elif ch in self.QUOTE_CODES:
                     length = self.QUOTE_CODES[ch]
                     code = int(self.data[self.index : self.index + length], 16)
-                    chunks.append(unichr(code))
+                    chunks.append(chr(code))
                     self.index += length
                 else:
                     if ch not in self.QUOTE_REPLACES:
                         raise CanonicalError('invalid escape code')
                     chunks.append(self.QUOTE_REPLACES[ch])
                 start = self.index
-            elif self.data[self.index] == u'\n':
+            elif self.data[self.index] == '\n':
                 chunks.append(self.data[start : self.index])
-                chunks.append(u' ')
+                chunks.append(' ')
                 self.index += 1
                 start = self.index
                 ignore_spaces = True
-            elif ignore_spaces and self.data[self.index] == u' ':
+            elif ignore_spaces and self.data[self.index] == ' ':
                 self.index += 1
                 start = self.index
             else:
@@ -198,12 +196,12 @@ class CanonicalScanner:
     def find_token(self):
         found = False
         while not found:
-            while self.data[self.index] in u' \t':
+            while self.data[self.index] in ' \t':
                 self.index += 1
-            if self.data[self.index] == u'#':
-                while self.data[self.index] != u'\n':
+            if self.data[self.index] == '#':
+                while self.data[self.index] != '\n':
                     self.index += 1
-            if self.data[self.index] == u'\n':
+            if self.data[self.index] == '\n':
                 self.index += 1
             else:
                 found = True
@@ -343,7 +341,9 @@ ruyaml.CanonicalLoader = CanonicalLoader
 
 
 def canonical_scan(stream):
-    return ruyaml.scan(stream, Loader=CanonicalLoader)
+    yaml = ruyaml.YAML()
+    yaml.scanner = CanonicalScanner
+    return yaml.scan(stream)
 
 
 ruyaml.canonical_scan = canonical_scan
@@ -378,7 +378,9 @@ ruyaml.canonical_load = canonical_load
 
 
 def canonical_load_all(stream):
-    return ruyaml.load_all(stream, Loader=CanonicalLoader)
+    yaml = ruyaml.YAML(typ='safe', pure=True)
+    yaml.Loader = CanonicalLoader
+    return yaml.load_all(stream)
 
 
 ruyaml.canonical_load_all = canonical_load_all

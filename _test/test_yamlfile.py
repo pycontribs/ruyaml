@@ -1,12 +1,13 @@
-from __future__ import print_function
+# coding: utf-8
 
 """
 various test cases for YAML files
 """
 
-import platform
-
+import sys
+import io
 import pytest  # NOQA
+import platform
 
 from .roundtrip import dedent, round_trip, round_trip_dump, round_trip_load  # NOQA
 
@@ -26,9 +27,8 @@ class TestYAML:
         from ruyaml.compat import ordereddict
 
         x = ordereddict([('a', 1), ('b', 2)])
-        res = ruyaml.dump(x, default_flow_style=False)
-        assert res == dedent(
-            """
+        res = round_trip_dump(x, default_flow_style=False)
+        assert res == dedent("""
         !!omap
         - a: 1
         - b: 2
@@ -53,9 +53,8 @@ class TestYAML:
 
         # OrderedDict mapped to !!omap
         x = OrderedDict([('a', 1), ('b', 2)])
-        res = ruyaml.dump(x, Dumper=ruyaml.RoundTripDumper, default_flow_style=False)
-        assert res == dedent(
-            """
+        res = round_trip_dump(x, default_flow_style=False)
+        assert res == dedent("""
         !!omap
         - a: 1
         - b: 2
@@ -79,9 +78,12 @@ class TestYAML:
         import ruyaml  # NOQA
 
         x = set(['a', 'b', 'c'])
-        res = ruyaml.dump(x, default_flow_style=False)
-        assert res == dedent(
-            """
+        # cannot use round_trip_dump, it doesn't show null in block style
+        buf = io.StringIO()
+        yaml = ruyaml.YAML(typ='unsafe', pure=True)
+        yaml.default_flow_style = False
+        yaml.dump(x, buf)
+        assert buf.getvalue() == dedent("""
         !!set
         a: null
         b: null
@@ -203,17 +205,20 @@ class TestYAML:
     def test_load_all_perserve_quotes(self):
         import ruyaml  # NOQA
 
-        s = dedent(
-            """\
+        yaml = ruyaml.YAML()
+        yaml.preserve_quotes = True
+        s = dedent("""\
         a: 'hello'
         ---
         b: "goodbye"
         """
         )
         data = []
-        for x in ruyaml.round_trip_load_all(s, preserve_quotes=True):
+        for x in yaml.load_all(s):
             data.append(x)
-        out = ruyaml.dump_all(data, Dumper=ruyaml.RoundTripDumper)
+        buf = ruyaml.compat.StringIO()
+        yaml.dump_all(data, buf)
+        out = buf.getvalue()
         print(type(data[0]['a']), data[0]['a'])
         # out = ruyaml.round_trip_dump_all(data)
         print(out)
