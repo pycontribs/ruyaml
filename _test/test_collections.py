@@ -16,6 +16,4 @@ class TestOrderedDict:
     def test_ordereddict(self):
         from collections import OrderedDict
 
-        import ruyaml  # NOQA
-
-        assert ruyaml.dump(OrderedDict()) == '!!omap []\n'
+        assert round_trip_dump(OrderedDict()) == '!!omap []\n'

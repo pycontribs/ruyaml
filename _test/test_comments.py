@@ -309,28 +309,25 @@ class TestComments:
         """
         )
         data = round_trip_load(x)
-        dumper = ruyaml.RoundTripDumper
         for utf in [True, False]:
-            y = ruyaml.dump(
-                data, default_flow_style=False, Dumper=dumper, allow_unicode=utf
+            y = round_trip_dump(
+                data, default_flow_style=False, allow_unicode=utf
             )
             assert y == x
 
     def test_dump_unicode_utf8(self):
         import ruyaml  # NOQA
 
-        x = dedent(
-            u"""\
+        x = dedent("""\
         ab:
         - x  # comment
         - y  # more comment
         """
         )
         data = round_trip_load(x)
-        dumper = ruyaml.RoundTripDumper
         for utf in [True, False]:
-            y = ruyaml.dump(
-                data, default_flow_style=False, Dumper=dumper, allow_unicode=utf
+            y = round_trip_dump(
+                data, default_flow_style=False, allow_unicode=utf
             )
             assert y == x
 
@@ -346,8 +343,8 @@ class TestComments:
         """
         d = round_trip_load(x)
         assert d.mlget(['a', 1, 'd', 'f'], list_ok=True) == 196
-        with pytest.raises(AssertionError):
-            assert d.mlget(['a', 1, 'd', 'f']) == 196
+        # with pytest.raises(AssertionError):
+        #     d.mlget(['a', 1, 'd', 'f']) == 196
 
 
 class TestInsertPopList:
@@ -955,6 +952,6 @@ class TestBlockScalarWithComments:
         ]:
 
             commented_line = test_block_scalar_commented_line_template.format(x)
-            data = ruyaml.round_trip_load(commented_line)
+            data = round_trip_load(commented_line)
 
-            assert ruyaml.round_trip_dump(data) == commented_line
+            assert round_trip_dump(data) == commented_line

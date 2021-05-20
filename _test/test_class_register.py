@@ -13,8 +13,8 @@ class User0:
         self.age = age
 
 
-class User1:
-    yaml_tag = u'!user'
+class User1(object):
+    yaml_tag = '!user'
 
     def __init__(self, name, age):
         self.name = name
@@ -22,9 +22,7 @@ class User1:
 
     @classmethod
     def to_yaml(cls, representer, node):
-        return representer.represent_scalar(
-            cls.yaml_tag, u'{.name}-{.age}'.format(node, node)
-        )
+        return representer.represent_scalar(cls.yaml_tag, '{.name}-{.age}'.format(node, node))
 
     @classmethod
     def from_yaml(cls, constructor, node):
@@ -117,8 +115,8 @@ class TestDecorator:
         yml = YAML()
 
         @yaml_object(yml)
-        class User3:
-            yaml_tag = u'!USER'
+        class User3(object):
+            yaml_tag = '!USER'
 
             def __init__(self, name, age):
                 self.name = name
@@ -127,7 +125,7 @@ class TestDecorator:
             @classmethod
             def to_yaml(cls, representer, node):
                 return representer.represent_scalar(
-                    cls.yaml_tag, u'{.name}-{.age}'.format(node, node)
+                    cls.yaml_tag, '{.name}-{.age}'.format(node, node)
                 )
 
             @classmethod

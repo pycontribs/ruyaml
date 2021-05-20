@@ -1,4 +1,3 @@
-from __future__ import absolute_import, print_function
 
 # Skipped because we have no idea where the "marks_filename"
 # fixture is supposed to come from

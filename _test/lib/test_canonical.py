@@ -1,5 +1,4 @@
-# from __future__ import absolute_import
-from __future__ import print_function
+
 
 # Skipped because we have no idea where this "canonical" module
 # comes from, nor where all those fixtures originate

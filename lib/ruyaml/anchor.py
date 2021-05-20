@@ -1,3 +1,4 @@
+# coding: utf-8
 if False:  # MYPY
     from typing import Any, Dict, Iterator, List, Optional, Union  # NOQA
 

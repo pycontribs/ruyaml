@@ -1,9 +1,9 @@
 # coding: utf-8
 
-from __future__ import absolute_import
-
-import textwrap
 import warnings
+import textwrap
+
+from ruyaml.compat import _F
 
 if False:  # MYPY
     from typing import Any, Dict, List, Optional, Text  # NOQA
@@ -34,10 +34,11 @@ class StreamMark:
 
     def __str__(self):
         # type: () -> Any
-        where = '  in "%s", line %d, column %d' % (
-            self.name,
-            self.line + 1,
-            self.column + 1,
+        where = _F(
+            '  in "{sname!s}", line {sline1:d}, column {scolumn1:d}',
+            sname=self.name,
+            sline1=self.line + 1,
+            scolumn1=self.column + 1,
         )
         return where
 
@@ -73,7 +74,7 @@ class StringMark(StreamMark):
             return None
         head = ""
         start = self.pointer
-        while start > 0 and self.buffer[start - 1] not in u'\0\r\n\x85\u2028\u2029':
+        while start > 0 and self.buffer[start - 1] not in '\0\r\n\x85\u2028\u2029':
             start -= 1
             if self.pointer - start > max_length / 2 - 1:
                 head = ' ... '
@@ -81,9 +82,7 @@ class StringMark(StreamMark):
                 break
         tail = ""
         end = self.pointer
-        while (
-            end < len(self.buffer) and self.buffer[end] not in u'\0\r\n\x85\u2028\u2029'
-        ):
+        while end < len(self.buffer) and self.buffer[end] not in '\0\r\n\x85\u2028\u2029':
             end += 1
             if end - self.pointer > max_length / 2 - 1:
                 tail = ' ... '
@@ -105,10 +104,24 @@ class StringMark(StreamMark):
     def __str__(self):
         # type: () -> Any
         snippet = self.get_snippet()
-        where = '  in "%s", line %d, column %d' % (
-            self.name,
-            self.line + 1,
-            self.column + 1,
+        where = _F(
+            '  in "{sname!s}", line {sline1:d}, column {scolumn1:d}',
+            sname=self.name,
+            sline1=self.line + 1,
+            scolumn1=self.column + 1,
+        )
+        if snippet is not None:
+            where += ':\n' + snippet
+        return where
+
+    def __repr__(self):
+        # type: () -> Any
+        snippet = self.get_snippet()
+        where = _F(
+            '  in "{sname!s}", line {sline1:d}, column {scolumn1:d}',
+            sname=self.name,
+            sline1=self.line + 1,
+            scolumn1=self.column + 1,
         )
         if snippet is not None:
             where += ':\n' + snippet

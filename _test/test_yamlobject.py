@@ -1,19 +1,18 @@
 # coding: utf-8
 
-from __future__ import print_function
-
+import sys
 import pytest  # NOQA
 
 from .roundtrip import save_and_run  # NOQA
 
 
 def test_monster(tmpdir):
-    program_src = u'''\
+    program_src = '''\
     import ruyaml
     from textwrap import dedent
 
-    class Monster(ruyaml.YAMLObject):
-        yaml_tag = u'!Monster'
+    class Monster(ruamel.yaml.YAMLObject):
+        yaml_tag = '!Monster'
 
         def __init__(self, name, hp, ac, attacks):
             self.name = name
@@ -46,9 +45,9 @@ def test_monster(tmpdir):
 
 def test_qualified_name00(tmpdir):
     """issue 214"""
-    program_src = u"""\
+    program_src = """\
     from ruyaml import YAML
-    from io import StringIO
+    from ruyaml.compat import StringIO
 
     class A:
         def f(self):

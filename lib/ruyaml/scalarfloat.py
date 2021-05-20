@@ -1,12 +1,7 @@
 # coding: utf-8
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import sys
-
 from ruyaml.anchor import Anchor
-
-from .compat import no_limit_int  # NOQA
 
 if False:  # MYPY
     from typing import Any, Dict, List, Text  # NOQA

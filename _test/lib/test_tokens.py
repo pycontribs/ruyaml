@@ -1,5 +1,3 @@
-from __future__ import absolute_import, print_function
-
 # Skipped because we have no idea where all those fixtures originate
 import pytest
 
@@ -29,24 +27,24 @@ import ruyaml as yaml
 # value:                :
 
 _replaces = {
-    yaml.DirectiveToken: '%',
-    yaml.DocumentStartToken: '---',
-    yaml.DocumentEndToken: '...',
-    yaml.AliasToken: '*',
-    yaml.AnchorToken: '&',
-    yaml.TagToken: '!',
-    yaml.ScalarToken: '_',
-    yaml.BlockSequenceStartToken: '[[',
-    yaml.BlockMappingStartToken: '{{',
-    yaml.BlockEndToken: ']}',
-    yaml.FlowSequenceStartToken: '[',
-    yaml.FlowSequenceEndToken: ']',
-    yaml.FlowMappingStartToken: '{',
-    yaml.FlowMappingEndToken: '}',
-    yaml.BlockEntryToken: ',',
-    yaml.FlowEntryToken: ',',
-    yaml.KeyToken: '?',
-    yaml.ValueToken: ':',
+    ruamel.yaml.DirectiveToken: '%',
+    ruamel.yaml.DocumentStartToken: '---',
+    ruamel.yaml.DocumentEndToken: '...',
+    ruamel.yaml.AliasToken: '*',
+    ruamel.yaml.AnchorToken: '&',
+    ruamel.yaml.TagToken: '!',
+    ruamel.yaml.ScalarToken: '_',
+    ruamel.yaml.BlockSequenceStartToken: '[[',
+    ruamel.yaml.BlockMappingStartToken: '{{',
+    ruamel.yaml.BlockEndToken: ']}',
+    ruamel.yaml.FlowSequenceStartToken: '[',
+    ruamel.yaml.FlowSequenceEndToken: ']',
+    ruamel.yaml.FlowMappingStartToken: '{',
+    ruamel.yaml.FlowMappingEndToken: '}',
+    ruamel.yaml.BlockEntryToken: ',',
+    ruamel.yaml.FlowEntryToken: ',',
+    ruamel.yaml.KeyToken: '?',
+    ruamel.yaml.ValueToken: ':',
 }
 
 
@@ -55,9 +53,10 @@ def test_tokens(data_filename, tokens_filename, verbose=False):
     with open(tokens_filename, 'r') as fp:
         tokens2 = fp.read().split()
     try:
+        yaml = ruamel.yaml.YAML(typ='unsafe', pure=True)
         with open(data_filename, 'rb') as fp1:
             for token in yaml.scan(fp1):
-                if not isinstance(token, (yaml.StreamStartToken, yaml.StreamEndToken)):
+                if not isinstance(token, (ruamel.yaml.StreamStartToken, ruamel.yaml.StreamEndToken)):
                     tokens1.append(_replaces[token.__class__])
     finally:
         if verbose:
@@ -75,6 +74,7 @@ def test_scanner(data_filename, canonical_filename, verbose=False):
     for filename in [data_filename, canonical_filename]:
         tokens = []
         try:
+            yaml = ruamel.yaml.YAML(typ='unsafe', pure=False)
             with open(filename, 'rb') as fp:
                 for token in yaml.scan(fp):
                     tokens.append(token.__class__.__name__)
