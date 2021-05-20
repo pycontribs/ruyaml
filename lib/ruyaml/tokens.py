@@ -1,9 +1,8 @@
 # coding: utf-8
 
-from ruyaml.compat import _F
-
 from typing import Any
 
+from ruyaml.compat import _F
 from ruyaml.error import StreamMark
 
 SHOWLINES = True
@@ -27,7 +26,10 @@ class Token:
         attributes = [key for key in self.__slots__ if not key.endswith('_mark')]
         attributes.sort()
         arguments = ', '.join(
-            [_F('{key!s}={gattr!r})', key=key, gattr=getattr(self, key)) for key in attributes]
+            [
+                _F('{key!s}={gattr!r})', key=key, gattr=getattr(self, key))
+                for key in attributes
+            ]
         )
         if SHOWLINES:
             try:

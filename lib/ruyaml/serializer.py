@@ -1,16 +1,8 @@
 # coding: utf-8
 
+from ruyaml.compat import DBG_NODE, dbg, nprint, nprintf  # NOQA
 from ruyaml.error import YAMLError
-from ruyaml.compat import nprint, DBG_NODE, dbg, nprintf  # NOQA
-from ruyaml.util import RegExp
-
 from ruyaml.events import (
-    StreamStartEvent,
-    StreamEndEvent,
-    MappingStartEvent,
-    MappingEndEvent,
-    SequenceStartEvent,
-    SequenceEndEvent,
     AliasEvent,
     DocumentEndEvent,
     DocumentStartEvent,

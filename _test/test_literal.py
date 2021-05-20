@@ -62,6 +62,7 @@ class TestNoIndent:
 
     def test_root_literal_scalar_no_indent_1_1_old_style(self):
         from textwrap import dedent
+
         from ruyaml import YAML
 
         yaml = YAML(typ='safe', pure=True)

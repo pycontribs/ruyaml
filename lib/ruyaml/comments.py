@@ -9,18 +9,15 @@ a separate base
 import copy
 import sys
 from collections.abc import Mapping, MutableSet, Set, Sized
-from typing import Any, Dict, Iterator, List, Optional
+from typing import Any, Dict, Iterator, List, Optional, Union
 
-
-from ruyaml.compat import ordereddict  # type: ignore
-from ruyaml.compat import MutableSliceableSequence, _F
-from ruyaml.scalarstring import ScalarString
 from ruyaml.anchor import Anchor
-
-from collections.abc import MutableSet, Sized, Set, Mapping
+from ruyaml.compat import ordereddict  # type: ignore
+from ruyaml.compat import _F, MutableSliceableSequence
+from ruyaml.scalarstring import ScalarString
 
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List, Union, Optional, Iterator  # NOQA
+    from typing import Any, Dict, Iterator, List, Optional, Union  # NOQA
 
 # fmt: off
 __all__ = ['CommentedSeq', 'CommentedKeySeq',
@@ -67,10 +64,11 @@ class Comment(object):
             end = ',\n  end=' + str(self._end)
         else:
             end = ""
+        ln = ''  # type: Union[str,int]
         try:
             ln = max([len(str(k)) for k in self._items]) + 1
         except ValueError:
-            ln = ''
+            pass
         it = '    '.join(
             ['{:{}} {}\n'.format(str(k) + ':', ln, v) for k, v in self._items.items()]
         )
@@ -416,6 +414,10 @@ class CommentedBase:
         raise NotImplementedError
 
     def _yaml_get_pre_comment(self):
+        # type: () -> Any
+        raise NotImplementedError
+
+    def _yaml_clear_pre_comment(self):
         # type: () -> Any
         raise NotImplementedError
 
@@ -1161,7 +1163,9 @@ def dump_comments(d, name="", sep='.', out=sys.stdout):
             out.write('{} {}\n'.format(name, type(d)))
         out.write('{!r}\n'.format(d.ca))  # type: ignore
         for k in d:
-            dump_comments(d[k], name=(name + sep + str(k)) if name else k, sep=sep, out=out)
+            dump_comments(
+                d[k], name=(name + sep + str(k)) if name else k, sep=sep, out=out
+            )
     elif isinstance(d, list) and hasattr(d, 'ca'):
         if name:
             out.write('{} {}\n'.format(name, type(d)))

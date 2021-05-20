@@ -15,7 +15,8 @@ from .roundtrip import (  # NOQA
 
 class TestIssues:
     def test_issue_61(self):
-        s = dedent("""
+        s = dedent(
+            """
         def1: &ANCHOR1
             key1: value1
         def: &ANCHOR
@@ -23,7 +24,8 @@ class TestIssues:
             key: value
         comb:
             <<: *ANCHOR
-        """)
+        """
+        )
         data = round_trip_load(s)
         assert str(data['comb']) == str(data['def'])
         assert (

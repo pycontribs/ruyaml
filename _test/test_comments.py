@@ -310,15 +310,14 @@ class TestComments:
         )
         data = round_trip_load(x)
         for utf in [True, False]:
-            y = round_trip_dump(
-                data, default_flow_style=False, allow_unicode=utf
-            )
+            y = round_trip_dump(data, default_flow_style=False, allow_unicode=utf)
             assert y == x
 
     def test_dump_unicode_utf8(self):
         import ruyaml  # NOQA
 
-        x = dedent("""\
+        x = dedent(
+            """\
         ab:
         - x  # comment
         - y  # more comment
@@ -326,9 +325,7 @@ class TestComments:
         )
         data = round_trip_load(x)
         for utf in [True, False]:
-            y = round_trip_dump(
-                data, default_flow_style=False, allow_unicode=utf
-            )
+            y = round_trip_dump(data, default_flow_style=False, allow_unicode=utf)
             assert y == x
 
     def test_mlget_00(self):

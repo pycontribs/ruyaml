@@ -4,10 +4,10 @@
 various test cases for YAML files
 """
 
-import sys
 import io
-import pytest  # NOQA
 import platform
+
+import pytest  # NOQA
 
 from .roundtrip import dedent, round_trip, round_trip_dump, round_trip_load  # NOQA
 
@@ -28,7 +28,8 @@ class TestYAML:
 
         x = ordereddict([('a', 1), ('b', 2)])
         res = round_trip_dump(x, default_flow_style=False)
-        assert res == dedent("""
+        assert res == dedent(
+            """
         !!omap
         - a: 1
         - b: 2
@@ -54,7 +55,8 @@ class TestYAML:
         # OrderedDict mapped to !!omap
         x = OrderedDict([('a', 1), ('b', 2)])
         res = round_trip_dump(x, default_flow_style=False)
-        assert res == dedent("""
+        assert res == dedent(
+            """
         !!omap
         - a: 1
         - b: 2
@@ -83,7 +85,8 @@ class TestYAML:
         yaml = ruyaml.YAML(typ='unsafe', pure=True)
         yaml.default_flow_style = False
         yaml.dump(x, buf)
-        assert buf.getvalue() == dedent("""
+        assert buf.getvalue() == dedent(
+            """
         !!set
         a: null
         b: null
@@ -207,7 +210,8 @@ class TestYAML:
 
         yaml = ruyaml.YAML()
         yaml.preserve_quotes = True
-        s = dedent("""\
+        s = dedent(
+            """\
         a: 'hello'
         ---
         b: "goodbye"

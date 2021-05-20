@@ -1,7 +1,5 @@
 # coding: utf-8
 
-import pytest  # NOQA
-
 import json
 
 import pytest  # NOQA

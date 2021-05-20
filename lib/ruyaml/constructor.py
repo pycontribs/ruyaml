@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import datetime
 import base64
 import binascii
 import datetime
@@ -8,7 +7,7 @@ import re
 import sys
 import types
 import warnings
-from collections.abc import Hashable, MutableSequence, MutableMapping  # type: ignore
+from collections.abc import Hashable, MutableMapping, MutableSequence  # type: ignore
 
 from ruyaml.comments import *  # NOQA
 from ruyaml.comments import (
@@ -20,27 +19,29 @@ from ruyaml.comments import (
     CommentedSet,
     TaggedScalar,
 )
-from ruyaml.compat import builtins_module  # NOQA
-
-# fmt: off
-from ruyaml.error import (MarkedYAMLError, MarkedYAMLFutureWarning,
-                          MantissaNoDotYAML1_1Warning)
-from ruyaml.nodes import *                               # NOQA
-from ruyaml.nodes import (SequenceNode, MappingNode, ScalarNode)
-from ruyaml.compat import (_F, builtins_module, # NOQA
-                           nprint, nprintf, version_tnf)
+from ruyaml.compat import _F  # , nprint
+from ruyaml.compat import builtins_module  # NOQA; NOQA
 from ruyaml.compat import ordereddict  # type: ignore
 
-from ruyaml.comments import *                               # NOQA
-from ruyaml.comments import (CommentedMap, CommentedOrderedMap, CommentedSet,
-                             CommentedKeySeq, CommentedSeq, TaggedScalar,
-                             CommentedKeyMap)
-from ruyaml.scalarstring import (SingleQuotedScalarString, DoubleQuotedScalarString,
-                                 LiteralScalarString, FoldedScalarString,
-                                 PlainScalarString, ScalarString,)
-from ruyaml.scalarint import ScalarInt, BinaryInt, OctalInt, HexInt, HexCapsInt
-from ruyaml.scalarfloat import ScalarFloat
+# fmt: off
+from ruyaml.error import (
+    MantissaNoDotYAML1_1Warning,
+    MarkedYAMLError,
+    MarkedYAMLFutureWarning,
+)
+from ruyaml.nodes import *  # NOQA
+from ruyaml.nodes import MappingNode, ScalarNode, SequenceNode
 from ruyaml.scalarbool import ScalarBoolean
+from ruyaml.scalarfloat import ScalarFloat
+from ruyaml.scalarint import BinaryInt, HexCapsInt, HexInt, OctalInt, ScalarInt
+from ruyaml.scalarstring import (
+    DoubleQuotedScalarString,
+    FoldedScalarString,
+    LiteralScalarString,
+    PlainScalarString,
+    ScalarString,
+    SingleQuotedScalarString,
+)
 from ruyaml.timestamp import TimeStamp
 from ruyaml.util import RegExp
 
@@ -746,17 +747,24 @@ class SafeConstructor(BaseConstructor):
             None,
             None,
             _F(
-                'could not determine a constructor for the tag {node_tag!r}', node_tag=node.tag
+                'could not determine a constructor for the tag {node_tag!r}',
+                node_tag=node.tag,
             ),
             node.start_mark,
         )
 
 
-SafeConstructor.add_constructor('tag:yaml.org,2002:null', SafeConstructor.construct_yaml_null)
+SafeConstructor.add_constructor(
+    'tag:yaml.org,2002:null', SafeConstructor.construct_yaml_null
+)
 
-SafeConstructor.add_constructor('tag:yaml.org,2002:bool', SafeConstructor.construct_yaml_bool)
+SafeConstructor.add_constructor(
+    'tag:yaml.org,2002:bool', SafeConstructor.construct_yaml_bool
+)
 
-SafeConstructor.add_constructor('tag:yaml.org,2002:int', SafeConstructor.construct_yaml_int)
+SafeConstructor.add_constructor(
+    'tag:yaml.org,2002:int', SafeConstructor.construct_yaml_int
+)
 
 SafeConstructor.add_constructor(
     'tag:yaml.org,2002:float', SafeConstructor.construct_yaml_float
@@ -770,19 +778,29 @@ SafeConstructor.add_constructor(
     'tag:yaml.org,2002:timestamp', SafeConstructor.construct_yaml_timestamp
 )
 
-SafeConstructor.add_constructor('tag:yaml.org,2002:omap', SafeConstructor.construct_yaml_omap)
+SafeConstructor.add_constructor(
+    'tag:yaml.org,2002:omap', SafeConstructor.construct_yaml_omap
+)
 
 SafeConstructor.add_constructor(
     'tag:yaml.org,2002:pairs', SafeConstructor.construct_yaml_pairs
 )
 
-SafeConstructor.add_constructor('tag:yaml.org,2002:set', SafeConstructor.construct_yaml_set)
+SafeConstructor.add_constructor(
+    'tag:yaml.org,2002:set', SafeConstructor.construct_yaml_set
+)
 
-SafeConstructor.add_constructor('tag:yaml.org,2002:str', SafeConstructor.construct_yaml_str)
+SafeConstructor.add_constructor(
+    'tag:yaml.org,2002:str', SafeConstructor.construct_yaml_str
+)
 
-SafeConstructor.add_constructor('tag:yaml.org,2002:seq', SafeConstructor.construct_yaml_seq)
+SafeConstructor.add_constructor(
+    'tag:yaml.org,2002:seq', SafeConstructor.construct_yaml_seq
+)
 
-SafeConstructor.add_constructor('tag:yaml.org,2002:map', SafeConstructor.construct_yaml_map)
+SafeConstructor.add_constructor(
+    'tag:yaml.org,2002:map', SafeConstructor.construct_yaml_map
+)
 
 SafeConstructor.add_constructor(None, SafeConstructor.construct_undefined)
 
@@ -1010,33 +1028,49 @@ class Constructor(SafeConstructor):
         return self.construct_python_object_apply(suffix, node, newobj=True)
 
 
-Constructor.add_constructor('tag:yaml.org,2002:python/none', Constructor.construct_yaml_null)
+Constructor.add_constructor(
+    'tag:yaml.org,2002:python/none', Constructor.construct_yaml_null
+)
 
-Constructor.add_constructor('tag:yaml.org,2002:python/bool', Constructor.construct_yaml_bool)
+Constructor.add_constructor(
+    'tag:yaml.org,2002:python/bool', Constructor.construct_yaml_bool
+)
 
-Constructor.add_constructor('tag:yaml.org,2002:python/str', Constructor.construct_python_str)
+Constructor.add_constructor(
+    'tag:yaml.org,2002:python/str', Constructor.construct_python_str
+)
 
 Constructor.add_constructor(
     'tag:yaml.org,2002:python/bytes', Constructor.construct_python_bytes
 )
 
-Constructor.add_constructor('tag:yaml.org,2002:python/int', Constructor.construct_yaml_int)
+Constructor.add_constructor(
+    'tag:yaml.org,2002:python/int', Constructor.construct_yaml_int
+)
 
-Constructor.add_constructor('tag:yaml.org,2002:python/long', Constructor.construct_python_long)
+Constructor.add_constructor(
+    'tag:yaml.org,2002:python/long', Constructor.construct_python_long
+)
 
-Constructor.add_constructor('tag:yaml.org,2002:python/float', Constructor.construct_yaml_float)
+Constructor.add_constructor(
+    'tag:yaml.org,2002:python/float', Constructor.construct_yaml_float
+)
 
 Constructor.add_constructor(
     'tag:yaml.org,2002:python/complex', Constructor.construct_python_complex
 )
 
-Constructor.add_constructor('tag:yaml.org,2002:python/list', Constructor.construct_yaml_seq)
+Constructor.add_constructor(
+    'tag:yaml.org,2002:python/list', Constructor.construct_yaml_seq
+)
 
 Constructor.add_constructor(
     'tag:yaml.org,2002:python/tuple', Constructor.construct_python_tuple
 )
 
-Constructor.add_constructor('tag:yaml.org,2002:python/dict', Constructor.construct_yaml_map)
+Constructor.add_constructor(
+    'tag:yaml.org,2002:python/dict', Constructor.construct_yaml_map
+)
 
 Constructor.add_multi_constructor(
     'tag:yaml.org,2002:python/name:', Constructor.construct_python_name
@@ -1673,7 +1707,8 @@ class RoundTripConstructor(SafeConstructor):
             None,
             None,
             _F(
-                'could not determine a constructor for the tag {node_tag!r}', node_tag=node.tag
+                'could not determine a constructor for the tag {node_tag!r}',
+                node_tag=node.tag,
             ),
             node.start_mark,
         )

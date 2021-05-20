@@ -1,7 +1,7 @@
 # coding: utf-8
 
-import datetime
 import copy
+import datetime
 
 # ToDo: you could probably attach the tzinfo correctly to the object
 #       a more complete datetime might be used by safe loading as well
@@ -57,6 +57,8 @@ class TimeStamp(datetime.datetime):
             tzinfo = self.tzinfo
         if fold is None:
             fold = self.fold
-        ts = type(self)(year, month, day, hour, minute, second, microsecond, tzinfo, fold=fold)
+        ts = type(self)(
+            year, month, day, hour, minute, second, microsecond, tzinfo, fold=fold
+        )
         ts._yaml = copy.deepcopy(self._yaml)
         return ts

@@ -4,13 +4,13 @@
 some helper functions that might be generally useful
 """
 
-from functools import partial
 import re
 from functools import partial
 from typing import Any
 
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List, Text  # NOQA
+    from typing import Any, Dict, List, Optional, Text  # NOQA
+
     from .compat import StreamTextType  # NOQA
 
 
@@ -55,8 +55,8 @@ RegExp = partial(LazyEval, re.compile)
 # if you use this in your code, I suggest adding a test in your test suite
 # that check this routines output against a known piece of your YAML
 # before upgrades to this code break your round-tripped YAML
-def load_yaml_guess_indent(stream, **kw):
-    # type: (StreamTextType, Any) -> Any
+def load_yaml_guess_indent(stream):
+    # type: (StreamTextType) -> Any
     """guess the indent and block sequence indent of yaml stream/string
 
     returns round_trip_loaded stream, indent level, block sequence indent
@@ -116,7 +116,7 @@ def load_yaml_guess_indent(stream, **kw):
     if indent is None and map_indent is not None:
         indent = map_indent
     yaml = YAML()
-    return yaml.load(yaml_str, **kw), indent, block_seq_indent
+    return yaml.load(yaml_str), indent, block_seq_indent
 
 
 def configobj_walker(cfg):

@@ -1,13 +1,11 @@
 # coding: utf-8
 
 import glob
-import sys
 import os
 import sys
 import warnings
 from importlib import import_module
 from io import BytesIO, StringIO
-from pathlib import Path
 from typing import Any, List, Optional, Text, Union
 
 import ruyaml
@@ -36,9 +34,10 @@ from ruyaml.resolver import Resolver, VersionedResolver  # NOQA
 from ruyaml.tokens import *  # NOQA
 
 if False:  # MYPY
-    from typing import List, Set, Dict, Union, Any, Callable, Optional, Text  # NOQA
-    from ruyaml.compat import StreamType, StreamTextType, VersionType  # NOQA
     from pathlib import Path
+    from typing import Any, Callable, Dict, List, Optional, Set, Text, Union  # NOQA
+
+    from ruyaml.compat import StreamTextType, StreamType, VersionType  # NOQA
 
 try:
     from _ruyaml import CEmitter, CParser  # type: ignore
@@ -443,12 +442,11 @@ class YAML:
                 pass
 
     def load_all(self, stream):  # *, skip=None):
-        # type: (Union[Path, StreamTextType], Any) -> Any
+        # type: (Union[Path, StreamTextType]) -> Any
         if not hasattr(stream, 'read') and hasattr(stream, 'open'):
             # pathlib.Path() instance
             with stream.open('r') as fp:
-                for d in self.load_all(fp):
-                    yield d
+                yield from self.load_all(fp)
                 return
         # if skip is None:
         #     skip = []
@@ -561,7 +559,9 @@ class YAML:
         # type: (Any, Union[Path, StreamType], Any, Any) -> Any
         if self._context_manager:
             if not self._output:
-                raise TypeError('Missing output stream while dumping from context manager')
+                raise TypeError(
+                    'Missing output stream while dumping from context manager'
+                )
             if transform is not None:
                 raise TypeError(
                     '{}.dump() in the context manager cannot have transform keyword '
@@ -570,11 +570,13 @@ class YAML:
             self._context_manager.dump(data)
         else:  # old style
             if stream is None:
-                raise TypeError('Need a stream argument when not dumping from context manager')
+                raise TypeError(
+                    'Need a stream argument when not dumping from context manager'
+                )
             return self.dump_all([data], stream, transform=transform)
 
     def dump_all(self, documents, stream, *, transform=None):
-        # type: (Any, Union[Path, StreamType], Any, Any) -> Any
+        # type: (Any, StreamType, Any, Any) -> Any
         if self._context_manager:
             raise NotImplementedError
         self._output = stream
@@ -595,8 +597,11 @@ class YAML:
             with stream.open('w') as fp:
                 return self.dump_all(documents, fp, transform=transform)
         # The stream should have the methods `write` and possibly `flush`.
+
+        documents: StreamType = documents  # mypy workaround
+
         if self.top_level_colon_align is True:
-            tlca = max([len(str(x)) for x in documents[0]])  # type: Any
+            tlca = max([len(str(x)) for x in documents[0]])  # type: Any  # NOQA
         else:
             tlca = self.top_level_colon_align
         if transform is not None:
@@ -610,7 +615,7 @@ class YAML:
         )
         try:
             self.serializer.open()
-            for data in documents:
+            for data in documents:  # NOQA
                 try:
                     self.representer.represent(data)
                 except AttributeError:
@@ -999,6 +1004,8 @@ def warn_deprecation(fun, method, arg=''):
         PendingDeprecationWarning,  # this will show when testing with pytest/tox
         stacklevel=3,
     )
+
+
 ########################################################################################
 
 

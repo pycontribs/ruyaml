@@ -1,7 +1,7 @@
 # coding: utf-8
 
-import warnings
 import textwrap
+import warnings
 
 from ruyaml.compat import _F
 
@@ -82,7 +82,9 @@ class StringMark(StreamMark):
                 break
         tail = ""
         end = self.pointer
-        while end < len(self.buffer) and self.buffer[end] not in '\0\r\n\x85\u2028\u2029':
+        while (
+            end < len(self.buffer) and self.buffer[end] not in '\0\r\n\x85\u2028\u2029'
+        ):
             end += 1
             if end - self.pointer > max_length / 2 - 1:
                 tail = ' ... '

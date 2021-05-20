@@ -1,11 +1,12 @@
-
-import ruyaml
-import canonical  # NOQA
 import pprint
+
+import canonical  # NOQA
 
 # Skipped because we have no idea where this "canonical" module
 # comes from, nor where all those fixtures originate
 import pytest
+
+import ruyaml
 
 pytestmark = pytest.mark.skip
 # import canonical  # NOQA
@@ -79,8 +80,10 @@ def _compare_events(events1, events2, full=False):
         assert event1.__class__ == event2.__class__, (event1, event2)
         if isinstance(event1, ruyaml.AliasEvent) and full:
             assert event1.anchor == event2.anchor, (event1, event2)
-        if isinstance(event1, (yaml.ScalarEvent, yaml.CollectionStartEvent)):
-            if (event1.tag not in [None, '!'] and event2.tag not in [None, '!']) or full:
+        if isinstance(event1, (ruyaml.ScalarEvent, ruyaml.CollectionStartEvent)):
+            if (
+                event1.tag not in [None, '!'] and event2.tag not in [None, '!']
+            ) or full:
                 assert event1.tag == event2.tag, (event1, event2)
         if isinstance(event1, ruyaml.ScalarEvent):
             assert event1.value == event2.value, (event1, event2)
@@ -208,7 +211,7 @@ def test_constructor(data_filename, canonical_filename, verbose=False):
     _make_canonical_loader()
     native1 = None
     native2 = None
-    yaml = YAML(typ='safe')
+    yaml = ruyaml.YAML(typ='safe')
     try:
         with open(data_filename, 'rb') as fp0:
             native1 = list(yaml.load(fp0, Loader=MyLoader))

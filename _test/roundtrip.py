@@ -3,9 +3,9 @@
 """
 helper routines for testing round trip of commented YAML data
 """
+import io
 import sys
 import textwrap
-import io
 from pathlib import Path
 
 import ruyaml
@@ -92,8 +92,6 @@ def round_trip_dump_all(
     version=None,
     allow_unicode=None,
 ):
-    import ruyaml as yaml # NOQA
-
     yaml = ruyaml.YAML()
     yaml.indent(mapping=indent, sequence=indent, offset=block_seq_indent)
     if default_flow_style is not unset:
@@ -330,7 +328,9 @@ def save_and_run(program, base_dir=None, output=None, file_name=None, optimized=
         cmd.append(str(file_name))
         print('running:', *cmd)
         # 3.5 needs strings
-        res = check_output(cmd, stderr=STDOUT, universal_newlines=True, cwd=str(base_dir))
+        res = check_output(
+            cmd, stderr=STDOUT, universal_newlines=True, cwd=str(base_dir)
+        )
         if output is not None:
             if '__pypy__' in sys.builtin_module_names:
                 res = res.splitlines(True)

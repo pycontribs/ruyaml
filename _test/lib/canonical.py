@@ -3,6 +3,7 @@ from ruyaml.composer import Composer
 from ruyaml.constructor import Constructor
 from ruyaml.resolver import Resolver
 
+
 class CanonicalError(ruyaml.YAMLError):
     pass
 
@@ -54,7 +55,7 @@ class CanonicalScanner:
             self.find_token()
             ch = self.data[self.index]
             if ch == '\0':
-                self.tokens.append(ruamel.yaml.StreamEndToken(None, None))
+                self.tokens.append(ruyaml.StreamEndToken(None, None))
                 break
             elif ch == '%':
                 self.tokens.append(self.scan_directive())

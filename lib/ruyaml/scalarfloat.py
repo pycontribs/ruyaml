@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import sys
+
 from ruyaml.anchor import Anchor
 
 if False:  # MYPY

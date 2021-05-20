@@ -1,9 +1,8 @@
-
 # Skipped because we have no idea where the "recursive_filename"
 # fixture is supposed to come from
 import pytest
 
-import ruyaml as yaml
+import ruyaml
 
 pytestmark = pytest.mark.skip
 
@@ -29,7 +28,7 @@ class AnInstanceWithState(AnInstance):
 
 
 def test_recursive(recursive_filename, verbose=False):
-    yaml = ruamel.yaml.YAML(typ='safe', pure=True)
+    yaml = ruyaml.YAML(typ='safe', pure=True)
     context = globals().copy()
     with open(recursive_filename, 'rb') as fp0:
         exec(fp0.read(), context)
@@ -38,11 +37,11 @@ def test_recursive(recursive_filename, verbose=False):
     value2 = None
     output2 = None
     try:
-        buf = ruamel.yaml.compat.StringIO()
+        buf = ruyaml.compat.StringIO()
         output1 = yaml.dump(value1, buf)
         yaml.load(output1)
         value2 = buf.getvalue()
-        buf = ruamel.yaml.compat.StringIO()
+        buf = ruyaml.compat.StringIO()
         yaml.dump(value2, buf)
         output2 = buf.getvalue()
         assert output1 == output2, (output1, output2)

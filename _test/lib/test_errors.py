@@ -1,8 +1,7 @@
-
 import ruyaml as yaml
+
 YAML = yaml.YAML
 
-import test_emitter
 import warnings
 
 # Skipped because we have no idea where the "error_filename"

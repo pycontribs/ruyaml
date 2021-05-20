@@ -52,7 +52,8 @@ class TestIndent:
 
     # first test by explicitly setting flow style
     def test_added_inline_list(self):
-        s1 = dedent("""
+        s1 = dedent(
+            """
         a:
         - b
         - c
@@ -70,10 +71,12 @@ class TestIndent:
     # ############ flow mappings
 
     def test_roundtrip_flow_mapping(self):
-        s = dedent("""\
+        s = dedent(
+            """\
         - {a: 1, b: hallo}
         - {j: fka, k: 42}
-        """)
+        """
+        )
         data = round_trip_load(s)
         output = round_trip_dump(data)
         assert s == output

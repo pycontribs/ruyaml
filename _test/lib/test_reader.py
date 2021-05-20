@@ -1,4 +1,3 @@
-
 import codecs  # NOQA
 import io
 
@@ -9,7 +8,6 @@ import pytest
 import ruyaml.reader
 
 pytestmark = pytest.mark.skip
-import ruyaml.reader
 
 
 def _run_reader(data, verbose):

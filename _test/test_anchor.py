@@ -303,7 +303,8 @@ class TestAnchorsAliases:
             <<: *shell_component
             components:
               server: {<<: *server_service}
-        """)
+        """
+        )
         yaml = ruyaml.YAML(typ='safe', pure=True)
         data = yaml.load(ys)
         assert data['services']['shell']['components']['server']['port'] == 8000
@@ -330,7 +331,8 @@ class TestAnchorsAliases:
             <<: *shell_component
             components:
               server: {<<: *server_service}
-        """)
+        """
+        )
         yaml = ruyaml.YAML(typ='safe', pure=True)
         data = yaml.load(ys)
         assert data['services']['shell']['components']['server']['port'] == 4000
@@ -529,9 +531,8 @@ class TestMergeKeysValues:
 
 class TestDuplicateKeyThroughAnchor:
     def test_duplicate_key_00(self):
-        from ruyaml import version_info
-        from ruyaml import YAML
-        from ruyaml.constructor import DuplicateKeyFutureWarning, DuplicateKeyError
+        from ruyaml import YAML, version_info
+        from ruyaml.constructor import DuplicateKeyError, DuplicateKeyFutureWarning
 
         s = dedent(
             """\
@@ -540,7 +541,8 @@ class TestDuplicateKeyThroughAnchor:
             *anchor : duplicate key
             baz: bat
             *anchor : duplicate key
-        """)
+        """
+        )
         if version_info < (0, 15, 1):
             pass
         elif version_info < (0, 16, 0):

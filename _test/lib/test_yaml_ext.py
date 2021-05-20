@@ -1,9 +1,9 @@
 # coding: utf-8
 
-import ruyaml
-import types
 import pprint
 import types
+
+import ruyaml
 
 try:
     import _ruyaml
@@ -14,7 +14,6 @@ except ImportError:
 
     class DummyLoader(type):
         pass
-
 
     ruyaml.CLoader = DummyLoader
     ruyaml.CDumper = DummyLoader
@@ -191,11 +190,11 @@ def test_c_version(verbose=False):
 
 def _compare_scanners(py_data, c_data, verbose):
     yaml = ruyaml.YAML(typ='unsafe', pure=True)
-    py_tokens = list(yaml.scan(py_data, Loader=ruamel.yaml.PyLoader))
+    py_tokens = list(yaml.scan(py_data, Loader=ruyaml.PyLoader))
     c_tokens = []
     try:
         yaml = ruyaml.YAML(typ='unsafe', pure=False)
-        for token in yaml.scan(c_data, Loader=ruamel.yaml.CLoader):
+        for token in yaml.scan(c_data, Loader=ruyaml.CLoader):
             c_tokens.append(token)
         assert len(py_tokens) == len(c_tokens), (len(py_tokens), len(c_tokens))
         for py_token, c_token in zip(py_tokens, c_tokens):

@@ -3,16 +3,9 @@
 import warnings
 from typing import Any, Dict
 
-from ruyaml.error import MarkedYAMLError, ReusedAnchorWarning
 from ruyaml.compat import _F, nprint, nprintf  # NOQA
-
+from ruyaml.error import MarkedYAMLError, ReusedAnchorWarning
 from ruyaml.events import (
-    StreamStartEvent,
-    StreamEndEvent,
-    MappingStartEvent,
-    MappingEndEvent,
-    SequenceStartEvent,
-    SequenceEndEvent,
     AliasEvent,
     MappingEndEvent,
     MappingStartEvent,

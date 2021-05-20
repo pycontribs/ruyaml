@@ -33,7 +33,10 @@ class Event:
             if hasattr(self, key)
         ]
         arguments = ', '.join(
-            [_F('{key!s}={attr!r}', key=key, attr=getattr(self, key)) for key in attributes]
+            [
+                _F('{key!s}={attr!r}', key=key, attr=getattr(self, key))
+                for key in attributes
+            ]
         )
         if self.comment not in [None, CommentCheck]:
             arguments += ', comment={!r}'.format(self.comment)

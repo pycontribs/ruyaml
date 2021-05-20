@@ -10,10 +10,10 @@
 import sys
 
 # fmt: off
-from ruyaml.compat import _F, nprint, dbg, DBG_EVENT, \
-    check_anchorname_char
-from ruyaml.error import YAMLError
-from ruyaml.events import *
+from ruyaml.compat import _F, DBG_EVENT, check_anchorname_char, dbg, nprint
+from ruyaml.error import YAMLError, YAMLStreamError
+from ruyaml.events import *  # NOQA
+
 # fmt: on
 
 if False:  # MYPY
@@ -164,7 +164,9 @@ class Emitter:
 
         # colon handling
         self.colon = ':'
-        self.prefixed_colon = self.colon if prefix_colon is None else prefix_colon + self.colon
+        self.prefixed_colon = (
+            self.colon if prefix_colon is None else prefix_colon + self.colon
+        )
         # single entry mappings in flow sequence
         self.brace_single_entry_mapping_in_flow_sequence = (
             brace_single_entry_mapping_in_flow_sequence  # NOQA
@@ -322,7 +324,10 @@ class Emitter:
             self.state = self.expect_first_document_start
         else:
             raise EmitterError(
-                _F('expected StreamStartEvent, but got {self_event!s}', self_event=self.event)
+                _F(
+                    'expected StreamStartEvent, but got {self_event!s}',
+                    self_event=self.event,
+                )
             )
 
     def expect_nothing(self):
@@ -394,7 +399,10 @@ class Emitter:
             self.state = self.expect_document_start
         else:
             raise EmitterError(
-                _F('expected DocumentEndEvent, but got {self_event!s}', self_event=self.event)
+                _F(
+                    'expected DocumentEndEvent, but got {self_event!s}',
+                    self_event=self.event,
+                )
             )
 
     def expect_document_root(self):
@@ -909,6 +917,7 @@ class Emitter:
             self.write_folded(self.analysis.scalar)
             if (
                 self.event.comment
+                and self.indent is not None
                 and self.event.comment[0]
                 and self.event.comment[0].column >= self.indent
             ):
@@ -918,6 +927,7 @@ class Emitter:
             self.write_literal(self.analysis.scalar, self.event.comment)
             if (
                 self.event.comment
+                and self.indent is not None
                 and self.event.comment[0]
                 and self.event.comment[0].column >= self.indent
             ):
@@ -937,7 +947,11 @@ class Emitter:
         major, minor = version
         if major != 1:
             raise EmitterError(
-                _F('unsupported YAML version: {major:d}.{minor:d}', major=major, minor=minor)
+                _F(
+                    'unsupported YAML version: {major:d}.{minor:d}',
+                    major=major,
+                    minor=minor,
+                )
             )
         return _F('{major:d}.{minor:d}', major=major, minor=minor)
 
@@ -950,7 +964,9 @@ class Emitter:
                 _F("tag handle must start and end with '!': {handle!r}", handle=handle)
             )
         for ch in handle[1:-1]:
-            if not ('0' <= ch <= '9' or 'A' <= ch <= 'Z' or 'a' <= ch <= 'z' or ch in '-_'):
+            if not (
+                '0' <= ch <= '9' or 'A' <= ch <= 'Z' or 'a' <= ch <= 'z' or ch in '-_'
+            ):
                 raise EmitterError(
                     _F(
                         'invalid character {ch!r} in the tag handle: {handle!r}',
@@ -1029,7 +1045,9 @@ class Emitter:
             chunks.append(suffix[start:end])
         suffix_text = "".join(chunks)
         if handle:
-            return _F('{handle!s}{suffix_text!s}', handle=handle, suffix_text=suffix_text)
+            return _F(
+                '{handle!s}{suffix_text!s}', handle=handle, suffix_text=suffix_text
+            )
         else:
             return _F('!<{suffix_text!s}>', suffix_text=suffix_text)
 
@@ -1086,7 +1104,9 @@ class Emitter:
         preceeded_by_whitespace = True
 
         # Last character or followed by a whitespace.
-        followed_by_whitespace = len(scalar) == 1 or scalar[1] in '\0 \t\r\n\x85\u2028\u2029'
+        followed_by_whitespace = (
+            len(scalar) == 1 or scalar[1] in '\0 \t\r\n\x85\u2028\u2029'
+        )
 
         # The previous character is a space.
         previous_space = False
@@ -1136,7 +1156,10 @@ class Emitter:
                     ch == '\x85'
                     or '\xA0' <= ch <= '\uD7FF'
                     or '\uE000' <= ch <= '\uFFFD'
-                    or (self.unicode_supplementary and ('\U00010000' <= ch <= '\U0010FFFF'))
+                    or (
+                        self.unicode_supplementary
+                        and ('\U00010000' <= ch <= '\U0010FFFF')
+                    )
                 ) and ch != '\uFEFF':
                     # unicode_characters = True
                     if not self.allow_unicode:
@@ -1171,7 +1194,8 @@ class Emitter:
             index += 1
             preceeded_by_whitespace = ch in '\0 \t\r\n\x85\u2028\u2029'
             followed_by_whitespace = (
-                index + 1 >= len(scalar) or scalar[index + 1] in '\0 \t\r\n\x85\u2028\u2029'
+                index + 1 >= len(scalar)
+                or scalar[index + 1] in '\0 \t\r\n\x85\u2028\u2029'
             )
 
         # Let's decide what styles are allowed.

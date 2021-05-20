@@ -1,8 +1,8 @@
 # coding: utf-8
 
-from .roundtrip import YAML
-
 import pytest  # NOQA
+
+from .roundtrip import YAML
 
 
 def test_example_2_1():

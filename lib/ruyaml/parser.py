@@ -74,11 +74,11 @@
 # and for Jython too
 
 
-from ruyaml.error import MarkedYAMLError
-from ruyaml.tokens import *  # NOQA
-from ruyaml.events import *  # NOQA
-from ruyaml.scanner import Scanner, RoundTripScanner, ScannerError  # NOQA
 from ruyaml.compat import _F, nprint, nprintf  # NOQA
+from ruyaml.error import MarkedYAMLError
+from ruyaml.events import *  # NOQA
+from ruyaml.scanner import RoundTripScanner, Scanner, ScannerError  # NOQA
+from ruyaml.tokens import *  # NOQA
 
 if False:  # MYPY
     from typing import Any, Dict, List, Optional  # NOQA
@@ -522,7 +522,10 @@ class Parser:
             raise ParserError(
                 _F('while parsing a {node!s} node', node=node),
                 start_mark,
-                _F('expected the node content, but found {token_id!r}', token_id=token.id),
+                _F(
+                    'expected the node content, but found {token_id!r}',
+                    token_id=token.id,
+                ),
                 token.start_mark,
             )
         return event
@@ -691,7 +694,10 @@ class Parser:
                     raise ParserError(
                         'while parsing a flow sequence',
                         self.marks[-1],
-                        _F("expected ',' or ']', but got {token_id!r}", token_id=token.id),
+                        _F(
+                            "expected ',' or ']', but got {token_id!r}",
+                            token_id=token.id,
+                        ),
                         token.start_mark,
                     )
 
@@ -769,7 +775,10 @@ class Parser:
                     raise ParserError(
                         'while parsing a flow mapping',
                         self.marks[-1],
-                        _F("expected ',' or '}}', but got {token_id!r}", token_id=token.id),
+                        _F(
+                            "expected ',' or '}}', but got {token_id!r}",
+                            token_id=token.id,
+                        ),
                         token.start_mark,
                     )
             if self.scanner.check_token(KeyToken):

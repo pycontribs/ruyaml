@@ -1,5 +1,5 @@
-
 import ruyaml as yaml
+
 YAML = yaml.YAML
 
 import pprint

@@ -26,9 +26,11 @@ def test_load_cyaml():
     yaml.load('abc: 1')
 
 
-@pytest.mark.skipif(sys.version_info >= NO_CLIB_VER
-                    or platform.python_implementation() in ['Jython', 'PyPy'],
-                    reason='no _PyGC_FINALIZED')
+@pytest.mark.skipif(
+    sys.version_info >= NO_CLIB_VER
+    or platform.python_implementation() in ['Jython', 'PyPy'],
+    reason='no _PyGC_FINALIZED',
+)
 def test_dump_cyaml():
     import ruyaml
 

@@ -1,10 +1,7 @@
 # coding: utf-8
 
 from ruyaml.emitter import Emitter
-from ruyaml.serializer import Serializer
 from ruyaml.representer import (
-    Representer,
-    SafeRepresenter,
     BaseRepresenter,
     Representer,
     RoundTripRepresenter,

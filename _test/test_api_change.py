@@ -9,7 +9,6 @@ import textwrap
 from pathlib import Path
 
 import pytest
-from pathlib import Path
 
 
 class TestNewAPI:
@@ -158,7 +157,8 @@ class TestLoadAll:
 
         fn = Path(str(tmpdir)) / 'test.yaml'
         fn.write_text(
-            textwrap.dedent("""\
+            textwrap.dedent(
+                """\
             ---
             - a
             ---

@@ -20,10 +20,10 @@
 #      character.
 
 import codecs
-from typing import Text,Optional,Tuple
+from typing import Any, Optional, Text, Tuple
 
-from ruyaml.error import YAMLError, FileMark, StringMark, YAMLStreamError
 from ruyaml.compat import _F  # NOQA
+from ruyaml.error import FileMark, StringMark, YAMLError, YAMLStreamError
 from ruyaml.util import RegExp
 
 #    from ruyaml.compat import StreamTextType  # NOQA
@@ -203,7 +203,11 @@ class Reader:
         self.update(1)
 
     NON_PRINTABLE = RegExp(
-        '[^\x09\x0A\x0D\x20-\x7E\x85' '\xA0-\uD7FF' '\uE000-\uFFFD' '\U00010000-\U0010FFFF' ']'
+        '[^\x09\x0A\x0D\x20-\x7E\x85'
+        '\xA0-\uD7FF'
+        '\uE000-\uFFFD'
+        '\U00010000-\U0010FFFF'
+        ']'
     )
 
     _printable_ascii = ('\x09\x0A\x0D' + "".join(map(chr, range(0x20, 0x7F)))).encode(

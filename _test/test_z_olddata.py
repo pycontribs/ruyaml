@@ -1,7 +1,7 @@
 # coding: utf-8
 
-import sys
 import os
+import sys
 
 import pytest  # NOQA
 
@@ -22,6 +22,7 @@ def test_data():
     collections.append(test_yaml)
     test_appliance.run(collections, args)
 
+
 # @pytest.mark.skipif(not ruyaml.__with_libyaml__,
 #                     reason="no libyaml")
 
@@ -29,6 +30,7 @@ def test_data():
 def test_data_ext():
     collections = []
     import test_appliance  # NOQA
+
     import ruyaml
 
     warnings.simplefilter('ignore', ruyaml.error.UnsafeLoaderWarning)

@@ -1,10 +1,11 @@
 # coding: utf-8
 
-import sys
 import os
-import pytest  # NOQA
+import sys
 import warnings  # NOQA
 from pathlib import Path
+
+import pytest  # NOQA
 
 from ruyaml.compat import _F
 
@@ -160,9 +161,9 @@ class TestYAMLData:
 
     def insert_comments(self, data, actions):
         """this is to automatically insert based on:
-          path (a.1.b),
-          position (before, after, between), and
-          offset (absolute/relative)
+        path (a.1.b),
+        position (before, after, between), and
+        offset (absolute/relative)
         """
         raise NotImplementedError
         expected = []
@@ -224,7 +225,9 @@ class TestYAMLData:
             self.round_trip(data, output, yaml_version=yaml_version)
         elif typ == 'python_run':
             inp = None if output is None or data is None else data
-            self.run_python(python, output if output is not None else data, tmpdir, input=inp)
+            self.run_python(
+                python, output if output is not None else data, tmpdir, input=inp
+            )
         elif typ == 'load_assert':
             self.load_assert(data, confirm, yaml_version=yaml_version)
         elif typ == 'comment':

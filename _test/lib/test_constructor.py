@@ -1,13 +1,11 @@
-
 # Skipped because we have no idea where all those fixtures originate
 import pytest
 
 pytestmark = pytest.mark.skip
 
 import ruyaml as yaml
-YAML = yaml.YAML
 
-import pprint
+YAML = yaml.YAML
 
 import datetime
 import pprint

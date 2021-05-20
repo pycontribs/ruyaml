@@ -212,7 +212,10 @@ class BaseResolver:
                 )
             if not isinstance(index_check, (str, int)) and index_check is not None:
                 raise ResolverError(
-                    _F('Invalid index checker: {index_check!s}', index_check=index_check)
+                    _F(
+                        'Invalid index checker: {index_check!s}',
+                        index_check=index_check,
+                    )
                 )
             new_path.append((node_check, index_check))
         if kind is str:
@@ -258,7 +261,7 @@ class BaseResolver:
         self.resolver_prefix_paths.pop()
 
     def check_resolver_prefix(self, depth, path, kind, current_node, current_index):
-        # type: (int, Text, Any, Any, Any) -> bool
+        # type: (int, Any, Any, Any, Any) -> bool
         node_check, index_check = path[depth - 1]
         if isinstance(node_check, str):
             if current_node.tag != node_check:

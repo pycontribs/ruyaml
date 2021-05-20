@@ -56,7 +56,9 @@ def test_tokens(data_filename, tokens_filename, verbose=False):
         yaml = ruyaml.YAML(typ='unsafe', pure=True)
         with open(data_filename, 'rb') as fp1:
             for token in yaml.scan(fp1):
-                if not isinstance(token, (ruyaml.StreamStartToken, ruyaml.StreamEndToken)):
+                if not isinstance(
+                    token, (ruyaml.StreamStartToken, ruyaml.StreamEndToken)
+                ):
                     tokens1.append(_replaces[token.__class__])
     finally:
         if verbose:

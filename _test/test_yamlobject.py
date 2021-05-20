@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import sys
 import pytest  # NOQA
 
 from .roundtrip import save_and_run  # NOQA

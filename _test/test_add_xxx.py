@@ -172,7 +172,8 @@ def test_issue_127():
     CList:
       - Five Six
       - 'Seven Eight'
-    """)
+    """
+    )
     yaml = ruyaml.YAML()
     yaml.preserve_quotes = True
     yaml.default_flow_style = None

@@ -2,15 +2,13 @@
 
 # partially from package six by Benjamin Peterson
 
-import sys
-import os
-import types
+import collections.abc
 import io
+import os
+import sys
 import traceback
 from abc import abstractmethod
-import collections.abc
-
-from typing import Any,Union,List,Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 # partially from package six by Benjamin Peterson
 
@@ -18,7 +16,7 @@ from typing import Any,Union,List,Tuple
 _DEFAULT_YAML_VERSION = (1, 2)
 
 try:
-    from ruamel.ordereddict import ordereddict
+    from ruamel.ordereddict import ordereddict  # type: ignore
 except:  # NOQA
     try:
         from collections import OrderedDict

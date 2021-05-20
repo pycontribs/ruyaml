@@ -28,9 +28,9 @@
 # Read comments in the Scanner code for more details.
 #
 
+from ruyaml.compat import _F, check_anchorname_char, nprint  # NOQA
 from ruyaml.error import MarkedYAMLError
 from ruyaml.tokens import *  # NOQA
-from ruyaml.compat import _F, check_anchorname_char, nprint  # NOQA
 
 if False:  # MYPY
     from typing import Any, Dict, List, Optional, Text, Union  # NOQA
@@ -1313,7 +1313,10 @@ class Scanner:
             raise ScannerError(
                 'while scanning a block scalar',
                 start_mark,
-                _F('expected chomping or indentation indicators, but found {ch!r}', ch=ch),
+                _F(
+                    'expected chomping or indentation indicators, but found {ch!r}',
+                    ch=ch,
+                ),
                 self.reader.get_mark(),
             )
         return chomping, increment
