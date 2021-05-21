@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import absolute_import
-
 from _ruyaml import CEmitter, CParser  # type: ignore
 
 from ruyaml.constructor import BaseConstructor, Constructor, SafeConstructor

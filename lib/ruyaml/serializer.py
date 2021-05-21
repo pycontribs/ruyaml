@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import absolute_import
-
 from ruyaml.compat import DBG_NODE, dbg, nprint, nprintf  # NOQA
 from ruyaml.error import YAMLError
 from ruyaml.events import (
@@ -34,8 +32,8 @@ class SerializerError(YAMLError):
 class Serializer:
 
     # 'id' and 3+ numbers, but not 000
-    ANCHOR_TEMPLATE = u'id%03d'
-    ANCHOR_RE = RegExp(u'id(?!000$)\\d{3,}')
+    ANCHOR_TEMPLATE = 'id%03d'
+    ANCHOR_RE = RegExp('id(?!000$)\\d{3,}')
 
     def __init__(
         self,

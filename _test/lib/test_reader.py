@@ -1,5 +1,3 @@
-from __future__ import absolute_import, print_function
-
 import codecs  # NOQA
 import io
 
@@ -15,7 +13,7 @@ pytestmark = pytest.mark.skip
 def _run_reader(data, verbose):
     try:
         stream = ruyaml.py.reader.Reader(data)
-        while stream.peek() != u'\0':
+        while stream.peek() != '\0':
             stream.forward()
     except ruyaml.py.reader.ReaderError as exc:
         if verbose:

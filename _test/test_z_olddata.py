@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import print_function
-
 import os
 import sys
 
@@ -17,6 +15,7 @@ args = []
 def test_data():
     import test_appliance  # NOQA
 
+    warnings.simplefilter('ignore', PendingDeprecationWarning)
     collections = []
     import test_yaml
 
@@ -32,9 +31,10 @@ def test_data_ext():
     collections = []
     import test_appliance  # NOQA
 
-    import ruyaml  # NOQA
+    import ruyaml
 
     warnings.simplefilter('ignore', ruyaml.error.UnsafeLoaderWarning)
+    warnings.simplefilter('ignore', PendingDeprecationWarning)
     if ruyaml.__with_libyaml__:
         import test_yaml_ext
 

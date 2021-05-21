@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import absolute_import, print_function
-
 import pprint
 import types
 
@@ -191,10 +189,12 @@ def test_c_version(verbose=False):
 
 
 def _compare_scanners(py_data, c_data, verbose):
-    py_tokens = list(ruyaml.scan(py_data, Loader=ruyaml.PyLoader))
+    yaml = ruyaml.YAML(typ='unsafe', pure=True)
+    py_tokens = list(yaml.scan(py_data, Loader=ruyaml.PyLoader))
     c_tokens = []
     try:
-        for token in ruyaml.scan(c_data, Loader=ruyaml.CLoader):
+        yaml = ruyaml.YAML(typ='unsafe', pure=False)
+        for token in yaml.scan(c_data, Loader=ruyaml.CLoader):
             c_tokens.append(token)
         assert len(py_tokens) == len(c_tokens), (len(py_tokens), len(c_tokens))
         for py_token, c_token in zip(py_tokens, c_tokens):
@@ -326,9 +326,9 @@ def _compare_emitters(data, verbose):
                 c_value = getattr(c_event, attribute, None)
                 if (
                     attribute == 'tag'
-                    and value in [None, u'!']
-                    and py_value in [None, u'!']
-                    and c_value in [None, u'!']
+                    and value in [None, '!']
+                    and py_value in [None, '!']
+                    and c_value in [None, '!']
                 ):
                     continue
                 if attribute == 'explicit' and (py_value or c_value):

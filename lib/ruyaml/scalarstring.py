@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 from ruyaml.anchor import Anchor
 
 if False:  # MYPY
@@ -128,7 +126,7 @@ def walk_tree(base, map=None):
         map[':'] = SingleQuotedScalarString
         walk_tree(data, map=map)
     """
-    from ruyaml.compat import MutableMapping, MutableSequence  # type: ignore
+    from collections.abc import MutableMapping, MutableSequence  # type: ignore
 
     if map is None:
         map = {'\n': preserve_literal}
@@ -142,7 +140,7 @@ def walk_tree(base, map=None):
                         base[k] = map[ch](v)
                         break
             else:
-                walk_tree(v)
+                walk_tree(v, map=map)
     elif isinstance(base, MutableSequence):
         for idx, elem in enumerate(base):
             if isinstance(elem, str):
@@ -151,4 +149,4 @@ def walk_tree(base, map=None):
                         base[idx] = map[ch](elem)
                         break
             else:
-                walk_tree(elem)
+                walk_tree(elem, map=map)

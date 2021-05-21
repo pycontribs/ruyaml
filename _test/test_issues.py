@@ -1,7 +1,5 @@
 # coding: utf-8
 
-from __future__ import absolute_import, print_function, unicode_literals
-
 import pytest  # NOQA
 
 from .roundtrip import (  # NOQA
@@ -17,8 +15,6 @@ from .roundtrip import (  # NOQA
 
 class TestIssues:
     def test_issue_61(self):
-        import ruyaml
-
         s = dedent(
             """
         def1: &ANCHOR1
@@ -30,7 +26,7 @@ class TestIssues:
             <<: *ANCHOR
         """
         )
-        data = ruyaml.round_trip_load(s)
+        data = round_trip_load(s)
         assert str(data['comb']) == str(data['def'])
         assert (
             str(data['comb']) == "ordereddict([('key', 'value'), ('key1', 'value1')])"
@@ -38,18 +34,14 @@ class TestIssues:
 
     def test_issue_82(self, tmpdir):
         program_src = r'''
-        from __future__ import print_function
-
-        import ruyaml
-
+        import ruyaml as yaml
         import re
 
-
-        class SINumber(ruyaml.YAMLObject):
+        class SINumber(yaml.YAMLObject):
             PREFIXES = {'k': 1e3, 'M': 1e6, 'G': 1e9}
-            yaml_loader = ruyaml.Loader
-            yaml_dumper = ruyaml.Dumper
-            yaml_tag = u'!si'
+            yaml_loader = yaml.Loader
+            yaml_dumper = yaml.Dumper
+            yaml_tag = '!si'
             yaml_implicit_pattern = re.compile(
                 r'^(?P<value>[0-9]+(?:\.[0-9]+)?)(?P<prefix>[kMG])$')
 
@@ -73,11 +65,11 @@ class TestIssues:
                 return int(self.value*self.PREFIXES[self.prefix])
 
         # This fails:
-        ruyaml.add_implicit_resolver(SINumber.yaml_tag, SINumber.yaml_implicit_pattern)
+        yaml.add_implicit_resolver(SINumber.yaml_tag, SINumber.yaml_implicit_pattern)
 
-        ret = ruyaml.load("""
+        ret = yaml.load("""
         [1,2,3, !si 10k, 100G]
-        """, Loader=ruyaml.Loader)
+        """, Loader=yaml.Loader)
         for idx, l in enumerate([1, 2, 3, 10000, 100000000000]):
             assert int(ret[idx]) == l
         '''
@@ -301,7 +293,7 @@ class TestIssues:
         program_src = r'''
         from ruyaml import YAML
 
-        yaml_str = u"""\
+        yaml_str = """\
         ---
         foo: ["bar"]
         """
@@ -443,8 +435,9 @@ class TestIssues:
 
         import ruyaml
 
+        yaml = ruyaml.YAML(typ='safe')
         buf = StringIO()
-        ruyaml.safe_dump(['012923'], buf)
+        yaml.dump(['012923'], buf)
         assert buf.getvalue() == "['012923']\n"
 
     def test_issue_223(self):
@@ -456,10 +449,12 @@ class TestIssues:
     def test_issue_232(self):
         import ruyaml
 
+        yaml = ruyaml.YAML(typ='safe', pure=True)
+
         with pytest.raises(ruyaml.parser.ParserError):
-            ruyaml.safe_load(']')
+            yaml.load(']')
         with pytest.raises(ruyaml.parser.ParserError):
-            ruyaml.safe_load('{]')
+            yaml.load('{]')
 
     def test_issue_233(self):
         import json
