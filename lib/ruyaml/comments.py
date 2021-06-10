@@ -12,7 +12,8 @@ from collections.abc import Mapping, MutableSet, Set, Sized
 from typing import Any, Dict, Iterator, List, Optional, Union
 
 from ruyaml.anchor import Anchor
-from ruyaml.compat import ordereddict  # type: ignore
+from ruyaml.compat import nprintf  # NOQA
+from ruyaml.compat import ordereddict  # NOQA; type: ignore
 from ruyaml.compat import _F, MutableSliceableSequence
 from ruyaml.scalarstring import ScalarString
 
@@ -22,8 +23,63 @@ if False:  # MYPY
 # fmt: off
 __all__ = ['CommentedSeq', 'CommentedKeySeq',
            'CommentedMap', 'CommentedOrderedMap',
-           'CommentedSet', 'comment_attrib', 'merge_attrib']
+           'CommentedSet', 'comment_attrib', 'merge_attrib',
+           'C_POST', 'C_PRE', 'C_SPLIT_ON_FIRST_BLANK', 'C_BLANK_LINE_PRESERVE_SPACE',
+           ]
 # fmt: on
+
+# splitting of comments by the scanner
+# an EOLC (End-Of-Line Comment) is preceded by some token
+# an FLC (Full Line Comment) is a comment not preceded by a token, i.e. # is
+#   the first non-blank on line
+# a BL is a blank line i.e. empty or spaces/tabs only
+# bits 0 and 1 are combined, you can choose only one
+C_POST = 0b00
+C_PRE = 0b01
+C_SPLIT_ON_FIRST_BLANK = (
+    0b10  # as C_POST, but if blank line then C_PRE all lines before
+)
+# first blank goes to POST even if no following real FLC
+# (first blank -> first of post)
+# 0b11 -> reserved for future use
+C_BLANK_LINE_PRESERVE_SPACE = 0b100
+# C_EOL_PRESERVE_SPACE2 = 0b1000
+
+
+class IDX:
+    # temporary auto increment, so rearranging is easier
+    def __init__(self):
+        # type: () -> None
+        self._idx = 0
+
+    def __call__(self):
+        # type: () -> Any
+        x = self._idx
+        self._idx += 1
+        return x
+
+    def __str__(self):
+        # type: () -> Any
+        return str(self._idx)
+
+
+cidx = IDX()
+
+# more or less in order of subjective expected likelyhood
+# the _POST and _PRE ones are lists themselves
+C_VALUE_EOL = C_ELEM_EOL = cidx()
+C_KEY_EOL = cidx()
+C_KEY_PRE = C_ELEM_PRE = cidx()  # not this is not value
+C_VALUE_POST = C_ELEM_POST = cidx()  # not this is not value
+C_VALUE_PRE = cidx()
+C_KEY_POST = cidx()
+C_TAG_EOL = cidx()
+C_TAG_POST = cidx()
+C_TAG_PRE = cidx()
+C_ANCHOR_EOL = cidx()
+C_ANCHOR_POST = cidx()
+C_ANCHOR_PRE = cidx()
+
 
 comment_attrib = '_yaml_comment'
 format_attrib = '_yaml_format'
@@ -32,36 +88,37 @@ merge_attrib = '_yaml_merge'
 tag_attrib = '_yaml_tag'
 
 
-class Comment(object):
+class Comment:
     # using sys.getsize tested the Comment objects, __slots__ makes them bigger
     # and adding self.end did not matter
-    __slots__ = 'comment', '_items', '_end', '_start'
+    __slots__ = 'comment', '_items', '_post', '_pre'
     attrib = comment_attrib
 
-    def __init__(self):
-        # type: () -> None
+    def __init__(self, old=True):
+        # type: (bool) -> None
+        self._pre = None if old else []  # type: ignore
         self.comment = None  # [post, [pre]]
         # map key (mapping/omap/dict) or index (sequence/list) to a  list of
         # dict: post_key, pre_key, post_value, pre_value
         # list: pre item, post item
         self._items = {}  # type: Dict[Any, Any]
         # self._start = [] # should not put these on first item
-        self._end = []  # type: List[Any] # end of document comments
+        self._post = []  # type: List[Any] # end of document comments
 
     def __str__(self):
         # type: () -> str
-        if bool(self._end):
-            end = ',\n  end=' + str(self._end)
+        if bool(self._post):
+            end = ',\n  end=' + str(self._post)
         else:
             end = ""
         return 'Comment(comment={0},\n  items={1}{2})'.format(
             self.comment, self._items, end
         )
 
-    def __repr__(self):
+    def _old__repr__(self):
         # type: () -> str
-        if bool(self._end):
-            end = ',\n  end=' + str(self._end)
+        if bool(self._post):
+            end = ',\n  end=' + str(self._post)
         else:
             end = ""
         ln = ''  # type: Union[str,int]
@@ -76,6 +133,25 @@ class Comment(object):
             it = '\n    ' + it + '  '
         return 'Comment(\n  start={},\n  items={{{}}}{})'.format(self.comment, it, end)
 
+    def __repr__(self):
+        # type: () -> str
+        if self._pre is None:
+            return self._old__repr__()
+        if bool(self._post):
+            end = ',\n  end=' + repr(self._post)
+        else:
+            end = ""
+        try:
+            ln = max([len(str(k)) for k in self._items]) + 1
+        except ValueError:
+            ln = ''  # type: ignore
+        it = '    '.join(
+            ['{:{}} {}\n'.format(str(k) + ':', ln, v) for k, v in self._items.items()]
+        )
+        if it:
+            it = '\n    ' + it + '  '
+        return 'Comment(\n  pre={},\n  items={{{}}}{})'.format(self.pre, it, end)
+
     @property
     def items(self):
         # type: () -> Any
@@ -84,24 +160,43 @@ class Comment(object):
     @property
     def end(self):
         # type: () -> Any
-        return self._end
+        return self._post
 
     @end.setter
     def end(self, value):
         # type: (Any) -> None
-        self._end = value
+        self._post = value
 
     @property
-    def start(self):
+    def pre(self):
         # type: () -> Any
-        return self._start
+        return self._pre
 
-    @start.setter
-    def start(self, value):
+    @pre.setter
+    def pre(self, value):
         # type: (Any) -> None
-        self._start = value
+        self._pre = value
+
+    def get(self, item, pos):
+        # type: (Any, Any) -> Any
+        x = self._items.get(item)
+        if x is None or len(x) < pos:
+            return None
+        return x[pos]  # can be None
+
+    def set(self, item, pos, value):
+        # type: (Any, Any, Any) -> Any
+        x = self._items.get(item)
+        if x is None:
+            self._items[item] = x = [None] * (pos + 1)
+        else:
+            while len(x) <= pos:
+                x.append(None)
+        assert x[pos] is None
+        x[pos] = value
 
     def __contains__(self, x):
+        # type: (Any) -> Any
         # test if a substring is in any of the attached comments
         if self.comment:
             if self.comment[0] and x in self.comment[0].value:
@@ -156,7 +251,7 @@ class Format:
         return self._flow_style
 
 
-class LineCol(object):
+class LineCol:
     """
     line and column information wrt document, values start at zero (0)
     """
@@ -204,7 +299,7 @@ class LineCol(object):
 
     def __repr__(self):
         # type: () -> str
-        return _F('LineCol({line}, {col})', line=self.line, col=self.col)
+        return _F('LineCol({line}, {col})', line=self.line, col=self.col)  # type: ignore
 
 
 class Tag:
@@ -268,7 +363,7 @@ class CommentedBase:
         from ruyaml.error import CommentMark
         from ruyaml.tokens import CommentToken
 
-        pre_comments = self._yaml_clear_pre_comment()
+        pre_comments = self._yaml_clear_pre_comment()  # type: ignore
         if comment[-1] == '\n':
             comment = comment[:-1]  # strip final newline if there
         start_mark = CommentMark(indent)
@@ -276,7 +371,7 @@ class CommentedBase:
             c = com.strip()
             if len(c) > 0 and c[0] != '#':
                 com = '# ' + com
-            pre_comments.append(CommentToken(com + '\n', start_mark, None))
+            pre_comments.append(CommentToken(com + '\n', start_mark))
 
     def yaml_set_comment_before_after_key(
         self, key, before=None, indent=0, after=None, after_indent=None
@@ -291,7 +386,7 @@ class CommentedBase:
         def comment_token(s, mark):
             # type: (Any, Any) -> Any
             # handle empty lines as having no comment
-            return CommentToken(('# ' if s else "") + s + '\n', mark, None)
+            return CommentToken(('# ' if s else "") + s + '\n', mark)
 
         if after_indent is None:
             after_indent = indent + 2
@@ -345,7 +440,7 @@ class CommentedBase:
                 comment = ' ' + comment
                 column = 0
         start_mark = CommentMark(column)
-        ct = [CommentToken(comment, start_mark, None), None]
+        ct = [CommentToken(comment, start_mark), None]
         self._yaml_add_eol_comment(ct, key=key)
 
     @property
@@ -546,7 +641,7 @@ class CommentedSeq(MutableSliceableSequence, list, CommentedBase):  # type: igno
         # type: (Any) -> Any
         return list.__add__(self, other)
 
-    def sort(self, key=None, reverse=False):  # type: ignore
+    def sort(self, key=None, reverse=False):
         # type: (Any, bool) -> None
         if key is None:
             tmp_lst = sorted(zip(self, range(len(self))), reverse=reverse)
@@ -698,7 +793,7 @@ class CommentedMapValuesView(CommentedMapView):
             yield self._mapping[key]
 
 
-class CommentedMap(ordereddict, CommentedBase):  # type: ignore
+class CommentedMap(ordereddict, CommentedBase):
     __slots__ = (Comment.attrib, '_ok', '_ref')
 
     def __init__(self, *args, **kw):
@@ -782,7 +877,7 @@ class CommentedMap(ordereddict, CommentedBase):  # type: ignore
             for x in vals[0]:
                 self[x] = vals[0][x]
         try:
-            self._ok.update(vals.keys())  # type: ignore
+            self._ok.update(vals[0].keys())  # type: ignore
         except AttributeError:
             # assume one argument that is a list/tuple of two element lists/tuples
             for x in vals[0]:

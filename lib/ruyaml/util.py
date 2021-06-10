@@ -116,7 +116,7 @@ def load_yaml_guess_indent(stream):
     if indent is None and map_indent is not None:
         indent = map_indent
     yaml = YAML()
-    return yaml.load(yaml_str), indent, block_seq_indent
+    return yaml.load(yaml_str), indent, block_seq_indent  # type: ignore
 
 
 def configobj_walker(cfg):
