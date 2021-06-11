@@ -10,7 +10,14 @@
 import sys
 
 # fmt: off
-from ruyaml.compat import _F, DBG_EVENT, check_anchorname_char, dbg, nprint
+from ruyaml.compat import (  # NOQA
+    _F,
+    DBG_EVENT,
+    check_anchorname_char,
+    dbg,
+    nprint,
+    nprintf,
+)
 from ruyaml.error import YAMLError, YAMLStreamError
 from ruyaml.events import *  # NOQA
 
@@ -706,7 +713,8 @@ class Emitter:
                         pass
                 self.states.append(self.expect_block_mapping_simple_value)
                 self.expect_node(mapping=True, simple_key=True)
-                if isinstance(self.event, AliasEvent):
+                # test on style for alias in !!set
+                if isinstance(self.event, AliasEvent) and not self.event.style == '?':
                     self.stream.write(' ')
             else:
                 self.write_indicator('?', True, indention=True)
@@ -922,9 +930,14 @@ class Emitter:
                 and self.event.comment[0].column >= self.indent
             ):
                 # comment following a folded scalar must dedent (issue 376)
-                self.event.comment[0].column = self.indent - 1
+                self.event.comment[0].column = self.indent - 1  # type: ignore
         elif self.style == '|':
-            self.write_literal(self.analysis.scalar, self.event.comment)
+            # self.write_literal(self.analysis.scalar, self.event.comment)
+            try:
+                cmx = self.event.comment[1][0]
+            except (IndexError, TypeError):
+                cmx = ""
+            self.write_literal(self.analysis.scalar, cmx)
             if (
                 self.event.comment
                 and self.indent is not None
@@ -932,7 +945,7 @@ class Emitter:
                 and self.event.comment[0].column >= self.indent
             ):
                 # comment following a literal scalar must dedent (issue 376)
-                self.event.comment[0].column = self.indent - 1
+                self.event.comment[0].column = self.indent - 1  # type: ignore
         else:
             self.write_plain(self.analysis.scalar, split)
         self.analysis = None
@@ -1597,13 +1610,21 @@ class Emitter:
     def write_literal(self, text, comment=None):
         # type: (Any, Any) -> None
         hints, _indent, _indicator = self.determine_block_hints(text)
-        self.write_indicator('|' + hints, True)
-        try:
-            comment = comment[1][0]  # type: ignore
-            if comment:
-                self.stream.write(comment)
-        except (TypeError, IndexError):
-            pass
+        # if comment is not None:
+        #    try:
+        #        hints += comment[1][0]
+        #    except (TypeError, IndexError) as e:
+        #        pass
+        if not isinstance(comment, str):
+            comment = ''
+        self.write_indicator('|' + hints + comment, True)
+        # try:
+        #    nprintf('selfev', comment)
+        #    cmx = comment[1][0]
+        #    if cmx:
+        #        self.stream.write(cmx)
+        # except (TypeError, IndexError) as e:
+        #    pass
         if _indicator == '+':
             self.open_ended = True
         self.write_line_break()

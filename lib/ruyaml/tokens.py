@@ -5,7 +5,7 @@ from typing import Any
 from ruyaml.compat import _F
 from ruyaml.error import StreamMark
 
-SHOWLINES = True
+SHOW_LINES = True
 
 
 class Token:
@@ -25,54 +25,111 @@ class Token:
         #               hasattr('self', key)]
         attributes = [key for key in self.__slots__ if not key.endswith('_mark')]
         attributes.sort()
-        arguments = ', '.join(
-            [
-                _F('{key!s}={gattr!r})', key=key, gattr=getattr(self, key))
-                for key in attributes
-            ]
-        )
-        if SHOWLINES:
+        # arguments = ', '.join(
+        #  [_F('{key!s}={gattr!r})', key=key, gattr=getattr(self, key)) for key in attributes]
+        # )
+        arguments = [
+            _F('{key!s}={gattr!r}', key=key, gattr=getattr(self, key))
+            for key in attributes
+        ]
+        if SHOW_LINES:
             try:
-                arguments += ', line: ' + str(self.start_mark.line)
+                arguments.append('line: ' + str(self.start_mark.line))
             except:  # NOQA
                 pass
         try:
-            arguments += ', comment: ' + str(self._comment)
+            arguments.append('comment: ' + str(self._comment))
         except:  # NOQA
             pass
-        return '{}({})'.format(self.__class__.__name__, arguments)
+        return '{}({})'.format(self.__class__.__name__, ', '.join(arguments))
 
     @property
     def column(self):
+        # type: () -> int
         return self.start_mark.column
 
     @column.setter
     def column(self, pos):
+        # type: (Any) -> None
         self.start_mark.column = pos
 
+    # old style ( <= 0.17) is a TWO element list with first being the EOL
+    # comment concatenated with following FLC/BLNK; and second being a list of FLC/BLNK
+    # preceding the token
+    # new style ( >= 0.17 ) is a THREE element list with the first being a list of
+    # preceding FLC/BLNK, the second EOL and the third following FLC/BLNK
+    # note that new style has differing order, and does not consist of CommentToken(s)
+    # but of CommentInfo instances
+    # any non-assigned values in new style are None, but first and last can be empty list
+    # new style routines add one comment at a time
+
+    # going to be deprecated in favour of add_comment_eol/post
     def add_post_comment(self, comment):
         # type: (Any) -> None
         if not hasattr(self, '_comment'):
             self._comment = [None, None]
+        else:
+            assert len(self._comment) == 2  # make sure it is version 0
+        # if isinstance(comment, CommentToken):
+        #    if comment.value.startswith('# C09'):
+        #        raise
         self._comment[0] = comment
 
+    # going to be deprecated in favour of add_comment_pre
     def add_pre_comments(self, comments):
         # type: (Any) -> None
         if not hasattr(self, '_comment'):
             self._comment = [None, None]
+        else:
+            assert len(self._comment) == 2  # make sure it is version 0
         assert self._comment[1] is None
         self._comment[1] = comments
+        return
 
-    def get_comment(self):
-        # type: () -> Any
-        return getattr(self, '_comment', None)
+    # new style
+    def add_comment_pre(self, comment):
+        # type: (Any) -> None
+        if not hasattr(self, '_comment'):
+            self._comment = [[], None, None]  # type: ignore
+        else:
+            assert len(self._comment) == 3
+            if self._comment[0] is None:
+                self._comment[0] = []  # type: ignore
+        self._comment[0].append(comment)  # type: ignore
+
+    def add_comment_eol(self, comment, comment_type):
+        # type: (Any, Any) -> None
+        if not hasattr(self, '_comment'):
+            self._comment = [None, None, None]
+        else:
+            assert len(self._comment) == 3
+            assert self._comment[1] is None
+        if self.comment[1] is None:
+            self._comment[1] = []  # type: ignore
+        self._comment[1].extend([None] * (comment_type + 1 - len(self.comment[1])))  # type: ignore # NOQA
+        # nprintf('commy', self.comment, comment_type)
+        self._comment[1][comment_type] = comment  # type: ignore
+
+    def add_comment_post(self, comment):
+        # type: (Any) -> None
+        if not hasattr(self, '_comment'):
+            self._comment = [None, None, []]  # type: ignore
+        else:
+            assert len(self._comment) == 3
+            if self._comment[2] is None:
+                self._comment[2] = []  # type: ignore
+        self._comment[2].append(comment)  # type: ignore
+
+    # def get_comment(self):
+    #     # type: () -> Any
+    #     return getattr(self, '_comment', None)
 
     @property
     def comment(self):
         # type: () -> Any
         return getattr(self, '_comment', None)
 
-    def move_comment(self, target, empty=False):
+    def move_old_comment(self, target, empty=False):
         # type: (Any, bool) -> Any
         """move a comment from this token to target (normally next token)
         used to combine e.g. comments before a BlockEntryToken to the
@@ -102,7 +159,7 @@ class Token:
             tc[1] = c[1]
         return self
 
-    def split_comment(self):
+    def split_old_comment(self):
         # type: () -> Any
         """split the post part of a comment, and return it
         as comment to be added. Delete second part if [None, None]
@@ -117,6 +174,40 @@ class Token:
         if comment[1] is None:
             delattr(self, '_comment')
         return ret_val
+
+    def move_new_comment(self, target, empty=False):
+        # type: (Any, bool) -> Any
+        """move a comment from this token to target (normally next token)
+        used to combine e.g. comments before a BlockEntryToken to the
+        ScalarToken that follows it
+        empty is a special for empty values -> comment after key
+        """
+        c = self.comment
+        if c is None:
+            return
+        # don't push beyond last element
+        if isinstance(target, (StreamEndToken, DocumentStartToken)):
+            return
+        delattr(self, '_comment')
+        tc = target.comment
+        if not tc:  # target comment, just insert
+            # special for empty value in key: value issue 25
+            if empty:
+                c = [c[0], c[1], c[2]]
+            target._comment = c
+            # nprint('mco2:', self, target, target.comment, empty)
+            return self
+        # if self and target have both pre, eol or post comments, something seems wrong
+        for idx in range(3):
+            if c[idx] is not None and tc[idx] is not None:
+                raise NotImplementedError(
+                    _F('overlap in comment {c!r} {tc!r}', c=c, tc=tc)
+                )
+        # move the comment parts
+        for idx in range(3):
+            if c[idx]:
+                tc[idx] = c[idx]
+        return self
 
 
 # class BOMToken(Token):
@@ -265,13 +356,28 @@ class ScalarToken(Token):
 
 
 class CommentToken(Token):
-    __slots__ = 'value', 'pre_done'
+    __slots__ = '_value', 'pre_done'
     id = '<comment>'
 
-    def __init__(self, value, start_mark, end_mark):
-        # type: (Any, Any, Any) -> None
-        Token.__init__(self, start_mark, end_mark)
-        self.value = value
+    def __init__(self, value, start_mark=None, end_mark=None, column=None):
+        # type: (Any, Any, Any, Any) -> None
+        if start_mark is None:
+            assert column is not None
+            self._column = column
+        Token.__init__(self, start_mark, None)  # type: ignore
+        self._value = value
+
+    @property
+    def value(self):
+        # type: () -> str
+        if isinstance(self._value, str):
+            return self._value
+        return "".join(self._value)
+
+    @value.setter
+    def value(self, val):
+        # type: (Any) -> None
+        self._value = val
 
     def reset(self):
         # type: () -> None
@@ -281,7 +387,7 @@ class CommentToken(Token):
     def __repr__(self):
         # type: () -> Any
         v = '{!r}'.format(self.value)
-        if SHOWLINES:
+        if SHOW_LINES:
             try:
                 v += ', line: ' + str(self.start_mark.line)
             except:  # NOQA

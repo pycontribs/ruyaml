@@ -17,7 +17,7 @@ class TimeStamp(datetime.datetime):
 
     def __new__(cls, *args, **kw):  # datetime is immutable
         # type: (Any, Any) -> Any
-        return datetime.datetime.__new__(cls, *args, **kw)  # type: ignore
+        return datetime.datetime.__new__(cls, *args, **kw)
 
     def __deepcopy__(self, memo):
         # type: (Any) -> Any
@@ -39,6 +39,7 @@ class TimeStamp(datetime.datetime):
         tzinfo=True,
         fold=None,
     ):
+        # type: (Any, Any, Any, Any, Any, Any, Any, Any, Any) -> Any
         if year is None:
             year = self.year
         if month is None:
