@@ -55,7 +55,7 @@ class ReaderError(YAMLError):
             )
         else:
             return _F(
-                'unacceptable character #x{self_character:04x}: {self._reason!s}\n'
+                'unacceptable character #x{self_character:04x}: {self_reason!s}\n'
                 '  in "{self_name!s}", position {self_position:d}',
                 self_character=self.character,
                 self_reason=self.reason,
