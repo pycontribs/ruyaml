@@ -39,7 +39,7 @@ functionality will throw a warning before being changed/removed.
 pin the version being used with ``ruamel.yaml<=0.15``** if you cannot
 fully test upgrading to a newer version. For new usage
 pin to the minor version tested ( ``ruamel.yaml<=0.17``) or even to the
-exact version used. 
+exact version used.
 
 New functionality is usually only available via the new API, so
 make sure you use it and stop using the `ruamel.yaml.safe_load()`,
@@ -90,20 +90,20 @@ ChangeLog
     (reported by `Bastien gerard <https://sourceforge.net/u/bagerard/>`__)
 
 0.17.14 (2021-08-25):
-  - fix issue 396, inserting key/val in merged-in dictionary (reported by `Bastien gerard 
+  - fix issue 396, inserting key/val in merged-in dictionary (reported by `Bastien gerard
     <https://sourceforge.net/u/bagerard/>`__)
 
 0.17.13 (2021-08-21):
   - minor fix in attr handling
 
 0.17.12 (2021-08-21):
-  - fix issue with anchor on registered class not preserved and those classes using package 
+  - fix issue with anchor on registered class not preserved and those classes using package
     attrs with `@attr.s()` (both reported by `ssph <https://sourceforge.net/u/sph/>`__)
 
 0.17.11 (2021-08-19):
   - fix error baseclass for ``DuplicateKeyErorr`` (reported by `Łukasz Rogalski
     <https://sourceforge.net/u/lrogalski/>`__)
-  - fix typo in reader error message, causing `KeyError` during reader error 
+  - fix typo in reader error message, causing `KeyError` during reader error
     (reported by `MTU <https://sourceforge.net/u/mtu/>`__)
 
 0.17.10 (2021-06-24):
