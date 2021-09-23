@@ -1698,8 +1698,8 @@ class RoundTripConstructor(SafeConstructor):
             else:
                 data.__dict__.update(state)
         if node.anchor:
-            from ruyaml.serializer import templated_id
             from ruyaml.anchor import Anchor
+            from ruyaml.serializer import templated_id
 
             if not templated_id(node.anchor):
                 if not hasattr(data, Anchor.attrib):

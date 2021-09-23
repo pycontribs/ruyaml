@@ -6,6 +6,7 @@ import datetime
 import types
 from collections import OrderedDict
 
+from ruyaml.anchor import Anchor
 from ruyaml.comments import (
     CommentedKeyMap,
     CommentedKeySeq,
@@ -32,7 +33,6 @@ from ruyaml.scalarstring import (
     SingleQuotedScalarString,
 )
 from ruyaml.timestamp import TimeStamp
-from ruyaml.anchor import Anchor
 
 if False:  # MYPY
     from typing import Any, Dict, List, Optional, Text, Union  # NOQA
