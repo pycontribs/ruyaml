@@ -396,11 +396,14 @@ class CommentedBase:
             after = after[:-1]  # strip final newline if there
         start_mark = CommentMark(indent)
         c = self.ca.items.setdefault(key, [None, [], None, None])
-        if before == '\n':
-            c[1].append(comment_token("", start_mark))
-        elif before:
-            for com in before.split('\n'):
-                c[1].append(comment_token(com, start_mark))
+        if before is not None:
+            if c[1] is None:
+                c[1] = []
+            if before == '\n':
+                c[1].append(comment_token("", start_mark))  # type: ignore
+            else:
+                for com in before.split('\n'):
+                    c[1].append(comment_token(com, start_mark))  # type: ignore
         if after:
             start_mark = CommentMark(after_indent)
             if c[3] is None:
@@ -890,8 +893,13 @@ class CommentedMap(ordereddict, CommentedBase):
         """insert key value into given position
         attach comment if provided
         """
+        keys = list(self.keys()) + [key]
         ordereddict.insert(self, pos, key, value)
-        self._ok.add(key)
+        for keytmp in keys:
+            self._ok.add(keytmp)
+        for referer in self._ref:
+            for keytmp in keys:
+                referer.update_key_value(keytmp)
         if comment is not None:
             self.yaml_add_eol_comment(comment, key=key)
 

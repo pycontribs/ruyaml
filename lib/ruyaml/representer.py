@@ -6,6 +6,7 @@ import datetime
 import types
 from collections import OrderedDict
 
+from ruyaml.anchor import Anchor
 from ruyaml.comments import (
     CommentedKeyMap,
     CommentedKeySeq,
@@ -1114,6 +1115,17 @@ class RoundTripRepresenter(SafeRepresenter):
         except AttributeError:
             anchor = None
         return SafeRepresenter.represent_bool(self, data, anchor=anchor)
+
+    def represent_yaml_object(self, tag, data, cls, flow_style=None):
+        if hasattr(data, '__getstate__'):
+            state = data.__getstate__()
+        else:
+            state = data.__dict__.copy()
+        anchor = state.pop(Anchor.attrib, None)
+        res = self.represent_mapping(tag, state, flow_style=flow_style)
+        if anchor is not None:
+            res.anchor = anchor
+        return res
 
 
 RoundTripRepresenter.add_representer(type(None), RoundTripRepresenter.represent_none)
