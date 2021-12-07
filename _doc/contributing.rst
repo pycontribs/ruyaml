@@ -27,7 +27,7 @@ In my experience it is best to use two ``virtualenv`` environments, one with the
 latest Python from the 2.7 series, the other with 3.5 or 3.6. In the
 site-packages directory of each virtualenv make a soft link to the ruyaml
 directory of your (cloned and checked out) copy of the repository. Do not under
-any circumstances run ``pip install -e .`` or ``python setup.py -e .`` it will
+any circumstances run ``pip install -e .`` it will
 not work (at least not until these commands are fixed to support packages with
 namespaces).
 
@@ -38,7 +38,7 @@ pass without warning/error, you can create your pull-request.
 Flake
 +++++
 
-The `Flake8 <https://flake8.pycqa.org>`_ configuration is part of ``setup.py``::
+The `Flake8 <https://flake8.pycqa.org>`_ configuration is part of ``setup.cfg``::
 
     [flake8]
     show-source = True
