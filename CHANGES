@@ -4,6 +4,9 @@
   - Removed remains of Python 2 compatiblity
   - Removed documentation's dependency on "ryd" tool
 
+[0, 17, 17]: 2021-10-31
+  - extract timestamp matching/creation to util
+
 [0, 17, 16]: 2021-08-28
   - also handle issue 397 when comment is newline
 

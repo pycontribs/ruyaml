@@ -20,7 +20,7 @@ Notes
 :repository:    https://github.com/pycontribs/ruyaml.git
 :pypi:          https://pypi.org/project/ruyaml/
 
-*The 0.16.13 release was the last that will tested to be working on Python 2.7.
+*The 0.16.13 release was the last that was tested to be working on Python 2.7.
 The 0.17 series will still be tested on Python 3.5, but the 0.18 will not. The
 0.17 series will also stop support for the old PyYAML functions, so a `YAML()` instance
 will need to be created.*
@@ -82,8 +82,11 @@ ChangeLog
 
 .. should insert NEXT: at the beginning of line for next key (with empty line)
 
+0.17.17 (2021-10-31):
+  - extract timestamp matching/creation to util
+
 0.17.16 (2021-08-28):
-  - also handle issue 397 when comment is newline
+  - 398 also handle issue 397 when comment is newline
 
 0.17.15 (2021-08-28):
   - fix issue 397, insert comment before key when a comment between key and value exists

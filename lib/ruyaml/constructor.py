@@ -3,7 +3,6 @@
 import base64
 import binascii
 import datetime
-import re
 import sys
 import types
 import warnings
@@ -49,7 +48,7 @@ from ruyaml.scalarstring import (
     SingleQuotedScalarString,
 )
 from ruyaml.timestamp import TimeStamp
-from ruyaml.util import RegExp
+from ruyaml.util import create_timestamp, timestamp_regexp
 
 if False:  # MYPY
     from typing import Any, Dict, Generator, List, Optional, Set, Union  # NOQA
@@ -576,19 +575,7 @@ class SafeConstructor(BaseConstructor):
                 node.start_mark,
             )
 
-    timestamp_regexp = RegExp(
-        """^(?P<year>[0-9][0-9][0-9][0-9])
-          -(?P<month>[0-9][0-9]?)
-          -(?P<day>[0-9][0-9]?)
-          (?:((?P<t>[Tt])|[ \\t]+)   # explictly not retaining extra spaces
-          (?P<hour>[0-9][0-9]?)
-          :(?P<minute>[0-9][0-9])
-          :(?P<second>[0-9][0-9])
-          (?:\\.(?P<fraction>[0-9]*))?
-          (?:[ \\t]*(?P<tz>Z|(?P<tz_sign>[-+])(?P<tz_hour>[0-9][0-9]?)
-          (?::(?P<tz_minute>[0-9][0-9]))?))?)?$""",
-        re.X,
-    )
+    timestamp_regexp = timestamp_regexp  # moved to util 0.17.17
 
     def construct_yaml_timestamp(self, node, values=None):
         # type: (Any, Any) -> Any
@@ -605,42 +592,7 @@ class SafeConstructor(BaseConstructor):
                     node.start_mark,
                 )
             values = match.groupdict()
-        year = int(values['year'])
-        month = int(values['month'])
-        day = int(values['day'])
-        if not values['hour']:
-            return datetime.date(year, month, day)
-        hour = int(values['hour'])
-        minute = int(values['minute'])
-        second = int(values['second'])
-        fraction = 0
-        if values['fraction']:
-            fraction_s = values['fraction'][:6]
-            while len(fraction_s) < 6:
-                fraction_s += '0'
-            fraction = int(fraction_s)
-            if len(values['fraction']) > 6 and int(values['fraction'][6]) > 4:
-                fraction += 1
-        delta = None
-        if values['tz_sign']:
-            tz_hour = int(values['tz_hour'])
-            minutes = values['tz_minute']
-            tz_minute = int(minutes) if minutes else 0
-            delta = datetime.timedelta(hours=tz_hour, minutes=tz_minute)
-            if values['tz_sign'] == '-':
-                delta = -delta
-        # should do something else instead (or hook this up to the preceding if statement
-        # in reverse
-        #  if delta is None:
-        #      return datetime.datetime(year, month, day, hour, minute, second, fraction)
-        #  return datetime.datetime(year, month, day, hour, minute, second, fraction,
-        #                           datetime.timezone.utc)
-        # the above is not good enough though, should provide tzinfo. In Python3 that is easily
-        # doable drop that kind of support for Python2 as it has not native tzinfo
-        data = datetime.datetime(year, month, day, hour, minute, second, fraction)
-        if delta:
-            data -= delta
-        return data
+        return create_timestamp(**values)
 
     def construct_yaml_omap(self, node):
         # type: (Any) -> Any
@@ -1858,12 +1810,14 @@ class RoundTripConstructor(SafeConstructor):
             )
         values = match.groupdict()
         if not values['hour']:
-            return SafeConstructor.construct_yaml_timestamp(self, node, values)
+            return create_timestamp(**values)
+            # return SafeConstructor.construct_yaml_timestamp(self, node, values)
         for part in ['t', 'tz_sign', 'tz_hour', 'tz_minute']:
             if values[part]:
                 break
         else:
-            return SafeConstructor.construct_yaml_timestamp(self, node, values)
+            return create_timestamp(**values)
+            # return SafeConstructor.construct_yaml_timestamp(self, node, values)
         year = int(values['year'])
         month = int(values['month'])
         day = int(values['day'])
@@ -1886,7 +1840,7 @@ class RoundTripConstructor(SafeConstructor):
             delta = datetime.timedelta(hours=tz_hour, minutes=tz_minute)
             if values['tz_sign'] == '-':
                 delta = -delta
-        # shold check for NOne and solve issue 366 should be tzinfo=delta)
+        # should check for None and solve issue 366 should be tzinfo=delta)
         if delta:
             dt = datetime.datetime(year, month, day, hour, minute)
             dt -= delta
