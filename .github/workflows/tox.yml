@@ -25,6 +25,8 @@ jobs:
           python-version: 3.8
         - name: py39
           python-version: 3.9
+        - name: py310
+          python-version: "3.10"
     steps:
     - uses: actions/checkout@v2
       with:
