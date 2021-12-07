@@ -15,5 +15,13 @@ skip-string-normalization = true
 profile = "black"
 # known_first_party = "foo"
 
+[tool.pytest.ini_options]
+# ensure we treat warnings as error
+filterwarnings = [
+  # "error",
+  "error::DeprecationWarning",
+  "error::PendingDeprecationWarning"
+]
+
 [tool.setuptools_scm]
 local_scheme = "no-local-version"
