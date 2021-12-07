@@ -21,6 +21,7 @@ Contents:
     api
     pyyaml
     contributing
+    upmerge
 
 .. image:: https://readthedocs.org/projects/ruyaml/badge/?version=stable
     :target: https://ruyaml.readthedocs.org/en/stable
