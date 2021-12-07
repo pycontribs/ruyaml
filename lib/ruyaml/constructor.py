@@ -48,7 +48,7 @@ from ruyaml.scalarstring import (
     SingleQuotedScalarString,
 )
 from ruyaml.timestamp import TimeStamp
-from ruyaml.util import timestamp_regexp, create_timestamp
+from ruyaml.util import create_timestamp, timestamp_regexp
 
 if False:  # MYPY
     from typing import Any, Dict, Generator, List, Optional, Set, Union  # NOQA

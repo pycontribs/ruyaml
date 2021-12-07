@@ -5,8 +5,8 @@ some helper functions that might be generally useful
 """
 
 import datetime
-from functools import partial
 import re
+from functools import partial
 from typing import Any
 
 if False:  # MYPY
