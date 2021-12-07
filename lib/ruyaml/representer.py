@@ -671,7 +671,7 @@ class RoundTripRepresenter(SafeRepresenter):
 
     def represent_scalar_float(self, data):
         # type: (Any) -> Any
-        """ this is way more complicated """
+        """this is way more complicated"""
         value = None
         anchor = data.yaml_anchor(any=True)
         if data != data or (data == 0.0 and data == 1.0):

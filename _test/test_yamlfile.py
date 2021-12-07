@@ -158,7 +158,7 @@ class TestYAML:
         reason='Jython throws RepresenterError',
     )
     def test_blank_line_after_literal_keep(self):
-        """ have to insert an eof marker in YAML to test this"""
+        """have to insert an eof marker in YAML to test this"""
         s = """
         c:
         - |+
