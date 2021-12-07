@@ -33,7 +33,7 @@ script::
 We use that script to setup our git copy::
 
     cd ../git
-    ../fast-export/hg-fast-export.sh -r ../hg --ignore-unnamed-heads  
+    ../fast-export/hg-fast-export.sh -r ../hg --ignore-unnamed-heads
 
 Now let's create a third repository for the actual work::
 
@@ -57,7 +57,7 @@ First, let's pull the remote changes (if any)::
     cd /your/src/ruyaml/hg
     hg pull
     cd ../git
-    ../fast-export/hg-fast-export.sh -r ../hg --ignore-unnamed-heads  
+    ../fast-export/hg-fast-export.sh -r ../hg --ignore-unnamed-heads
     cd ../repo
     git fetch --all
     git checkout merge
