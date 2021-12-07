@@ -95,5 +95,3 @@ Then, commit your changes::
 
 Now check github. If everything is OK, congratulations, otherwise fix and
 push (no need to repeat the ``-f``).
-
-
