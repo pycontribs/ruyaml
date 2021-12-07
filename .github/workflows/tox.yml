@@ -65,3 +65,12 @@ jobs:
       with:
         name: logs.zip
         path: .tox/**/log/
+  check:
+    needs:
+      - gh
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report success of the test matrix
+        run: >-
+          print("All's good")
+        shell: python
