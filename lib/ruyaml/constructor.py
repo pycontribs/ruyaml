@@ -3,7 +3,6 @@
 import base64
 import binascii
 import datetime
-import re
 import sys
 import types
 import warnings
