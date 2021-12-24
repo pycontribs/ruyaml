@@ -7,6 +7,9 @@ secure the future of the library, mainly by having a pool of maintainers.
 Notes
 =====
 
+- Several references to ``ruamel.yaml``, as well as its changelog and
+  some ancient compatibility warnings, have been retained because
+  that makes merging future upstream changes substantially easier.
 - The current version has the same API as the "ruamel.yaml" package.
   However, it will install the `ruyaml` python module. Thus, simply
   replace ``from ruamel import yaml`` with ``import ruyaml as yaml``
@@ -14,11 +17,11 @@ Notes
 - python3.7 is the minimal version of python supported
 
 
-:version:       0.90.1
-:updated:       2021-06-10
-:documentation: http://ruyaml.readthedocs.io
-:repository:    https://github.com/pycontribs/ruyaml.git
-:pypi:          https://pypi.org/project/ruyaml/
+:version:       0.17.18
+:updated:       2021-12-24
+:documentation: http://yaml.readthedocs.io
+:repository:    https://sourceforge.net/projects/ruamel-yaml/
+:pypi:          https://pypi.org/project/ruamel.yaml/
 
 *The 0.16.13 release was the last that was tested to be working on Python 2.7.
 The 0.17 series will still be tested on Python 3.5, but the 0.18 will not. The
@@ -65,10 +68,10 @@ when the status of the API is stable enough to make the transition.
 .. image:: https://bestpractices.coreinfrastructure.org/projects/1128/badge
    :target: https://bestpractices.coreinfrastructure.org/projects/1128
 
-.. image:: https://sourceforge.net/p/ruamel-yaml/code/ci/default/tree/_doc/_static/license.svg?format=raw
+.. image:: https://sourceforge.net/p/ruamel-yaml-base/code/ci/default/tree/_doc/_static/license.svg?format=raw
    :target: https://opensource.org/licenses/MIT
 
-.. image:: https://sourceforge.net/p/ruamel-yaml/code/ci/default/tree/_doc/_static/pypi.svg?format=raw
+.. image:: https://sourceforge.net/p/ruamel-yaml-base/code/ci/default/tree/_doc/_static/pypi.svg?format=raw
    :target: https://pypi.org/project/ruamel.yaml/
 
 .. image:: https://sourceforge.net/p/oitnb/code/ci/default/tree/_doc/_static/oitnb.svg?format=raw
@@ -82,9 +85,11 @@ ChangeLog
 
 .. should insert NEXT: at the beginning of line for next key (with empty line)
 
-NEXT:
+0.17.18 (2021-12-24):
   - copy-paste error in folded scalar comment attachment (reported by `Stephan Geulette
     <https://sourceforge.net/u/sgeulette/profile/>`__)
+  - fix 411, indent error comment between key empty seq value (reported by `Guillermo Julián
+    <https://sourceforge.net/u/gjulianm/profile/>`__)
 
 0.17.17 (2021-10-31):
   - extract timestamp matching/creation to util
