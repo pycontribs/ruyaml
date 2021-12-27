@@ -1,7 +1,6 @@
 # Skipped because we have no idea where the "recursive_filename"
 # fixture is supposed to come from
 import pytest
-
 import ruyaml
 
 pytestmark = pytest.mark.skip
