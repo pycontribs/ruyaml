@@ -4,6 +4,7 @@ import io
 # Skipped because we have no idea where the "error_filename"
 # fixture is supposed to come from
 import pytest
+
 import ruyaml.reader
 
 pytestmark = pytest.mark.skip

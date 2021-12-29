@@ -13,7 +13,7 @@ skip-string-normalization = true
 
 [tool.isort]
 profile = "black"
-# known_first_party = "foo"
+known_first_party = "ruyaml"
 
 [tool.pytest.ini_options]
 # ensure we treat warnings as error
