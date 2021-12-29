@@ -359,11 +359,10 @@ class CommentToken(Token):
     __slots__ = '_value', 'pre_done'
     id = '<comment>'
 
-    def __init__(self, value, start_mark=None, end_mark=None, column=None):
-        # type: (Any, Any, Any, Any) -> None
+    def __init__(self, value, start_mark=None, end_mark=None, column=None) -> None:
         if start_mark is None:
             assert column is not None
-            self._column = column
+            self._column = column  # type: ignore
         Token.__init__(self, start_mark, None)  # type: ignore
         self._value = value
 
