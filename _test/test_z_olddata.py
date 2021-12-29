@@ -29,8 +29,9 @@ def test_data():
 
 def test_data_ext():
     collections = []
-    import ruyaml
     import test_appliance  # NOQA
+
+    import ruyaml
 
     warnings.simplefilter('ignore', ruyaml.error.UnsafeLoaderWarning)
     warnings.simplefilter('ignore', PendingDeprecationWarning)

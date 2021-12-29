@@ -5,6 +5,7 @@ import canonical  # NOQA
 # Skipped because we have no idea where this "canonical" module
 # comes from, nor where all those fixtures originate
 import pytest
+
 import ruyaml
 
 pytestmark = pytest.mark.skip

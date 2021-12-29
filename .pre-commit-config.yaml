@@ -9,13 +9,13 @@ repos:
     rev: 5.10.1
     hooks:
       - id: isort
-  - repo: https://github.com/python/black.git
+  - repo: https://github.com/psf/black
     rev: 21.12b0
     hooks:
       - id: black
         language_version: python3
   - repo: https://github.com/pre-commit/pre-commit-hooks.git
-    rev: v4.0.1
+    rev: v4.1.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
@@ -25,7 +25,7 @@ repos:
       - id: check-merge-conflict
       - id: debug-statements
         language_version: python3
-  - repo: https://gitlab.com/pycqa/flake8.git
+  - repo: https://github.com/PyCQA/flake8
     rev: 3.9.2
     hooks:
       - id: flake8

@@ -10,6 +10,7 @@ from io import BytesIO, StringIO
 # Skipped because we have no idea where the "unicode_filename"
 # fixture is supposed to come from
 import pytest
+
 import ruyaml as yaml
 
 pytestmark = pytest.mark.skip

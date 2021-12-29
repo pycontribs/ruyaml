@@ -7,8 +7,9 @@ import warnings
 # Skipped because we have no idea where the "error_filename"
 # fixture is supposed to come from
 import pytest
-import ruyaml as yaml
 import test_emitter
+
+import ruyaml as yaml
 
 pytestmark = pytest.mark.skip
 
