@@ -449,8 +449,8 @@ class Representer(SafeRepresenter):
             reduce = data.__reduce__()
         else:
             raise RepresenterError(_F('cannot represent object: {data!r}', data=data))
-        reduce = (list(reduce) + [None] * 5)[:5]
-        function, args, state, listitems, dictitems = reduce
+        reduce = (list(reduce) + [None] * 5)[:5]  # type: ignore
+        function, args, state, listitems, dictitems = reduce  # type: ignore
         args = list(args)
         if state is None:
             state = {}

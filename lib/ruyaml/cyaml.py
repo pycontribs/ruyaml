@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from _ruyaml import CEmitter, CParser  # type: ignore
-
 from ruyaml.constructor import BaseConstructor, Constructor, SafeConstructor
 from ruyaml.representer import BaseRepresenter, Representer, SafeRepresenter
 from ruyaml.resolver import BaseResolver, Resolver

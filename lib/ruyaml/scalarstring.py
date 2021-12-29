@@ -3,7 +3,7 @@
 from ruyaml.anchor import Anchor
 
 if False:  # MYPY
-    from typing import Any, Dict, List, Text  # NOQA
+    from typing import Any, Dict, List, SupportsIndex, Text  # NOQA
 
 __all__ = [
     'ScalarString',
@@ -30,7 +30,7 @@ class ScalarString(str):
         return ret_val
 
     def replace(self, old, new, maxreplace=-1):
-        # type: (Any, Any, int) -> Any
+        # type: (Any, Any, SupportsIndex) -> Any
         return type(self)((str.replace(self, old, new, maxreplace)))
 
     @property

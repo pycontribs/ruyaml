@@ -6,7 +6,6 @@ import warnings  # NOQA
 from pathlib import Path
 
 import pytest  # NOQA
-
 from ruyaml.compat import _F
 
 base_path = Path('data')  # that is ruamel.yaml.data
