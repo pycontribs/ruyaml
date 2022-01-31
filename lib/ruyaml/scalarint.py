@@ -50,7 +50,7 @@ class ScalarInt(int):
 
     def __ipow__(self, a):  # type: ignore
         # type: (Any) -> Any
-        x = type(self)(self ** a)
+        x = type(self)(self**a)
         x._width = self._width  # type: ignore
         x._underscore = (  # type: ignore
             self._underscore[:] if self._underscore is not None else None  # type: ignore

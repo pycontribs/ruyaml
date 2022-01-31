@@ -69,7 +69,7 @@ class ScalarFloat(float):
     def __ipow__(self, a):  # type: ignore
         # type: (Any) -> Any
         return float(self) ** a
-        x = type(self)(self ** a)
+        x = type(self)(self**a)
         x._width = self._width
         x._underscore = (
             self._underscore[:] if self._underscore is not None else None
