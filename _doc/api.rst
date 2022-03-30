@@ -32,17 +32,22 @@ Starting with 0.15.0 ``load()`` and ``dump()`` are methods on a
 resp. the data and stream argument. All other parameters are set on the instance
 of ``YAML`` before calling ``load()`` or ``dump()``
 
-Before 0.15.0::
+Before 0.15.0 you could do:
+
+.. code:: python
 
     from pathlib import Path
-    import ruyaml
+    import ruyaml as yaml
 
-    data = ruyaml.safe_load("abc: 1")
+    data = yaml.safe_load("abc: 1")
     out = Path('/tmp/out.yaml')
     with out.open('w') as fp:
-        ruyaml.safe_dump(data, fp, default_flow_style=False)
+        yaml.safe_dump(data, fp, default_flow_style=False)
 
-after::
+after:
+--- !python |
+from pathlib import Path
+from ruyaml import YAML
 
     from pathlib import Path
     from ruyaml import YAML
@@ -96,7 +101,7 @@ PyYAML never enforced this although the YAML 1.1 specification already
 required this.
 
 In the new API (starting 0.15.1) duplicate keys in mappings are no longer allowed by
-default. To allow duplicate keys in mappings::
+default. To allow duplicate keys in mappings:
 
     yaml = ruyaml.YAML()
     yaml.allow_duplicate_keys = True
@@ -194,14 +199,22 @@ for reading resp. writing.
 
 Loading and dumping using the ``SafeLoader``::
 
-    yml = ruyaml.YAML(typ='safe', pure=True)  # 'safe' load and dump
-    data = yml.load(istream)
-    yml.dump(data, ostream)
+    if ruyaml.version_info < (0, 15):
+        data = yaml.safe_load(istream)
+        yaml.safe_dump(data, ostream)
+    else:
+        yml = ruyaml.YAML(typ='safe', pure=True)  # 'safe' load and dump
+        data = yml.load(istream)
+        yml.dump(data, ostream)
 
 Loading with the ``CSafeLoader``, dumping with
 ``RoundTripLoader``. You need two ``YAML`` instances, but each of them
-can be re-used::
-
+can be re-used:
+--- !python |
+if ruyaml.version_info < (0, 15):
+    data = yaml.load(istream, Loader=yaml.CSafeLoader)
+    yaml.round_trip_dump(data, ostream, width=1000, explicit_start=True)
+else:
     yml = ruyaml.YAML(typ='safe')
     data = yml.load(istream)
     ymlo = ruyaml.YAML()  # or yaml.YAML(typ='rt')

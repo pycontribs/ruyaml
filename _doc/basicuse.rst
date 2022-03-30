@@ -2,7 +2,9 @@
 Basic Usage
 ***********
 
-You load a YAML document using::
+You load a YAML document using:
+--- !python |
+from ruyaml import YAML
 
     from ruyaml import YAML
 
@@ -29,7 +31,7 @@ in this ``s`` can be a file pointer (i.e. an object that has the
 your output, just stream to ``sys.stdout``.
 
 If you need to transform a string representation of the output provide
-a function that takes a string as input and returns one::
+a function that takes a string as input and returns one:
 
     def tr(s):
         return s.replace('\n', '<\n')  # such output is not valid YAML!
@@ -40,14 +42,16 @@ More examples
 =============
 
 Using the C based SafeLoader (at this time is inherited from
-libyaml/PyYAML and e.g. loads ``0o52`` as well as ``052`` load as integer ``42``)::
+libyaml/PyYAML and e.g. loads ``0o52`` as well as ``052`` load as integer ``42``):
 
     from ruyaml import YAML
 
     yaml=YAML(typ="safe")
     yaml.load("""a:\n  b: 2\n  c: 3\n""")
 
-Using the Python based SafeLoader (YAML 1.2 support, ``052`` loads as ``52``)::
+--- |
+Using the Python based SafeLoader (YAML 1.2 support, ``052`` loads as ``52``):
+--- !python |
 
     from ruyaml import YAML
 
