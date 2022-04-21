@@ -1057,9 +1057,9 @@ class CommentedMap(ordereddict, CommentedBase):
 
     def add_yaml_merge(self, value):
         # type: (Any) -> None
-        for v in value:
-            v[1].add_referent(self)
-            for k, v in v[1].items():
+        for val in value:
+            val[1].add_referent(self)
+            for k, v in val[1].items():
                 if ordereddict.__contains__(self, k):
                     continue
                 ordereddict.__setitem__(self, k, v)
