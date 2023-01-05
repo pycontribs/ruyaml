@@ -1045,6 +1045,13 @@ class Scanner:
         srp = self.reader.peek
         start_mark = self.reader.get_mark()
         ch = srp(1)
+        short_handle = '!'
+        if ch == '!':
+            short_handle = '!!'
+            self.reader.forward()
+            srp = self.reader.peek
+            ch = srp(1)
+
         if ch == '<':
             handle = None
             self.reader.forward(2)
@@ -1059,7 +1066,7 @@ class Scanner:
             self.reader.forward()
         elif ch in _THE_END_SPACE_TAB:
             handle = None
-            suffix = '!'
+            suffix = short_handle
             self.reader.forward()
         else:
             length = 1
@@ -1070,11 +1077,11 @@ class Scanner:
                     break
                 length += 1
                 ch = srp(length)
-            handle = '!'
+            handle = short_handle
             if use_handle:
                 handle = self.scan_tag_handle('tag', start_mark)
             else:
-                handle = '!'
+                handle = short_handle
                 self.reader.forward()
             suffix = self.scan_tag_uri('tag', start_mark)
         ch = srp()
