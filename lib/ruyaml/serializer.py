@@ -30,7 +30,6 @@ class SerializerError(YAMLError):
 
 
 class Serializer:
-
     # 'id' and 3+ numbers, but not 000
     ANCHOR_TEMPLATE = 'id%03d'
     ANCHOR_RE = RegExp('id(?!000$)\\d{3,}')
