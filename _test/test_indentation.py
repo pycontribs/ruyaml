@@ -6,7 +6,6 @@ from .roundtrip import YAML, dedent, round_trip, round_trip_dump, round_trip_loa
 
 
 def rt(s):
-
     res = round_trip_dump(round_trip_load(s))
     return res.strip() + '\n'
 

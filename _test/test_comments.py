@@ -957,7 +957,6 @@ class TestBlockScalarWithComments:
             '# abc\n\n#xyz\n',
             '\n\n  # abc\n  #xyz\n',
         ]:
-
             commented_line = test_block_scalar_commented_line_template.format(x)
             data = round_trip_load(commented_line)
 
