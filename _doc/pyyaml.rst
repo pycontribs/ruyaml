@@ -45,7 +45,7 @@ the document starts with::
 Python Compatibility
 ++++++++++++++++++++
 
-``ruyaml`` requires Python 3.6 or later.
+``ruyaml`` requires Python 3.7 or later.
 
 Fixes
 +++++

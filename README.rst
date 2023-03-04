@@ -11,7 +11,7 @@ Notes
   However, it will install the `ruyaml` python module. Thus, simply
   replace ``from ruamel import yaml`` with ``import ruyaml as yaml``
   (or equivalent) and you're all set.
-- python3.6 is the minimal version of python supported
+- python3.7 is the minimal version of python supported
 
 
 :version:       0.90.1
