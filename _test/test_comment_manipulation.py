@@ -20,7 +20,6 @@ def compare_eol(data, s):
 
 
 class TestCommentsManipulation:
-
     # list
     def test_seq_set_comment_on_existing_explicit_column(self):
         data = load(

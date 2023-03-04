@@ -601,7 +601,6 @@ class Scanner:
         # type: () -> None
         # Block context needs additional checks.
         if not self.flow_level:
-
             # Are we allowed to start a key (not nessesary a simple)?
             if not self.allow_simple_key:
                 raise ScannerError(
@@ -653,12 +652,10 @@ class Scanner:
 
         # It must be a part of a complex key.
         else:
-
             # Block context needs additional checks.
             # (Do we really need them? They will be caught by the parser
             # anyway.)
             if not self.flow_level:
-
                 # We are allowed to start a complex value if and only if
                 # we can start a simple key.
                 if not self.allow_simple_key:
@@ -1214,7 +1211,6 @@ class Scanner:
                 if self.check_document_start() or self.check_document_end():
                     break
             if self.reader.column == indent and srp() != '\0':
-
                 # Unfortunately, folding rules are ambiguous.
                 #
                 # This is the folding according to the specification:

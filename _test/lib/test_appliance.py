@@ -104,7 +104,7 @@ def execute(function, filenames, verbose):
         sys.stdout.write('=' * 75 + '\n')
         sys.stdout.write('%s(%s)...\n' % (name, ', '.join(filenames)))
     try:
-        function(verbose=verbose, *filenames)
+        function(verbose=verbose, *filenames)  # noqa: B026
     except Exception as exc:
         info = sys.exc_info()
         if isinstance(exc, AssertionError):

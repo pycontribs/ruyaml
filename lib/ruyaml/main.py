@@ -6,7 +6,7 @@ import sys
 import warnings
 from importlib import import_module
 from io import BytesIO, StringIO
-from typing import Any, List, Optional, Text, Union
+from typing import TYPE_CHECKING, Any, List, Optional, Text, Union
 
 import ruyaml
 from ruyaml.comments import C_PRE, CommentedMap, CommentedSeq
@@ -40,7 +40,7 @@ from ruyaml.representer import (
 from ruyaml.resolver import Resolver, VersionedResolver  # NOQA
 from ruyaml.tokens import *  # NOQA
 
-if False:  # MYPY
+if TYPE_CHECKING:  # MYPY
     from pathlib import Path
     from typing import Any, Callable, Dict, List, Optional, Set, Text, Union  # NOQA
 

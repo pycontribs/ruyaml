@@ -339,7 +339,6 @@ class TestAnchorsAliases:
 
 
 class TestMergeKeysValues:
-
     yaml_str = dedent(
         """\
     - &mx

@@ -72,7 +72,6 @@ class DuplicateKeyError(MarkedYAMLError):
 
 
 class BaseConstructor:
-
     yaml_constructors = {}  # type: Dict[Any, Any]
     yaml_multi_constructors = {}  # type: Dict[Any, Any]
 
@@ -877,7 +876,6 @@ class Constructor(SafeConstructor):
         obj = module
         while lobject_name:
             if not hasattr(obj, lobject_name[0]):
-
                 raise ConstructorError(
                     'while constructing a Python object',
                     mark,

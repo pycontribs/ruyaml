@@ -48,7 +48,6 @@ class RepresenterError(YAMLError):
 
 
 class BaseRepresenter:
-
     yaml_representers = {}  # type: Dict[Any, Any]
     yaml_multi_representers = {}  # type: Dict[Any, Any]
 
