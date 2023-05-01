@@ -560,7 +560,7 @@ class TestCommentedMapMerge:
         )
         assert data['x']['a'] == 1
         assert data['y']['a'] == 1
-        assert str(data['y']) == """ordereddict([('a', 1)])"""
+        assert str(data['y']) == """{'a': 1}"""
 
     def test_issue_60_1(self) -> None:
         data = round_trip_load("""
@@ -573,7 +573,7 @@ class TestCommentedMapMerge:
         )
         assert data['x']['a'] == 1
         assert data['y']['a'] == 1
-        assert str(data['y']) == """ordereddict([('b', 2), ('a', 1)])"""
+        assert str(data['y']) == """{'b': 2, 'a': 1}"""
 
 
 class TestEmptyLines:
