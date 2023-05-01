@@ -1,29 +1,29 @@
 # coding: utf-8
 
-import pytest  # NOQA
+import pytest  # type: ignore  # NOQA
 
-from .roundtrip import dedent, round_trip, round_trip_dump, round_trip_load  # NOQA
+from .roundtrip import round_trip, dedent, round_trip_load, round_trip_dump  # NOQA
+from typing import Any
 
 
-def load(s):
+def load(s: str) -> Any:
     return round_trip_load(dedent(s))
 
 
-def compare(data, s, **kw):
+def compare(data: Any, s: str, **kw: Any) -> None:
     assert round_trip_dump(data, **kw) == dedent(s)
 
 
-def compare_eol(data, s):
+def compare_eol(data: Any, s: str) -> None:
     assert 'EOL' in s
     ds = dedent(s).replace('EOL', '').replace('\n', '|\n')
-    assert round_trip_dump(data).replace('\n', '|\n') == ds
+    assert round_trip_dump(data).replace('\n', '|\n') == ds  # type: ignore
 
 
 class TestCommentsManipulation:
     # list
-    def test_seq_set_comment_on_existing_explicit_column(self):
-        data = load(
-            """
+    def test_seq_set_comment_on_existing_explicit_column(self) -> None:
+        data = load("""
         - a   # comment 1
         - b
         - c
@@ -37,9 +37,8 @@ class TestCommentsManipulation:
         """
         compare(data, exp)
 
-    def test_seq_overwrite_comment_on_existing_explicit_column(self):
-        data = load(
-            """
+    def test_seq_overwrite_comment_on_existing_explicit_column(self) -> None:
+        data = load("""
         - a   # comment 1
         - b
         - c
@@ -53,9 +52,8 @@ class TestCommentsManipulation:
         """
         compare(data, exp)
 
-    def test_seq_first_comment_explicit_column(self):
-        data = load(
-            """
+    def test_seq_first_comment_explicit_column(self) -> None:
+        data = load("""
         - a
         - b
         - c
@@ -69,9 +67,8 @@ class TestCommentsManipulation:
         """
         compare(data, exp)
 
-    def test_seq_set_comment_on_existing_column_prev(self):
-        data = load(
-            """
+    def test_seq_set_comment_on_existing_column_prev(self) -> None:
+        data = load("""
         - a   # comment 1
         - b
         - c
@@ -87,16 +84,14 @@ class TestCommentsManipulation:
         """
         compare(data, exp)
 
-    def test_seq_set_comment_on_existing_column_next(self):
-        data = load(
-            """
+    def test_seq_set_comment_on_existing_column_next(self) -> None:
+        data = load("""
         - a   # comment 1
         - b
         - c
         - d     # comment 3
-        """
-        )
-        print(data._yaml_comment)
+        """)
+        print(data.ca)
         # print(type(data._yaml_comment._items[0][0].start_mark))
         # ruyaml.error.Mark
         # print(type(data._yaml_comment._items[0][0].start_mark))
@@ -109,7 +104,7 @@ class TestCommentsManipulation:
         """
         compare(data, exp)
 
-    def test_seq_set_comment_on_existing_column_further_away(self):
+    def test_seq_set_comment_on_existing_column_further_away(self) -> None:
         """
         no comment line before or after, take the latest before
         the new position
@@ -122,9 +117,8 @@ class TestCommentsManipulation:
         - d
         - e
         - f     # comment 3
-        """
-        )
-        print(data._yaml_comment)
+        """)
+        print(data.ca)
         # print(type(data._yaml_comment._items[0][0].start_mark))
         # ruyaml.error.Mark
         # print(type(data._yaml_comment._items[0][0].start_mark))
@@ -139,9 +133,8 @@ class TestCommentsManipulation:
         """
         compare(data, exp)
 
-    def test_seq_set_comment_on_existing_explicit_column_with_hash(self):
-        data = load(
-            """
+    def test_seq_set_comment_on_existing_explicit_column_with_hash(self) -> None:
+        data = load("""
         - a   # comment 1
         - b
         - c
@@ -157,9 +150,8 @@ class TestCommentsManipulation:
 
     # dict
 
-    def test_dict_set_comment_on_existing_explicit_column(self):
-        data = load(
-            """
+    def test_dict_set_comment_on_existing_explicit_column(self) -> None:
+        data = load("""
         a: 1   # comment 1
         b: 2
         c: 3
@@ -177,9 +169,8 @@ class TestCommentsManipulation:
         """
         compare(data, exp)
 
-    def test_dict_overwrite_comment_on_existing_explicit_column(self):
-        data = load(
-            """
+    def test_dict_overwrite_comment_on_existing_explicit_column(self) -> None:
+        data = load("""
         a: 1   # comment 1
         b: 2
         c: 3
@@ -197,9 +188,8 @@ class TestCommentsManipulation:
         """
         compare(data, exp)
 
-    def test_map_set_comment_on_existing_column_prev(self):
-        data = load(
-            """
+    def test_map_set_comment_on_existing_column_prev(self) -> None:
+        data = load("""
             a: 1   # comment 1
             b: 2
             c: 3
@@ -217,9 +207,8 @@ class TestCommentsManipulation:
             """
         compare(data, exp)
 
-    def test_map_set_comment_on_existing_column_next(self):
-        data = load(
-            """
+    def test_map_set_comment_on_existing_column_next(self) -> None:
+        data = load("""
             a: 1   # comment 1
             b: 2
             c: 3
@@ -237,7 +226,7 @@ class TestCommentsManipulation:
             """
         compare(data, exp)
 
-    def test_map_set_comment_on_existing_column_further_away(self):
+    def test_map_set_comment_on_existing_column_further_away(self) -> None:
         """
         no comment line before or after, take the latest before
         the new position
@@ -262,9 +251,8 @@ class TestCommentsManipulation:
             """
         compare(data, exp)
 
-    def test_before_top_map_rt(self):
-        data = load(
-            """
+    def test_before_top_map_rt(self) -> None:
+        data = load("""
         a: 1
         b: 2
         """
@@ -278,9 +266,8 @@ class TestCommentsManipulation:
         """
         compare(data, exp.format(comment='#'))
 
-    def test_before_top_map_replace(self):
-        data = load(
-            """
+    def test_before_top_map_replace(self) -> None:
+        data = load("""
         # abc
         # def
         a: 1 # 1
@@ -296,7 +283,7 @@ class TestCommentsManipulation:
         """
         compare(data, exp.format(comment='#'))
 
-    def test_before_top_map_from_scratch(self):
+    def test_before_top_map_from_scratch(self) -> None:
         from ruyaml.comments import CommentedMap
 
         data = CommentedMap()
@@ -313,9 +300,8 @@ class TestCommentsManipulation:
             """
         compare(data, exp.format(comment='#'))
 
-    def test_before_top_seq_rt(self):
-        data = load(
-            """
+    def test_before_top_seq_rt(self) -> None:
+        data = load("""
         - a
         - b
         """
@@ -330,7 +316,7 @@ class TestCommentsManipulation:
         """
         compare(data, exp)
 
-    def test_before_top_seq_rt_replace(self):
+    def test_before_top_seq_rt_replace(self) -> None:
         s = """
         # this
         # that
@@ -348,7 +334,7 @@ class TestCommentsManipulation:
         """
         compare(data, exp.format(comment='#'))
 
-    def test_before_top_seq_from_scratch(self):
+    def test_before_top_seq_from_scratch(self) -> None:
         from ruyaml.comments import CommentedSeq
 
         data = CommentedSeq()
@@ -365,9 +351,8 @@ class TestCommentsManipulation:
         compare(data, exp.format(comment='#'))
 
     # nested variants
-    def test_before_nested_map_rt(self):
-        data = load(
-            """
+    def test_before_nested_map_rt(self) -> None:
+        data = load("""
         a: 1
         b:
           c: 2
@@ -385,9 +370,8 @@ class TestCommentsManipulation:
         """
         compare(data, exp.format(comment='#'))
 
-    def test_before_nested_map_rt_indent(self):
-        data = load(
-            """
+    def test_before_nested_map_rt_indent(self) -> None:
+        data = load("""
         a: 1
         b:
           c: 2
@@ -406,7 +390,7 @@ class TestCommentsManipulation:
         compare(data, exp.format(comment='#'))
         print(data['b'].ca)
 
-    def test_before_nested_map_from_scratch(self):
+    def test_before_nested_map_from_scratch(self) -> None:
         from ruyaml.comments import CommentedMap
 
         data = CommentedMap()
@@ -426,7 +410,7 @@ class TestCommentsManipulation:
         """
         compare(data, exp.format(comment='#'))
 
-    def test_before_nested_seq_from_scratch(self):
+    def test_before_nested_seq_from_scratch(self) -> None:
         from ruyaml.comments import CommentedMap, CommentedSeq
 
         data = CommentedMap()
@@ -446,7 +430,7 @@ class TestCommentsManipulation:
         """
         compare(data, exp.format(comment='#'))
 
-    def test_before_nested_seq_from_scratch_block_seq_indent(self):
+    def test_before_nested_seq_from_scratch_block_seq_indent(self) -> None:
         from ruyaml.comments import CommentedMap, CommentedSeq
 
         data = CommentedMap()
@@ -466,7 +450,7 @@ class TestCommentsManipulation:
         """
         compare(data, exp.format(comment='#'), indent=4, block_seq_indent=2)
 
-    def test_map_set_comment_before_and_after_non_first_key_00(self):
+    def test_map_set_comment_before_and_after_non_first_key_00(self) -> None:
         # http://stackoverflow.com/a/40705671/1307905
         data = load(
             """
@@ -497,9 +481,8 @@ class TestCommentsManipulation:
         """
         compare(data, exp)
 
-    def Xtest_map_set_comment_before_and_after_non_first_key_01(self):
-        data = load(
-            """
+    def Xtest_map_set_comment_before_and_after_non_first_key_01(self) -> None:
+        data = load("""
         xyz:
           a: 1    # comment 1
           b: 2
@@ -531,9 +514,8 @@ class TestCommentsManipulation:
 
     # EOL is no longer necessary
     # fixed together with issue # 216
-    def test_map_set_comment_before_and_after_non_first_key_01(self):
-        data = load(
-            """
+    def test_map_set_comment_before_and_after_non_first_key_01(self) -> None:
+        data = load("""
         xyz:
           a: 1    # comment 1
           b: 2
@@ -562,9 +544,8 @@ class TestCommentsManipulation:
         """
         compare(data, exp)
 
-    def Xtest_map_set_comment_before_and_after_non_first_key_02(self):
-        data = load(
-            """
+    def Xtest_map_set_comment_before_and_after_non_first_key_02(self) -> None:
+        data = load("""
         xyz:
           a: 1    # comment 1
           b: 2
@@ -599,9 +580,8 @@ class TestCommentsManipulation:
         """
         compare_eol(data, exp)
 
-    def test_map_set_comment_before_and_after_non_first_key_02(self):
-        data = load(
-            """
+    def test_map_set_comment_before_and_after_non_first_key_02(self) -> None:
+        data = load("""
         xyz:
           a: 1    # comment 1
           b: 2

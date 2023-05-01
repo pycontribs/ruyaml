@@ -1,13 +1,13 @@
 # coding: utf-8
 
-import pytest  # NOQA
+import pytest  # type: ignore  # NOQA
 
 # import ruyaml
 from .roundtrip import round_trip
 
 
 class TestProgramConfig:
-    def test_application_arguments(self):
+    def test_application_arguments(self) -> None:
         # application configur
         round_trip(
             """
@@ -22,7 +22,7 @@ class TestProgramConfig:
         """
         )
 
-    def test_single(self):
+    def test_single(self) -> None:
         # application configuration
         round_trip(
             """
@@ -43,7 +43,7 @@ class TestProgramConfig:
         """
         )
 
-    def test_multi(self):
+    def test_multi(self) -> None:
         # application configuration
         round_trip(
             """

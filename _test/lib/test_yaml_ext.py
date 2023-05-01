@@ -123,7 +123,7 @@ def new_safe_dump(data, stream=None, **kwds):
     return old_dump(data, stream, ruyaml.CSafeDumper, **kwds)
 
 
-old_safe_dump_all = ruyaml.safe_dump_all
+# old_safe_dump_all = ruyaml.safe_dump_all
 
 
 def new_safe_dump_all(documents, stream=None, **kwds):
@@ -253,10 +253,12 @@ test_c_scanner.skip = ['.skip-ext']
 
 
 def _compare_parsers(py_data, c_data, verbose):
-    py_events = list(ruyaml.parse(py_data, Loader=ruyaml.PyLoader))
+    yaml = ruyaml.YAML(typ='unsafe', pure=True)
+    py_events = list(yaml.parse(py_data, Loader=ruyaml.PyLoader))
     c_events = []
     try:
-        for event in ruyaml.parse(c_data, Loader=ruyaml.CLoader):
+        yaml = ruyaml.YAML(typ='unsafe', pure=False)
+        for event in yaml.parse(c_data, Loader=ruyaml.CLoader):
             c_events.append(event)
         assert len(py_events) == len(c_events), (len(py_events), len(c_events))
         for py_event, c_event in zip(py_events, c_events):
@@ -301,12 +303,13 @@ test_c_parser.skip = ['.skip-ext']
 
 
 def _compare_emitters(data, verbose):
-    events = list(ruyaml.parse(data, Loader=ruyaml.PyLoader))
-    c_data = ruyaml.emit(events, Dumper=ruyaml.CDumper)
+    yaml = ruyaml.YAML(typ='unsafe', pure=True)
+    events = list(yaml.parse(py_data, Loader=ruyaml.PyLoader))
+    c_data = yaml.emit(events, Dumper=ruyaml.CDumper)
     if verbose:
         print(c_data)
-    py_events = list(ruyaml.parse(c_data, Loader=ruyaml.PyLoader))
-    c_events = list(ruyaml.parse(c_data, Loader=ruyaml.CLoader))
+    py_events = list(yaml.parse(c_data, Loader=ruyaml.PyLoader))
+    c_events = list(yaml.parse(c_data, Loader=ruyaml.CLoader))
     try:
         assert len(events) == len(py_events), (len(events), len(py_events))
         assert len(events) == len(c_events), (len(events), len(c_events))

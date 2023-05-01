@@ -10,10 +10,12 @@ from pathlib import Path
 
 import ruyaml
 
+from typing import Any, Optional, Union
+
 unset = object()
 
 
-def dedent(data):
+def dedent(data: str) -> str:
     try:
         position_of_first_newline = data.index('\n')
         for idx in range(position_of_first_newline):
@@ -26,7 +28,9 @@ def dedent(data):
     return textwrap.dedent(data)
 
 
-def round_trip_load(inp, preserve_quotes=None, version=None):
+def round_trip_load(
+    inp: Any, preserve_quotes: Optional[bool] = None, version: Optional[Any] = None
+) -> Any:
     import ruyaml  # NOQA
 
     dinp = dedent(inp)
@@ -36,7 +40,9 @@ def round_trip_load(inp, preserve_quotes=None, version=None):
     return yaml.load(dinp)
 
 
-def round_trip_load_all(inp, preserve_quotes=None, version=None):
+def round_trip_load_all(
+    inp: Any, preserve_quotes: Optional[bool] = None, version: Optional[Any] = None
+) -> Any:
     import ruyaml  # NOQA
 
     dinp = dedent(inp)
@@ -47,18 +53,18 @@ def round_trip_load_all(inp, preserve_quotes=None, version=None):
 
 
 def round_trip_dump(
-    data,
-    stream=None,  # *,
-    indent=None,
-    block_seq_indent=None,
-    default_flow_style=unset,
-    top_level_colon_align=None,
-    prefix_colon=None,
-    explicit_start=None,
-    explicit_end=None,
-    version=None,
-    allow_unicode=True,
-):
+    data: Any,
+    stream: Any = None,  # *,
+    indent: Optional[int] = None,
+    block_seq_indent: Optional[int] = None,
+    default_flow_style: Any = unset,
+    top_level_colon_align: Any = None,
+    prefix_colon: Any = None,
+    explicit_start: Optional[bool] = None,
+    explicit_end: Optional[bool] = None,
+    version: Optional[Any] = None,
+    allow_unicode: bool = True,
+) -> Union[str, None]:
     import ruyaml  # NOQA
 
     yaml = ruyaml.YAML()
@@ -73,25 +79,27 @@ def round_trip_dump(
     yaml.allow_unicode = allow_unicode
     if stream is not None:
         yaml.dump(data, stream=stream)
-        return
+        return None
     buf = io.StringIO()
     yaml.dump(data, stream=buf)
     return buf.getvalue()
 
 
 def round_trip_dump_all(
-    data,
-    stream=None,  # *,
-    indent=None,
-    block_seq_indent=None,
-    default_flow_style=unset,
-    top_level_colon_align=None,
-    prefix_colon=None,
-    explicit_start=None,
-    explicit_end=None,
-    version=None,
-    allow_unicode=None,
-):
+    data: Any,
+    stream: Any = None,  # *,
+    indent: Optional[int] = None,
+    block_seq_indent: Optional[int] = None,
+    default_flow_style: Any = unset,
+    top_level_colon_align: Any = None,
+    prefix_colon: Any = None,
+    explicit_start: Optional[bool] = None,
+    explicit_end: Optional[bool] = None,
+    version: Optional[Any] = None,
+    allow_unicode: bool = True,
+) -> Union[str, None]:
+    import ruyaml  # NOQA
+
     yaml = ruyaml.YAML()
     yaml.indent(mapping=indent, sequence=indent, offset=block_seq_indent)
     if default_flow_style is not unset:
@@ -104,13 +112,13 @@ def round_trip_dump_all(
     yaml.allow_unicode = allow_unicode
     if stream is not None:
         yaml.dump(data, stream=stream)
-        return
+        return None
     buf = io.StringIO()
     yaml.dump_all(data, stream=buf)
     return buf.getvalue()
 
 
-def diff(inp, outp, file_name='stdin'):
+def diff(inp: str, outp: str, file_name: str = 'stdin') -> None:
     import difflib
 
     inl = inp.splitlines(True)  # True for keepends
@@ -121,20 +129,21 @@ def diff(inp, outp, file_name='stdin'):
 
 
 def round_trip(
-    inp,
-    outp=None,
-    extra=None,
-    intermediate=None,
-    indent=None,
-    block_seq_indent=None,
-    top_level_colon_align=None,
-    prefix_colon=None,
-    preserve_quotes=None,
-    explicit_start=None,
-    explicit_end=None,
-    version=None,
-    dump_data=None,
-):
+    inp: str,
+    outp: Optional[str] = None,
+    extra: Optional[str] = None,
+    intermediate: Any = None,
+    indent: Optional[int] = None,
+    block_seq_indent: Optional[int] = None,
+    default_flow_style: Any = unset,
+    top_level_colon_align: Any = None,
+    prefix_colon: Any = None,
+    preserve_quotes: Any = None,
+    explicit_start: Optional[bool] = None,
+    explicit_end: Optional[bool] = None,
+    version: Optional[Any] = None,
+    dump_data: Any = None,
+) -> Any:
     """
     inp:    input string to parse
     outp:   expected output (equals input if not specified)
@@ -163,6 +172,7 @@ def round_trip(
         explicit_end=explicit_end,
         version=version,
     )
+    assert isinstance(res, str)
     if res != doutp:
         diff(doutp, res, 'input string')
     print('\nroundtrip data:\n', res, sep="")
@@ -183,19 +193,19 @@ def round_trip(
 
 
 def na_round_trip(
-    inp,
-    outp=None,
-    extra=None,
-    intermediate=None,
-    indent=None,
-    top_level_colon_align=None,
-    prefix_colon=None,
-    preserve_quotes=None,
-    explicit_start=None,
-    explicit_end=None,
-    version=None,
-    dump_data=None,
-):
+    inp: str,
+    outp: Optional[str] = None,
+    extra: Optional[str] = None,
+    intermediate: Any = None,
+    indent: Optional[int] = None,
+    top_level_colon_align: Any = None,
+    prefix_colon: Any = None,
+    preserve_quotes: Any = None,
+    explicit_start: Optional[bool] = None,
+    explicit_end: Optional[bool] = None,
+    version: Optional[Any] = None,
+    dump_data: Any = None,
+) -> Any:
     """
     inp:    input string to parse
     outp:   expected output (equals input if not specified)
@@ -229,20 +239,20 @@ def na_round_trip(
     return res
 
 
-def YAML(**kw):
+def YAML(**kw: Any) -> Any:
     import ruyaml  # NOQA
 
     class MyYAML(ruyaml.YAML):
         """auto dedent string parameters on load"""
 
-        def load(self, stream):
+        def load(self, stream: Any) -> Any:
             if isinstance(stream, str):
                 if stream and stream[0] == '\n':
                     stream = stream[1:]
                 stream = textwrap.dedent(stream)
             return ruyaml.YAML.load(self, stream)
 
-        def load_all(self, stream):
+        def load_all(self, stream: Any) -> Any:
             if isinstance(stream, str):
                 if stream and stream[0] == '\n':
                     stream = stream[1:]
@@ -250,8 +260,8 @@ def YAML(**kw):
             for d in ruyaml.YAML.load_all(self, stream):
                 yield d
 
-        def dump(self, data, **kw):
-            from io import BytesIO, StringIO  # NOQA
+        def dump(self, data: Any, **kw: Any) -> Any:  # type: ignore
+            from ruyaml.compat import StringIO, BytesIO  # NOQA
 
             assert ('stream' in kw) ^ ('compare' in kw)
             if 'stream' in kw:
@@ -266,12 +276,12 @@ def YAML(**kw):
             res = st.getvalue()
             print(res)
             if unordered_lines:
-                res = sorted(res.splitlines())
-                expected = sorted(expected.splitlines())
+                res = sorted(res.splitlines())  # type: ignore
+                expected = sorted(expected.splitlines())  # type: ignore
             assert res == expected
 
-        def round_trip(self, stream, **kw):
-            from io import BytesIO, StringIO  # NOQA
+        def round_trip(self, stream: Any, **kw: Any) -> None:
+            from ruyaml.compat import StringIO, BytesIO  # NOQA
 
             assert isinstance(stream, str)
             lkw = kw.copy()
@@ -287,8 +297,8 @@ def YAML(**kw):
                 diff(outp, res, 'input string')
             assert res == outp
 
-        def round_trip_all(self, stream, **kw):
-            from io import BytesIO, StringIO  # NOQA
+        def round_trip_all(self, stream: Any, **kw: Any) -> None:
+            from ruyaml.compat import StringIO, BytesIO  # NOQA
 
             assert isinstance(stream, str)
             lkw = kw.copy()
@@ -307,7 +317,13 @@ def YAML(**kw):
     return MyYAML(**kw)
 
 
-def save_and_run(program, base_dir=None, output=None, file_name=None, optimized=False):
+def save_and_run(
+    program: str,
+    base_dir: Optional[Any] = None,
+    output: Optional[Any] = None,
+    file_name: Optional[Any] = None,
+    optimized: bool = False,
+) -> int:
     """
     safe and run a python program, thereby circumventing any restrictions on module level
     imports
@@ -318,7 +334,7 @@ def save_and_run(program, base_dir=None, output=None, file_name=None, optimized=
         base_dir = Path(str(base_dir))
     if file_name is None:
         file_name = 'safe_and_run_tmp.py'
-    file_name = base_dir / file_name
+    file_name = base_dir / file_name  # type: ignore
     file_name.write_text(dedent(program))
 
     try:
@@ -333,9 +349,9 @@ def save_and_run(program, base_dir=None, output=None, file_name=None, optimized=
         )
         if output is not None:
             if '__pypy__' in sys.builtin_module_names:
-                res = res.splitlines(True)
-                res = [line for line in res if 'no version info' not in line]
-                res = ''.join(res)
+                res1 = res.splitlines(True)
+                res2 = [line for line in res1 if 'no version info' not in line]
+                res = ''.join(res2)
             print('result:  ', res, end='')
             print('expected:', output, end='')
             assert res == output

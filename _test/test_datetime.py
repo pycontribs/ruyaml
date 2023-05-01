@@ -20,14 +20,13 @@ Please note that a fraction can only be included if not equal to 0
 """
 
 import copy
-
-import pytest  # NOQA
+import pytest  # type: ignore  # NOQA
 
 from .roundtrip import dedent, round_trip, round_trip_dump, round_trip_load  # NOQA
 
 
 class TestDateTime:
-    def test_date_only(self):
+    def test_date_only(self) -> None:
         inp = """
         - 2011-10-02
         """
@@ -36,7 +35,7 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_zero_fraction(self):
+    def test_zero_fraction(self) -> None:
         inp = """
         - 2011-10-02 16:45:00.0
         """
@@ -45,7 +44,7 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_long_fraction(self):
+    def test_long_fraction(self) -> None:
         inp = """
         - 2011-10-02 16:45:00.1234      # expand with zeros
         - 2011-10-02 16:45:00.123456
@@ -62,7 +61,7 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_canonical(self):
+    def test_canonical(self) -> None:
         inp = """
         - 2011-10-02T16:45:00.1Z
         """
@@ -71,7 +70,7 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_spaced_timezone(self):
+    def test_spaced_timezone(self) -> None:
         inp = """
         - 2011-10-02T11:45:00 -5
         """
@@ -80,9 +79,8 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_normal_timezone(self):
-        round_trip(
-            """
+    def test_normal_timezone(self) -> None:
+        round_trip("""
         - 2011-10-02T11:45:00-5
         - 2011-10-02 11:45:00-5
         - 2011-10-02T11:45:00-05:00
@@ -90,7 +88,7 @@ class TestDateTime:
         """
         )
 
-    def test_no_timezone(self):
+    def test_no_timezone(self) -> None:
         inp = """
         - 2011-10-02 6:45:00
         """
@@ -99,7 +97,7 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_explicit_T(self):
+    def test_explicit_T(self) -> None:
         inp = """
         - 2011-10-02T16:45:00
         """
@@ -108,7 +106,7 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_explicit_t(self):  # to upper
+    def test_explicit_t(self) -> None:  # to upper
         inp = """
         - 2011-10-02t16:45:00
         """
@@ -117,7 +115,7 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_no_T_multi_space(self):
+    def test_no_T_multi_space(self) -> None:
         inp = """
         - 2011-10-02   16:45:00
         """
@@ -126,28 +124,25 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_iso(self):
-        round_trip(
-            """
+    def test_iso(self) -> None:
+        round_trip("""
         - 2011-10-02T15:45:00+01:00
         """
         )
 
-    def test_zero_tz(self):
-        round_trip(
-            """
+    def test_zero_tz(self) -> None:
+        round_trip("""
         - 2011-10-02T15:45:00+0
         """
         )
 
-    def test_issue_45(self):
-        round_trip(
-            """
+    def test_issue_45(self) -> None:
+        round_trip("""
         dt: 2016-08-19T22:45:47Z
         """
         )
 
-    def test_deepcopy_datestring(self):
+    def test_deepcopy_datestring(self) -> None:
         # reported by Quuxplusone, http://stackoverflow.com/a/41577841/1307905
         x = dedent(
             """\
@@ -157,7 +152,7 @@ class TestDateTime:
         data = copy.deepcopy(round_trip_load(x))
         assert round_trip_dump(data) == x
 
-    def test_fraction_overflow(self):
+    def test_fraction_overflow(self) -> None:
         # reported (indirectly) by Luís Ferreira
         # https://sourceforge.net/p/ruamel-yaml/tickets/414/
         inp = dedent("""\

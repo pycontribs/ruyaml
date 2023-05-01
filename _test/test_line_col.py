@@ -1,18 +1,19 @@
 # coding: utf-8
 
-import pytest  # NOQA
+import pytest  # type: ignore  # NOQA
 
 from .roundtrip import dedent, round_trip, round_trip_dump, round_trip_load  # NOQA
 
+from typing import Any
 
-def load(s):
+
+def load(s: str) -> Any:
     return round_trip_load(dedent(s))
 
 
 class TestLineCol:
-    def test_item_00(self):
-        data = load(
-            """
+    def test_item_00(self) -> None:
+        data = load("""
             - a
             - e
             - [b, d]
@@ -22,9 +23,8 @@ class TestLineCol:
         assert data[2].lc.line == 2
         assert data[2].lc.col == 2
 
-    def test_item_01(self):
-        data = load(
-            """
+    def test_item_01(self) -> None:
+        data = load("""
             - a
             - e
             - {x: 3}
@@ -34,9 +34,8 @@ class TestLineCol:
         assert data[2].lc.line == 2
         assert data[2].lc.col == 2
 
-    def test_item_02(self):
-        data = load(
-            """
+    def test_item_02(self) -> None:
+        data = load("""
             - a
             - e
             - !!set {x, y}
@@ -46,9 +45,8 @@ class TestLineCol:
         assert data[2].lc.line == 2
         assert data[2].lc.col == 2
 
-    def test_item_03(self):
-        data = load(
-            """
+    def test_item_03(self) -> None:
+        data = load("""
             - a
             - e
             - !!omap
@@ -60,9 +58,8 @@ class TestLineCol:
         assert data[2].lc.line == 2
         assert data[2].lc.col == 2
 
-    def test_item_04(self):
-        data = load(
-            """
+    def test_item_04(self) -> None:
+        data = load("""
          # testing line and column based on SO
          # http://stackoverflow.com/questions/13319067/
          - key1: item 1
@@ -76,9 +73,8 @@ class TestLineCol:
         assert data[1].lc.line == 4
         assert data[1].lc.col == 2
 
-    def test_pos_mapping(self):
-        data = load(
-            """
+    def test_pos_mapping(self) -> None:
+        data = load("""
         a: 1
         b: 2
         c: 3
@@ -90,9 +86,8 @@ class TestLineCol:
         assert data.lc.key('klm') == (4, 0)
         assert data.lc.value('klm') == (4, 5)
 
-    def test_pos_sequence(self):
-        data = load(
-            """
+    def test_pos_sequence(self) -> None:
+        data = load("""
         - a
         - b
         - c

@@ -1,7 +1,7 @@
 # coding: utf-8
 
 import platform
-import sys
+import pytest  # type: ignore  # NOQA
 from textwrap import dedent
 
 import pytest
@@ -9,12 +9,11 @@ import pytest
 NO_CLIB_VER = (3, 10)
 
 
-@pytest.mark.skipif(
+@pytest.mark.skipif(  # type: ignore
     platform.python_implementation() in ['Jython', 'PyPy'],
     reason='Jython throws RepresenterError',
 )
-@pytest.mark.xfail(reason="cyaml not ported yet")
-def test_load_cyaml():
+def test_load_cyaml() -> None:
     print("???????????????????????", platform.python_implementation())
     import ruyaml
 
@@ -26,13 +25,11 @@ def test_load_cyaml():
     yaml.load('abc: 1')
 
 
-@pytest.mark.skipif(
-    sys.version_info >= NO_CLIB_VER
-    or platform.python_implementation() in ['Jython', 'PyPy'],
-    reason='no _PyGC_FINALIZED',
-)
-def test_dump_cyaml():
-    import ruyaml
+@pytest.mark.skipif(sys.version_info >= NO_CLIB_VER  # type: ignore
+                    or platform.python_implementation() in ['Jython', 'PyPy'],
+                    reason='no _PyGC_FINALIZED')
+def test_dump_cyaml() -> None:
+    import ruamel.yaml
 
     if sys.version_info >= NO_CLIB_VER:
         return
@@ -45,11 +42,10 @@ def test_dump_cyaml():
     assert buf.getvalue() == 'a: 1\nb: 2\n'
 
 
-@pytest.mark.skipif(
+@pytest.mark.skipif(  # type: ignore
     platform.python_implementation() in ['Jython', 'PyPy'], reason='not avialable'
 )
-@pytest.mark.xfail(reason="cyaml not ported yet")
-def test_load_cyaml_1_2():
+def test_load_cyaml_1_2() -> None:
     # issue 155
     import ruyaml
 
@@ -67,11 +63,10 @@ def test_load_cyaml_1_2():
     yaml.load(inp)
 
 
-@pytest.mark.skipif(
+@pytest.mark.skipif(  # type: ignore
     platform.python_implementation() in ['Jython', 'PyPy'], reason='not available'
 )
-@pytest.mark.xfail(reason="cyaml not ported yet")
-def test_dump_cyaml_1_2():
+def test_dump_cyaml_1_2() -> None:
     # issue 155
     from io import StringIO
 

@@ -5,6 +5,7 @@ various test cases for YAML files
 """
 
 import io
+import pytest  # type: ignore # NOQA
 import platform
 
 import pytest  # NOQA
@@ -13,15 +14,14 @@ from .roundtrip import dedent, round_trip, round_trip_dump, round_trip_load  # N
 
 
 class TestYAML:
-    def test_backslash(self):
-        round_trip(
-            """
+    def test_backslash(self) -> None:
+        round_trip("""
         handlers:
           static_files: applications/\\1/static/\\2
         """
         )
 
-    def test_omap_out(self):
+    def test_omap_out(self) -> None:
         # ordereddict mapped to !!omap
         import ruyaml  # NOQA
         from ruyaml.compat import ordereddict
@@ -36,9 +36,8 @@ class TestYAML:
         """
         )
 
-    def test_omap_roundtrip(self):
-        round_trip(
-            """
+    def test_omap_roundtrip(self) -> None:
+        round_trip("""
         !!omap
         - a: 1
         - b: 2
@@ -47,23 +46,39 @@ class TestYAML:
         """
         )
 
-    def test_dump_collections_ordereddict(self):
-        from collections import OrderedDict
+    # @pytest.mark.skipif(sys.version_info < (2, 7),
+    #                     reason='collections not available')
+    # def test_dump_collections_ordereddict(self) -> None:
+    #     from collections import OrderedDict
+    #     import ruamel.yaml  # NOQA
 
-        import ruyaml  # NOQA
+    #     # OrderedDict mapped to !!omap
+    #     x = OrderedDict([('a', 1), ('b', 2)])
+    #     res = round_trip_dump(x, default_flow_style=False)
+    #     assert res == dedent("""
+    #     !!omap
+    #     - a: 1
+    #     - b: 2
+    #     """)
+
+    @pytest.mark.skipif(  # type: ignore
+        sys.version_info >= (3, 0) or platform.python_implementation() != 'CPython',
+        reason='ruamel.yaml not available',
+    )
+    def test_dump_ruamel_ordereddict(self) -> None:
+        from ruamel.ordereddict import ordereddict
+        import ruamel.yaml  # NOQA
 
         # OrderedDict mapped to !!omap
-        x = OrderedDict([('a', 1), ('b', 2)])
+        x = ordereddict([('a', 1), ('b', 2)])
         res = round_trip_dump(x, default_flow_style=False)
-        assert res == dedent(
-            """
+        assert res == dedent("""
         !!omap
         - a: 1
         - b: 2
-        """
-        )
+        """)
 
-    def test_CommentedSet(self):
+    def test_CommentedSet(self) -> None:
         from ruyaml.constructor import CommentedSet
 
         s = CommentedSet(['a', 'b', 'c'])
@@ -75,7 +90,7 @@ class TestYAML:
         s.remove('e')
         assert s == CommentedSet(['a', 'c', 'd', 'f'])
 
-    def test_set_out(self):
+    def test_set_out(self) -> None:
         # preferable would be the shorter format without the ': null'
         import ruyaml  # NOQA
 
@@ -95,7 +110,7 @@ class TestYAML:
         )
 
     # ordering is not preserved in a set
-    def test_set_compact(self):
+    def test_set_compact(self) -> None:
         # this format is read and also should be written by default
         round_trip(
             """
@@ -106,9 +121,8 @@ class TestYAML:
         """
         )
 
-    def test_blank_line_after_comment(self):
-        round_trip(
-            """
+    def test_blank_line_after_comment(self) -> None:
+        round_trip("""
         # Comment with spaces after it.
 
 
@@ -116,9 +130,8 @@ class TestYAML:
         """
         )
 
-    def test_blank_line_between_seq_items(self):
-        round_trip(
-            """
+    def test_blank_line_between_seq_items(self) -> None:
+        round_trip("""
         # Seq with empty lines in between items.
         b:
         - bar
@@ -128,11 +141,10 @@ class TestYAML:
         """
         )
 
-    @pytest.mark.skipif(
-        platform.python_implementation() == 'Jython',
-        reason='Jython throws RepresenterError',
+    @pytest.mark.skipif(  # type: ignore
+        platform.python_implementation() == 'Jython', reason='Jython throws RepresenterError'
     )
-    def test_blank_line_after_literal_chip(self):
+    def test_blank_line_after_literal_chip(self) -> None:
         s = """
         c:
         - |
@@ -153,12 +165,11 @@ class TestYAML:
         assert d['c'][0].split('it.')[1] == '\n'
         assert d['c'][1].split('line.')[1] == '\n'
 
-    @pytest.mark.skipif(
-        platform.python_implementation() == 'Jython',
-        reason='Jython throws RepresenterError',
+    @pytest.mark.skipif(  # type: ignore
+        platform.python_implementation() == 'Jython', reason='Jython throws RepresenterError'
     )
-    def test_blank_line_after_literal_keep(self):
-        """have to insert an eof marker in YAML to test this"""
+    def test_blank_line_after_literal_keep(self) -> None:
+        """ have to insert an eof marker in YAML to test this"""
         s = """
         c:
         - |+
@@ -180,11 +191,10 @@ class TestYAML:
         assert d['c'][0].split('it.')[1] == '\n\n'
         assert d['c'][1].split('line.')[1] == '\n\n\n'
 
-    @pytest.mark.skipif(
-        platform.python_implementation() == 'Jython',
-        reason='Jython throws RepresenterError',
+    @pytest.mark.skipif(  # type: ignore
+        platform.python_implementation() == 'Jython', reason='Jython throws RepresenterError'
     )
-    def test_blank_line_after_literal_strip(self):
+    def test_blank_line_after_literal_strip(self) -> None:
         s = """
         c:
         - |-
@@ -205,8 +215,8 @@ class TestYAML:
         assert d['c'][0].split('it.')[1] == ""
         assert d['c'][1].split('line.')[1] == ""
 
-    def test_load_all_perserve_quotes(self):
-        import ruyaml  # NOQA
+    def test_load_all_perserve_quotes(self) -> None:
+        import ruamel.yaml  # NOQA
 
         yaml = ruyaml.YAML()
         yaml.preserve_quotes = True

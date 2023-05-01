@@ -1,13 +1,10 @@
 # coding: utf-8
 
 import os
-import sys
+import pytest  # type: ignore  # NOQA
 import warnings  # NOQA
+from typing import Any, Optional, List, Tuple
 from pathlib import Path
-
-import pytest  # NOQA
-
-from ruyaml.compat import _F
 
 base_path = Path('data')  # that is ruamel.yaml.data
 
@@ -15,7 +12,7 @@ base_path = Path('data')  # that is ruamel.yaml.data
 class YAMLData:
     yaml_tag = '!YAML'
 
-    def __init__(self, s):
+    def __init__(self, s: Any) -> None:
         self._s = s
 
     # Conversion tables for input. E.g. "<TAB>" is replaced by "\t"
@@ -29,9 +26,9 @@ class YAMLData:
     # fmt: on
 
     @property
-    def value(self):
+    def value(self) -> Any:
         if hasattr(self, '_p'):
-            return self._p
+            return self._p  # type: ignore
         assert ' \n' not in self._s
         assert '\t\n' not in self._s
         self._p = self._s
@@ -40,7 +37,7 @@ class YAMLData:
             self._p = self._p.replace(k, v)
         return self._p
 
-    def test_rewrite(self, s):
+    def test_rewrite(self, s: str) -> str:
         assert ' \n' not in s
         assert '\t\n' not in s
         for k, v in YAMLData.special.items():
@@ -49,7 +46,7 @@ class YAMLData:
         return s
 
     @classmethod
-    def from_yaml(cls, constructor, node):
+    def from_yaml(cls, constructor: Any, node: Any) -> 'YAMLData':
         from ruyaml.nodes import MappingNode
 
         if isinstance(node, MappingNode):
@@ -69,18 +66,18 @@ class Assert(YAMLData):
     yaml_tag = '!Assert'
 
     @property
-    def value(self):
+    def value(self) -> Any:
         from collections.abc import Mapping
 
         if hasattr(self, '_pa'):
-            return self._pa
+            return self._pa  # type: ignore
         if isinstance(self._s, Mapping):
-            self._s['lines'] = self.test_rewrite(self._s['lines'])
+            self._s['lines'] = self.test_rewrite(self._s['lines'])  # type: ignore
         self._pa = self._s
         return self._pa
 
 
-def pytest_generate_tests(metafunc):
+def pytest_generate_tests(metafunc: Any) -> None:
     test_yaml = []
     paths = sorted(base_path.glob('**/*.yaml'))
     idlist = []
@@ -102,7 +99,7 @@ def pytest_generate_tests(metafunc):
 
 
 class TestYAMLData:
-    def yaml(self, yaml_version=None):
+    def yaml(self, yaml_version: Optional[Any] = None) -> Any:
         from ruyaml import YAML
 
         y = YAML()
@@ -111,7 +108,7 @@ class TestYAMLData:
             y.version = yaml_version
         return y
 
-    def docs(self, path):
+    def docs(self, path: Path) -> List[Any]:
         from ruyaml import YAML
 
         tyaml = YAML(typ='safe', pure=True)
@@ -121,22 +118,27 @@ class TestYAMLData:
         tyaml.register_class(Assert)
         return list(tyaml.load_all(path))
 
-    def yaml_load(self, value, yaml_version=None):
+    def yaml_load(self, value: Any, yaml_version: Optional[Any] = None) -> Tuple[Any, Any]:
         yaml = self.yaml(yaml_version=yaml_version)
         data = yaml.load(value)
         return yaml, data
 
-    def round_trip(self, input, output=None, yaml_version=None):
-        from io import StringIO
+    def round_trip(
+        self, input: Any, output: Optional[Any] = None, yaml_version: Optional[Any] = None
+    ) -> None:
+        from ruyaml.compat import StringIO
 
         yaml, data = self.yaml_load(input.value, yaml_version=yaml_version)
         buf = StringIO()
         yaml.dump(data, buf)
         expected = input.value if output is None else output.value
         value = buf.getvalue()
+        print('>>>> rt output\n', value.replace(' ', '\u2423'), sep='')  # 2423 open box
         assert value == expected
 
-    def load_assert(self, input, confirm, yaml_version=None):
+    def load_assert(
+        self, input: Any, confirm: Any, yaml_version: Optional[Any] = None
+    ) -> None:
         from collections.abc import Mapping
 
         d = self.yaml_load(input.value, yaml_version=yaml_version)[1]  # NOQA
@@ -155,14 +157,16 @@ class TestYAMLData:
                 print(line)
                 exec(line)
 
-    def run_python(self, python, data, tmpdir, input=None):
-        from roundtrip import save_and_run
+    def run_python(
+        self, python: Any, data: Any, tmpdir: Any, input: Optional[Any] = None
+    ) -> None:
+        from .roundtrip import save_and_run
 
         if input is not None:
             (tmpdir / 'input.yaml').write_text(input.value, encoding='utf-8')
         assert save_and_run(python.value, base_dir=tmpdir, output=data.value) == 0
 
-    def insert_comments(self, data, actions):
+    def insert_comments(self, data: Any, actions: Any) -> None:
         """this is to automatically insert based on:
         path (a.1.b),
         position (before, after, between), and
@@ -181,7 +185,7 @@ class TestYAMLData:
 
     # this is executed by pytest the methods with names not starting with
     # test_ are helper methods
-    def test_yaml_data(self, yaml, tmpdir):
+    def test_yaml_data(self, yaml: Any, tmpdir: Any) -> None:
         from collections.abc import Mapping
 
         idx = 0
@@ -222,8 +226,8 @@ class TestYAMLData:
                 typ = 'rt'
         print('type:', typ)
         if data is not None:
-            print('data:', data.value, end='')
-        print('output:', output.value if output is not None else output)
+            print('>>>> data:\n', data.value.replace(' ', '\u2423'), sep='', end='')
+        print('>>>> output:\n', output.value if output is not None else output, sep='')
         if typ == 'rt':
             self.round_trip(data, output, yaml_version=yaml_version)
         elif typ == 'python_run':
@@ -234,14 +238,14 @@ class TestYAMLData:
         elif typ == 'load_assert':
             self.load_assert(data, confirm, yaml_version=yaml_version)
         elif typ == 'comment':
-            actions = []
+            actions: List[Any] = []
             self.insert_comments(data, actions)
         else:
-            _F('\n>>>>>> run type unknown: "{typ}" <<<<<<\n')
+            f'\n>>>>>> run type unknown: "{typ}" <<<<<<\n'
             raise AssertionError()
 
 
-def check_python_version(match, current=None):
+def check_python_version(match: Any, current: Optional[Any] = None) -> bool:
     """
     version indication, return True if version matches.
     match should be something like 3.6+, or [2.7, 3.3] etc. Floats

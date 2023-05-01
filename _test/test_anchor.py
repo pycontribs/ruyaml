@@ -7,32 +7,24 @@ testing of anchors and the aliases referring to them
 import platform
 from textwrap import dedent
 
-import pytest
-
-from .roundtrip import (  # NOQA
-    YAML,
-    dedent,
-    round_trip,
-    round_trip_dump,
-    round_trip_load,
-)
+from .roundtrip import round_trip, dedent, round_trip_load, round_trip_dump, YAML  # NOQA
+from typing import Any
 
 
-def load(s):
+def load(s: str) -> Any:
     return round_trip_load(dedent(s))
 
 
-def compare(d, s):
+def compare(d: Any, s: str) -> None:
     assert round_trip_dump(d) == dedent(s)
 
 
 class TestAnchorsAliases:
-    def test_anchor_id_renumber(self):
+    def test_anchor_id_renumber(self) -> None:
         from ruyaml.serializer import Serializer
 
-        assert Serializer.ANCHOR_TEMPLATE == 'id%03d'
-        data = load(
-            """
+        assert Serializer.ANCHOR_TEMPLATE == 'id{:03d}'
+        data = load("""
         a: &id002
           b: 1
           c: 2
@@ -49,7 +41,7 @@ class TestAnchorsAliases:
         """,
         )
 
-    def test_template_matcher(self):
+    def test_template_matcher(self) -> None:
         """test if id matches the anchor template"""
         from ruyaml.serializer import templated_id
 
@@ -62,13 +54,13 @@ class TestAnchorsAliases:
         assert not templated_id('id000')
         assert not templated_id('x000')
 
-    # def test_re_matcher(self):
+    # def test_re_matcher(self) -> None:
     #     import re
     #     assert re.compile('id(?!000)\\d{3,}').match('id001')
     #     assert not re.compile('id(?!000\\d*)\\d{3,}').match('id000')
     #     assert re.compile('id(?!000$)\\d{3,}').match('id0001')
 
-    def test_anchor_assigned(self):
+    def test_anchor_assigned(self) -> None:
         from ruyaml.comments import CommentedMap
 
         data = load(
@@ -91,9 +83,8 @@ class TestAnchorsAliases:
         assert e.yaml_anchor().value == 'etemplate'
         assert e.yaml_anchor().always_dump is False
 
-    def test_anchor_id_retained(self):
-        data = load(
-            """
+    def test_anchor_id_retained(self) -> None:
+        data = load("""
         a: &id002
           b: 1
           c: 2
@@ -118,11 +109,10 @@ class TestAnchorsAliases:
         """,
         )
 
-    @pytest.mark.skipif(
-        platform.python_implementation() == 'Jython',
-        reason='Jython throws RepresenterError',
+    @pytest.mark.skipif(  # type: ignore
+        platform.python_implementation() == 'Jython', reason='Jython throws RepresenterError'
     )
-    def test_alias_before_anchor(self):
+    def test_alias_before_anchor(self) -> None:
         from ruyaml.composer import ComposerError
 
         with pytest.raises(ComposerError):
@@ -136,7 +126,7 @@ class TestAnchorsAliases:
             )
             data = data
 
-    def test_anchor_on_sequence(self):
+    def test_anchor_on_sequence(self) -> None:
         # as reported by Bjorn Stabell
         # https://bitbucket.org/ruyaml/issue/7/anchor-names-not-preserved
         from ruyaml.comments import CommentedSeq
@@ -185,7 +175,7 @@ class TestAnchorsAliases:
         """
     )
 
-    def test_merge_00(self):
+    def test_merge_00(self) -> None:
         data = load(self.merge_yaml)
         d = data[4]
         ok = True
@@ -201,7 +191,7 @@ class TestAnchorsAliases:
                     print('key', k, d.get(k), data[o].get(k))
         assert ok
 
-    def test_merge_accessible(self):
+    def test_merge_accessible(self) -> None:
         from ruyaml.comments import CommentedMap, merge_attrib
 
         data = load(
@@ -218,11 +208,11 @@ class TestAnchorsAliases:
         assert isinstance(d, CommentedMap)
         assert hasattr(d, merge_attrib)
 
-    def test_merge_01(self):
+    def test_merge_01(self) -> None:
         data = load(self.merge_yaml)
         compare(data, self.merge_yaml)
 
-    def test_merge_nested(self):
+    def test_merge_nested(self) -> None:
         yaml = """
         a:
           <<: &content
@@ -234,7 +224,7 @@ class TestAnchorsAliases:
         """
         data = round_trip(yaml)  # NOQA
 
-    def test_merge_nested_with_sequence(self):
+    def test_merge_nested_with_sequence(self) -> None:
         yaml = """
         a:
           <<: &content
@@ -247,7 +237,7 @@ class TestAnchorsAliases:
         """
         data = round_trip(yaml)  # NOQA
 
-    def test_add_anchor(self):
+    def test_add_anchor(self) -> None:
         from ruyaml.comments import CommentedMap
 
         data = CommentedMap()
@@ -268,7 +258,7 @@ class TestAnchorsAliases:
         )
 
     # this is an error in PyYAML
-    def test_reused_anchor(self):
+    def test_reused_anchor(self) -> None:
         from ruyaml.error import ReusedAnchorWarning
 
         yaml = """
@@ -282,7 +272,7 @@ class TestAnchorsAliases:
         with pytest.warns(ReusedAnchorWarning):
             data = round_trip(yaml)  # NOQA
 
-    def test_issue_130(self):
+    def test_issue_130(self) -> None:
         # issue 130 reported by Devid Fee
         import ruyaml
 
@@ -309,7 +299,7 @@ class TestAnchorsAliases:
         data = yaml.load(ys)
         assert data['services']['shell']['components']['server']['port'] == 8000
 
-    def test_issue_130a(self):
+    def test_issue_130a(self) -> None:
         # issue 130 reported by Devid Fee
         import ruyaml
 
@@ -358,8 +348,8 @@ class TestMergeKeysValues:
 
     # in the following d always has "expanded" the merges
 
-    def test_merge_for(self):
-        from ruyaml import YAML
+    def test_merge_for(self) -> None:
+        from ruyaml import YAML  # type: ignore
 
         d = YAML(typ='safe', pure=True).load(self.yaml_str)
         data = round_trip_load(self.yaml_str)
@@ -369,8 +359,8 @@ class TestMergeKeysValues:
             print(count, x)
         assert count == len(d[2])
 
-    def test_merge_keys(self):
-        from ruyaml import YAML
+    def test_merge_keys(self) -> None:
+        from ruyaml import YAML  # type: ignore
 
         d = YAML(typ='safe', pure=True).load(self.yaml_str)
         data = round_trip_load(self.yaml_str)
@@ -380,8 +370,8 @@ class TestMergeKeysValues:
             print(count, x)
         assert count == len(d[2])
 
-    def test_merge_values(self):
-        from ruyaml import YAML
+    def test_merge_values(self) -> None:
+        from ruyaml import YAML  # type: ignore
 
         d = YAML(typ='safe', pure=True).load(self.yaml_str)
         data = round_trip_load(self.yaml_str)
@@ -391,8 +381,8 @@ class TestMergeKeysValues:
             print(count, x)
         assert count == len(d[2])
 
-    def test_merge_items(self):
-        from ruyaml import YAML
+    def test_merge_items(self) -> None:
+        from ruyaml import YAML  # type: ignore
 
         d = YAML(typ='safe', pure=True).load(self.yaml_str)
         data = round_trip_load(self.yaml_str)
@@ -402,8 +392,8 @@ class TestMergeKeysValues:
             print(count, x)
         assert count == len(d[2])
 
-    def test_len_items_delete(self):
-        from ruyaml import YAML
+    def test_len_items_delete(self) -> None:
+        from ruyaml import YAML  # type: ignore
 
         d = YAML(typ='safe', pure=True).load(self.yaml_str)
         data = round_trip_load(self.yaml_str)
@@ -422,8 +412,8 @@ class TestMergeKeysValues:
         ref -= 1
         assert len(x) == ref
 
-    def test_issue_196_cast_of_dict(self, capsys):
-        from ruyaml import YAML
+    def test_issue_196_cast_of_dict(self, capsys: Any) -> None:
+        from ruyaml import YAML  # type: ignore
 
         yaml = YAML()
         mapping = yaml.load(
@@ -462,15 +452,15 @@ class TestMergeKeysValues:
         assert 'a' in dict(mapping)
         assert 'a' in dict(mapping.items())
 
-    def test_values_of_merged(self):
-        from ruyaml import YAML
+    def test_values_of_merged(self) -> None:
+        from ruyaml import YAML  # type: ignore
 
         yaml = YAML()
         data = yaml.load(dedent(self.yaml_str))
         assert list(data[2].values()) == [1, 6, 'x2', 'x3', 'y4']
 
-    def test_issue_213_copy_of_merge(self):
-        from ruyaml import YAML
+    def test_issue_213_copy_of_merge(self) -> None:
+        from ruyaml import YAML  # type: ignore
 
         yaml = YAML()
         d = yaml.load(
@@ -529,9 +519,10 @@ class TestMergeKeysValues:
 
 
 class TestDuplicateKeyThroughAnchor:
-    def test_duplicate_key_00(self):
-        from ruyaml import YAML, version_info
-        from ruyaml.constructor import DuplicateKeyError, DuplicateKeyFutureWarning
+    def test_duplicate_key_00(self) -> None:
+        from ruyaml import version_info
+        from ruyaml import YAML  # type: ignore
+        from ruyaml.constructor import DuplicateKeyFutureWarning, DuplicateKeyError
 
         s = dedent(
             """\
@@ -555,7 +546,7 @@ class TestDuplicateKeyThroughAnchor:
             with pytest.raises(DuplicateKeyError):
                 YAML(typ='rt').load(s)
 
-    def test_duplicate_key_01(self):
+    def test_duplicate_key_01(self) -> None:
         # so issue https://stackoverflow.com/a/52852106/1307905
         from ruyaml.constructor import DuplicateKeyError
 
@@ -578,8 +569,8 @@ class TestDuplicateKeyThroughAnchor:
 
 
 class TestFullCharSetAnchors:
-    def test_master_of_orion(self):
-        # https://bitbucket.org/ruyaml/issues/72/not-allowed-in-anchor-names
+    def test_master_of_orion(self) -> None:
+        # https://bitbucket.org/ruamel/yaml/issues/72/not-allowed-in-anchor-names
         # submitted by Shalon Wood
         yaml_str = """
         - collection: &Backend.Civilizations.RacialPerk
@@ -589,7 +580,7 @@ class TestFullCharSetAnchors:
         """
         data = load(yaml_str)  # NOQA
 
-    def test_roundtrip_00(self):
+    def test_roundtrip_00(self) -> None:
         yaml_str = """
         - &dotted.words.here
           a: 1
@@ -598,7 +589,7 @@ class TestFullCharSetAnchors:
         """
         data = round_trip(yaml_str)  # NOQA
 
-    def test_roundtrip_01(self):
+    def test_roundtrip_01(self) -> None:
         yaml_str = """
         - &dotted.words.here[a, b]
         - *dotted.words.here
