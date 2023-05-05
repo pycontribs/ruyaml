@@ -3,7 +3,7 @@
 import pytest  # type: ignore  # NOQA
 
 # import ruyaml
-from .roundtrip import round_trip
+from roundtrip import round_trip  # type: ignore
 
 
 class TestProgramConfig:

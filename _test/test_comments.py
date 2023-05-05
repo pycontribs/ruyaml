@@ -13,7 +13,7 @@ roundtrip changes
 import pytest  # type: ignore  # NOQA
 import sys
 
-from .roundtrip import dedent, round_trip, round_trip_dump, round_trip_load
+from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump  # type: ignore
 
 
 class TestComments:

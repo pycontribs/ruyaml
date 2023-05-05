@@ -7,7 +7,7 @@ testing of anchors and the aliases referring to them
 import platform
 from textwrap import dedent
 
-from .roundtrip import round_trip, dedent, round_trip_load, round_trip_dump, YAML  # NOQA
+from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump, YAML # type: ignore # NOQA
 from typing import Any
 
 
@@ -349,7 +349,7 @@ class TestMergeKeysValues:
     # in the following d always has "expanded" the merges
 
     def test_merge_for(self) -> None:
-        from ruyaml import YAML  # type: ignore
+        from ruyaml import YAML
 
         d = YAML(typ='safe', pure=True).load(self.yaml_str)
         data = round_trip_load(self.yaml_str)
@@ -360,7 +360,7 @@ class TestMergeKeysValues:
         assert count == len(d[2])
 
     def test_merge_keys(self) -> None:
-        from ruyaml import YAML  # type: ignore
+        from ruyaml import YAML
 
         d = YAML(typ='safe', pure=True).load(self.yaml_str)
         data = round_trip_load(self.yaml_str)
@@ -371,7 +371,7 @@ class TestMergeKeysValues:
         assert count == len(d[2])
 
     def test_merge_values(self) -> None:
-        from ruyaml import YAML  # type: ignore
+        from ruyaml import YAML
 
         d = YAML(typ='safe', pure=True).load(self.yaml_str)
         data = round_trip_load(self.yaml_str)
@@ -382,7 +382,7 @@ class TestMergeKeysValues:
         assert count == len(d[2])
 
     def test_merge_items(self) -> None:
-        from ruyaml import YAML  # type: ignore
+        from ruyaml import YAML
 
         d = YAML(typ='safe', pure=True).load(self.yaml_str)
         data = round_trip_load(self.yaml_str)
@@ -393,7 +393,7 @@ class TestMergeKeysValues:
         assert count == len(d[2])
 
     def test_len_items_delete(self) -> None:
-        from ruyaml import YAML  # type: ignore
+        from ruyaml import YAML
 
         d = YAML(typ='safe', pure=True).load(self.yaml_str)
         data = round_trip_load(self.yaml_str)
@@ -413,7 +413,7 @@ class TestMergeKeysValues:
         assert len(x) == ref
 
     def test_issue_196_cast_of_dict(self, capsys: Any) -> None:
-        from ruyaml import YAML  # type: ignore
+        from ruyaml import YAML
 
         yaml = YAML()
         mapping = yaml.load(
@@ -453,14 +453,14 @@ class TestMergeKeysValues:
         assert 'a' in dict(mapping.items())
 
     def test_values_of_merged(self) -> None:
-        from ruyaml import YAML  # type: ignore
+        from ruyaml import YAML
 
         yaml = YAML()
         data = yaml.load(dedent(self.yaml_str))
         assert list(data[2].values()) == [1, 6, 'x2', 'x3', 'y4']
 
     def test_issue_213_copy_of_merge(self) -> None:
-        from ruyaml import YAML  # type: ignore
+        from ruyaml import YAML
 
         yaml = YAML()
         d = yaml.load(
@@ -521,7 +521,7 @@ class TestMergeKeysValues:
 class TestDuplicateKeyThroughAnchor:
     def test_duplicate_key_00(self) -> None:
         from ruyaml import version_info
-        from ruyaml import YAML  # type: ignore
+        from ruyaml import YAML
         from ruyaml.constructor import DuplicateKeyFutureWarning, DuplicateKeyError
 
         s = dedent(

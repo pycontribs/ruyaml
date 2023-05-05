@@ -8,9 +8,7 @@ import io
 import pytest  # type: ignore # NOQA
 import platform
 
-import pytest  # NOQA
-
-from .roundtrip import dedent, round_trip, round_trip_dump, round_trip_load  # NOQA
+from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump  # type: ignore # NOQA
 
 
 class TestYAML:

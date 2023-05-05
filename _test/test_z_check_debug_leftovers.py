@@ -4,7 +4,7 @@ import sys
 from typing import Any
 import pytest  # type: ignore # NOQA
 
-from .roundtrip import dedent, round_trip_dump, round_trip_load
+from roundtrip import round_trip_load, round_trip_dump, dedent  # type: ignore
 
 
 class TestLeftOverDebug:
