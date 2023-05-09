@@ -17,7 +17,7 @@ Notes
 - python3.7 is the minimal version of python supported
 
 
-:version:       0.17.25
+:version:       0.17.26
 :updated:       2023-05-09
 :documentation: http://yaml.readthedocs.io
 :repository:    https://sourceforge.net/projects/ruamel-yaml/
@@ -73,6 +73,9 @@ ChangeLog
 =========
 
 .. should insert NEXT: at the beginning of line for next key (with empty line)
+
+0.17.26 (2023-05-09):
+  - Fix for error on edge cage for issue 459
 
 0.17.25 (2023-05-09):
   - fix for regression while dumping wrapped strings with too many backslashes removed
