@@ -199,8 +199,7 @@ class Comment:
 
 
 # to distinguish key from None
-def NoComment() -> None:
-    pass
+class NotNone: pass
 
 
 class Format:
@@ -385,7 +384,7 @@ class CommentedBase:
         return getattr(self, Format.attrib)
 
     def yaml_add_eol_comment(
-        self, comment: Any, key: Optional[Any] = NoComment, column: Optional[Any] = None
+        self, comment: Any, key: Optional[Any] = NotNone, column: Optional[Any] = None
     ) -> None:
         """
         there is a problem as eol comments should start with ' #'
@@ -516,8 +515,8 @@ class CommentedSeq(MutableSliceableSequence, list, CommentedBase):  # type: igno
     def __eq__(self, other: Any) -> bool:
         return list.__eq__(self, other)
 
-    def _yaml_add_comment(self, comment: Any, key: Optional[Any] = NoComment) -> None:
-        if key is not NoComment:
+    def _yaml_add_comment(self, comment: Any, key: Optional[Any] = NotNone) -> None:
+        if key is not NotNone:
             self.yaml_key_comment_extend(key, comment, clear=True)
         else:
             self.ca.comment = comment
@@ -598,8 +597,8 @@ class CommentedSeq(MutableSliceableSequence, list, CommentedBase):  # type: igno
 class CommentedKeySeq(tuple, CommentedBase):  # type: ignore
     """This primarily exists to be able to roundtrip keys that are sequences"""
 
-    def _yaml_add_comment(self, comment: Any, key: Optional[Any] = NoComment) -> None:
-        if key is not NoComment:
+    def _yaml_add_comment(self, comment: Any, key: Optional[Any] = NotNone) -> None:
+        if key is not NotNone:
             self.yaml_key_comment_extend(key, comment)
         else:
             self.ca.comment = comment
@@ -719,13 +718,13 @@ class CommentedMap(ordereddict, CommentedBase):
         ordereddict.__init__(self, *args, **kw)
 
     def _yaml_add_comment(
-        self, comment: Any, key: Optional[Any] = NoComment, value: Optional[Any] = NoComment
+        self, comment: Any, key: Optional[Any] = NotNone, value: Optional[Any] = NotNone
     ) -> None:
         """values is set to key to indicate a value attachment of comment"""
-        if key is not NoComment:
+        if key is not NotNone:
             self.yaml_key_comment_extend(key, comment)
             return
-        if value is not NoComment:
+        if value is not NotNone:
             self.yaml_value_comment_extend(value, comment)
         else:
             self.ca.comment = comment
@@ -925,6 +924,16 @@ class CommentedMap(ordereddict, CommentedBase):
         for x in ordereddict.__iter__(self):
             yield x
 
+    def pop(self, key, default=NotNone):
+        try:
+            result = self[key]
+        except KeyError:
+            if default is NotNone:
+                raise
+            return default
+        del self[key]
+        return result
+
     def _keys(self) -> Any:
         for x in ordereddict.__iter__(self):
             yield x
@@ -1037,8 +1046,8 @@ class CommentedKeyMap(CommentedBase, Mapping):  # type: ignore
     def fromkeys(keys: Any, v: Any = None) -> Any:
         return CommentedKeyMap(dict.fromkeys(keys, v))
 
-    def _yaml_add_comment(self, comment: Any, key: Optional[Any] = NoComment) -> None:
-        if key is not NoComment:
+    def _yaml_add_comment(self, comment: Any, key: Optional[Any] = NotNone) -> None:
+        if key is not NotNone:
             self.yaml_key_comment_extend(key, comment)
         else:
             self.ca.comment = comment
@@ -1092,13 +1101,13 @@ class CommentedSet(MutableSet, CommentedBase):  # type: ignore  # NOQA
             self |= values
 
     def _yaml_add_comment(
-        self, comment: Any, key: Optional[Any] = NoComment, value: Optional[Any] = NoComment
+        self, comment: Any, key: Optional[Any] = NotNone, value: Optional[Any] = NotNone
     ) -> None:
         """values is set to key to indicate a value attachment of comment"""
-        if key is not NoComment:
+        if key is not NotNone:
             self.yaml_key_comment_extend(key, comment)
             return
-        if value is not NoComment:
+        if value is not NotNone:
             self.yaml_value_comment_extend(value, comment)
         else:
             self.ca.comment = comment
