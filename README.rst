@@ -17,8 +17,8 @@ Notes
 - python3.7 is the minimal version of python supported
 
 
-:version:       0.17.27
-:updated:       2023-05-25
+:version:       0.17.28
+:updated:       2023-05-26
 :documentation: http://yaml.readthedocs.io
 :repository:    https://sourceforge.net/projects/ruamel-yaml/
 :pypi:          https://pypi.org/project/ruamel.yaml/
@@ -73,6 +73,10 @@ ChangeLog
 =========
 
 .. should insert NEXT: at the beginning of line for next key (with empty line)
+
+0.17.28 (2023-05-26):
+  - fix for issue 464: documents ending with document end marker without final newline
+    fail to load (reported by `Mariusz Rusiniak <https://sourceforge.net/u/r2dan/profile/>`__)
 
 0.17.27 (2023-05-25):
   - fix issue with inline mappings as value for merge keys
