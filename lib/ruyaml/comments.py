@@ -16,6 +16,7 @@ from ruyaml.compat import ordereddict
 from ruyaml.compat import MutableSliceableSequence, nprintf  # NOQA
 from ruyaml.scalarstring import ScalarString
 from ruyaml.anchor import Anchor
+from ruyaml.tag import Tag
 
 from collections.abc import MutableSet, Sized, Set, Mapping
 
@@ -83,7 +84,6 @@ comment_attrib = '_yaml_comment'
 format_attrib = '_yaml_format'
 line_col_attrib = '_yaml_line_col'
 merge_attrib = '_yaml_merge'
-tag_attrib = '_yaml_tag'
 
 
 class Comment:
@@ -269,19 +269,6 @@ class LineCol:
         return f'LineCol({self.line}, {self.col})'
 
 
-class Tag:
-    """store tag information for roundtripping"""
-
-    __slots__ = ('value',)
-    attrib = tag_attrib
-
-    def __init__(self) -> None:
-        self.value = None
-
-    def __repr__(self) -> Any:
-        return f'{self.__class__.__name__}({self.value!r})'
-
-
 class CommentedBase:
     @property
     def ca(self):
@@ -447,8 +434,8 @@ class CommentedBase:
             setattr(self, Tag.attrib, Tag())
         return getattr(self, Tag.attrib)
 
-    def yaml_set_tag(self, value: Any) -> None:
-        self.tag.value = value
+    def yaml_set_ctag(self, value: Tag) -> None:
+        setattr(self, Tag.attrib, value)
 
     def copy_attributes(self, t: Any, memo: Any = None) -> None:
         # fmt: off
@@ -1148,7 +1135,9 @@ class TaggedScalar(CommentedBase):
         self.value = value
         self.style = style
         if tag is not None:
-            self.yaml_set_tag(tag)
+            if isinstance(tag, str):
+                tag = Tag(suffix=tag)
+            self.yaml_set_ctag(tag)
 
     def __str__(self) -> Any:
         return self.value

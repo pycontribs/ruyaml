@@ -162,14 +162,14 @@ class Serializer:
                     ScalarNode, node.value, (False, True)
                 )
                 implicit = (
-                    (node.tag == detected_tag),
-                    (node.tag == default_tag),
-                    node.tag.startswith('tag:yaml.org,2002:'),
+                    (node.ctag == detected_tag),
+                    (node.ctag == default_tag),
+                    node.tag.startswith('tag:yaml.org,2002:'),  # type: ignore
                 )
                 self.emitter.emit(
                     ScalarEvent(
                         alias,
-                        node.tag,
+                        node.ctag,
                         implicit,
                         node.value,
                         style=node.style,
@@ -177,9 +177,7 @@ class Serializer:
                     )
                 )
             elif isinstance(node, SequenceNode):
-                implicit = node.tag == self.resolver.resolve(
-                    SequenceNode, node.value, True
-                )
+                implicit = node.ctag == self.resolver.resolve(SequenceNode, node.value, True)
                 comment = node.comment
                 end_comment = None
                 seq_comment = None
@@ -194,7 +192,7 @@ class Serializer:
                 self.emitter.emit(
                     SequenceStartEvent(
                         alias,
-                        node.tag,
+                        node.ctag,
                         implicit,
                         flow_style=node.flow_style,
                         comment=node.comment,
@@ -206,9 +204,7 @@ class Serializer:
                     index += 1
                 self.emitter.emit(SequenceEndEvent(comment=[seq_comment, end_comment]))
             elif isinstance(node, MappingNode):
-                implicit = node.tag == self.resolver.resolve(
-                    MappingNode, node.value, True
-                )
+                implicit = node.ctag == self.resolver.resolve(MappingNode, node.value, True)
                 comment = node.comment
                 end_comment = None
                 map_comment = None
@@ -221,7 +217,7 @@ class Serializer:
                 self.emitter.emit(
                     MappingStartEvent(
                         alias,
-                        node.tag,
+                        node.ctag,
                         implicit,
                         flow_style=node.flow_style,
                         comment=node.comment,

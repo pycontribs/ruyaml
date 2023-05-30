@@ -73,7 +73,7 @@ class YAML:
         for pu in ([] if plug_ins is None else plug_ins) + self.official_plug_ins():
             file_name = pu.replace(os.sep, '.')
             self.plug_ins.append(import_module(file_name))
-        self.Resolver: Any = ruamel.yaml.resolver.VersionedResolver
+        self.Resolver: Any = ruyaml.resolver.VersionedResolver
         self.allow_unicode = True
         self.Reader: Any = None
         self.Representer: Any = None
@@ -111,7 +111,7 @@ class YAML:
         elif 'rtsc' in self.typ:
             self.default_flow_style = False
             # no optimized rt-dumper yet
-            self.Emitter = ruyaml.emitter.Emitter
+            self.Emitter = ruyaml.emitter.RoundTripEmitter
             self.Serializer = ruyaml.serializer.Serializer
             self.Representer = ruyaml.representer.RoundTripRepresenter
             self.Scanner = ruyaml.scanner.RoundTripScannerSC
@@ -126,7 +126,7 @@ class YAML:
         if setup_rt:
             self.default_flow_style = False
             # no optimized rt-dumper yet
-            self.Emitter = ruyaml.emitter.Emitter
+            self.Emitter = ruyaml.emitter.RoundTripEmitter
             self.Serializer = ruyaml.serializer.Serializer
             self.Representer = ruyaml.representer.RoundTripRepresenter
             self.Scanner = ruyaml.scanner.RoundTripScanner

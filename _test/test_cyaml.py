@@ -6,7 +6,7 @@ from textwrap import dedent
 
 import pytest
 
-NO_CLIB_VER = (3, 10)
+NO_CLIB_VER = (3, 12)
 
 
 @pytest.mark.skipif(  # type: ignore
