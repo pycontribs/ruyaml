@@ -117,7 +117,7 @@ def pytest_generate_tests(metafunc: Any) -> None:
 
 class TestYAMLData:
     def yaml(
-        self, yaml_version: Optional[Any] = None, typ: Any = 'rt', pure: Any = None
+        self, yaml_version: Optional[Any] = None, typ: Any = 'rt', pure: Any = None,
     ) -> Any:
         from ruyaml import YAML
 
@@ -148,7 +148,7 @@ class TestYAMLData:
         return yaml, data
 
     def round_trip(
-        self, input: Any, output: Optional[Any] = None, yaml_version: Optional[Any] = None
+        self, input: Any, output: Optional[Any] = None, yaml_version: Optional[Any] = None,
     ) -> None:
         from ruyaml.compat import StringIO
 
@@ -161,7 +161,7 @@ class TestYAMLData:
         assert value == expected
 
     def gen_events(
-        self, input: Any, output: Any, yaml_version: Optional[Any] = None
+        self, input: Any, output: Any, yaml_version: Optional[Any] = None,
     ) -> None:
         from ruamel.yaml.compat import StringIO
 
@@ -186,7 +186,7 @@ class TestYAMLData:
         assert buf.getvalue() == output.value
 
     def load_compare_json(
-        self, input: Any, output: Any, yaml_version: Optional[Any] = None
+        self, input: Any, output: Any, yaml_version: Optional[Any] = None,
     ) -> None:
         import json
         from ruamel.yaml.compat import StringIO
@@ -194,7 +194,7 @@ class TestYAMLData:
 
         def serialize_obj(obj: Any) -> Any:
             if isinstance(obj, CommentedMap):
-                return {k: v for k, v in obj.items()}
+                return {k: v for k, v in obj.items()}  # NOQA
             elif isinstance(obj, TaggedScalar):
                 return str(obj.value)
             elif isinstance(obj, set):
@@ -213,7 +213,7 @@ class TestYAMLData:
         assert buf.getvalue() == output.value
 
     def load_compare_emit(
-        self, input: Any, output: Any, yaml_version: Optional[Any] = None
+        self, input: Any, output: Any, yaml_version: Optional[Any] = None,
     ) -> None:
         from ruamel.yaml.compat import StringIO
 
@@ -229,7 +229,7 @@ class TestYAMLData:
         assert buf.getvalue() == output.value
 
     def load_assert(
-        self, input: Any, confirm: Any, yaml_version: Optional[Any] = None
+        self, input: Any, confirm: Any, yaml_version: Optional[Any] = None,
     ) -> None:
         from collections.abc import Mapping
 
@@ -250,7 +250,7 @@ class TestYAMLData:
                 exec(line)
 
     def run_python(
-        self, python: Any, data: Any, tmpdir: Any, input: Optional[Any] = None
+        self, python: Any, data: Any, tmpdir: Any, input: Optional[Any] = None,
     ) -> None:
         from roundtrip import save_and_run  # type: ignore
 
@@ -346,7 +346,7 @@ class TestYAMLData:
             elif typ == 'python_run':
                 inp = None if output is None or data is None else data
                 self.run_python(
-                    python, output if output is not None else data, tmpdir, input=inp
+                    python, output if output is not None else data, tmpdir, input=inp,
                 )
             elif typ == 'load_assert':
                 self.load_assert(data, confirm, yaml_version=yaml_version)

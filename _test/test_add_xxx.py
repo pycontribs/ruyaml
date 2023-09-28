@@ -122,7 +122,7 @@ def test_yaml_obj_with_loader_and_dumper() -> None:
     yaml = ruyaml.YAML(typ='unsafe', pure=True)
     ruyaml.add_representer(Obj1, YAMLObj1.to_yaml, Dumper=ruyaml.Dumper)
     ruyaml.add_multi_constructor(
-        YAMLObj1.yaml_tag, YAMLObj1.from_yaml, Loader=ruyaml.Loader
+        YAMLObj1.yaml_tag, YAMLObj1.from_yaml, Loader=ruyaml.Loader,
     )
     x = yaml.load('!obj:x.2\na: 1')
     # x = ruyaml.load('!obj:x.2\na: 1')
@@ -156,7 +156,7 @@ def test_issue_127() -> None:
         @classmethod
         def to_yaml(cls, dumper: Any, data: Any) -> Any:
             if isinstance(data.logical_id, ruyaml.scalarstring.ScalarString):
-                style = data.logical_id.style  # type: ignore # ruamel.yaml>0.15.8
+                style = data.logical_id.style  # type: ignore # ruyaml>0.15.8
             else:
                 style = None
             return dumper.represent_scalar(cls.yaml_tag, data.logical_id, style=style)

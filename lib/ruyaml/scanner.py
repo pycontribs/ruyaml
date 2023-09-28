@@ -57,7 +57,7 @@ class SimpleKey:
     # See below simple keys treatment.
 
     def __init__(
-        self, token_number: Any, required: Any, index: int, line: int, column: int, mark: Any
+        self, token_number: Any, required: Any, index: int, line: int, column: int, mark: Any,
     ) -> None:
         self.token_number = token_number
         self.required = required
@@ -569,10 +569,7 @@ class Scanner:
             # Are we allowed to start a key (not nessesary a simple)?
             if not self.allow_simple_key:
                 raise ScannerError(
-                    None,
-                    None,
-                    'mapping keys are not allowed here',
-                    self.reader.get_mark(),
+                    None, None, 'mapping keys are not allowed here', self.reader.get_mark(),
                 )
 
             # We may need to add BLOCK-MAPPING-START.
@@ -599,7 +596,7 @@ class Scanner:
             key = self.possible_simple_keys[self.flow_level]
             del self.possible_simple_keys[self.flow_level]
             self.tokens.insert(
-                key.token_number - self.tokens_taken, KeyToken(key.mark, key.mark)
+                key.token_number - self.tokens_taken, KeyToken(key.mark, key.mark),
             )
 
             # If this key starts a new block mapping, we need to add
@@ -1122,9 +1119,7 @@ class Scanner:
                 style not in '|>'
                 or (self.scanner_processing_version == (1, 1))
                 and getattr(
-                    self.loader,
-                    'top_level_block_style_scalar_no_indent_error_1_1',
-                    False,
+                    self.loader, 'top_level_block_style_scalar_no_indent_error_1_1', False,
                 )
             ):
                 min_indent = 1
@@ -1325,8 +1320,7 @@ class Scanner:
         if first_indent > 0 and max_indent > first_indent:
             start_mark = self.reader.get_mark()
             raise ScannerError(
-                'more indented follow up line than first in a block scalar',
-                start_mark,
+                'more indented follow up line than first in a block scalar', start_mark,
             )
         return chunks, max_indent, end_mark
 
@@ -2152,7 +2146,7 @@ class ScannedComments:
             return
         idx = 1
         while tokens[-idx].start_mark.line > comment_line or isinstance(
-            tokens[-idx], ValueToken
+            tokens[-idx], ValueToken,
         ):
             idx += 1
         xprintf('idx1', idx)
@@ -2164,7 +2158,7 @@ class ScannedComments:
             return
         try:
             if isinstance(tokens[-idx], ScalarToken) and isinstance(
-                tokens[-(idx + 1)], KeyToken
+                tokens[-(idx + 1)], KeyToken,
             ):
                 try:
                     eol_idx = self.unused.pop(0)
@@ -2179,7 +2173,7 @@ class ScannedComments:
             pass
         try:
             if isinstance(tokens[-idx], ScalarToken) and isinstance(
-                tokens[-(idx + 1)], (ValueToken, BlockEntryToken)
+                tokens[-(idx + 1)], (ValueToken, BlockEntryToken),
             ):
                 try:
                     eol_idx = self.unused.pop(0)
@@ -2213,7 +2207,7 @@ class ScannedComments:
 
     def str_unprocessed(self) -> Any:
         return ''.join(
-            (f'  {ind:2} {x.info()}\n' for ind, x in self.comments.items() if x.used == ' ')
+            (f'  {ind:2} {x.info()}\n' for ind, x in self.comments.items() if x.used == ' '),
         )
 
 
@@ -2292,11 +2286,11 @@ class RoundTripScannerSC(Scanner):  # RoundTripScanner Split Comments
                 # we have a comment
                 if start_mark.column == 0:
                     self.comments.add_full_line_comment(  # type: ignore
-                        comment, comment_start_mark.column, comment_start_mark.line
+                        comment, comment_start_mark.column, comment_start_mark.line,
                     )
                 else:
                     self.comments.add_eol_comment(  # type: ignore
-                        comment, comment_start_mark.column, comment_start_mark.line
+                        comment, comment_start_mark.column, comment_start_mark.line,
                     )
                     comment = ""
                 # gather any blank lines or full line comments following the comment as well

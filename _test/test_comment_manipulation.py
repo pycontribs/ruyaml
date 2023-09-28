@@ -464,7 +464,7 @@ class TestCommentsManipulation:
                 """
         )
         data.yaml_set_comment_before_after_key(
-            'test1', 'before test1 (top level)', after='before test2'
+            'test1', 'before test1 (top level)', after='before test2',
         )
         data['test1']['test2'].yaml_set_start_comment('after test2', indent=4)
         exp = """
@@ -493,7 +493,7 @@ class TestCommentsManipulation:
         """
         )
         data.yaml_set_comment_before_after_key(
-            'test1', 'before test1 (top level)', after='before test2\n\n'
+            'test1', 'before test1 (top level)', after='before test2\n\n',
         )
         data['test1']['test2'].yaml_set_start_comment('after test2', indent=4)
         # EOL is needed here as dedenting gets rid of spaces (as well as does Emacs
@@ -526,7 +526,7 @@ class TestCommentsManipulation:
         """
         )
         data.yaml_set_comment_before_after_key(
-            'test1', 'before test1 (top level)', after='before test2\n\n'
+            'test1', 'before test1 (top level)', after='before test2\n\n',
         )
         data['test1']['test2'].yaml_set_start_comment('after test2', indent=4)
         exp = """
@@ -556,10 +556,7 @@ class TestCommentsManipulation:
         """
         )
         data.yaml_set_comment_before_after_key(
-            'test1',
-            'xyz\n\nbefore test1 (top level)',
-            after='\nbefore test2',
-            after_indent=4,
+            'test1', 'xyz\n\nbefore test1 (top level)', after='\nbefore test2', after_indent=4,
         )
         data['test1']['test2'].yaml_set_start_comment('after test2', indent=4)
         # EOL is needed here as dedenting gets rid of spaces (as well as does Emacs
@@ -592,10 +589,7 @@ class TestCommentsManipulation:
         """
         )
         data.yaml_set_comment_before_after_key(
-            'test1',
-            'xyz\n\nbefore test1 (top level)',
-            after='\nbefore test2',
-            after_indent=4,
+            'test1', 'xyz\n\nbefore test1 (top level)', after='\nbefore test2', after_indent=4,
         )
         data['test1']['test2'].yaml_set_start_comment('after test2', indent=4)
         exp = """

@@ -46,7 +46,7 @@ from ruyaml.comments import (CommentedMap, CommentedOrderedMap, CommentedSet,
                                   )
 from ruyaml.scalarstring import (SingleQuotedScalarString, DoubleQuotedScalarString,
                                       LiteralScalarString, FoldedScalarString,
-                                      PlainScalarString, ScalarString,)
+                                      PlainScalarString, ScalarString)
 from ruyaml.scalarint import ScalarInt, BinaryInt, OctalInt, HexInt, HexCapsInt
 from ruyaml.scalarfloat import ScalarFloat
 from ruyaml.scalarbool import ScalarBoolean
@@ -270,7 +270,7 @@ class BaseConstructor:
         return total_mapping
 
     def check_mapping_key(
-        self, node: Any, key_node: Any, mapping: Any, key: Any, value: Any
+        self, node: Any, key_node: Any, mapping: Any, key: Any, value: Any,
     ) -> bool:
         """return True if key is unique"""
         if key in mapping:
@@ -343,6 +343,16 @@ class BaseConstructor:
         if 'yaml_multi_constructors' not in cls.__dict__:
             cls.yaml_multi_constructors = cls.yaml_multi_constructors.copy()
         cls.yaml_multi_constructors[tag_prefix] = multi_constructor
+
+    @classmethod
+    def add_default_constructor(
+        cls, tag: str, method: Any = None, tag_base: str = 'tag:yaml.org,2002:',
+    ) -> None:
+        if not tag.startswith('tag:'):
+            if method is None:
+                method = 'construct_yaml_' + tag
+            tag = tag_base + tag
+        cls.add_constructor(tag, getattr(cls, method))
 
 
 class SafeConstructor(BaseConstructor):
@@ -655,53 +665,8 @@ class SafeConstructor(BaseConstructor):
         )
 
 
-SafeConstructor.add_constructor(
-    'tag:yaml.org,2002:null', SafeConstructor.construct_yaml_null
-)
-
-SafeConstructor.add_constructor(
-    'tag:yaml.org,2002:bool', SafeConstructor.construct_yaml_bool
-)
-
-SafeConstructor.add_constructor(
-    'tag:yaml.org,2002:int', SafeConstructor.construct_yaml_int
-)
-
-SafeConstructor.add_constructor(
-    'tag:yaml.org,2002:float', SafeConstructor.construct_yaml_float
-)
-
-SafeConstructor.add_constructor(
-    'tag:yaml.org,2002:binary', SafeConstructor.construct_yaml_binary
-)
-
-SafeConstructor.add_constructor(
-    'tag:yaml.org,2002:timestamp', SafeConstructor.construct_yaml_timestamp
-)
-
-SafeConstructor.add_constructor(
-    'tag:yaml.org,2002:omap', SafeConstructor.construct_yaml_omap
-)
-
-SafeConstructor.add_constructor(
-    'tag:yaml.org,2002:pairs', SafeConstructor.construct_yaml_pairs
-)
-
-SafeConstructor.add_constructor(
-    'tag:yaml.org,2002:set', SafeConstructor.construct_yaml_set
-)
-
-SafeConstructor.add_constructor(
-    'tag:yaml.org,2002:str', SafeConstructor.construct_yaml_str
-)
-
-SafeConstructor.add_constructor(
-    'tag:yaml.org,2002:seq', SafeConstructor.construct_yaml_seq
-)
-
-SafeConstructor.add_constructor(
-    'tag:yaml.org,2002:map', SafeConstructor.construct_yaml_map
-)
+for tag in 'null bool int float binary timestamp omap pairs set str seq map'.split():
+    SafeConstructor.add_default_constructor(tag)
 
 SafeConstructor.add_constructor(None, SafeConstructor.construct_undefined)
 
@@ -829,7 +794,7 @@ class Constructor(SafeConstructor):
         return self.find_python_module(suffix, node.start_mark)
 
     def make_python_instance(
-        self, suffix: Any, node: Any, args: Any = None, kwds: Any = None, newobj: bool = False
+        self, suffix: Any, node: Any, args: Any = None, kwds: Any = None, newobj: bool = False,
     ) -> Any:
         if not args:
             args = []
@@ -866,7 +831,7 @@ class Constructor(SafeConstructor):
         self.set_python_instance_state(instance, state)
 
     def construct_python_object_apply(
-        self, suffix: Any, node: Any, newobj: bool = False
+        self, suffix: Any, node: Any, newobj: bool = False,
     ) -> Any:
         # Format:
         #   !!python/object/apply       # (or !!python/object/new)
@@ -905,21 +870,27 @@ class Constructor(SafeConstructor):
     def construct_python_object_new(self, suffix: Any, node: Any) -> Any:
         return self.construct_python_object_apply(suffix, node, newobj=True)
 
+    @classmethod
+    def add_default_constructor(
+        cls, tag: str, method: Any = None, tag_base: str = 'tag:yaml.org,2002:python/',
+    ) -> None:
+        if not tag.startswith('tag:'):
+            if method is None:
+                method = 'construct_yaml_' + tag
+            tag = tag_base + tag
+        cls.add_constructor(tag, getattr(cls, method))
+
 
 Constructor.add_constructor(
     'tag:yaml.org,2002:python/none', Constructor.construct_yaml_null
 )
 
 Constructor.add_constructor(
-    'tag:yaml.org,2002:python/bool', Constructor.construct_yaml_bool
+    'tag:yaml.org,2002:python/unicode', Constructor.construct_python_unicode,
 )
 
 Constructor.add_constructor(
-    'tag:yaml.org,2002:python/str', Constructor.construct_python_str
-)
-
-Constructor.add_constructor(
-    'tag:yaml.org,2002:python/bytes', Constructor.construct_python_bytes
+    'tag:yaml.org,2002:python/bytes', Constructor.construct_python_bytes,
 )
 
 Constructor.add_constructor(
@@ -935,7 +906,7 @@ Constructor.add_constructor(
 )
 
 Constructor.add_constructor(
-    'tag:yaml.org,2002:python/complex', Constructor.construct_python_complex
+    'tag:yaml.org,2002:python/complex', Constructor.construct_python_complex,
 )
 
 Constructor.add_constructor(
@@ -943,31 +914,33 @@ Constructor.add_constructor(
 )
 
 Constructor.add_constructor(
-    'tag:yaml.org,2002:python/tuple', Constructor.construct_python_tuple
+    'tag:yaml.org,2002:python/tuple', Constructor.construct_python_tuple,
 )
+# for tag in 'bool str unicode bytes int long float complex tuple'.split():
+#    Constructor.add_default_constructor(tag)
 
 Constructor.add_constructor(
     'tag:yaml.org,2002:python/dict', Constructor.construct_yaml_map
 )
 
 Constructor.add_multi_constructor(
-    'tag:yaml.org,2002:python/name:', Constructor.construct_python_name
+    'tag:yaml.org,2002:python/name:', Constructor.construct_python_name,
 )
 
 Constructor.add_multi_constructor(
-    'tag:yaml.org,2002:python/module:', Constructor.construct_python_module
+    'tag:yaml.org,2002:python/module:', Constructor.construct_python_module,
 )
 
 Constructor.add_multi_constructor(
-    'tag:yaml.org,2002:python/object:', Constructor.construct_python_object
+    'tag:yaml.org,2002:python/object:', Constructor.construct_python_object,
 )
 
 Constructor.add_multi_constructor(
-    'tag:yaml.org,2002:python/object/apply:', Constructor.construct_python_object_apply
+    'tag:yaml.org,2002:python/object/apply:', Constructor.construct_python_object_apply,
 )
 
 Constructor.add_multi_constructor(
-    'tag:yaml.org,2002:python/object/new:', Constructor.construct_python_object_new
+    'tag:yaml.org,2002:python/object/new:', Constructor.construct_python_object_new,
 )
 
 
@@ -1043,7 +1016,7 @@ class RoundTripConstructor(SafeConstructor):
         #     data2.style = node.style
         #     data2.yaml_set_ctag(node.ctag)
         #     if node.anchor:
-        #         from ruamel.yaml.serializer import templated_id
+        #         from ruyaml.serializer import templated_id
 
         #         if not templated_id(node.anchor):
         #             data2.yaml_set_anchor(node.anchor, always_dump=True)
@@ -1116,10 +1089,7 @@ class RoundTripConstructor(SafeConstructor):
             )
         elif self.resolver.processing_version != (1, 2) and value_s[0] == '0':
             return OctalInt(
-                sign * int(value_s, 8),
-                width=width,
-                underscore=underscore,
-                anchor=node.anchor,
+                sign * int(value_s, 8), width=width, underscore=underscore, anchor=node.anchor,
             )
         elif self.resolver.processing_version != (1, 2) and ':' in value_s:
             digits = [int(part) for part in value_s.split(':')]
@@ -1142,10 +1112,7 @@ class RoundTripConstructor(SafeConstructor):
             # cannot have a leading underscore
             underscore[2] = len(value_su) > 1 and value_su[-1] == '_'
             return ScalarInt(
-                sign * int(value_s),
-                width=None,
-                underscore=underscore,
-                anchor=node.anchor,
+                sign * int(value_s), width=None, underscore=underscore, anchor=node.anchor,
             )
         elif node.anchor:
             return ScalarInt(sign * int(value_s), width=None, anchor=node.anchor)
@@ -1269,7 +1236,7 @@ class RoundTripConstructor(SafeConstructor):
                 child.comment = None  # if moved to sequence remove from child
             ret_val.append(self.construct_object(child, deep=deep))
             seqtyp._yaml_set_idx_line_col(
-                idx, [child.start_mark.line, child.start_mark.column]
+                idx, [child.start_mark.line, child.start_mark.column],
             )
         return ret_val
 
@@ -1629,7 +1596,7 @@ class RoundTripConstructor(SafeConstructor):
         self.construct_setting(node, data)
 
     def construct_unknown(
-        self, node: Any
+        self, node: Any,
     ) -> Iterator[Union[CommentedMap, TaggedScalar, CommentedSeq]]:
         try:
             if isinstance(node, MappingNode):
@@ -1686,7 +1653,7 @@ class RoundTripConstructor(SafeConstructor):
         )
 
     def construct_yaml_timestamp(
-        self, node: Any, values: Any = None
+        self, node: Any, values: Any = None,
     ) -> Union[datetime.date, datetime.datetime, TimeStamp]:
         try:
             match = self.timestamp_regexp.match(node.value)
@@ -1722,7 +1689,7 @@ class RoundTripConstructor(SafeConstructor):
         # isinstance(datetime.datetime.now, datetime.date) is true)
         if isinstance(dd, datetime.datetime):
             data = TimeStamp(
-                dd.year, dd.month, dd.day, dd.hour, dd.minute, dd.second, dd.microsecond
+                dd.year, dd.month, dd.day, dd.hour, dd.minute, dd.second, dd.microsecond,
             )
         else:
             # ToDo: make this into a DateStamp?
@@ -1748,52 +1715,9 @@ class RoundTripConstructor(SafeConstructor):
         return b
 
 
-RoundTripConstructor.add_constructor(
-    'tag:yaml.org,2002:null', RoundTripConstructor.construct_yaml_null
-)
+RoundTripConstructor.add_default_constructor('bool', method='construct_yaml_sbool')
 
-RoundTripConstructor.add_constructor(
-    'tag:yaml.org,2002:bool', RoundTripConstructor.construct_yaml_sbool
-)
-
-RoundTripConstructor.add_constructor(
-    'tag:yaml.org,2002:int', RoundTripConstructor.construct_yaml_int
-)
-
-RoundTripConstructor.add_constructor(
-    'tag:yaml.org,2002:float', RoundTripConstructor.construct_yaml_float
-)
-
-RoundTripConstructor.add_constructor(
-    'tag:yaml.org,2002:binary', RoundTripConstructor.construct_yaml_binary
-)
-
-RoundTripConstructor.add_constructor(
-    'tag:yaml.org,2002:timestamp', RoundTripConstructor.construct_yaml_timestamp
-)
-
-RoundTripConstructor.add_constructor(
-    'tag:yaml.org,2002:omap', RoundTripConstructor.construct_yaml_omap
-)
-
-RoundTripConstructor.add_constructor(
-    'tag:yaml.org,2002:pairs', RoundTripConstructor.construct_yaml_pairs
-)
-
-RoundTripConstructor.add_constructor(
-    'tag:yaml.org,2002:set', RoundTripConstructor.construct_yaml_set
-)
-
-RoundTripConstructor.add_constructor(
-    'tag:yaml.org,2002:str', RoundTripConstructor.construct_yaml_str
-)
-
-RoundTripConstructor.add_constructor(
-    'tag:yaml.org,2002:seq', RoundTripConstructor.construct_yaml_seq
-)
-
-RoundTripConstructor.add_constructor(
-    'tag:yaml.org,2002:map', RoundTripConstructor.construct_yaml_map
-)
+for tag in 'null int float binary timestamp omap pairs set str seq map'.split():
+    RoundTripConstructor.add_default_constructor(tag)
 
 RoundTripConstructor.add_constructor(None, RoundTripConstructor.construct_unknown)
