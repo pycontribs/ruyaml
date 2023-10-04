@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+y -*- coding: utf-8 -*-
 #
 # yaml documentation build configuration file, created by
 # sphinx-quickstart on Mon Feb 29 12:03:00 2016.
