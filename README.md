@@ -1,3 +1,19 @@
+# ruyaml
+
+``ruyaml`` package is a fork of ``ruamel.yaml`` aimed to made in order to
+secure the future of the library, mainly by having a pool of maintainers.
+
+## Notes
+
+- Several references to ``ruamel.yaml``, as well as its changelog and
+  some ancient compatibility warnings, have been retained because
+  that makes merging future upstream changes substantially easier.
+- The current version has the same API as the "ruamel.yaml" package.
+  However, it will install the `ruyaml` python module. Thus, simply
+  replace ``from ruamel import yaml`` with ``import ruyaml as yaml``
+  (or equivalent) and you're all set.
+- python3.7 is the minimal version of python supported
+
 # ruamel.yaml
 
 `ruamel.yaml` is a YAML 1.2 loader/dumper package for Python.
