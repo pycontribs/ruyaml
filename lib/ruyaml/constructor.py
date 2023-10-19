@@ -37,16 +37,17 @@ from ruyaml.compat import (builtins_module, # NOQA
                                 nprint, nprintf, version_tnf)
 from ruyaml.compat import ordereddict
 
+from ruyaml.tag import Tag
 from ruyaml.comments import *                               # NOQA
 from ruyaml.comments import (CommentedMap, CommentedOrderedMap, CommentedSet,
-                                  CommentedKeySeq, CommentedSeq, TaggedScalar,
-                                  CommentedKeyMap,
-                                  C_KEY_PRE, C_KEY_EOL, C_KEY_POST,
-                                  C_VALUE_PRE, C_VALUE_EOL, C_VALUE_POST,
-                                  )
+                             CommentedKeySeq, CommentedSeq, TaggedScalar,
+                             CommentedKeyMap,
+                             C_KEY_PRE, C_KEY_EOL, C_KEY_POST,
+                             C_VALUE_PRE, C_VALUE_EOL, C_VALUE_POST,
+                             )
 from ruyaml.scalarstring import (SingleQuotedScalarString, DoubleQuotedScalarString,
-                                      LiteralScalarString, FoldedScalarString,
-                                      PlainScalarString, ScalarString)
+                                 LiteralScalarString, FoldedScalarString,
+                                 PlainScalarString, ScalarString)
 from ruyaml.scalarint import ScalarInt, BinaryInt, OctalInt, HexInt, HexCapsInt
 from ruyaml.scalarfloat import ScalarFloat
 from ruyaml.scalarbool import ScalarBoolean
@@ -332,11 +333,17 @@ class BaseConstructor:
             pairs.append((key, value))
         return pairs
 
+    # ToDo: putting stuff on the class makes it global, consider making this to work on an
+    # instance variable once function load is dropped.
     @classmethod
-    def add_constructor(cls, tag: Any, constructor: Any) -> None:
+    def add_constructor(cls, tag: Any, constructor: Any) -> Any:
+        if isinstance(tag, Tag):
+            tag = str(tag)
         if 'yaml_constructors' not in cls.__dict__:
             cls.yaml_constructors = cls.yaml_constructors.copy()
+        ret_val = cls.yaml_constructors.get(tag, None)
         cls.yaml_constructors[tag] = constructor
+        return ret_val
 
     @classmethod
     def add_multi_constructor(cls, tag_prefix: Any, multi_constructor: Any) -> None:

@@ -53,7 +53,7 @@ def tr(s):
 # More examples
 
 Using the C based SafeLoader (at this time is inherited from
-libyaml/PyYAML and e.g. loads `0o52` as well as `052` load as integer
+libyaml/PyYAML and e.g. loads `0o52` as well as `052` as integer
 `42`):
 --- !python |
    from ruamel.yaml import YAML
@@ -66,7 +66,11 @@ Using the Python based SafeLoader (YAML 1.2 support, `052` loads as
 `52`):
 --- !python |
 
-    from ruyaml import YAML
+   yaml=YAML(typ="safe", pure=True)
+   yaml.load("""a:\n  b: 2\n  c: 3\n""")
 
-    yaml=YAML(typ="safe", pure=True)
-    yaml.load("""a:\n  b: 2\n  c: 3\n""")
+--- |
+
+Restrictions when using the C based SafeLoader/SafeDumper:
+
+- yaml.indent will set the same value for mappings and sequences. (Issue 471)
