@@ -19,10 +19,10 @@ secure the future of the library, mainly by having a pool of maintainers.
 `ruamel.yaml` is a YAML 1.2 loader/dumper package for Python.
 <table class="docutils">
   <tr>    <td>version</td>
-    <td>0.17.39</td>
+    <td>version</td>
   </tr>
   <tr>    <td>updated</td>
-    <td>2023-10-19</td>
+    <td>date</td>
   </tr>
   <tr>    <td>documentation</td>
     <td><a href="http://yaml.readthedocs.io">http://yaml.readthedocs.io</a></td>
