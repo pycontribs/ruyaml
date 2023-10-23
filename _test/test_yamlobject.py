@@ -82,7 +82,8 @@ def test_qualified_name01(tmpdir: Any) -> None:
     import ruyaml.comments
     from ruyaml import YAML
 
-    yaml = YAML(typ='unsafe', pure=True)
+    with pytest.warns(PendingDeprecationWarning):
+        yaml = YAML(typ='unsafe', pure=True)
     yaml.explicit_end = True
     buf = StringIO()
     yaml.dump(ruyaml.comments.CommentedBase.yaml_anchor, buf)

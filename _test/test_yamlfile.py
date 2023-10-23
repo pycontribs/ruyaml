@@ -48,7 +48,7 @@ class TestYAML:
     #                     reason='collections not available')
     # def test_dump_collections_ordereddict(self) -> None:
     #     from collections import OrderedDict
-    #     import ruamel.yaml  # NOQA
+    #     import ruyaml  # NOQA
 
     #     # OrderedDict mapped to !!omap
     #     x = OrderedDict([('a', 1), ('b', 2)])
@@ -61,11 +61,11 @@ class TestYAML:
 
     @pytest.mark.skipif(  # type: ignore
         sys.version_info >= (3, 0) or platform.python_implementation() != 'CPython',
-        reason='ruamel.yaml not available',
+        reason='ruyaml not available',
     )
     def test_dump_ruamel_ordereddict(self) -> None:
         from ruamel.ordereddict import ordereddict
-        import ruamel.yaml  # NOQA
+        import ruyaml  # NOQA
 
         # OrderedDict mapped to !!omap
         x = ordereddict([('a', 1), ('b', 2)])
@@ -95,7 +95,8 @@ class TestYAML:
         x = set(['a', 'b', 'c'])  # NOQA
         # cannot use round_trip_dump, it doesn't show null in block style
         buf = io.StringIO()
-        yaml = ruyaml.YAML(typ='unsafe', pure=True)
+        with pytest.warns(PendingDeprecationWarning):
+            yaml = ruyaml.YAML(typ='unsafe', pure=True)
         yaml.default_flow_style = False
         yaml.dump(x, buf)
         assert buf.getvalue() == dedent(
@@ -220,7 +221,7 @@ class TestYAML:
         assert d['c'][1].split('line.')[1] == ""
 
     def test_load_all_perserve_quotes(self) -> None:
-        import ruamel.yaml  # NOQA
+        import ruyaml  # NOQA
 
         yaml = ruyaml.YAML()
         yaml.preserve_quotes = True
