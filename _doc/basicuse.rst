@@ -4,13 +4,14 @@ pdf: false
 --- !python-pre |
 import sys
 from io import StringIO
-from ruamel.yaml import YAML
+from ruyaml import YAML
 yaml=YAML()
 s = StringIO()
 doc = "a: 1"
 data = dict(a=1)
 --- |
 # Basic Usage
+## Load and dump  
 
 You load a YAML document using:
 --- !python |
@@ -32,7 +33,7 @@ will be used when possible/available but these behave slightly different
 
 Dumping works in the same way:
 --- !code |
-from ruamel.yaml import YAML
+from ruyaml import YAML
 
 yaml=YAML()
 yaml.default_flow_style = False
@@ -50,13 +51,14 @@ def tr(s):
 
     yaml.dump(data, sys.stdout, transform=tr)
 
-# More examples
+--- |
+## More examples
 
 Using the C based SafeLoader (at this time is inherited from
 libyaml/PyYAML and e.g. loads `0o52` as well as `052` as integer
 `42`):
 --- !python |
-   from ruamel.yaml import YAML
+   from ruyaml import YAML
 
     yaml=YAML(typ="safe")
     yaml.load("""a:\n  b: 2\n  c: 3\n""")

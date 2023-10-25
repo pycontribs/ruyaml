@@ -92,9 +92,9 @@ If a parse or dump fails, and throws and exception, the state of the
 processing. You should, at that point to recreate the YAML instance
 before proceeding.
 
-# Loading
+## Loading
 
-## Duplicate keys
+### Duplicate keys
 
 In JSON mapping keys should be unique, in YAML they must be unique.
 PyYAML never enforced this although the YAML 1.1 specification already
@@ -114,7 +114,7 @@ When a duplicate key is found it and its value are discarded, as should
 be done according to the [YAML 1.1
 specification](http://yaml.org/spec/1.1/#id932806).
 
-# Dumping a multi-documents YAML stream
+## Dumping a multi-document YAML stream
 
 The \"normal\" `dump_all` expected as first element a list of documents,
 or something else the internals of the method can iterate over. To read
@@ -160,9 +160,9 @@ The output will be a valid, uniformly indented YAML file. Doing
 `cat {x,y}.yaml` might result in a single document if there is not
 document start marker at the beginning of `y.yaml`
 
-# Dumping
+## Dumping
 
-## Controls
+### Controls
 
 On your `YAML()` instance you can set attributes e.g with:
 
@@ -177,7 +177,11 @@ available attributes include:
     Set to `False` to enforce output of the form `\U0001f601` (ignored
     if `allow_unicode` is `False`)
 
-# Transparent usage of new and old API
+## Transparent usage of new and old API
+
+With 0.18 the entry functions for the  old API has been removed, so the
+following now only makes sense if you use the old API on a pinned
+old version or `ruamel.yaml`.
 
 If you have multiple packages depending on `ruyaml`, or install
 your utility together with other packages not under your control, then
@@ -236,7 +240,7 @@ if ruyaml.version_info < (0, 15):
     data = yml.load(inf)
     yml.dump(data, outf)
 --- |
-# Reason for API change
+## Reason for API change
 
 `ruyaml` inherited the way of doing things from `PyYAML`. In
 particular when calling the function `load()` or `dump()` temporary
