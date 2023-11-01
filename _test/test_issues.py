@@ -952,13 +952,13 @@ class TestIssues:
         from ruyaml.compat import StringIO
 
         yaml = YAML()
-        yaml.version = '1.1'
+        yaml.version = '1.1'  # type: ignore
         data = yaml.load('quote: I have seen things')
         buf = StringIO()
         yaml.dump(data, buf)
         assert buf.getvalue() == '%YAML 1.1\n---\nquote: I have seen things\n'
         yaml = YAML()
-        yaml.version = [1, 1]
+        yaml.version = [1, 1]  # type: ignore
         data = yaml.load('quote: I have seen things')
         buf = StringIO()
         yaml.dump(data, buf)

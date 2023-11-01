@@ -325,6 +325,7 @@ class Parser:
                 self.loader.tags = {}
             for k in self.tag_handles:
                 self.loader.tags[k] = self.tag_handles[k]
+                self.loader.doc_infos[-1].tags.append((k, self.tag_handles[k]))
         for key in self.DEFAULT_TAGS:
             if key not in self.tag_handles:
                 self.tag_handles[key] = self.DEFAULT_TAGS[key]
@@ -389,6 +390,10 @@ class Parser:
                 )
         elif self.scanner.check_token(TagToken):
             token = self.scanner.get_token()
+            try:
+                self.move_token_comment(token)
+            except NotImplementedError:
+                pass
             start_mark = tag_mark = token.start_mark
             end_mark = token.end_mark
             # tag = token.value
@@ -441,7 +446,6 @@ class Parser:
                 dimplicit = (False, True)
             else:
                 dimplicit = (False, False)
-            # nprint('se', token.value, token.comment)
             event = ScalarEvent(
                 anchor,
                 tag,
