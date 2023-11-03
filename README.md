@@ -19,10 +19,10 @@ secure the future of the library, mainly by having a pool of maintainers.
 `ruamel.yaml` is a YAML 1.2 loader/dumper package for Python.
 <table class="docutils">
   <tr>    <td>version</td>
-    <td>0.18.4</td>
+    <td>0.18.5</td>
   </tr>
   <tr>    <td>updated</td>
-    <td>2023-11-01</td>
+    <td>2023-11-03</td>
   </tr>
   <tr>    <td>documentation</td>
     <td><a href="https://yaml.readthedocs.io">https://yaml.readthedocs.io</a></td>
@@ -143,6 +143,10 @@ the API is stable enough to make the transition.
 [![image](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 
 # ChangeLog
+
+0.18.5 (2023-11-03):
+
+- there is some indication that dependent packages have been pinned to use specific (tested) and just install the latest even in Python versions that have end-of-life
 
 0.18.4 (2023-11-01):
 
