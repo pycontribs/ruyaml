@@ -1,4 +1,3 @@
-# coding: utf-8
 
 from __future__ import annotations
 
@@ -6,21 +5,24 @@ from __future__ import annotations
 
 import collections.abc
 import io
-import os
-import sys
-import traceback
 from abc import abstractmethod
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 # partially from package six by Benjamin Peterson
 
+from ruamel.yaml.docinfo import Version  # NOQA
 # fmt: off
-from typing import Any, Dict, Optional, List, Union, BinaryIO, IO, Text, Tuple  # NOQA
-from typing import Optional  # NOQA
-try:
-    from typing import SupportsIndex as SupportsIndex  # in order to reexport for mypy
-except ImportError:
-    SupportsIndex = int  # type: ignore
+if False:  # MYPY
+    from typing import Any, Dict, Optional, List, Union, BinaryIO, IO, Text, Tuple  # NOQA
+    from typing import Optional  # NOQA
+    try:
+        from typing import SupportsIndex as SupportsIndex  # in order to reexport for mypy
+    except ImportError:
+        SupportsIndex = int  # type: ignore
+
+    StreamType = Any
+    StreamTextType = StreamType
+    VersionType = Union[str , Tuple[int, int] , List[int] , Version , None]
 # fmt: on
 
 _DEFAULT_YAML_VERSION = (1, 2)
@@ -53,11 +55,6 @@ class ordereddict(OrderedDict):  # type: ignore
 StringIO = io.StringIO
 BytesIO = io.BytesIO
 
-StreamType = Any
-
-StreamTextType = StreamType
-from ruamel.yaml.docinfo import Version  # NOQA
-VersionType = Union[str , Tuple[int, int] , List[int] , Version , None]
 
 builtins_module = 'builtins'
 
@@ -119,6 +116,8 @@ class Nprint:
         self._file_name = file_name
 
     def __call__(self, *args: Any, **kw: Any) -> None:
+        import traceback
+
         if not bool(_debug):
             return
         out = sys.stdout if self._file_name is None else open(self._file_name, 'a')

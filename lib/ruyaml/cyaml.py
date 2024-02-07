@@ -1,4 +1,5 @@
-# coding: utf-8
+
+from __future__ import annotations
 
 from _ruyaml import CEmitter, CParser  # type: ignore
 
@@ -7,9 +8,8 @@ from ruyaml.representer import BaseRepresenter, Representer, SafeRepresenter
 from ruyaml.resolver import BaseResolver, Resolver
 
 
-from typing import Any, Union, Optional  # NOQA
-from ruyaml.compat import StreamTextType, StreamType, VersionType  # NOQA
-
+if False:  # MYPY
+    from typing import Any, Union, Optional  # NOQA
     from ruyaml.compat import StreamTextType, StreamType, VersionType  # NOQA
 
 __all__ = [

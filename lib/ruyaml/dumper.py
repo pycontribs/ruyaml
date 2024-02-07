@@ -1,4 +1,5 @@
-# coding: utf-8
+
+from __future__ import annotations
 
 from ruyaml.emitter import Emitter
 from ruyaml.representer import (
@@ -10,8 +11,9 @@ from ruyaml.representer import (
 from ruyaml.resolver import BaseResolver, Resolver, VersionedResolver
 from ruyaml.serializer import Serializer
 
-from typing import Any, Dict, List, Union, Optional  # NOQA
-from ruyaml.compat import StreamType, VersionType  # NOQA
+if False:  # MYPY
+    from typing import Any, Dict, List, Union, Optional  # NOQA
+    from ruyaml.compat import StreamType, VersionType  # NOQA
 
 __all__ = ['BaseDumper', 'SafeDumper', 'Dumper', 'RoundTripDumper']
 

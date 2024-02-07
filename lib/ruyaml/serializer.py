@@ -1,4 +1,5 @@
-# coding: utf-8
+
+from __future__ import annotations
 
 from ruyaml.compat import DBG_NODE, dbg, nprint, nprintf  # NOQA
 from ruyaml.error import YAMLError
@@ -17,8 +18,9 @@ from ruyaml.events import (
 from ruyaml.nodes import MappingNode, ScalarNode, SequenceNode
 from ruyaml.util import RegExp
 
-from typing import Any, Dict, Union, Text, Optional  # NOQA
-from ruyaml.compat import VersionType  # NOQA
+if False:  # MYPY
+    from typing import Any, Dict, Union, Text, Optional  # NOQA
+    from ruyaml.compat import VersionType  # NOQA
 
 __all__ = ['Serializer', 'SerializerError']
 

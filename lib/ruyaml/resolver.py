@@ -1,10 +1,12 @@
-# coding: utf-8
+
+from __future__ import annotations
 
 import re
 from typing import Any, Dict, List, Optional, Text, Union  # NOQA
 
-from typing import Any, Dict, List, Union, Text, Optional  # NOQA
-from ruyaml.compat import VersionType  # NOQA
+if False:  # MYPY
+    from typing import Any, Dict, List, Union, Text, Optional  # NOQA
+    from ruyaml.compat import VersionType  # NOQA
 
 from ruyaml.tag import Tag
 from ruyaml.compat import _DEFAULT_YAML_VERSION  # NOQA

@@ -35,6 +35,7 @@ secure the future of the library, mainly by having a pool of maintainers.
   </tr>
 </table>
 
+
 As announced, in 0.18.0, the old PyYAML functions have been deprecated.
 (`scan`, `parse`, `compose`, `load`, `emit`, `serialize`, `dump` and their variants
 (`_all`, `safe_`, `round_trip_`, etc)). If you only read this after your program has 
@@ -136,6 +137,7 @@ the API is stable enough to make the transition.
 </pre>
 
 
+
 [![image](https://readthedocs.org/projects/yaml/badge/?version=latest)](https://yaml.readthedocs.org/en/latest?badge=latest)[![image](https://bestpractices.coreinfrastructure.org/projects/1128/badge)](https://bestpractices.coreinfrastructure.org/projects/1128)
 [![image](https://sourceforge.net/p/ruamel-yaml/code/ci/default/tree/_doc/_static/license.svg?format=raw)](https://opensource.org/licenses/MIT)
 [![image](https://sourceforge.net/p/ruamel-yaml/code/ci/default/tree/_doc/_static/pypi.svg?format=raw)](https://pypi.org/project/ruamel.yaml/)
@@ -143,6 +145,9 @@ the API is stable enough to make the transition.
 [![image](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 
 # ChangeLog
+NEXT:<br>
+- fixed an issue with dataclass loading when the fields were collections (bug found as a result of a question by [FibroMyAlgebra](https://stackoverflow.com/users/6855070/fibromyalgebra) on [StackOverflow](https://stackoverflow.com/a/77485786/1307905))
+- fixed an issue loading dataclasses with `InitVar` fields when `from __future__ import annotations` was used to delay evaluation of typing.
 
 0.18.5 (2023-11-03):
 
@@ -405,6 +410,7 @@ Nicol](https://sourceforge.net/u/alasdairnicol/))
 scalar to start before the `#` column of a following comment.
 Effectively making the comment part of the scalar in the output.
 (reported by [Bence Nagy](https://sourceforge.net/u/underyx/))
+
 
 ------------------------------------------------------------------------
 

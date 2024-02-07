@@ -1,9 +1,11 @@
-# coding: utf-8
+
+from __future__ import annotations
 
 from ruyaml.anchor import Anchor
 
-from typing import Text, Any, Dict, List  # NOQA
-from ruyaml.compat import SupportsIndex
+if False:  # MYPY
+    from typing import Text, Any, Dict, List  # NOQA
+    from ruyaml.compat import SupportsIndex
 
 __all__ = [
     'ScalarString',

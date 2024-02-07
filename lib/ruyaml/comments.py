@@ -1,4 +1,5 @@
-# coding: utf-8
+
+from __future__ import annotations
 
 """
 stuff to deal with comments and formatting on dict/list/ordereddict/set
@@ -20,7 +21,8 @@ from ruyaml.tag import Tag
 
 from collections.abc import MutableSet, Sized, Set, Mapping
 
-from typing import Any, Dict, Optional, List, Union, Optional, Iterator  # NOQA
+if False:  # MYPY
+    from typing import Any, Dict, Optional, List, Union, Optional, Iterator  # NOQA
 
 # fmt: off
 __all__ = ['CommentedSeq', 'CommentedKeySeq',

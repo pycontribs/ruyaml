@@ -1,4 +1,3 @@
-# coding: utf-8
 
 from __future__ import annotations
 
@@ -32,10 +31,11 @@ from ruyaml.loader import Loader as UnsafeLoader  # NOQA
 from ruyaml.comments import CommentedMap, CommentedSeq, C_PRE
 from ruyaml.docinfo import DocInfo, version, Version
 
-from typing import List, Set, Dict, Tuple, Union, Any, Callable, Optional, Text, Type  # NOQA
-from types import TracebackType
-from ruyaml.compat import StreamType, StreamTextType, VersionType  # NOQA
-from pathlib import Path  # NOQA
+if False:  # MYPY
+    from typing import List, Set, Dict, Tuple, Union, Any, Callable, Optional, Text, Type  # NOQA
+    from ruyaml.compat import StreamType, StreamTextType, VersionType  # NOQA
+    from types import TracebackType
+    from pathlib import Path
 
 try:
     from _ruyaml import CEmitter, CParser  # type: ignore

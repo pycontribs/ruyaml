@@ -1,4 +1,5 @@
-# coding: utf-8
+
+from __future__ import annotations
 
 # This module contains abstractions for the input stream. You don't have to
 # looks further, there are no pretty code.
@@ -25,7 +26,8 @@ from typing import Any, Optional, Text, Tuple
 from ruyaml.error import YAMLError, FileMark, StringMark, YAMLStreamError
 from ruyaml.util import RegExp
 
-from typing import Any, Dict, Optional, List, Union, Text, Tuple, Optional  # NOQA
+if False:  # MYPY
+    from typing import Any, Dict, Optional, List, Union, Text, Tuple, Optional  # NOQA
 # from ruyaml.compat import StreamTextType  # NOQA
 
 __all__ = ['Reader', 'ReaderError']
