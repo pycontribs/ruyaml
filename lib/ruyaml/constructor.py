@@ -75,7 +75,7 @@ class BaseConstructor:
     yaml_constructors = {}  # type: Dict[Any, Any]
     yaml_multi_constructors = {}  # type: Dict[Any, Any]
 
-    def __init__(self, preserve_quotes=None, loader=None):
+    def __init__(self, preserve_quotes=None, loader=None, preserve_bools=None):
         # type: (Optional[bool], Any) -> None
         self.loader = loader
         if (
@@ -91,6 +91,7 @@ class BaseConstructor:
         self.state_generators = []  # type: List[Any]
         self.deep_construct = False
         self._preserve_quotes = preserve_quotes
+        self._preserve_bools = preserve_bools
         self.allow_duplicate_keys = False
 
     @property
@@ -1862,8 +1863,8 @@ class RoundTripConstructor(SafeConstructor):
     def construct_yaml_bool(self, node):
         # type: (Any) -> Any
         b = SafeConstructor.construct_yaml_bool(self, node)
-        if node.anchor:
-            return ScalarBoolean(b, anchor=node.anchor)
+        if node.anchor or self._preserve_bools:
+            return ScalarBoolean(b, anchor=node.anchor, orig_repr=node.value)
         return b
 
 

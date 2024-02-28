@@ -18,10 +18,15 @@ __all__ = ['ScalarBoolean']
 
 
 class ScalarBoolean(int):
+    yaml_orig_repr = None
+
     def __new__(cls, *args, **kw):
         # type: (Any, Any, Any) -> Any
         anchor = kw.pop('anchor', None)
+        orig_repr = kw.pop('orig_repr', None)
         b = int.__new__(cls, *args, **kw)
+        if orig_repr is not None:
+            b.yaml_orig_repr = orig_repr
         if anchor is not None:
             b.yaml_set_anchor(anchor, always_dump=True)
         return b

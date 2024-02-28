@@ -254,13 +254,16 @@ class SafeRepresenter(BaseRepresenter):
 
     def represent_bool(self, data, anchor=None):
         # type: (Any, Optional[Any]) -> Any
-        try:
-            value = self.dumper.boolean_representation[bool(data)]  # type: ignore
-        except AttributeError:
-            if data:
-                value = 'true'
-            else:
-                value = 'false'
+        if getattr(data, 'yaml_orig_repr', None) is not None:
+            value = data.yaml_orig_repr
+        else:
+            try:
+                value = self.dumper.boolean_representation[bool(data)]  # type: ignore
+            except AttributeError:
+                if data:
+                    value = 'true'
+                else:
+                    value = 'false'
         return self.represent_scalar('tag:yaml.org,2002:bool', value, anchor=anchor)
 
     def represent_int(self, data):
