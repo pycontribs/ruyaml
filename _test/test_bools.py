@@ -1,16 +1,17 @@
+import io
+from typing import Any, Dict, List, Text  # NOQA
 
 import pytest
-import io
-import ruyaml  # NOQA
-from .roundtrip import round_trip, dedent
 
+import ruyaml  # NOQA
 from ruyaml import YAML
-from ruyaml.util import load_yaml_guess_indent
-from ruyaml.scalarbool import ScalarBoolean
 from ruyaml.comments import CommentedSeq
-from ruyaml.representer import RoundTripRepresenter, ScalarNode
 from ruyaml.constructor import RoundTripConstructor
-from typing import Text, Any, Dict, List  # NOQA
+from ruyaml.representer import RoundTripRepresenter, ScalarNode
+from ruyaml.scalarbool import ScalarBoolean
+from ruyaml.util import load_yaml_guess_indent
+
+from .roundtrip import dedent, round_trip
 
 
 def round_trip_stabler(
@@ -31,7 +32,6 @@ def round_trip_stabler(
 
 
 class TestStability:
-
     def test_lowercase_boolean(self):
         round_trip(
             """

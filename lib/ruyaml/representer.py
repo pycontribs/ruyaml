@@ -825,7 +825,9 @@ class RoundTripRepresenter(SafeRepresenter):
         if not sequence.lc.data:
             return
         for lc_item in sequence.lc.data.values():
-            local_block_seq_indent = min(local_block_seq_indent, lc_item[1] - 2)  # Why '2'?
+            local_block_seq_indent = min(
+                local_block_seq_indent, lc_item[1] - 2
+            )  # Why '2'?
         node.block_seq_indent = local_block_seq_indent
 
     def merge_comments(self, node, comments):

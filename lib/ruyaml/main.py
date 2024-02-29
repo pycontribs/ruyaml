@@ -244,9 +244,11 @@ class YAML:
         # type: () -> Any
         attr = '_' + sys._getframe().f_code.co_name
         if not hasattr(self, attr):
-            cnst = self.Constructor(preserve_quotes=self.preserve_quotes,
-                                    preserve_bools=self.preserve_bools,
-                                    loader=self)
+            cnst = self.Constructor(
+                preserve_quotes=self.preserve_quotes,
+                preserve_bools=self.preserve_bools,
+                loader=self,
+            )
             cnst.allow_duplicate_keys = self.allow_duplicate_keys
             setattr(self, attr, cnst)
         return getattr(self, attr)

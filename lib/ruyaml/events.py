@@ -186,7 +186,7 @@ class ScalarEvent(NodeEvent):
 
 
 class SequenceStartEvent(CollectionStartEvent):
-    __slots__ = ('block_seq_indent', )
+    __slots__ = ('block_seq_indent',)
 
     def __init__(
         self,
@@ -201,7 +201,17 @@ class SequenceStartEvent(CollectionStartEvent):
         nr_items=None,
     ):
         # type: (Any, Any, Any, Any, Any, Any, Any, Any, Optional[int]) -> None
-        CollectionStartEvent.__init__(self, anchor, tag, implicit, start_mark, end_mark, flow_style, comment, nr_items)
+        CollectionStartEvent.__init__(
+            self,
+            anchor,
+            tag,
+            implicit,
+            start_mark,
+            end_mark,
+            flow_style,
+            comment,
+            nr_items,
+        )
         self.block_seq_indent = block_seq_indent
 
 

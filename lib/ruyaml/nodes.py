@@ -121,7 +121,7 @@ class CollectionNode(Node):
 
 
 class SequenceNode(CollectionNode):
-    __slots__ = ('block_seq_indent', )
+    __slots__ = ('block_seq_indent',)
     id = 'sequence'
 
     def __init__(
