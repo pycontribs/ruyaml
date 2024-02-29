@@ -254,13 +254,16 @@ class SafeRepresenter(BaseRepresenter):
 
     def represent_bool(self, data, anchor=None):
         # type: (Any, Optional[Any]) -> Any
-        try:
-            value = self.dumper.boolean_representation[bool(data)]  # type: ignore
-        except AttributeError:
-            if data:
-                value = 'true'
-            else:
-                value = 'false'
+        if getattr(data, 'yaml_orig_repr', None) is not None:
+            value = data.yaml_orig_repr
+        else:
+            try:
+                value = self.dumper.boolean_representation[bool(data)]  # type: ignore
+            except AttributeError:
+                if data:
+                    value = 'true'
+                else:
+                    value = 'false'
         return self.represent_scalar('tag:yaml.org,2002:bool', value, anchor=anchor)
 
     def represent_int(self, data):
@@ -812,7 +815,20 @@ class RoundTripRepresenter(SafeRepresenter):
                 node.flow_style = self.default_flow_style
             else:
                 node.flow_style = best_style
+        self.set_block_seq_indent(node, sequence)
         return node
+
+    def set_block_seq_indent(self, node, sequence):
+        local_block_seq_indent = 10000
+        if not isinstance(sequence, CommentedSeq):
+            return
+        if not sequence.lc.data:
+            return
+        for lc_item in sequence.lc.data.values():
+            local_block_seq_indent = min(
+                local_block_seq_indent, lc_item[1] - 2
+            )  # Why '2'?
+        node.block_seq_indent = local_block_seq_indent
 
     def merge_comments(self, node, comments):
         # type: (Any, Any) -> Any

@@ -121,8 +121,24 @@ class CollectionNode(Node):
 
 
 class SequenceNode(CollectionNode):
-    __slots__ = ()
+    __slots__ = ('block_seq_indent',)
     id = 'sequence'
+
+    def __init__(
+        self,
+        tag,
+        value,
+        start_mark=None,
+        end_mark=None,
+        flow_style=None,
+        comment=None,
+        anchor=None,
+    ):
+        # type: (Any, Any, Any, Any, Any, Any, Any) -> None
+        CollectionNode.__init__(
+            self, tag, value, start_mark, end_mark, flow_style, comment, anchor
+        )
+        self.block_seq_indent = None
 
 
 class MappingNode(CollectionNode):

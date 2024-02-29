@@ -168,6 +168,8 @@ class YAML:
         self.prefix_colon = None
         self.version = None
         self.preserve_quotes = None
+        self.preserve_bools = None
+        self.preserve_block_seqs_indents = None
         self.allow_duplicate_keys = False  # duplicate keys in map, set
         self.encoding = 'utf-8'
         self.explicit_start = None
@@ -242,7 +244,11 @@ class YAML:
         # type: () -> Any
         attr = '_' + sys._getframe().f_code.co_name
         if not hasattr(self, attr):
-            cnst = self.Constructor(preserve_quotes=self.preserve_quotes, loader=self)
+            cnst = self.Constructor(
+                preserve_quotes=self.preserve_quotes,
+                preserve_bools=self.preserve_bools,
+                loader=self,
+            )
             cnst.allow_duplicate_keys = self.allow_duplicate_keys
             setattr(self, attr, cnst)
         return getattr(self, attr)
@@ -270,6 +276,7 @@ class YAML:
                     line_break=self.line_break,
                     prefix_colon=self.prefix_colon,
                     brace_single_entry_mapping_in_flow_sequence=self.brace_single_entry_mapping_in_flow_sequence,  # NOQA
+                    preserve_block_seqs_indents=self.preserve_block_seqs_indents,
                     dumper=self,
                 )
                 setattr(self, attr, _emitter)
