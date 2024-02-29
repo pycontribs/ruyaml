@@ -169,6 +169,7 @@ class YAML:
         self.version = None
         self.preserve_quotes = None
         self.preserve_bools = None
+        self.preserve_block_seqs_indents = None
         self.allow_duplicate_keys = False  # duplicate keys in map, set
         self.encoding = 'utf-8'
         self.explicit_start = None
@@ -273,6 +274,7 @@ class YAML:
                     line_break=self.line_break,
                     prefix_colon=self.prefix_colon,
                     brace_single_entry_mapping_in_flow_sequence=self.brace_single_entry_mapping_in_flow_sequence,  # NOQA
+                    preserve_block_seqs_indents=self.preserve_block_seqs_indents,
                     dumper=self,
                 )
                 setattr(self, attr, _emitter)

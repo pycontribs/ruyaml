@@ -117,9 +117,10 @@ class Emitter:
         top_level_colon_align=None,
         prefix_colon=None,
         brace_single_entry_mapping_in_flow_sequence=None,
+        preserve_block_seqs_indents=None,
         dumper=None,
     ):
-        # type: (StreamType, Any, Optional[int], Optional[int], Optional[bool], Any, Optional[int], Optional[bool], Any, Optional[bool], Any) -> None  # NOQA
+        # type: (StreamType, Any, Optional[int], Optional[int], Optional[bool], Any, Optional[int], Optional[bool], Any, Optional[bool], Optional[bool], Any) -> None  # NOQA
         self.dumper = dumper
         if self.dumper is not None and getattr(self.dumper, '_emitter', None) is None:
             self.dumper._emitter = self
@@ -185,6 +186,8 @@ class Emitter:
         # set to False to get "\Uxxxxxxxx" for non-basic unicode like emojis
         self.unicode_supplementary = sys.maxunicode > 0xFFFF
         self.sequence_dash_offset = block_seq_indent if block_seq_indent else 0
+        self.preserve_block_seqs_indents = preserve_block_seqs_indents
+        self.current_local_block_seq_indent = None
         self.top_level_colon_align = top_level_colon_align
         self.best_sequence_indent = 2
         self.requested_indent = indent  # specific for literal zero indent
@@ -446,6 +449,7 @@ class Emitter:
                 self.expect_scalar()
             elif isinstance(self.event, SequenceStartEvent):
                 # nprint('@', self.indention, self.no_newline, self.column)
+                self.current_local_block_seq_indent = self.event.block_seq_indent
                 i2, n2 = self.indention, self.no_newline  # NOQA
                 if self.event.comment:
                     if self.event.flow_style is False and self.event.comment:
@@ -669,9 +673,12 @@ class Emitter:
                 self.write_pre_comment(self.event)
             nonl = self.no_newline if self.column == 0 else False
             self.write_indent()
-            ind = self.sequence_dash_offset  # if  len(self.indents) > 1 else 0
+            cur_dash_offset = self.sequence_dash_offset
+            if self.current_local_block_seq_indent and self.preserve_block_seqs_indents:
+                cur_dash_offset = self.current_local_block_seq_indent
+            ind = cur_dash_offset  # if  len(self.indents) > 1 else 0
             self.write_indicator(' ' * ind + '-', True, indention=True)
-            if nonl or self.sequence_dash_offset + 2 > self.best_sequence_indent:
+            if nonl or cur_dash_offset + 2 > self.best_sequence_indent:
                 self.no_newline = True
             self.states.append(self.expect_block_sequence_item)
             self.expect_node(sequence=True)

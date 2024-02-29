@@ -208,6 +208,7 @@ class Serializer:
                         implicit,
                         flow_style=node.flow_style,
                         comment=node.comment,
+                        block_seq_indent=node.block_seq_indent,
                     )
                 )
                 index = 0
