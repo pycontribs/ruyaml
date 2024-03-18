@@ -1234,9 +1234,9 @@ class Emitter:
         # Spaces followed by breaks, as well as special character are only
         # allowed for double quoted scalars.
         if special_characters:
-            allow_flow_plain = (
-                allow_block_plain
-            ) = allow_single_quoted = allow_block = False
+            allow_flow_plain = allow_block_plain = allow_single_quoted = allow_block = (
+                False
+            )
         elif space_break:
             allow_flow_plain = allow_block_plain = allow_single_quoted = False
             if not self.allow_space_break:
