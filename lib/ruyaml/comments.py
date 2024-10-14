@@ -1105,9 +1105,9 @@ class CommentedKeyMap(CommentedBase, Mapping):  # type: ignore
         except TypeError:
             raise
 
-    __delitem__ = (
-        __setitem__
-    ) = clear = pop = popitem = setdefault = update = raise_immutable
+    __delitem__ = __setitem__ = clear = pop = popitem = setdefault = update = (
+        raise_immutable
+    )
 
     # need to implement __getitem__, __iter__ and __len__
     def __getitem__(self, index):
