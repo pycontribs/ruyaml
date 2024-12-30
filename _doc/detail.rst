@@ -1,7 +1,3 @@
-version: 0.2
-text: md
-pdf: false
---- |
 # Details
 
 -   support for simple lists as mapping keys by transforming these to
@@ -32,27 +28,33 @@ pdf: false
 -   preservation of whitelines after block scalars. Contributed by Sam
     Thursfield.
 
-*In the following examples it is assumed you have done something like:*:
+*In the following examples it is assumed you have done something like:*
 
-    from ruyaml import YAML
-    yaml = YAML()
+```python
+from ruyaml import YAML
+yaml = YAML()
+```
 
 *if not explicitly specified.*
 
 ## Indentation of block sequences
 
 Although ruyaml doesn\'t preserve individual indentations of block
-sequence items, it does properly dump:
+sequence items, it does dump:
 
-    x:
-    - b: 1
-    - 2
+```yaml
+x:
+- b: 1
+- 2
+```
 
 back to:
 
-    x:
-    -   b: 1
-    -   2
+```yaml
+x:
+-   b: 1
+-   2
+```
 
 if you specify `yaml.indent(sequence=4)` (indentation is counted to the
 beginning of the sequence element).
@@ -60,9 +62,11 @@ beginning of the sequence element).
 PyYAML (and older versions of ruyaml) gives you non-indented
 scalars (when specifying default_flow_style=False):
 
-    x:
-    -   b: 1
-    - 2
+```yaml
+x:
+-   b: 1
+- 2
+```
 
 You can use `mapping=4` to also have the mappings values indented. The
 dump also observes an additional `offset=2` setting that can be used to
@@ -71,10 +75,12 @@ push the dash inwards, *within the space defined by* `sequence`.
 The above example with the often seen
 `yaml.indent(mapping=2, sequence=4, offset=2)` indentation:
 
-    x:
-      y:
-        - b: 1
-        - 2
+```yaml
+x:
+  y:
+    - b: 1
+    - 2
+```
 
 The defaults are as if you specified
 `yaml.indent(mapping=2, sequence=2, offset=0)`.
@@ -99,16 +105,20 @@ Here are some inconsistently indented YAML examples.
 
 `b` indented 3, `c` indented 4 positions:
 
-    a:
-       b:
-           c: 1
+```yaml
+a:
+   b:
+       c: 1
+```
 
 Top level sequence is indented 2 without offset, the other sequence 4
 (with offset 2):
 
-    - key:
-        - foo
-        - bar
+```yaml
+- key:
+    - foo
+    - bar
+```
 
 ### Indenting using `typ="safe"`
 
@@ -121,9 +131,11 @@ of the dumper if you want to have that sort of control.
 
 If you want your toplevel mappings to look like:
 
-    library version: 1
-    comment        : |
-        this is just a first try
+```yaml
+library version: 1
+comment        : |
+    this is just a first try
+```
 
 then set `yaml.top_level_colon_align = True` (and `yaml.indent = 4`).
 `True` causes calculation based on the longest key, but you can also
@@ -132,9 +144,11 @@ explicitly set a number.
 If you want an extra space between a mapping key and the colon specify
 `yaml.prefix_colon = ' '`:
 
-    - https://myurl/abc.tar.xz : 23445
-    #                         ^ extra space here
-    - https://myurl/def.tar.xz : 944
+```yaml
+- https://myurl/abc.tar.xz : 23445
+#      extra space here --^
+- https://myurl/def.tar.xz : 944
+```
 
 If you combine `prefix_colon` with `top_level_colon_align`, the top
 level mapping doesn\'t get the extra prefix. If you want that anyway,
@@ -157,8 +171,8 @@ The 1.2 version does **not** support:
 -   sexagesimals like `12:34:56`
 -   octals that start with 0 only: like `012` for number 10 (`0o12`
     **is** supported by YAML 1.2)
--   Unquoted Yes and On as alternatives for True and No and Off for
-    False.
+-   Unquoted `Yes` and `On` as alternatives for `True`, resp. `No` and `Off` for
+    `False`.
 
 If you cannot change your YAML files and you need them to load as 1.1
 you can load with `yaml.version = (1, 1)`, or the equivalent (version
@@ -187,6 +201,18 @@ pattern for this is:
 
     yaml = ruyaml.YAML()  # defaults to round-trip
 
+    inp = """\
+    abc:
+      - a     # comment 1
+    xyz:
+      a: 1    # comment 2
+      b: 2
+      c: 3
+      d: 4
+      e: 5
+      f: 6 # comment 3
+    """
+
     data = yaml.load(inp)
     data['abc'].append('b')
     data['abc'].yaml_add_eol_comment('comment 4', 1)  # takes column of comment 1
@@ -194,7 +220,21 @@ pattern for this is:
     data['xyz'].yaml_add_eol_comment('comment 6', 'e')  # takes column of comment 3
     data['xyz'].yaml_add_eol_comment('comment 7\n\n# that\'s all folks', 'd', column=20)
 
-Resulting in::
+    yaml.dump(data, sys.stdout)
+
+--- !stdout-yaml |
+Resulting in:
+--- !comment |
+  abc:
+  - a       # comment 1
+  - b       # comment 4
+  xyz:
+    a: 1    # comment 2
+    b: 2
+    c: 3    # comment 5
+    d: 4              # comment 7
+    e: 5 # comment 6
+    f: 6 # comment 3
 
 --- |
 If the comment doesn\'t start with \'#\', this will be added. The key is
@@ -207,7 +247,7 @@ Make sure that the added comment is correct, in the sense that when it
 contains newlines, the following is either an empty line or a line with
 only spaces, or the first non-space is a `#`.
 
-# Config file formats
+## Config file formats
 
 There are only a few configuration file formats that are easily readable
 and editable: JSON, INI/ConfigParser, YAML (XML is to cluttered to be
@@ -235,7 +275,7 @@ comments, it makes YAML a very good choice for configuration files that
 are human readable and editable while at the same time interpretable and
 modifiable by a program.
 
-# Extending
+## Extending
 
 There are normally six files involved when extending the roundtrip
 capabilities: the reader, parser, composer and constructor to go from
@@ -248,24 +288,25 @@ alternative), that should behave like the original, but on the way from
 Python to YAML generates the original (or at least something much
 closer).
 
-# Smartening
+## Smartening
 
 When you use round-tripping, then the complex data you get are already
 subclasses of the built-in types. So you can patch in extra methods or
 override existing ones. Some methods are already included and you can
 do:
 
-    yaml_str = """\
-    a:
-    - b:
-      c: 42
-    - d:
-        f: 196
-      e:
-        g: 3.14
-    """
+```python
+yaml_str = """\
+a:
+- b:
+  c: 42
+- d:
+    f: 196
+  e:
+    g: 3.14
+"""
 
+data = yaml.load(yaml_str)
 
-    data = yaml.load(yaml_str)
-
-    assert data.mlget(['a', 1, 'd', 'f'], list_ok=True) == 196
+assert data.mlget(['a', 1, 'd', 'f'], list_ok=True) == 196
+```

@@ -94,6 +94,7 @@ class Composer:
         return document
 
     def compose_document(self: Any) -> Any:
+        self.anchors = {}
         # Drop the DOCUMENT-START event.
         self.parser.get_event()
 
@@ -103,7 +104,6 @@ class Composer:
         # Drop the DOCUMENT-END event.
         self.parser.get_event()
 
-        self.anchors = {}
         return node
 
     def return_alias(self, a: Any) -> Any:

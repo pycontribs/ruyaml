@@ -1,5 +1,5 @@
 version: 0.2
-text: md
+text: smd
 pdf: false
 --- |
 # Overview
@@ -8,7 +8,7 @@ pdf: false
 derivative of Kirill Simonov\'s [PyYAML
 3.11](https://bitbucket.org/xi/pyyaml).
 
-`ruyaml` supports [YAML 1.2]() and has round-trip loaders and
+`ruyaml` supports [YAML 1.2] and has round-trip loaders and
 dumpers. A round-trip is a YAML load-modify-save sequence and
 ruyaml tries to preserve, among others:
 
@@ -46,3 +46,8 @@ have been fixed in `ruyaml`
 --- !inc-raw |
 links.rydinc
 
+--- |
+
+----------
+
+This documentation was generate using [ryd](https://pypi.org/project/ryd/) and [zine](https://zine-ssg.io/).

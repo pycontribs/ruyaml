@@ -1,15 +1,3 @@
-version: 0.2
-text: md
-pdf: false
---- !python-pre |
-import sys
-from io import StringIO
-from ruyaml import YAML
-yaml=YAML()
-s = StringIO()
-doc = "a: 1"
-data = dict(a=1)
---- |
 # Basic Usage
 ## Load and dump  
 
@@ -23,8 +11,8 @@ from ruyaml import YAML
     yaml.load(doc)
 
 --- |
-in this `doc` can be a file pointer (i.e. an object that has the
-`.read()` method, a string or a `pathlib.Path()`. `typ='safe'`
+in this, `doc` can be a file pointer (i.e. an object that has the
+`.read()` method, a string, or a `pathlib.Path()` instance. `typ='safe'`
 accomplishes the same as what `safe_load()` did before: loading of a
 document without resolving unknown tags. Provide `pure=True` to enforce
 using the pure Python implementation, otherwise the faster C libraries
@@ -32,7 +20,7 @@ will be used when possible/available but these behave slightly different
 (and sometimes more like a YAML 1.1 loader).
 
 Dumping works in the same way:
---- !code |
+--- !python-code |
 from ruyaml import YAML
 
 yaml=YAML()

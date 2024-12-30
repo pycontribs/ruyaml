@@ -1051,13 +1051,11 @@ class RoundTripConstructor(SafeConstructor):
             underscore = None
         value_s = value_su.replace('_', "")
         sign = +1
-        if value_s[0] == '-':
-            sign = -1
         if value_s[0] in '+-':
+            if value_s[0] == '-':
+                sign = -1
             value_s = value_s[1:]
-        if value_s == '0':
-            return 0
-        elif value_s.startswith('0b'):
+        if value_s.startswith('0b'):
             if self.resolver.processing_version > (1, 1) and value_s[2] == '0':
                 width = len(value_s[2:])
             if underscore is not None:
@@ -1120,7 +1118,10 @@ class RoundTripConstructor(SafeConstructor):
                 # cannot have a leading underscore
                 underscore[2] = len(value_su) > 1 and value_su[-1] == '_'
             return ScalarInt(
-                sign * int(value_s), width=len(value_s), underscore=underscore
+                sign * int(value_s),
+                width=len(value_s),
+                underscore=underscore,
+                anchor=node.anchor,
             )
         elif underscore:
             # cannot have a leading underscore
@@ -1257,8 +1258,7 @@ class RoundTripConstructor(SafeConstructor):
     def flatten_mapping(self, node: Any) -> Any:
         """
         This implements the merge key feature http://yaml.org/type/merge.html
-        by inserting keys from the merge dict/list of dicts if not yet
-        available in this node
+        by referencing the merge dict/list of dicts
         """
 
         def constructed(value_node: Any) -> Any:

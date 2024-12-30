@@ -1,5 +1,5 @@
 version: 0.2
-text: md
+text: smd
 pdf: false
 --- |
 # Installing
@@ -14,7 +14,7 @@ probably best to do:
 in your environment (`virtualenv`, (Docker) container, etc) before
 installing `ruyaml`.
 
-`ruyaml` itself should be installed from [PyPI]() using:
+`ruyaml` itself should be installed from [PyPI] using:
 
     pip install ruyaml
 
