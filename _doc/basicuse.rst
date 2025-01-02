@@ -1,5 +1,5 @@
 # Basic Usage
-## Load and dump  
+## Load and dump
 
 You load a YAML document using:
 --- !python |
