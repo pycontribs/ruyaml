@@ -1099,7 +1099,11 @@ class RoundTripConstructor(SafeConstructor):
                 underscore=underscore,
                 anchor=node.anchor,
             )
-        elif self.resolver.processing_version != (1, 2) and value_s[0] == '0':
+        elif (
+            self.resolver.processing_version != (1, 2)
+            and len(value_s) > 1
+            and value_s[0] == '0'
+        ):
             return OctalInt(
                 sign * int(value_s, 8), width=width, underscore=underscore, anchor=node.anchor,
             )
