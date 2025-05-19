@@ -60,3 +60,6 @@ class TimeStamp(datetime.datetime):
         )
         ts._yaml = copy.deepcopy(self._yaml)
         return ts
+
+    def __str__(self):
+        return self.isoformat('T' if self._yaml['t'] else ' ')

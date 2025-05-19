@@ -208,6 +208,8 @@ class YAML:
         try:
             return self._scanner  # type: ignore
         except AttributeError:
+            if self.Scanner is None:
+                raise
             self._scanner = self.Scanner(loader=self)
             return self._scanner
 
@@ -509,7 +511,7 @@ class YAML:
             else:
                 # combined C level reader>scanner>parser
                 # does some calls to the resolver, e.g. BaseResolver.descend_resolver
-                # if you just initialise the CParser, to much of resolver.py
+                # if you just initialise the CParser, too much of resolver.py
                 # is actually used
                 rslvr = self.Resolver
                 # if rslvr is ruyaml.resolver.VersionedResolver:
@@ -531,6 +533,7 @@ class YAML:
 
                 self._stream = stream
                 loader = XLoader(stream)
+                self._scanner = loader
                 return loader, loader
         return self.constructor, self.parser
 
