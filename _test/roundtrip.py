@@ -33,7 +33,7 @@ def round_trip_load(
 ) -> Any:
     import ruyaml  # NOQA
 
-    dinp = dedent(inp)
+    dinp = dedent(inp).replace('<SPC>', ' ')  # to allow for end-of-line spaces
     yaml = ruyaml.YAML()
     yaml.preserve_quotes = preserve_quotes
     yaml.version = version
@@ -45,7 +45,7 @@ def round_trip_load_all(
 ) -> Any:
     import ruyaml  # NOQA
 
-    dinp = dedent(inp)
+    dinp = dedent(inp).replace('<SPC>', ' ')  # to allow for end-of-line spaces
     yaml = ruyaml.YAML()
     yaml.preserve_quotes = preserve_quotes
     yaml.version = version
@@ -150,7 +150,7 @@ def round_trip(
     """
     if outp is None:
         outp = inp
-    doutp = dedent(outp)
+    doutp = dedent(outp).replace('<SPC>', ' ')  # allow for end-of-line spaces
     if extra is not None:
         doutp += extra
     data = round_trip_load(inp, preserve_quotes=preserve_quotes)
