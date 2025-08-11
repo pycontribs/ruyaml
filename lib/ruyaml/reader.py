@@ -158,7 +158,7 @@ class Reader:
             ):
                 self.line += 1
                 self.column = 0
-            elif ch != '\uFEFF':
+            elif ch != '\ufeff':
                 self.column += 1
             length -= 1
 
@@ -173,7 +173,7 @@ class Reader:
             if ch == '\n' or (ch == '\r' and self.buffer[self.pointer] != '\n'):
                 self.line += 1
                 self.column = 0
-            elif ch != '\uFEFF':
+            elif ch != '\ufeff':
                 self.column += 1
             length -= 1
 
@@ -203,14 +203,14 @@ class Reader:
         self.update(1)
 
     NON_PRINTABLE = RegExp(
-        '[^\x09\x0A\x0D\x20-\x7E\x85'
-        '\xA0-\uD7FF'
-        '\uE000-\uFFFD'
-        '\U00010000-\U0010FFFF'
+        '[^\x09\x0a\x0d\x20-\x7e\x85'
+        '\xa0-\ud7ff'
+        '\ue000-\ufffd'
+        '\U00010000-\U0010ffff'
         ']'
     )
 
-    _printable_ascii = ('\x09\x0A\x0D' + "".join(map(chr, range(0x20, 0x7F)))).encode(
+    _printable_ascii = ('\x09\x0a\x0d' + "".join(map(chr, range(0x20, 0x7F)))).encode(
         'ascii'
     )
 
