@@ -351,28 +351,32 @@ ruyaml.canonical_scan = canonical_scan
 
 
 def canonical_parse(stream):
-    return ruyaml.parse(stream, Loader=CanonicalLoader)
+    yaml = ruyaml.YAML()
+    return yaml.parse(stream, Loader=CanonicalLoader)
 
 
 ruyaml.canonical_parse = canonical_parse
 
 
 def canonical_compose(stream):
-    return ruyaml.compose(stream, Loader=CanonicalLoader)
+    yaml = ruyaml.YAML()
+    return yaml.compose(stream, Loader=CanonicalLoader)
 
 
 ruyaml.canonical_compose = canonical_compose
 
 
 def canonical_compose_all(stream):
-    return ruyaml.compose_all(stream, Loader=CanonicalLoader)
+    yaml = ruyaml.YAML()
+    return yaml.compose_all(stream, Loader=CanonicalLoader)
 
 
 ruyaml.canonical_compose_all = canonical_compose_all
 
 
 def canonical_load(stream):
-    return ruyaml.load(stream, Loader=CanonicalLoader)
+    yaml = ruyaml.YAML()
+    return yaml.load(stream, Loader=CanonicalLoader)
 
 
 ruyaml.canonical_load = canonical_load

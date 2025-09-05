@@ -4,35 +4,37 @@
 testing of YAML.register_class and @yaml_object
 """
 
-from .roundtrip import YAML
+import pytest  # type: ignore  # NOQA  
+from typing import Any
+from ruyaml.comments import TaggedScalar, CommentedMap  # NOQA
+
+from roundtrip import YAML  # type: ignore
 
 
 class User0:
-    def __init__(self, name, age):
+    def __init__(self, name: str, age: int) -> None:
         self.name = name
         self.age = age
 
 
-class User1(object):
+class User1:
     yaml_tag = '!user'
 
-    def __init__(self, name, age):
+    def __init__(self, name: str, age: int) -> None:
         self.name = name
         self.age = age
 
     @classmethod
-    def to_yaml(cls, representer, node):
-        return representer.represent_scalar(
-            cls.yaml_tag, '{.name}-{.age}'.format(node, node)
-        )
+    def to_yaml(cls, representer: Any, node: Any) -> Any:
+        return representer.represent_scalar(cls.yaml_tag, '{.name}-{.age}'.format(node, node))
 
     @classmethod
-    def from_yaml(cls, constructor, node):
+    def from_yaml(cls, constructor: Any, node: Any) -> Any:
         return cls(*node.value.split('-'))
 
 
 class TestRegisterClass:
-    def test_register_0_rt(self):
+    def test_register_0_rt(self) -> None:
         yaml = YAML()
         yaml.register_class(User0)
         ys = """
@@ -43,7 +45,7 @@ class TestRegisterClass:
         d = yaml.load(ys)
         yaml.dump(d, compare=ys, unordered_lines=True)
 
-    def test_register_0_safe(self):
+    def test_register_0_safe(self) -> None:
         # default_flow_style = None
         yaml = YAML(typ='safe')
         yaml.register_class(User0)
@@ -53,9 +55,10 @@ class TestRegisterClass:
         d = yaml.load(ys)
         yaml.dump(d, compare=ys)
 
-    def test_register_0_unsafe(self):
+    def test_register_0_unsafe(self) -> None:
         # default_flow_style = None
-        yaml = YAML(typ='unsafe')
+        with pytest.warns(PendingDeprecationWarning):
+            yaml = YAML(typ='unsafe')
         yaml.register_class(User0)
         ys = """
         - !User0 {age: 18, name: Anthon}
@@ -63,7 +66,7 @@ class TestRegisterClass:
         d = yaml.load(ys)
         yaml.dump(d, compare=ys)
 
-    def test_register_1_rt(self):
+    def test_register_1_rt(self) -> None:
         yaml = YAML()
         yaml.register_class(User1)
         ys = """
@@ -72,7 +75,7 @@ class TestRegisterClass:
         d = yaml.load(ys)
         yaml.dump(d, compare=ys)
 
-    def test_register_1_safe(self):
+    def test_register_1_safe(self) -> None:
         yaml = YAML(typ='safe')
         yaml.register_class(User1)
         ys = """
@@ -81,8 +84,9 @@ class TestRegisterClass:
         d = yaml.load(ys)
         yaml.dump(d, compare=ys)
 
-    def test_register_1_unsafe(self):
-        yaml = YAML(typ='unsafe')
+    def test_register_1_unsafe(self) -> None:
+        with pytest.warns(PendingDeprecationWarning):
+            yaml = YAML(typ='unsafe')
         yaml.register_class(User1)
         ys = """
         [!user Anthon-18]
@@ -92,14 +96,14 @@ class TestRegisterClass:
 
 
 class TestDecorator:
-    def test_decorator_implicit(self):
+    def test_decorator_implicit(self) -> None:
         from ruyaml import yaml_object
 
         yml = YAML()
 
         @yaml_object(yml)
         class User2:
-            def __init__(self, name, age):
+            def __init__(self, name: str, age: int) -> None:
                 self.name = name
                 self.age = age
 
@@ -111,27 +115,27 @@ class TestDecorator:
         d = yml.load(ys)
         yml.dump(d, compare=ys, unordered_lines=True)
 
-    def test_decorator_explicit(self):
+    def test_decorator_explicit(self) -> None:
         from ruyaml import yaml_object
 
         yml = YAML()
 
         @yaml_object(yml)
-        class User3(object):
+        class User3:
             yaml_tag = '!USER'
 
-            def __init__(self, name, age):
+            def __init__(self, name: str, age: int) -> None:
                 self.name = name
                 self.age = age
 
             @classmethod
-            def to_yaml(cls, representer, node):
+            def to_yaml(cls, representer: Any, node: Any) -> Any:
                 return representer.represent_scalar(
-                    cls.yaml_tag, '{.name}-{.age}'.format(node, node)
+                    cls.yaml_tag, '{.name}-{.age}'.format(node, node),
                 )
 
             @classmethod
-            def from_yaml(cls, constructor, node):
+            def from_yaml(cls, constructor: Any, node: Any) -> Any:
                 return cls(*node.value.split('-'))
 
         ys = """

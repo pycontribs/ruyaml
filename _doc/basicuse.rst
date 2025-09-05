@@ -1,55 +1,66 @@
-***********
-Basic Usage
-***********
+# Basic Usage
+## Load and dump
 
-You load a YAML document using::
+You load a YAML document using:
+--- !python |
+from ruyaml import YAML
 
     from ruyaml import YAML
 
     yaml=YAML(typ='safe')  # default, if not specfied, is 'rt' (round-trip)
     yaml.load(doc)
 
-in this ``doc`` can be a file pointer (i.e. an object that has the
-``.read()`` method, a string or a ``pathlib.Path()``. ``typ='safe'``
-accomplishes the same as what ``safe_load()`` did before: loading of a
-document without resolving unknown tags. Provide  ``pure=True`` to
-enforce using the pure Python implementation, otherwise the faster C libraries will be used
-when possible/available but these behave slightly different (and sometimes more like a YAML 1.1 loader).
+--- |
+in this, `doc` can be a file pointer (i.e. an object that has the
+`.read()` method, a string, or a `pathlib.Path()` instance. `typ='safe'`
+accomplishes the same as what `safe_load()` did before: loading of a
+document without resolving unknown tags. Provide `pure=True` to enforce
+using the pure Python implementation, otherwise the faster C libraries
+will be used when possible/available but these behave slightly different
+(and sometimes more like a YAML 1.1 loader).
 
-Dumping works in the same way::
+Dumping works in the same way:
+--- !python-code |
+from ruyaml import YAML
 
-    from ruyaml import YAML
+yaml=YAML()
+yaml.default_flow_style = False
+yaml.dump({'a': [1, 2]}, s)
+--- |
+in this `s` can be a file pointer (i.e. an object that has the
+`.write()` method, or a `pathlib.Path()`. If you want to display your
+output, just stream to `sys.stdout`.
 
-    yaml=YAML()
-    yaml.default_flow_style = False
-    yaml.dump({'a': [1, 2]}, s)
-
-in this ``s`` can be a file pointer (i.e. an object that has the
-``.write()`` method, or a ``pathlib.Path()``. If you want to display
-your output, just stream to ``sys.stdout``.
-
-If you need to transform a string representation of the output provide
-a function that takes a string as input and returns one::
-
-    def tr(s):
-        return s.replace('\n', '<\n')  # such output is not valid YAML!
+If you need to transform a string representation of the output provide a
+function that takes a string as input and returns one:
+--- !python |
+def tr(s):
+    return s.replace('\n', '<\n')  # such output is not valid YAML!
 
     yaml.dump(data, sys.stdout, transform=tr)
 
-More examples
-=============
+--- |
+## More examples
 
 Using the C based SafeLoader (at this time is inherited from
-libyaml/PyYAML and e.g. loads ``0o52`` as well as ``052`` load as integer ``42``)::
-
-    from ruyaml import YAML
+libyaml/PyYAML and e.g. loads `0o52` as well as `052` as integer
+`42`):
+--- !python |
+   from ruyaml import YAML
 
     yaml=YAML(typ="safe")
     yaml.load("""a:\n  b: 2\n  c: 3\n""")
 
-Using the Python based SafeLoader (YAML 1.2 support, ``052`` loads as ``52``)::
+--- |
+Using the Python based SafeLoader (YAML 1.2 support, `052` loads as
+`52`):
+--- !python |
 
-    from ruyaml import YAML
+   yaml=YAML(typ="safe", pure=True)
+   yaml.load("""a:\n  b: 2\n  c: 3\n""")
 
-    yaml=YAML(typ="safe", pure=True)
-    yaml.load("""a:\n  b: 2\n  c: 3\n""")
+--- |
+
+Restrictions when using the C based SafeLoader/SafeDumper:
+
+- yaml.indent will set the same value for mappings and sequences. (Issue 471)

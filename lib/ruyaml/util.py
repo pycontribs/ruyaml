@@ -1,8 +1,10 @@
-# coding: utf-8
+
 
 """
 some helper functions that might be generally useful
 """
+
+from __future__ import annotations
 
 import datetime
 import re
@@ -10,8 +12,7 @@ from functools import partial
 from typing import Any
 
 if False:  # MYPY
-    from typing import Any, Dict, List, Optional, Text  # NOQA
-
+    from typing import Any, Dict, Optional, List, Text, Callable, Union  # NOQA
     from .compat import StreamTextType  # NOQA
 
 
@@ -26,25 +27,21 @@ class LazyEval:
     return value (or, prior to evaluation, func and arguments), in its closure.
     """
 
-    def __init__(self, func, *args, **kwargs):
-        # type: (Any, Any, Any) -> None
-        def lazy_self():
-            # type: () -> Any
+    def __init__(self, func: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
+        def lazy_self() -> Any:
             return_value = func(*args, **kwargs)
             object.__setattr__(self, 'lazy_self', lambda: return_value)
             return return_value
 
         object.__setattr__(self, 'lazy_self', lazy_self)
 
-    def __getattribute__(self, name):
-        # type: (Any) -> Any
+    def __getattribute__(self, name: str) -> Any:
         lazy_self = object.__getattribute__(self, 'lazy_self')
         if name == 'lazy_self':
             return lazy_self
         return getattr(lazy_self(), name)
 
-    def __setattr__(self, name, value):
-        # type: (Any, Any) -> None
+    def __setattr__(self, name: str, value: Any) -> None:
         setattr(self.lazy_self(), name, value)
 
 
@@ -66,34 +63,58 @@ timestamp_regexp = RegExp(
 
 
 def create_timestamp(
-    year, month, day, t, hour, minute, second, fraction, tz, tz_sign, tz_hour, tz_minute
-):
+    year: Any,
+    month: Any,
+    day: Any,
+    t: Any,
+    hour: Any,
+    minute: Any,
+    second: Any,
+    fraction: Any,
+    tz: Any,
+    tz_sign: Any,
+    tz_hour: Any,
+    tz_minute: Any,
+) -> Union[datetime.datetime, datetime.date]:
+    # create a timestamp from matching against timestamp_regexp
+    MAX_FRAC = 999999
     year = int(year)
     month = int(month)
     day = int(day)
-    if not hour:
+    if hour is None:
         return datetime.date(year, month, day)
     hour = int(hour)
     minute = int(minute)
     second = int(second)
+    frac = 0
     if fraction:
-        frac = 0
         frac_s = fraction[:6]
         while len(frac_s) < 6:
             frac_s += '0'
         frac = int(frac_s)
         if len(fraction) > 6 and int(fraction[6]) > 4:
             frac += 1
-        fraction = frac
+        if frac > MAX_FRAC:
+            fraction = 0
+        else:
+            fraction = frac
     else:
         fraction = 0
+    tzinfo = None
     delta = None
     if tz_sign:
         tz_hour = int(tz_hour)
         tz_minute = int(tz_minute) if tz_minute else 0
-        delta = datetime.timedelta(hours=tz_hour, minutes=tz_minute)
+        td = datetime.timedelta(
+            hours=tz_hour, minutes=tz_minute,
+        )
         if tz_sign == '-':
-            delta = -delta
+            td = -td
+        tzinfo = datetime.timezone(td, name=tz)
+    elif tz == 'Z':
+        tzinfo = datetime.timezone(datetime.timedelta(hours=0), name=tz)
+    if frac > MAX_FRAC:
+        delta = -datetime.timedelta(seconds=1)
     # should do something else instead (or hook this up to the preceding if statement
     # in reverse
     #  if delta is None:
@@ -102,7 +123,7 @@ def create_timestamp(
     #                           datetime.timezone.utc)
     # the above is not good enough though, should provide tzinfo. In Python3 that is easily
     # doable drop that kind of support for Python2 as it has not native tzinfo
-    data = datetime.datetime(year, month, day, hour, minute, second, fraction)
+    data = datetime.datetime(year, month, day, hour, minute, second, fraction, tzinfo)
     if delta:
         data -= delta
     return data
@@ -113,8 +134,7 @@ def create_timestamp(
 # if you use this in your code, I suggest adding a test in your test suite
 # that check this routines output against a known piece of your YAML
 # before upgrades to this code break your round-tripped YAML
-def load_yaml_guess_indent(stream):
-    # type: (StreamTextType) -> Any
+def load_yaml_guess_indent(stream: StreamTextType, **kw: Any) -> Any:
     """guess the indent and block sequence indent of yaml stream/string
 
     returns round_trip_loaded stream, indent level, block sequence indent
@@ -125,15 +145,14 @@ def load_yaml_guess_indent(stream):
     from .main import YAML
 
     # load a YAML document, guess the indentation, if you use TABs you are on your own
-    def leading_spaces(line):
-        # type: (Any) -> int
+    def leading_spaces(line: Any) -> int:
         idx = 0
         while idx < len(line) and line[idx] == ' ':
             idx += 1
         return idx
 
     if isinstance(stream, str):
-        yaml_str = stream  # type: Any
+        yaml_str: Any = stream
     elif isinstance(stream, bytes):
         # most likely, but the Reader checks BOM for this
         yaml_str = stream.decode('utf-8')
@@ -173,12 +192,11 @@ def load_yaml_guess_indent(stream):
         prev_line_key_only = None
     if indent is None and map_indent is not None:
         indent = map_indent
-    yaml = YAML()
-    return yaml.load(yaml_str), indent, block_seq_indent  # type: ignore
+    yaml = YAML() if 'yaml' not in kw else kw.pop('yaml')
+    return yaml.load(yaml_str, **kw), indent, block_seq_indent
 
 
-def configobj_walker(cfg):
-    # type: (Any) -> Any
+def configobj_walker(cfg: Any) -> Any:
     """
     walks over a ConfigObj (INI file with comments) generating
     corresponding YAML output (including comments
@@ -197,8 +215,7 @@ def configobj_walker(cfg):
             yield c
 
 
-def _walk_section(s, level=0):
-    # type: (Any, int) -> Any
+def _walk_section(s: Any, level: int = 0) -> Any:
     from configobj import Section
 
     assert isinstance(s, Section)
@@ -212,7 +229,7 @@ def _walk_section(s, level=0):
             x = '|\n' + i + x.strip().replace('\n', '\n' + i)
         elif ':' in x:
             x = "'" + x.replace("'", "''") + "'"
-        line = '{0}{1}: {2}'.format(indent, name, x)
+        line = f'{indent}{name}: {x}'
         c = s.inline_comments[name]
         if c:
             line += ' ' + c
@@ -220,7 +237,7 @@ def _walk_section(s, level=0):
     for name in s.sections:
         for c in s.comments[name]:
             yield indent + c.strip()
-        line = '{0}{1}:'.format(indent, name)
+        line = f'{indent}{name}:'
         c = s.inline_comments[name]
         if c:
             line += ' ' + c

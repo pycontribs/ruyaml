@@ -1,20 +1,21 @@
 # coding: utf-8
 
-import pytest  # NOQA
+import pytest  # type: ignore # NOQA
+from typing import Any
 
-from .roundtrip import YAML, round_trip, round_trip_load
+from roundtrip import round_trip, round_trip_load, YAML  # type: ignore
 
 
-def register_xxx(**kw):
-    import ruyaml as yaml
+def register_xxx(**kw: Any) -> None:
+    from ruamel import yaml
 
     class XXX(yaml.comments.CommentedMap):
         @staticmethod
-        def yaml_dump(dumper, data):
+        def yaml_dump(dumper: Any, data: Any) -> Any:
             return dumper.represent_mapping('!xxx', data)
 
         @classmethod
-        def yaml_load(cls, constructor, node):
+        def yaml_load(cls, constructor: Any, node: Any) -> Any:
             data = cls()
             yield data
             constructor.construct_mapping(node, data)
@@ -24,59 +25,95 @@ def register_xxx(**kw):
 
 
 class TestIndentFailures:
-    def test_tag(self):
+    def test_tag(self) -> None:
         round_trip(
             """\
         !!python/object:__main__.Developer
         name: Anthon
         location: Germany
         language: python
-        """
+        """,
         )
 
-    def test_full_tag(self):
+    def test_full_tag(self) -> None:
         round_trip(
             """\
         !!tag:yaml.org,2002:python/object:__main__.Developer
         name: Anthon
         location: Germany
         language: python
-        """
+        """,
         )
 
-    def test_standard_tag(self):
+    def test_standard_tag(self) -> None:
         round_trip(
             """\
         !!tag:yaml.org,2002:python/object:map
         name: Anthon
         location: Germany
         language: python
-        """
+        """,
         )
 
-    def test_Y1(self):
+    def test_Y1(self) -> None:
         round_trip(
             """\
         !yyy
         name: Anthon
         location: Germany
         language: python
-        """
+        """,
         )
 
-    def test_Y2(self):
+    def test_Y2(self) -> None:
         round_trip(
             """\
         !!yyy
         name: Anthon
         location: Germany
         language: python
-        """
+        """,
         )
+
+    # @pytest.mark.xfail(strict=True)  # type: ignore
+    def test_spec_6_26_tag_shorthands(self) -> None:
+        from ruamel.yaml import YAML
+        from io import StringIO
+        from textwrap import dedent
+
+        inp = dedent(
+            """\
+        %TAG !e! tag:example.com,2000:app/
+        ---
+        - !local foo
+        - !!str bar
+        - !e!tag%21 baz
+        """,
+        )
+        yaml = YAML()
+        data = yaml.load(inp)
+        buf = StringIO()
+        yaml.dump(data, buf)
+        print('buf:\n', buf.getvalue(), sep='')
+        assert buf.getvalue() == inp
+
+
+class TestTagGeneral:
+    def test_unknow_handle(self) -> None:
+        from ruamel.yaml.parser import ParserError
+
+        with pytest.raises(ParserError):
+            round_trip(
+                """\
+            %TAG !x! tag:example.com,2000:app/
+            ---
+            - !y!tag%21 baz
+            """,
+            )
 
 
 class TestRoundTripCustom:
-    def test_X1(self):
+    def test_X1(self) -> None:
         register_xxx()
         round_trip(
             """\
@@ -84,11 +121,11 @@ class TestRoundTripCustom:
         name: Anthon
         location: Germany
         language: python
-        """
+        """,
         )
 
-    @pytest.mark.xfail(strict=True)
-    def test_X_pre_tag_comment(self):
+    @pytest.mark.xfail(strict=True)  # type: ignore
+    def test_X_pre_tag_comment(self) -> None:
         register_xxx()
         round_trip(
             """\
@@ -98,11 +135,11 @@ class TestRoundTripCustom:
           name: Anthon
           location: Germany
           language: python
-        """
+        """,
         )
 
-    @pytest.mark.xfail(strict=True)
-    def test_X_post_tag_comment(self):
+    @pytest.mark.xfail(strict=True)  # type: ignore
+    def test_X_post_tag_comment(self) -> None:
         register_xxx()
         round_trip(
             """\
@@ -111,10 +148,10 @@ class TestRoundTripCustom:
           name: Anthon
           location: Germany
           language: python
-        """
+        """,
         )
 
-    def test_scalar_00(self):
+    def test_scalar_00(self) -> None:
         # https://stackoverflow.com/a/45967047/1307905
         round_trip(
             """\
@@ -123,49 +160,60 @@ class TestRoundTripCustom:
             Value: !Ref: vpc    # first tag
             Export:
               Name: !Sub "${AWS::StackName}-Vpc"  # second tag
-        """
+        """,
         )
 
 
 class TestIssue201:
-    def test_encoded_unicode_tag(self):
+    def test_encoded_unicode_tag(self) -> None:
         round_trip_load(
             """
         s: !!python/%75nicode 'abc'
-        """
+        """,
         )
 
 
 class TestImplicitTaggedNodes:
-    def test_scalar(self):
-        round_trip(
+    def test_scalar(self) -> None:
+        data = round_trip(
             """\
-        - !Scalar abcdefg
-        """
+        - !SString abcdefg
+        - !SFloat 1.0
+        - !SInt 1961
+        - !SBool true
+        - !SLit |
+          glitter in the dark near the Tanhäuser gate
+        """,
         )
+        # tagged scalers have string or string types as value
+        assert data[0].count('d') == 1
+        assert data[1].count('1') == 1
+        assert data[2].count('1') == 2
+        assert data[3].count('u') == 1
+        assert data[4].count('a') == 4
 
-    def test_mapping(self):
+    def test_mapping(self) -> None:
         round_trip(
             """\
         - !Mapping {a: 1, b: 2}
-        """
+        """,
         )
 
-    def test_sequence(self):
+    def test_sequence(self) -> None:
         yaml = YAML()
         yaml.brace_single_entry_mapping_in_flow_sequence = True
         yaml.mapping_value_align = True
         yaml.round_trip(
             """
         - !Sequence [a, {b: 1}, {c: {d: 3}}]
-        """
+        """,
         )
 
-    def test_sequence2(self):
+    def test_sequence2(self) -> None:
         yaml = YAML()
         yaml.mapping_value_align = True
         yaml.round_trip(
             """
         - !Sequence [a, b: 1, c: {d: 3}]
-        """
+        """,
         )

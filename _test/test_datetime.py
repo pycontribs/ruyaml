@@ -19,15 +19,16 @@ Please note that a fraction can only be included if not equal to 0
 
 """
 
+import sys
 import copy
+import pytest  # type: ignore  # NOQA
+from datetime import datetime as DateTime, timezone as TimeZone, timedelta as TimeDelta
 
-import pytest  # NOQA
-
-from .roundtrip import dedent, round_trip, round_trip_dump, round_trip_load  # NOQA
+from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump  # type: ignore # NOQA
 
 
 class TestDateTime:
-    def test_date_only(self):
+    def test_date_only(self) -> None:
         inp = """
         - 2011-10-02
         """
@@ -36,7 +37,7 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_zero_fraction(self):
+    def test_zero_fraction(self) -> None:
         inp = """
         - 2011-10-02 16:45:00.0
         """
@@ -45,7 +46,7 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_long_fraction(self):
+    def test_long_fraction(self) -> None:
         inp = """
         - 2011-10-02 16:45:00.1234      # expand with zeros
         - 2011-10-02 16:45:00.123456
@@ -62,7 +63,7 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_canonical(self):
+    def test_canonical(self) -> None:
         inp = """
         - 2011-10-02T16:45:00.1Z
         """
@@ -71,7 +72,7 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_spaced_timezone(self):
+    def test_spaced_timezone(self) -> None:
         inp = """
         - 2011-10-02T11:45:00 -5
         """
@@ -80,9 +81,8 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_normal_timezone(self):
-        round_trip(
-            """
+    def test_normal_timezone(self) -> None:
+        round_trip("""
         - 2011-10-02T11:45:00-5
         - 2011-10-02 11:45:00-5
         - 2011-10-02T11:45:00-05:00
@@ -90,7 +90,7 @@ class TestDateTime:
         """
         )
 
-    def test_no_timezone(self):
+    def test_no_timezone(self) -> None:
         inp = """
         - 2011-10-02 6:45:00
         """
@@ -99,7 +99,7 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_explicit_T(self):
+    def test_explicit_T(self) -> None:
         inp = """
         - 2011-10-02T16:45:00
         """
@@ -108,7 +108,7 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_explicit_t(self):  # to upper
+    def test_explicit_t(self) -> None:  # to upper
         inp = """
         - 2011-10-02t16:45:00
         """
@@ -117,7 +117,7 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_no_T_multi_space(self):
+    def test_no_T_multi_space(self) -> None:
         inp = """
         - 2011-10-02   16:45:00
         """
@@ -126,28 +126,40 @@ class TestDateTime:
         """
         round_trip(inp, exp)
 
-    def test_iso(self):
-        round_trip(
-            """
+    def test_iso(self) -> None:
+        round_trip("""
         - 2011-10-02T15:45:00+01:00
         """
         )
 
-    def test_zero_tz(self):
-        round_trip(
-            """
+    def test_zero_tz(self) -> None:
+        round_trip("""
         - 2011-10-02T15:45:00+0
         """
         )
 
-    def test_issue_45(self):
-        round_trip(
-            """
+    def test_issue_45(self) -> None:
+        round_trip("""
         dt: 2016-08-19T22:45:47Z
         """
         )
 
-    def test_deepcopy_datestring(self):
+    def test_issue_366(self) -> None:
+        import ruamel.yaml
+        import io
+
+        round_trip("""
+        [2021-02-01 22:34:48.696868-03:00]
+        """)
+        yaml = ruamel.yaml.YAML()
+        dd = DateTime(2021, 2, 1, 22, 34, 48, 696868, TimeZone(TimeDelta(hours=-3), name=''))
+        buf = io.StringIO()
+        yaml.dump(dd, buf)
+        assert buf.getvalue() == '2021-02-01 22:34:48.696868-03:00\n...\n'
+        rd = yaml.load(buf.getvalue())
+        assert rd == dd
+
+    def test_deepcopy_datestring(self) -> None:
         # reported by Quuxplusone, http://stackoverflow.com/a/41577841/1307905
         x = dedent(
             """\
@@ -156,3 +168,32 @@ class TestDateTime:
         )
         data = copy.deepcopy(round_trip_load(x))
         assert round_trip_dump(data) == x
+
+    def test_fraction_overflow(self) -> None:
+        # reported (indirectly) by Luís Ferreira
+        # https://sourceforge.net/p/ruamel-yaml/tickets/414/
+        inp = dedent("""\
+        - 2022-01-02T12:34:59.9999994
+        - 2022-01-02T12:34:59.9999995
+        """)
+        exp = dedent("""\
+        - 2022-01-02T12:34:59.999999
+        - 2022-01-02T12:35:00
+        """)
+        round_trip(inp, exp)
+
+    def Xtest_tzinfo(self) -> None:
+        import ruamel.yaml
+
+        yaml = ruamel.yaml.YAML()
+        dts = '2011-10-02T16:45:00.930619+01:00'
+        d = yaml.load(dts)
+        print('d', repr(d), d._yaml)
+        yaml.dump(dict(x=d), sys.stdout)
+        print('----')
+        # dx = DateTime.fromisoformat(dts)
+        # print('dx', dx, repr(dx))
+        dd = DateTime(2011, 10, 2, 16, 45, 00, 930619, TimeZone(TimeDelta(hours=1, minutes=0), name='+01:00'))  # NOQA
+        yaml.dump([dd], sys.stdout)
+        print('dd', dd, dd.tzinfo)
+        raise AssertionError()

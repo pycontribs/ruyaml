@@ -1,12 +1,13 @@
 # coding: utf-8
 
-import pytest  # NOQA
+import pytest  # type: ignore # NOQA
+from typing import Any, Optional
 
-from .roundtrip import dedent, round_trip, round_trip_load
+from roundtrip import dedent, round_trip, round_trip_load  # type: ignore
 
 
-def load(s, version=None):
-    import ruyaml  # NOQA
+def load(s: str, version: Optional[Any] = None) -> Any:
+    import ruamel.yaml  # NOQA
 
     yaml = ruyaml.YAML()
     yaml.version = version
@@ -14,9 +15,8 @@ def load(s, version=None):
 
 
 class TestVersions:
-    def test_explicit_1_2(self):
-        r = load(
-            """\
+    def test_explicit_1_2(self) -> None:
+        r = load("""\
         %YAML 1.2
         ---
         - 12:34:56
@@ -40,9 +40,8 @@ class TestVersions:
         assert r[7] == 'no'
         assert r[8] is True
 
-    def test_explicit_1_1(self):
-        r = load(
-            """\
+    def test_explicit_1_1(self) -> None:
+        r = load("""\
         %YAML 1.1
         ---
         - 12:34:56
@@ -66,9 +65,8 @@ class TestVersions:
         assert r[7] is False
         assert r[8] is True
 
-    def test_implicit_1_2(self):
-        r = load(
-            """\
+    def test_implicit_1_2(self) -> None:
+        r = load("""\
         - 12:34:56
         - 12:34:56.78
         - 012
@@ -92,7 +90,7 @@ class TestVersions:
         assert r[8] == 'no'
         assert r[9] is True
 
-    def test_load_version_1_1(self):
+    def test_load_version_1_1(self) -> None:
         inp = """\
         - 12:34:56
         - 12:34:56.78
@@ -120,8 +118,8 @@ class TestVersions:
 
 class TestIssue62:
     # bitbucket issue 62, issue_62
-    def test_00(self):
-        import ruyaml  # NOQA
+    def test_00(self) -> None:
+        import ruamel.yaml  # NOQA
 
         s = dedent(
             """\
@@ -139,8 +137,8 @@ class TestIssue62:
             round_trip(s.format('%YAML 1.1\n---\n'), preserve_quotes=True)
         round_trip(s.format(""), preserve_quotes=True)
 
-    def test_00_single_comment(self):
-        import ruyaml  # NOQA
+    def test_00_single_comment(self) -> None:
+        import ruamel.yaml  # NOQA
 
         s = dedent(
             """\
@@ -158,8 +156,8 @@ class TestIssue62:
         round_trip(s.format(""), preserve_quotes=True)
         # round_trip(s.format('%YAML 1.2\n---\n'), preserve_quotes=True, version=(1, 2))
 
-    def test_01(self):
-        import ruyaml  # NOQA
+    def test_01(self) -> None:
+        import ruamel.yaml  # NOQA
 
         s = dedent(
             """\
@@ -172,6 +170,20 @@ class TestIssue62:
         # note the flow seq on the --- line!
         round_trip(s.format('%YAML 1.2\n--- '), preserve_quotes=True, version='1.2')
 
-    def test_so_45681626(self):
+    def test_so_45681626(self) -> None:
         # was not properly parsing
         round_trip_load('{"in":{},"out":{}}')
+
+
+class TestVersionComparison:
+    def test_vc(self) -> None:
+        from ruamel.yaml.docinfo import Version
+
+        assert Version(1, 1) <= Version(2, 0)
+        assert Version(1, 1) <= Version(1, 2)
+        assert Version(1, 1) <= Version(1, 1)
+        assert Version(1, 3) == Version(1, 3)
+        assert Version(1, 2) > Version(1, 1)
+        assert Version(2, 0) > Version(1, 1)
+        assert Version(2, 0) >= Version(1, 1)
+        assert Version(1, 2) >= Version(1, 2)

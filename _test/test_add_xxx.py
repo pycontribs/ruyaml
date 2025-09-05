@@ -1,53 +1,56 @@
 # coding: utf-8
 
 import re
+import pytest  # type: ignore  # NOQA
 
-import pytest  # NOQA
-
-from .roundtrip import dedent, round_trip_dump  # NOQA
+from roundtrip import dedent, round_trip_dump  # type: ignore  # NOQA
+from typing import Any
 
 
 # from PyYAML docs
-class Dice(tuple):
-    def __new__(cls, a, b):
+class Dice(tuple):  # type: ignore
+    def __new__(cls, a: int, b: int) -> "Dice":
         return tuple.__new__(cls, [a, b])
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return 'Dice(%s,%s)' % self
 
 
-def dice_constructor(loader, node):
+def dice_constructor(loader: Any, node: Any) -> Dice:
     value = loader.construct_scalar(node)
     a, b = map(int, value.split('d'))
     return Dice(a, b)
 
 
-def dice_representer(dumper, data):
+def dice_representer(dumper: Any, data: Any) -> Any:
     return dumper.represent_scalar('!dice', '{}d{}'.format(*data))
 
 
-def test_dice_constructor():
+def test_dice_constructor() -> None:
     import ruyaml  # NOQA
 
-    yaml = ruyaml.YAML(typ='unsafe', pure=True)
+    with pytest.warns(PendingDeprecationWarning):
+        yaml = ruyaml.YAML(typ='unsafe', pure=True)
     ruyaml.add_constructor('!dice', dice_constructor)
     data = yaml.load('initial hit points: !dice 8d4')
     assert str(data) == "{'initial hit points': Dice(8,4)}"
 
 
-def test_dice_constructor_with_loader():
+def test_dice_constructor_with_loader() -> None:
     import ruyaml  # NOQA
 
-    yaml = ruyaml.YAML(typ='unsafe', pure=True)
+    with pytest.warns(PendingDeprecationWarning):
+        yaml = ruyaml.YAML(typ='unsafe', pure=True)
     ruyaml.add_constructor('!dice', dice_constructor, Loader=ruyaml.Loader)
     data = yaml.load('initial hit points: !dice 8d4')
     assert str(data) == "{'initial hit points': Dice(8,4)}"
 
 
-def test_dice_representer():
+def test_dice_representer() -> None:
     import ruyaml  # NOQA
 
-    yaml = ruyaml.YAML(typ='unsafe', pure=True)
+    with pytest.warns(PendingDeprecationWarning):
+        yaml = ruyaml.YAML(typ='unsafe', pure=True)
     yaml.default_flow_style = False
     ruyaml.add_representer(Dice, dice_representer)
     # ruyaml 0.15.8+ no longer forces quotes tagged scalars
@@ -56,10 +59,11 @@ def test_dice_representer():
     assert buf.getvalue() == 'gold: !dice 10d6\n'
 
 
-def test_dice_implicit_resolver():
+def test_dice_implicit_resolver() -> None:
     import ruyaml  # NOQA
 
-    yaml = ruyaml.YAML(typ='unsafe', pure=True)
+    with pytest.warns(PendingDeprecationWarning):
+        yaml = ruyaml.YAML(typ='unsafe', pure=True)
     yaml.default_flow_style = False
     pattern = re.compile(r'^\d+d\d+$')
     ruyaml.add_implicit_resolver('!dice', pattern)
@@ -69,26 +73,26 @@ def test_dice_implicit_resolver():
     assert yaml.load('damage: 5d10') == dict(damage=Dice(5, 10))
 
 
-class Obj1(dict):
-    def __init__(self, suffix):
+class Obj1(dict):  # type: ignore
+    def __init__(self, suffix: Any) -> None:
         self._suffix = suffix
         self._node = None
 
-    def add_node(self, n):
+    def add_node(self, n: Any) -> None:
         self._node = n
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return 'Obj1(%s->%s)' % (self._suffix, self.items())
 
-    def dump(self):
+    def dump(self) -> str:
         return repr(self._node)
 
 
-class YAMLObj1(object):
+class YAMLObj1:
     yaml_tag = '!obj:'
 
     @classmethod
-    def from_yaml(cls, loader, suffix, node):
+    def from_yaml(cls, loader: Any, suffix: Any, node: Any) -> Any:
         import ruyaml  # NOQA
 
         obj1 = Obj1(suffix)
@@ -99,14 +103,15 @@ class YAMLObj1(object):
         return obj1
 
     @classmethod
-    def to_yaml(cls, dumper, data):
+    def to_yaml(cls, dumper: Any, data: Any) -> Any:
         return dumper.represent_scalar(cls.yaml_tag + data._suffix, data.dump())
 
 
-def test_yaml_obj():
+def test_yaml_obj() -> None:
     import ruyaml  # NOQA
 
-    yaml = ruyaml.YAML(typ='unsafe', pure=True)
+    with pytest.warns(PendingDeprecationWarning):
+        yaml = ruyaml.YAML(typ='unsafe', pure=True)
     ruyaml.add_representer(Obj1, YAMLObj1.to_yaml)
     ruyaml.add_multi_constructor(YAMLObj1.yaml_tag, YAMLObj1.from_yaml)
     x = yaml.load('!obj:x.2\na: 1')
@@ -116,13 +121,14 @@ def test_yaml_obj():
     assert buf.getvalue() == """!obj:x.2 "{'a': 1}"\n"""
 
 
-def test_yaml_obj_with_loader_and_dumper():
+def test_yaml_obj_with_loader_and_dumper() -> None:
     import ruyaml  # NOQA
 
-    yaml = ruyaml.YAML(typ='unsafe', pure=True)
+    with pytest.warns(PendingDeprecationWarning):
+        yaml = ruyaml.YAML(typ='unsafe', pure=True)
     ruyaml.add_representer(Obj1, YAMLObj1.to_yaml, Dumper=ruyaml.Dumper)
     ruyaml.add_multi_constructor(
-        YAMLObj1.yaml_tag, YAMLObj1.from_yaml, Loader=ruyaml.Loader
+        YAMLObj1.yaml_tag, YAMLObj1.from_yaml, Loader=ruyaml.Loader,
     )
     x = yaml.load('!obj:x.2\na: 1')
     # x = ruyaml.load('!obj:x.2\na: 1')
@@ -138,25 +144,25 @@ def test_yaml_obj_with_loader_and_dumper():
 # Issue 127 reported by Tommy Wang
 
 
-def test_issue_127():
+def test_issue_127() -> None:
     import ruyaml  # NOQA
 
     class Ref(ruyaml.YAMLObject):
-        yaml_constructor = ruyaml.RoundTripConstructor
-        yaml_representer = ruyaml.RoundTripRepresenter
+        yaml_constructor = ruyaml.RoundTripConstructor  # type: ignore
+        yaml_representer = ruyaml.RoundTripRepresenter  # type: ignore
         yaml_tag = '!Ref'
 
-        def __init__(self, logical_id):
+        def __init__(self, logical_id: Any) -> None:
             self.logical_id = logical_id
 
         @classmethod
-        def from_yaml(cls, loader, node):
+        def from_yaml(cls, loader: Any, node: Any) -> Any:
             return cls(loader.construct_scalar(node))
 
         @classmethod
-        def to_yaml(cls, dumper, data):
+        def to_yaml(cls, dumper: Any, data: Any) -> Any:
             if isinstance(data.logical_id, ruyaml.scalarstring.ScalarString):
-                style = data.logical_id.style  # ruyaml>0.15.8
+                style = data.logical_id.style  # type: ignore # ruyaml>0.15.8
             else:
                 style = None
             return dumper.represent_scalar(cls.yaml_tag, data.logical_id, style=style)

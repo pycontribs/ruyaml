@@ -1,48 +1,49 @@
-+++++++++++++++++++++++++++
-Departure from previous API
-+++++++++++++++++++++++++++
+# Departure from previous API
 
-With version 0.15.0 ``ruyaml`` starts to depart from the previous (PyYAML) way
-of loading and dumping. During a transition period the original
-``load()`` and ``dump()`` in its various formats will still be supported,
-but this is not guaranteed to be so with the transition to 1.0.
+With version 0.15.0 `ruyaml` starts to depart from the previous
+(PyYAML) way of loading and dumping. During a transition period the
+original `load()` and `dump()` in its various formats will still be
+supported, but this is not guaranteed to be so with the transition to
+1.0.
 
 At the latest with 1.0, but possible earlier transition error and
 warning messages will be issued, so any packages depending on
 ruyaml should pin the version with which they are testing.
 
-
-Up to 0.15.0, the loaders (``load()``, ``safe_load()``,
-``round_trip_load()``, ``load_all``, etc.) took, apart from the input
-stream, a ``version`` argument to allow downgrading to YAML 1.1,
-sometimes needed for
+Up to 0.15.0, the loaders (`load()`, `safe_load()`, `round_trip_load()`,
+`load_all`, etc.) took, apart from the input stream, a `version`
+argument to allow downgrading to YAML 1.1, sometimes needed for
 documents without directive. When round-tripping, there was an option to
 preserve quotes.
 
-Up to 0.15.0, the dumpers (``dump()``, ``safe_dump``,
-``round_trip_dump()``, ``dump_all()``, etc.) had a plethora of
-arguments, some inherited from ``PyYAML``, some added in
-``ruyaml``. The only required argument is the ``data`` to be
-dumped. If the stream argument is not provided to the dumper, then a
-string representation is build up in memory and returned to the
-caller.
+Up to 0.15.0, the dumpers (`dump()`, `safe_dump`, `round_trip_dump()`,
+`dump_all()`, etc.) had a plethora of arguments, some inherited from
+`PyYAML`, some added in `ruyaml`. The only required argument is the
+`data` to be dumped. If the stream argument is not provided to the
+dumper, then a string representation is build up in memory and returned
+to the caller.
 
-Starting with 0.15.0 ``load()`` and ``dump()`` are methods on a
-``YAML`` instance and only take the stream,
-resp. the data and stream argument. All other parameters are set on the instance
-of ``YAML`` before calling ``load()`` or ``dump()``
+Starting with 0.15.0 `load()` and `dump()` are methods on a `YAML`
+instance and only take the stream, resp. the data and stream argument.
+All other parameters are set on the instance of `YAML` before calling
+`load()` or `dump()`
 
-Before 0.15.0::
+Before 0.15.0 you could do:
 
-    from pathlib import Path
-    import ruyaml
+``` python
+from pathlib import Path
+from ruamel import yaml
 
-    data = ruyaml.safe_load("abc: 1")
-    out = Path('/tmp/out.yaml')
-    with out.open('w') as fp:
-        ruyaml.safe_dump(data, fp, default_flow_style=False)
+data = yaml.safe_load("abc: 1")
+out = Path('/tmp/out.yaml')
+with out.open('w') as fp:
+    yaml.safe_dump(data, fp, default_flow_style=False)
+```
 
-after::
+after:
+--- !python |
+from pathlib import Path
+from ruyaml import YAML
 
     from pathlib import Path
     from ruyaml import YAML
@@ -53,166 +54,174 @@ after::
     out = Path('/tmp/out.yaml')
     yaml.dump(data, out)
 
-If you previously used a keyword argument ``explicit_start=True`` you
-now do ``yaml.explicit_start = True`` before calling ``dump()``. The
-``Loader`` and ``Dumper`` keyword arguments are not supported that
-way. You can provide the ``typ`` keyword to ``rt`` (default),
-``safe``, ``unsafe`` or ``base`` (for round-trip load/dump, safe_load/dump,
-load/dump resp. using the BaseLoader / BaseDumper. More fine-control
-is possible by setting the attributes ``.Parser``, ``.Constructor``,
-``.Emitter``, etc., to the class of the type to create for that stage
-(typically a subclass of an existing class implementing that).
+yaml = YAML(typ='safe')
+yaml.default_flow_style = False
+data = yaml.load("abc: 1")
+out = Path('/tmp/out.yaml')
+yaml.dump(data, out)
+--- |
+If you previously used a keyword argument `explicit_start=True` you now
+do `yaml.explicit_start = True` before calling `dump()`. The `Loader`
+and `Dumper` keyword arguments are not supported that way. You can
+provide the `typ` keyword to `rt` (default), `safe`, `unsafe` or `base`
+(for round-trip load/dump, safe_load/dump, load/dump resp. using the
+BaseLoader / BaseDumper. More fine-control is possible by setting the
+attributes `.Parser`, `.Constructor`, `.Emitter`, etc., to the class of
+the type to create for that stage (typically a subclass of an existing
+class implementing that).
 
-The default loader (``typ='rt'``) is a direct derivative of the safe loader, without the
-methods to construct arbitrary Python objects that make the ``unsafe`` loader
-unsafe, but with the changes needed for round-trip preservation of comments,
-etc.. For trusted Python classes a constructor can of course be added to the round-trip
-or safe-loader, but this has to be done explicitly (``add_constructor``).
+The default loader (`typ='rt'`) is a direct derivative of the safe
+loader, without the methods to construct arbitrary Python objects that
+make the `unsafe` loader unsafe, but with the changes needed for
+round-trip preservation of comments, etc.. For trusted Python classes a
+constructor can of course be added to the round-trip or safe-loader, but
+this has to be done explicitly (`add_constructor`).
 
-All data is dumped (not just for round-trip-mode) with ``.allow_unicode
-= True``
+All data is dumped (not just for round-trip-mode) with
+`.allow_unicode = True`
 
-You can of course have multiple YAML instances active at the same
-time, with different load and/or dump behaviour.
+You can of course have multiple YAML instances active at the same time,
+with different load and/or dump behaviour.
 
 Initially only the typical operations are supported, but in principle
-all functionality of the old interface will be available via
-``YAML`` instances (if you are using something that isn't let me know).
+all functionality of the old interface will be available via `YAML`
+instances (if you are using something that isn\'t let me know).
 
 If a parse or dump fails, and throws and exception, the state of the
-``YAML()`` instance is not guaranteed to be able to handle further
-processing. You should, at that point to recreate the YAML instance before
-proceeding.
+`YAML()` instance is not guaranteed to be able to handle further
+processing. You should, at that point to recreate the YAML instance
+before proceeding.
 
+## Loading
 
-Loading
-+++++++
-
-Duplicate keys
-^^^^^^^^^^^^^^
+### Duplicate keys
 
 In JSON mapping keys should be unique, in YAML they must be unique.
 PyYAML never enforced this although the YAML 1.1 specification already
 required this.
 
-In the new API (starting 0.15.1) duplicate keys in mappings are no longer allowed by
-default. To allow duplicate keys in mappings::
-
-    yaml = ruyaml.YAML()
-    yaml.allow_duplicate_keys = True
-    yaml.load(stream)
-
+In the new API (starting 0.15.1) duplicate keys in mappings are no
+longer allowed by default. To allow duplicate keys in mappings:
+--- !python |
+yaml = ruyaml.YAML()
+yaml.allow_duplicate_keys = True
+yaml.load(stream)
+--- |
 In the old API this is a warning starting with 0.15.2 and an error in
 0.16.0.
 
-When a duplicate key is found it and its value are discarded, as should be done
-according to the `YAML 1.1 specification <http://yaml.org/spec/1.1/#id932806>`__.
+When a duplicate key is found it and its value are discarded, as should
+be done according to the [YAML 1.1
+specification](http://yaml.org/spec/1.1/#id932806).
 
-Dumping a multi-documents YAML stream
-+++++++++++++++++++++++++++++++++++++
+## Dumping a multi-document YAML stream
 
-The "normal" ``dump_all`` expected as first element a list of documents, or
-something else the internals of the method can iterate over. To read
-and write a multi-document you would either make a ``list``::
+The \"normal\" `dump_all` expected as first element a list of documents,
+or something else the internals of the method can iterate over. To read
+and write a multi-document you would either make a `list`:
+--- !code |
+   yaml = YAML()
+   data = list(yaml.load_all(in_path))
+   # do something on data[0], data[1], etc.
+   yaml.dump_all(data, out_path)
+--- |
+or create some function/object that would yield the `data` values.
 
-    yaml = YAML()
-    data = list(yaml.load_all(in_path))
-    # do something on data[0], data[1], etc.
-    yaml.dump_all(data, out_path)
+What you now can do is create `YAML()` as an context manager. This works
+for output (dumping) only, requires you to specify the output (file,
+buffer, `Path`) at creation time, and doesn\'t support `transform`
+(yet).
 
-
-or create some function/object that would yield the ``data`` values.
-
-What you now can do is create ``YAML()`` as an context manager. This
-works for output (dumping) only, requires you to specify the output
-(file, buffer, ``Path``) at creation time, and doesn't support
-``transform`` (yet).
-
-::
-
+:
+--- !code |
     with YAML(output=sys.stdout) as yaml:
-        yaml.explicit_start = True
-        for data in yaml.load_all(Path(multi_document_filename)):
-            # do something on data
-            yaml.dump(data)
-
-
-Within the context manager, you cannot use the ``dump()`` with a
-second (stream) argument, nor can you use ``dump_all()``. The
-``dump()`` within the context of the ``YAML()`` automatically creates
-multi-document if called more than once.
+            yaml.explicit_start = True
+            for data in yaml.load_all(Path(multi_document_filename)):
+                # do something on data
+                yaml.dump(data)
+--- |
+Within the context manager, you cannot use the `dump()` with a second
+(stream) argument, nor can you use `dump_all()`. The `dump()` within the
+context of the `YAML()` automatically creates multi-document if called
+more than once.
 
 To combine multiple YAML documents from multiple files:
 
-::
-
+:
+--- !code |
     list_of_filenames = ['x.yaml', 'y.yaml', ]
     with YAML(output=sys.stdout) as yaml:
-        yaml.explicit_start = True
-        for path in list_of_filename:
-            with open(path) as fp:
-                yaml.dump(yaml.load(fp))
-
-
+            yaml.explicit_start = True
+            for path in list_of_filename:
+                with open(path) as fp:
+                    yaml.dump(yaml.load(fp))
+--- |
 The output will be a valid, uniformly indented YAML file. Doing
-``cat {x,y}.yaml`` might result in a single document if there is not
-document start marker at the beginning of ``y.yaml``
+`cat {x,y}.yaml` might result in a single document if there is not
+document start marker at the beginning of `y.yaml`
 
+## Dumping
 
+### Controls
 
-
-Dumping
-+++++++
-
-Controls
-^^^^^^^^
-
-On your ``YAML()`` instance you can set attributes e.g with::
+On your `YAML()` instance you can set attributes e.g with:
 
     yaml = YAML(typ='safe', pure=True)
     yaml.allow_unicode = False
 
 available attributes include:
 
-``unicode_supplementary``
-   Defaults to ``True`` if Python's Unicode size is larger than 2 bytes. Set to ``False`` to
-   enforce output of the form ``\U0001f601`` (ignored if ``allow_unicode`` is ``False``)
+`unicode_supplementary`
 
-Transparent usage of new and old API
-++++++++++++++++++++++++++++++++++++
+:   Defaults to `True` if Python\'s Unicode size is larger than 2 bytes.
+    Set to `False` to enforce output of the form `\U0001f601` (ignored
+    if `allow_unicode` is `False`)
 
-If you have multiple packages depending on ``ruyaml``, or install
+## Transparent usage of new and old API
+
+With 0.18 the entry functions for the  old API has been removed, so the
+following now only makes sense if you use the old API on a pinned
+old version or `ruamel.yaml`.
+
+If you have multiple packages depending on `ruyaml`, or install
 your utility together with other packages not under your control, then
-fixing your ``install_requires`` might not be so easy.
+fixing your `install_requires` might not be so easy.
 
-Depending on your usage you might be able to "version" your usage to
+Depending on your usage you might be able to \"version\" your usage to
 be compatible with both the old and the new. The following are some
-examples all assuming ``import ruyaml`` somewhere at the top
-of your file and some ``istream`` and ``ostream`` apropriately opened
-for reading resp. writing.
+examples all assuming `from ruamel import yaml` somewhere at the top of
+your file and some `istream` and `ostream` apropriately opened for
+reading resp. writing.
 
+Loading and dumping using the `SafeLoader`:
 
-Loading and dumping using the ``SafeLoader``::
+    if ruyaml.version_info < (0, 15):
+        data = yaml.safe_load(istream)
+        yaml.safe_dump(data, ostream)
+    else:
+        yml = ruyaml.YAML(typ='safe', pure=True)  # 'safe' load and dump
+        data = yml.load(istream)
+        yml.dump(data, ostream)
 
-    yml = ruyaml.YAML(typ='safe', pure=True)  # 'safe' load and dump
-    data = yml.load(istream)
-    yml.dump(data, ostream)
-
-Loading with the ``CSafeLoader``, dumping with
-``RoundTripLoader``. You need two ``YAML`` instances, but each of them
-can be re-used::
-
+Loading with the `CSafeLoader`, dumping with `RoundTripLoader`. You need
+two `YAML` instances, but each of them can be re-used:
+--- !python |
+if ruyaml.version_info < (0, 15):
+    data = yaml.load(istream, Loader=yaml.CSafeLoader)
+    yaml.round_trip_dump(data, ostream, width=1000, explicit_start=True)
+else:
     yml = ruyaml.YAML(typ='safe')
     data = yml.load(istream)
     ymlo = ruyaml.YAML()  # or yaml.YAML(typ='rt')
     ymlo.width = 1000
     ymlo.explicit_start = True
     ymlo.dump(data, ostream)
-
-Loading and dumping from ``pathlib.Path`` instances using the
-round-trip-loader::
-
-    # in myyaml.py
+--- |
+Loading and dumping from `pathlib.Path` instances using the
+round-trip-loader:
+--- !code |
+# in myyaml.py
+if ruyaml.version_info < (0, 15):
     class MyYAML(yaml.YAML):
         def __init__(self):
             yaml.YAML.__init__(self)
@@ -230,58 +239,55 @@ round-trip-loader::
     # no need for with statement when using pathlib.Path instances
     data = yml.load(inf)
     yml.dump(data, outf)
+--- |
+## Reason for API change
 
-+++++++++++++++++++++
-Reason for API change
-+++++++++++++++++++++
-
-``ruyaml`` inherited the way of doing things from ``PyYAML``. In
-particular when calling the function ``load()`` or ``dump()``
-temporary instances of ``Loader()`` resp. ``Dumper()`` were
-created that were discarded on termination of the function.
+`ruyaml` inherited the way of doing things from `PyYAML`. In
+particular when calling the function `load()` or `dump()` temporary
+instances of `Loader()` resp. `Dumper()` were created that were
+discarded on termination of the function.
 
 This way of doing things leads to several problems:
 
-- it is virtually impossible to return information to the caller apart from the
-  constructed data structure. E.g. if you would get a YAML document
-  version number from a directive, there is no way to let the caller
-  know apart from handing back special data structures. The same
-  problem exists when trying to do on the fly
-  analysis of a document for indentation width.
+-   it is virtually impossible to return information to the caller apart
+    from the constructed data structure. E.g. if you would get a YAML
+    document version number from a directive, there is no way to let the
+    caller know apart from handing back special data structures. The
+    same problem exists when trying to do on the fly analysis of a
+    document for indentation width.
 
-- these instances were composites of the various load/dump steps and
-  if you wanted to enhance one of the steps, you needed e.g. subclass
-  the emitter and make a new composite (dumper) as well, providing all
-  of the parameters (i.e. copy paste)
+-   these instances were composites of the various load/dump steps and
+    if you wanted to enhance one of the steps, you needed e.g. subclass
+    the emitter and make a new composite (dumper) as well, providing all
+    of the parameters (i.e. copy paste)
 
-  Alternatives, like making a class that returned a ``Dumper`` when
-  called and sets attributes before doing so, is cumbersome for
-  day-to-day use.
+    Alternatives, like making a class that returned a `Dumper` when
+    called and sets attributes before doing so, is cumbersome for
+    day-to-day use.
 
-- many routines (like ``add_representer()``) have a direct global
-  impact on all of the following calls to ``dump()`` and those are
-  difficult if not impossible to turn back. This forces the need to
-  subclass ``Loaders`` and ``Dumpers``, a long time problem in PyYAML
-  as some attributes were not ``deep_copied`` although a bug-report
-  (and fix) had been available a long time.
+-   many routines (like `add_representer()`) have a direct global impact
+    on all of the following calls to `dump()` and those are difficult if
+    not impossible to turn back. This forces the need to subclass
+    `Loaders` and `Dumpers`, a long time problem in PyYAML as some
+    attributes were not `deep_copied` although a bug-report (and fix)
+    had been available a long time.
 
-- If you want to set an attribute, e.g. to control whether literal
-  block style scalars are allowed to have trailing spaces on a line
-  instead of being dumped as double quoted scalars, you have to change
-  the ``dump()`` family of routines, all of the ``Dumpers()`` as well
-  as the actual functionality change in ``emitter.Emitter()``. The
-  functionality change takes changing 4 (four!) lines in one file, and being able
-  to enable that another 50+ line changes (non-contiguous) in 3 more files resulting
-  in diff that is far over 200 lines long.
+-   If you want to set an attribute, e.g. to control whether literal
+    block style scalars are allowed to have trailing spaces on a line
+    instead of being dumped as double quoted scalars, you have to change
+    the `dump()` family of routines, all of the `Dumpers()` as well as
+    the actual functionality change in `emitter.Emitter()`. The
+    functionality change takes changing 4 (four!) lines in one file, and
+    being able to enable that another 50+ line changes (non-contiguous)
+    in 3 more files resulting in diff that is far over 200 lines long.
 
-- replacing libyaml with something that doesn't both support ``0o52``
-  and ``052`` for the integer ``42`` (instead of ``52`` as per YAML 1.2)
-  is difficult
+-   replacing libyaml with something that doesn\'t both support `0o52`
+    and `052` for the integer `42` (instead of `52` as per YAML 1.2) is
+    difficult
 
-
-With ``ruyaml>=0.15.0`` the various steps "know" about the
-``YAML`` instance and can pick up setting, as well as report back
-information via that instance. Representers, etc., are added to a
-reusable instance and different YAML instances can co-exists.
+With `ruyaml>=0.15.0` the various steps \"know\" about the `YAML`
+instance and can pick up setting, as well as report back information via
+that instance. Representers, etc., are added to a reusable instance and
+different YAML instances can co-exists.
 
 This change eases development and helps prevent regressions.

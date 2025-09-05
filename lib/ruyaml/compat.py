@@ -1,17 +1,29 @@
-# coding: utf-8
+
+from __future__ import annotations
 
 # partially from package six by Benjamin Peterson
 
 import collections.abc
 import io
-import os
-import sys
-import traceback
 from abc import abstractmethod
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 # partially from package six by Benjamin Peterson
 
+from ruamel.yaml.docinfo import Version  # NOQA
+# fmt: off
+if False:  # MYPY
+    from typing import Any, Dict, Optional, List, Union, BinaryIO, IO, Text, Tuple  # NOQA
+    from typing import Optional  # NOQA
+    try:
+        from typing import SupportsIndex as SupportsIndex  # in order to reexport for mypy
+    except ImportError:
+        SupportsIndex = int  # type: ignore
+
+    StreamType = Any
+    StreamTextType = StreamType
+    VersionType = Union[str , Tuple[int, int] , List[int] , Version , None]
+# fmt: on
 
 _DEFAULT_YAML_VERSION = (1, 2)
 
@@ -26,8 +38,7 @@ except ImportError:
 class ordereddict(OrderedDict):  # type: ignore
     if not hasattr(OrderedDict, 'insert'):
 
-        def insert(self, pos, key, value):
-            # type: (int, Any, Any) -> None
+        def insert(self, pos: int, key: Any, value: Any) -> None:
             if pos >= len(self):
                 self[key] = value
                 return
@@ -41,41 +52,24 @@ class ordereddict(OrderedDict):  # type: ignore
                 self[old_key] = od[old_key]
 
 
-PY2 = sys.version_info[0] == 2
-PY3 = sys.version_info[0] == 3
-
-
-# replace with f-strings when 3.5 support is dropped
-# ft = '42'
-# assert _F('abc {ft!r}', ft=ft) == 'abc %r' % ft
-# 'abc %r' % ft -> _F('abc {ft!r}' -> f'abc {ft!r}'
-def _F(s, *superfluous, **kw):
-    # type: (Any, Any, Any) -> Any
-    if superfluous:
-        raise TypeError
-    return s.format(**kw)
-
-
 StringIO = io.StringIO
 BytesIO = io.BytesIO
 
-# StreamType = Union[BinaryIO, IO[str], IO[unicode],  StringIO]
-# StreamType = Union[BinaryIO, IO[str], StringIO]  # type: ignore
-StreamType = Any
-
-StreamTextType = StreamType  # Union[Text, StreamType]
-VersionType = Union[List[int], str, Tuple[int, int]]
 
 builtins_module = 'builtins'
 
-UNICODE_SIZE = 4 if sys.maxunicode > 65535 else 2
+
+def with_metaclass(meta: Any, *bases: Any) -> Any:
+    """Create a base class with a metaclass."""
+    return meta('NewBase', bases, {})
+
 
 DBG_TOKEN = 1
 DBG_EVENT = 2
 DBG_NODE = 4
 
 
-_debug = None  # type: Optional[int]
+_debug: Optional[int] = None
 if 'RUAMELDEBUG' in os.environ:
     _debugx = os.environ.get('RUAMELDEBUG')
     if _debugx is None:
@@ -87,49 +81,45 @@ if 'RUAMELDEBUG' in os.environ:
 if bool(_debug):
 
     class ObjectCounter:
-        def __init__(self):
-            # type: () -> None
-            self.map = {}  # type: Dict[Any, Any]
+        def __init__(self) -> None:
+            self.map: Dict[Any, Any] = {}
 
-        def __call__(self, k):
-            # type: (Any) -> None
+        def __call__(self, k: Any) -> None:
             self.map[k] = self.map.get(k, 0) + 1
 
-        def dump(self):
-            # type: () -> None
+        def dump(self) -> None:
             for k in sorted(self.map):
-                sys.stdout.write('{} -> {}'.format(k, self.map[k]))
+                sys.stdout.write(f'{k} -> {self.map[k]}')
 
     object_counter = ObjectCounter()
 
 
 # used from yaml util when testing
-def dbg(val=None):
-    # type: (Any) -> Any
-    global _debug
-    if _debug is None:
+def dbg(val: Any = None) -> Any:
+    debug = _debug
+    if debug is None:
         # set to true or false
         _debugx = os.environ.get('YAMLDEBUG')
         if _debugx is None:
-            _debug = 0
+            debug = 0
         else:
-            _debug = int(_debugx)
+            debug = int(_debugx)
     if val is None:
-        return _debug
-    return _debug & val
+        return debug
+    return debug & val
 
 
 class Nprint:
-    def __init__(self, file_name=None):
-        # type: (Any) -> None
-        self._max_print = None  # type: Any
-        self._count = None  # type: Any
+    def __init__(self, file_name: Any = None) -> None:
+        self._max_print: Any = None
+        self._count: Any = None
         self._file_name = file_name
 
-    def __call__(self, *args, **kw):
-        # type: (Any, Any) -> None
+    def __call__(self, *args: Any, **kw: Any) -> None:
         if not bool(_debug):
             return
+        import traceback
+
         out = sys.stdout if self._file_name is None else open(self._file_name, 'a')
         dbgprint = print  # to fool checking for print statements by dv utility
         kw1 = kw.copy()
@@ -148,13 +138,11 @@ class Nprint:
         if self._file_name:
             out.close()
 
-    def set_max_print(self, i):
-        # type: (int) -> None
+    def set_max_print(self, i: int) -> None:
         self._max_print = i
         self._count = None
 
-    def fp(self, mode='a'):
-        # type: (str) -> Any
+    def fp(self, mode: str = 'a') -> Any:
         out = sys.stdout if self._file_name is None else open(self._file_name, mode)
         return out
 
@@ -165,8 +153,7 @@ nprintf = Nprint('/var/tmp/ruyaml.log')
 # char checkers following production rules
 
 
-def check_namespace_char(ch):
-    # type: (Any) -> bool
+def check_namespace_char(ch: Any) -> bool:
     if '\x21' <= ch <= '\x7E':  # ! to ~
         return True
     if '\xA0' <= ch <= '\uD7FF':
@@ -178,15 +165,13 @@ def check_namespace_char(ch):
     return False
 
 
-def check_anchorname_char(ch):
-    # type: (Any) -> bool
+def check_anchorname_char(ch: Any) -> bool:
     if ch in ',[]{}':
         return False
     return check_namespace_char(ch)
 
 
-def version_tnf(t1, t2=None):
-    # type: (Any, Any) -> Any
+def version_tnf(t1: Any, t2: Any = None) -> Any:
     """
     return True if ruyaml version_info < t1, None if t2 is specified and bigger else False
     """
@@ -202,14 +187,12 @@ def version_tnf(t1, t2=None):
 class MutableSliceableSequence(collections.abc.MutableSequence):  # type: ignore
     __slots__ = ()
 
-    def __getitem__(self, index):
-        # type: (Any) -> Any
+    def __getitem__(self, index: Any) -> Any:
         if not isinstance(index, slice):
             return self.__getsingleitem__(index)
         return type(self)([self[i] for i in range(*index.indices(len(self)))])  # type: ignore
 
-    def __setitem__(self, index, value):
-        # type: (Any, Any) -> None
+    def __setitem__(self, index: Any, value: Any) -> None:
         if not isinstance(index, slice):
             return self.__setsingleitem__(index, value)
         assert iter(value)
@@ -226,21 +209,16 @@ class MutableSliceableSequence(collections.abc.MutableSequence):  # type: ignore
             # need to test before changing, in case TypeError is caught
             if nr_assigned_items < len(value):
                 raise TypeError(
-                    'too many elements in value {} < {}'.format(
-                        nr_assigned_items, len(value)
-                    )
+                    f'too many elements in value {nr_assigned_items} < {len(value)}',
                 )
             elif nr_assigned_items > len(value):
                 raise TypeError(
-                    'not enough elements in value {} > {}'.format(
-                        nr_assigned_items, len(value)
-                    )
+                    f'not enough elements in value {nr_assigned_items} > {len(value)}',
                 )
             for idx, i in enumerate(range(*range_parms)):
                 self[i] = value[idx]
 
-    def __delitem__(self, index):
-        # type: (Any) -> None
+    def __delitem__(self, index: Any) -> None:
         if not isinstance(index, slice):
             return self.__delsingleitem__(index)
         # nprint(index.start, index.stop, index.step, index.indices(len(self)))
@@ -248,16 +226,13 @@ class MutableSliceableSequence(collections.abc.MutableSequence):  # type: ignore
             del self[i]
 
     @abstractmethod
-    def __getsingleitem__(self, index):
-        # type: (Any) -> Any
+    def __getsingleitem__(self, index: Any) -> Any:
         raise IndexError
 
     @abstractmethod
-    def __setsingleitem__(self, index, value):
-        # type: (Any, Any) -> None
+    def __setsingleitem__(self, index: Any, value: Any) -> None:
         raise IndexError
 
     @abstractmethod
-    def __delsingleitem__(self, index):
-        # type: (Any) -> None
+    def __delsingleitem__(self, index: Any) -> None:
         raise IndexError

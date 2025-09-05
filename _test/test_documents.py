@@ -1,12 +1,12 @@
 # coding: utf-8
 
-import pytest  # NOQA
+import pytest  # type: ignore  # NOQA
 
-from .roundtrip import round_trip, round_trip_dump_all, round_trip_load_all
+from roundtrip import round_trip, round_trip_load_all, round_trip_dump_all  # type: ignore
 
 
 class TestDocument:
-    def test_single_doc_begin_end(self):
+    def test_single_doc_begin_end(self) -> None:
         inp = """\
         ---
         - a
@@ -15,7 +15,7 @@ class TestDocument:
         """
         round_trip(inp, explicit_start=True, explicit_end=True)
 
-    def test_multi_doc_begin_end(self):
+    def test_multi_doc_begin_end(self) -> None:
         inp = """\
         ---
         - a
@@ -29,7 +29,7 @@ class TestDocument:
         out = round_trip_dump_all(docs, explicit_start=True, explicit_end=True)
         assert out == '---\n- a\n...\n---\n- b\n...\n'
 
-    def test_multi_doc_no_start(self):
+    def test_multi_doc_no_start(self) -> None:
         inp = """\
         - a
         ...
@@ -40,7 +40,7 @@ class TestDocument:
         docs = list(round_trip_load_all(inp))
         assert docs == [['a'], ['b']]
 
-    def test_multi_doc_no_end(self):
+    def test_multi_doc_no_end(self) -> None:
         inp = """\
         - a
         ---
@@ -49,7 +49,7 @@ class TestDocument:
         docs = list(round_trip_load_all(inp))
         assert docs == [['a'], ['b']]
 
-    def test_multi_doc_ends_only(self):
+    def test_multi_doc_ends_only(self) -> None:
         # this is ok in 1.2
         inp = """\
         - a
@@ -60,8 +60,38 @@ class TestDocument:
         docs = list(round_trip_load_all(inp, version=(1, 2)))
         assert docs == [['a'], ['b']]
 
-    def test_multi_doc_ends_only_1_1(self):
-        import ruyaml
+    def test_single_scalar_comment(self) -> None:
+        from ruamel import yaml
+
+        inp = """\
+        one # comment
+        two
+        """
+        with pytest.raises(yaml.parser.ParserError):
+            d = list(round_trip_load_all(inp, version=(1, 2)))  # NOQA
+
+    def test_scalar_after_seq_document(self) -> None:
+        from ruamel import yaml
+
+        inp = """\
+        [ 42 ]
+        hello
+        """
+        with pytest.raises(yaml.parser.ParserError):
+            d = list(round_trip_load_all(inp, version=(1, 2)))  # NOQA
+
+    def test_yunk_after_explicit_document_end(self) -> None:
+        from ruamel import yaml
+
+        inp = """\
+        hello: world
+        ... this is no comment
+        """
+        with pytest.raises(yaml.parser.ParserError):
+            d = list(round_trip_load_all(inp, version=(1, 2)))  # NOQA
+
+    def test_multi_doc_ends_only_1_1(self) -> None:
+        from ruamel import yaml
 
         # this is not ok in 1.1
         with pytest.raises(ruyaml.parser.ParserError):

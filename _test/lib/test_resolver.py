@@ -1,3 +1,6 @@
+
+import ruyaml as yaml
+yaml = yaml.YAML()
 import pprint
 
 # Skipped because we have no idea where all those fixtures originate

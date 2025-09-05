@@ -28,7 +28,7 @@ import sys  # NOQA
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = []
+extensions = []  # type: ignore
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -234,7 +234,7 @@ latex_documents = [
         'Python YAML package documentation',
         'Anthon van der Neut',
         'manual',
-    )
+    ),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -279,10 +279,10 @@ texinfo_documents = [
         'yaml',
         'yaml Documentation',
         author,
-        "yaml",
-        "One line description of project.",
-        "Miscellaneous",
-    )
+        'yaml',
+        'One line description of project.',
+        'Miscellaneous',
+    ),
 ]
 
 # Documents to append as an appendix to all manuals.
