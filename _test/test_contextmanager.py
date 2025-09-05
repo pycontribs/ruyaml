@@ -5,9 +5,9 @@ testing of anchors and the aliases referring to them
 """
 
 import sys
-import pytest  # type: ignore
-
 from typing import Any
+
+import pytest  # type: ignore
 
 single_doc = """\
 - a: 1

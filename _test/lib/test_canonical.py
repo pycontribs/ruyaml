@@ -2,9 +2,9 @@
 # comes from, nor where all those fixtures originate
 import pytest
 
-# import canonical  # NOQA
-
 import ruyaml
+
+# import canonical  # NOQA
 
 
 def test_canonical_scanner(canonical_filename, verbose=False):

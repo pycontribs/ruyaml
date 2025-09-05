@@ -1,9 +1,7 @@
 # coding: utf-8
 
 import pytest  # type: ignore  # NOQA
-
 from roundtrip import YAML  # type: ignore # does an automatic dedent on load
-
 
 """
 YAML 1.0 allowed root level literal style without indentation:
@@ -63,6 +61,7 @@ class TestNoIndent:
 
     def test_root_literal_scalar_no_indent_1_1_old_style(self) -> None:
         from textwrap import dedent
+
         from ruyaml import YAML
 
         yaml = YAML(typ='safe', pure=True)

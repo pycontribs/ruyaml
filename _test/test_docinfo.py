@@ -1,6 +1,6 @@
-
 import pytest  # type: ignore  # NOQA
-from ruyaml.docinfo import Version, version, Tag, DocInfo  # NOQA
+
+from ruyaml.docinfo import DocInfo, Tag, Version, version  # NOQA
 
 
 class TestVersion:

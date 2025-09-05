@@ -1,8 +1,7 @@
 # coding: utf-8
 
 import pytest  # type: ignore  # NOQA
-
-from roundtrip import dedent, round_trip_load, round_trip_dump  # type: ignore
+from roundtrip import dedent, round_trip_dump, round_trip_load  # type: ignore
 
 # http://yaml.org/type/int.html is where underscores in integers are defined
 

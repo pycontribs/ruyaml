@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import copy
@@ -10,7 +9,7 @@ import datetime
 #       add type information (iso8601, spaced)
 
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List  # NOQA
+    from typing import Any, Dict, List, Optional  # NOQA
 
 
 class TimeStamp(datetime.datetime):
@@ -21,7 +20,9 @@ class TimeStamp(datetime.datetime):
         return datetime.datetime.__new__(cls, *args, **kw)
 
     def __deepcopy__(self, memo: Any) -> Any:
-        ts = TimeStamp(self.year, self.month, self.day, self.hour, self.minute, self.second)
+        ts = TimeStamp(
+            self.year, self.month, self.day, self.hour, self.minute, self.second
+        )
         ts._yaml = copy.deepcopy(self._yaml)
         return ts
 

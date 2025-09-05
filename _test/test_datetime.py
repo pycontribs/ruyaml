@@ -19,12 +19,19 @@ Please note that a fraction can only be included if not equal to 0
 
 """
 
-import sys
 import copy
-import pytest  # type: ignore  # NOQA
-from datetime import datetime as DateTime, timezone as TimeZone, timedelta as TimeDelta
+import sys
+from datetime import datetime as DateTime
+from datetime import timedelta as TimeDelta
+from datetime import timezone as TimeZone
 
-from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump  # type: ignore # NOQA
+import pytest  # type: ignore  # NOQA
+from roundtrip import (  # type: ignore # NOQA
+    dedent,
+    round_trip,
+    round_trip_dump,
+    round_trip_load,
+)
 
 
 class TestDateTime:
@@ -82,7 +89,8 @@ class TestDateTime:
         round_trip(inp, exp)
 
     def test_normal_timezone(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         - 2011-10-02T11:45:00-5
         - 2011-10-02 11:45:00-5
         - 2011-10-02T11:45:00-05:00
@@ -127,32 +135,40 @@ class TestDateTime:
         round_trip(inp, exp)
 
     def test_iso(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         - 2011-10-02T15:45:00+01:00
         """
         )
 
     def test_zero_tz(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         - 2011-10-02T15:45:00+0
         """
         )
 
     def test_issue_45(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         dt: 2016-08-19T22:45:47Z
         """
         )
 
     def test_issue_366(self) -> None:
-        import ruyaml
         import io
 
-        round_trip("""
+        import ruyaml
+
+        round_trip(
+            """
         [2021-02-01 22:34:48.696868-03:00]
-        """)
+        """
+        )
         yaml = ruyaml.YAML()
-        dd = DateTime(2021, 2, 1, 22, 34, 48, 696868, TimeZone(TimeDelta(hours=-3), name=''))
+        dd = DateTime(
+            2021, 2, 1, 22, 34, 48, 696868, TimeZone(TimeDelta(hours=-3), name='')
+        )
         buf = io.StringIO()
         yaml.dump(dd, buf)
         assert buf.getvalue() == '2021-02-01 22:34:48.696868-03:00\n...\n'
@@ -172,14 +188,18 @@ class TestDateTime:
     def test_fraction_overflow(self) -> None:
         # reported (indirectly) by Luís Ferreira
         # https://sourceforge.net/p/ruyaml/tickets/414/
-        inp = dedent("""\
+        inp = dedent(
+            """\
         - 2022-01-02T12:34:59.9999994
         - 2022-01-02T12:34:59.9999995
-        """)
-        exp = dedent("""\
+        """
+        )
+        exp = dedent(
+            """\
         - 2022-01-02T12:34:59.999999
         - 2022-01-02T12:35:00
-        """)
+        """
+        )
         round_trip(inp, exp)
 
     def Xtest_tzinfo(self) -> None:
@@ -193,7 +213,16 @@ class TestDateTime:
         print('----')
         # dx = DateTime.fromisoformat(dts)
         # print('dx', dx, repr(dx))
-        dd = DateTime(2011, 10, 2, 16, 45, 00, 930619, TimeZone(TimeDelta(hours=1, minutes=0), name='+01:00'))  # NOQA
+        dd = DateTime(
+            2011,
+            10,
+            2,
+            16,
+            45,
+            00,
+            930619,
+            TimeZone(TimeDelta(hours=1, minutes=0), name='+01:00'),
+        )  # NOQA
         yaml.dump([dd], sys.stdout)
         print('dd', dd, dd.tzinfo)
         raise AssertionError()

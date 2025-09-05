@@ -14,29 +14,38 @@ and the chomping modifiers:
 """
 
 import platform
-import ruyaml
 
 import pytest
 
 # from ruyaml.compat import ordereddict
-from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump  # type: ignore # NOQA
+from roundtrip import (  # type: ignore # NOQA
+    dedent,
+    round_trip,
+    round_trip_dump,
+    round_trip_load,
+)
+
+import ruyaml
 
 
 class TestLiteralScalarString:
     def test_basic_string(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         a: abcdefg
         """
         )
 
     def test_quoted_integer_string(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         a: '12345'
         """
         )
 
     @pytest.mark.skipif(  # type: ignore
-        platform.python_implementation() == 'Jython', reason='Jython throws RepresenterError',
+        platform.python_implementation() == 'Jython',
+        reason='Jython throws RepresenterError',
     )
     def test_preserve_string(self) -> None:
         inp = """
@@ -47,7 +56,8 @@ class TestLiteralScalarString:
         round_trip(inp, intermediate=dict(a='abc\ndef\n'))
 
     @pytest.mark.skipif(  # type: ignore
-        platform.python_implementation() == 'Jython', reason='Jython throws RepresenterError',
+        platform.python_implementation() == 'Jython',
+        reason='Jython throws RepresenterError',
     )
     def test_preserve_string_strip(self) -> None:
         s = """
@@ -59,7 +69,8 @@ class TestLiteralScalarString:
         round_trip(s, intermediate=dict(a='abc\ndef'))
 
     @pytest.mark.skipif(  # type: ignore
-        platform.python_implementation() == 'Jython', reason='Jython throws RepresenterError',
+        platform.python_implementation() == 'Jython',
+        reason='Jython throws RepresenterError',
     )
     def test_preserve_string_keep(self) -> None:
         # with pytest.raises(AssertionError) as excinfo:
@@ -74,7 +85,8 @@ class TestLiteralScalarString:
         round_trip(inp, intermediate=dict(a='ghi\njkl\n\n\n', b='x'))
 
     @pytest.mark.skipif(  # type: ignore
-        platform.python_implementation() == 'Jython', reason='Jython throws RepresenterError',
+        platform.python_implementation() == 'Jython',
+        reason='Jython throws RepresenterError',
     )
     def test_preserve_string_keep_at_end(self) -> None:
         # at EOF you have to specify the ... to get proper "closure"
@@ -195,11 +207,11 @@ class TestWalkTree:
         assert round_trip_dump(data) == dedent(exp)
 
     def test_map(self) -> None:
-        from ruyaml.compat import ordereddict
         from ruyaml.comments import CommentedMap
-        from ruyaml.scalarstring import walk_tree, preserve_literal
+        from ruyaml.compat import ordereddict
         from ruyaml.scalarstring import DoubleQuotedScalarString as dq
         from ruyaml.scalarstring import SingleQuotedScalarString as sq
+        from ruyaml.scalarstring import preserve_literal, walk_tree
 
         data = CommentedMap()
         data[1] = 'a'

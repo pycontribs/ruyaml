@@ -1,8 +1,7 @@
-
 from __future__ import annotations
 
 if False:  # MYPY
-    from typing import Any, Dict, List, Union, Optional, Iterator  # NOQA
+    from typing import Any, Dict, Iterator, List, Optional, Union  # NOQA
 
 
 merge_attrib = '_yaml_merge'

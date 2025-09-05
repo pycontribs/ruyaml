@@ -44,8 +44,8 @@ mkdocs:
 `ruamel.yaml` is a YAML 1.2 loader/dumper package for Python.
 
 --- !table
-version: !Env version 
-updated: !Env date 
+version: !Env version
+updated: !Env date
 documentation: https://yaml.dev/doc/ruamel.yaml
 repository: https://sourceforge.net/projects/ruamel-yaml
 pypi:  https://pypi.org/project/ruamel.yaml
@@ -57,26 +57,26 @@ from textwrap import dedent
 if os.environ.get('GEN_README_MD'):
     print(dedent("""\
     ## breaking changes, that may make future uploads to PyPI impossible
-    
+
     *If you are interested in future upgrades of `ruamel.yaml`
     please check the [documentation on installing](https://yaml.dev/doc/ruamel.yaml/install/),
     since at some point I might not be able to upload a new version to PyPI with updated information.*
-    
+
     `ruamel.yaml` was intentionally named as `yaml` in a namespace `ruamel`. The namespace allows the installation
     name to correspond unchanged to how the package is imported, reduces the number of links I have to create
     in site-packages of a Python install during development, as well as providing a recognisable set of packages
-    my company releases to the public. 
-    
+    my company releases to the public.
+
     However, after uploading version 0.18.7, I got an email from PyPI, about having to change the project name
     to `ruamel_yaml` to comply with PEP 625, sometime in the future. The email doesn't say if namespace packages are
     no longer allowed, or how to deal with the very real clash with the pre-existing package `ruamel_yaml`.
-    
+
     I might not be able to adapt `ruamel.yaml`, in
-    a way that does not negatively affect the 0.5 million daily downloads (and my own usage of the package) in time. 
-    My experience with other such service downgrades (Bitbucket, Readthedocs), has not been entirely positive. 
-    
+    a way that does not negatively affect the 0.5 million daily downloads (and my own usage of the package) in time.
+    My experience with other such service downgrades (Bitbucket, Readthedocs), has not been entirely positive.
+
     -----
-    
+
     """))
 
 --- !stdout-raw |
@@ -85,9 +85,9 @@ if os.environ.get('GEN_README_MD'):
 
 As announced, in 0.18.0, the old PyYAML functions have been deprecated.
 (`scan`, `parse`, `compose`, `load`, `emit`, `serialize`, `dump` and their variants
-(`_all`, `safe_`, `round_trip_`, etc)). If you only read this after your program has 
-stopped working: I am sorry to hear that, but that also means you, or the person 
-developing your program, has not tested with warnings on (which is the recommendation 
+(`_all`, `safe_`, `round_trip_`, etc)). If you only read this after your program has
+stopped working: I am sorry to hear that, but that also means you, or the person
+developing your program, has not tested with warnings on (which is the recommendation
 in PEP 565, and e.g. defaulting when using `pytest`). If you have troubles, explicitly use
 ```
 pip install "ruamel.yaml<0.18.0"
@@ -99,21 +99,21 @@ There will be at least one more potentially breaking change in the 0.18 series: 
 now has a pending deprecation warning and is going to be deprecated, probably before the end of 2023.
 If you only use it to dump, please use the new `YAML(typ='full')`, the result of that can be *safely*
 loaded with a default  instance `YAML()`, as that will get you inspectable, tagged, scalars, instead of
-executed Python functions/classes. (You should probably add constructors for what you actually need, 
+executed Python functions/classes. (You should probably add constructors for what you actually need,
 but I do consider adding a `ruamel.yaml.unsafe` package that will re-add the `typ='unsafe'` option.
 *Please adjust/pin your dependencies accordingly if necessary.*
 
 
-There seems to be a CVE on `ruamel.yaml`, stating that the `load()` function could be abused 
+There seems to be a CVE on `ruamel.yaml`, stating that the `load()` function could be abused
 because of unchecked input. `load()` was never the default function (that was `round_trip_load()`
 before the new API came into existence. So the creator of that CVE was ill informed and
 probably lazily assumed that since `ruamel.yaml` is a derivative of PyYAML (for which
-a similar CVE exists), the same problem would still exist, without checking. 
+a similar CVE exists), the same problem would still exist, without checking.
 So the CVE was always inappropriate,  now just more so, as the call
-to the function `load()` with any input will terminate your program with an error message. If you 
+to the function `load()` with any input will terminate your program with an error message. If you
 (have to) care about such things as this CVE, my recommendation is to stop using Python
-completely, as `pickle.load()` can be abused in the same way as `load()` (and like unlike `load()` 
-is only documented to be unsafe, without development-time warning. 
+completely, as `pickle.load()` can be abused in the same way as `load()` (and like unlike `load()`
+is only documented to be unsafe, without development-time warning.
 
 Version 0.18.9 was the last one tested to be working with Python 3.7
 Version 0.17.21 was the last one tested to be working on Python 3.5 and 3.6<BR>

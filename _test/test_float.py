@@ -1,15 +1,20 @@
 # coding: utf-8
 
 import pytest  # type: ignore  # NOQA
-
-from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump  # type: ignore # NOQA
+from roundtrip import (  # type: ignore # NOQA
+    dedent,
+    round_trip,
+    round_trip_dump,
+    round_trip_load,
+)
 
 # http://yaml.org/type/int.html is where underscores in integers are defined
 
 
 class TestFloat:
     def test_round_trip_non_exp(self) -> None:
-        data = round_trip("""\
+        data = round_trip(
+            """\
         - 1.0
         - 1.00
         - 23.100
@@ -24,7 +29,8 @@ class TestFloat:
         - -.5
         - !!float '42'
         - !!float '-42'
-        """)
+        """
+        )
         print(data)
         assert 0.999 < data[0] < 1.001
         assert 0.999 < data[1] < 1.001
@@ -35,14 +41,15 @@ class TestFloat:
         assert 41.999 < data[6] < 42.001
         assert 41.999 < -data[7] < 42.001
         assert 41.999 < data[8] < 42.001
-        assert .49 < data[9] < .51
-        assert .49 < data[10] < .51
-        assert -.51 < data[11] < -.49
+        assert 0.49 < data[9] < 0.51
+        assert 0.49 < data[10] < 0.51
+        assert -0.51 < data[11] < -0.49
         assert 41.99 < data[12] < 42.01
         assert 41.99 < -data[13] < 42.01
 
     def test_round_trip_zeros_0(self) -> None:
-        data = round_trip("""\
+        data = round_trip(
+            """\
         - 0.
         - +0.
         - -0.
@@ -59,9 +66,11 @@ class TestFloat:
             assert -0.00001 < d < 0.00001
 
     def test_round_trip_exp_trailing_dot(self) -> None:
-        data = round_trip("""\
+        data = round_trip(
+            """\
         - 3.e4
-        """)
+        """
+        )
         print(data)
 
     def test_yaml_1_1_no_dot(self) -> None:

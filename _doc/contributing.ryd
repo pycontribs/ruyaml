@@ -50,7 +50,7 @@ should be tested (`tox`/`pytest`), checked for typing conformance
 (`mypy`) and pass pep8 conformance (`flake8`).
 
 In my experience it is best to use two `virtualenv` environments, one
-with the latest Python version currently supported, the other with 
+with the latest Python version currently supported, the other with
 the oldest supported version.
 In the site-packages directory of each virtualenv make a soft link to
 the ruamel directory of your (cloned and checked out) copy of the
@@ -131,9 +131,9 @@ finding/resolving this properly attributed.
 Please note that there is a CVE out there against `ruamel.yaml`, that states
 that the input of the function `load()` is not checked. As the
 use of `ruamel.yaml.load()` was never the default, was documented to potentially
-cause problems when specific parameters were provided, and issued a 
+cause problems when specific parameters were provided, and issued a
 warning, this was always an inappropriate statement.
-(To compare: no such CVE was given for the use of the Python standard library 
+(To compare: no such CVE was given for the use of the Python standard library
 function `pickle.load`, which only documents which is default function
 to use and only documented to potentially dangerious). The whole CVE is moot,
 with the removal of the `load()` function 0.18.

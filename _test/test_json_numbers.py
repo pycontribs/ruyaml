@@ -1,10 +1,9 @@
 # coding: utf-8
 
-import pytest  # type: ignore  # NOQA
-
 import json
-
 from typing import Any
+
+import pytest  # type: ignore  # NOQA
 
 
 def load(s: str, typ: Any = float) -> float:

@@ -7,13 +7,13 @@ Testing copy and deepcopy, instigated by Issue 84 (Peter Amstutz)
 import copy
 
 import pytest  # type: ignore  # NOQA
-
-from roundtrip import dedent, round_trip_load, round_trip_dump  # type: ignore
+from roundtrip import dedent, round_trip_dump, round_trip_load  # type: ignore
 
 
 class TestDeepCopy:
     def test_preserve_flow_style_simple(self) -> None:
-        x = dedent("""\
+        x = dedent(
+            """\
         {foo: bar, baz: quux}
         """
         )
@@ -26,7 +26,8 @@ class TestDeepCopy:
         assert data.fa.flow_style() == data_copy.fa.flow_style()
 
     def test_deepcopy_flow_style_nested_dict(self) -> None:
-        x = dedent("""\
+        x = dedent(
+            """\
         a: {foo: bar, baz: quux}
         """
         )
@@ -51,7 +52,8 @@ class TestDeepCopy:
         )
 
     def test_deepcopy_flow_style_nested_list(self) -> None:
-        x = dedent("""\
+        x = dedent(
+            """\
         a: [1, 2, 3]
         """
         )
@@ -79,7 +81,8 @@ class TestDeepCopy:
 
 class TestCopy:
     def test_copy_flow_style_nested_dict(self) -> None:
-        x = dedent("""\
+        x = dedent(
+            """\
         a: {foo: bar, baz: quux}
         """
         )
@@ -104,7 +107,8 @@ class TestCopy:
         )
 
     def test_copy_flow_style_nested_list(self) -> None:
-        x = dedent("""\
+        x = dedent(
+            """\
         a: [1, 2, 3]
         """
         )

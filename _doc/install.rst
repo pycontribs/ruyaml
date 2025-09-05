@@ -45,4 +45,3 @@ For CentOS (7) based systems you should do:
     sudo yum install python-devel
 --- !inc-raw |
 links.rydinc
-

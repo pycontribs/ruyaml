@@ -1,10 +1,9 @@
-
 from __future__ import annotations
 
 from ruyaml.anchor import Anchor
 
 if False:  # MYPY
-    from typing import Text, Any, Dict, List  # NOQA
+    from typing import Any, Dict, List, Text  # NOQA
 
 __all__ = ['ScalarInt', 'BinaryInt', 'OctalInt', 'HexInt', 'HexCapsInt', 'DecimalInt']
 
@@ -46,7 +45,7 @@ class ScalarInt(int):
         return x
 
     def __ipow__(self, a: Any) -> Any:  # type: ignore
-        x = type(self)(self ** a)
+        x = type(self)(self**a)
         x._width = self._width  # type: ignore
         x._underscore = (  # type: ignore
             self._underscore[:] if self._underscore is not None else None  # type: ignore
@@ -81,16 +80,28 @@ class ScalarInt(int):
 
 class BinaryInt(ScalarInt):
     def __new__(
-        cls, value: Any, width: Any = None, underscore: Any = None, anchor: Any = None,
+        cls,
+        value: Any,
+        width: Any = None,
+        underscore: Any = None,
+        anchor: Any = None,
     ) -> Any:
-        return ScalarInt.__new__(cls, value, width=width, underscore=underscore, anchor=anchor)
+        return ScalarInt.__new__(
+            cls, value, width=width, underscore=underscore, anchor=anchor
+        )
 
 
 class OctalInt(ScalarInt):
     def __new__(
-        cls, value: Any, width: Any = None, underscore: Any = None, anchor: Any = None,
+        cls,
+        value: Any,
+        width: Any = None,
+        underscore: Any = None,
+        anchor: Any = None,
     ) -> Any:
-        return ScalarInt.__new__(cls, value, width=width, underscore=underscore, anchor=anchor)
+        return ScalarInt.__new__(
+            cls, value, width=width, underscore=underscore, anchor=anchor
+        )
 
 
 # mixed casing of A-F is not supported, when loading the first non digit
@@ -101,25 +112,42 @@ class HexInt(ScalarInt):
     """uses lower case (a-f)"""
 
     def __new__(
-        cls, value: Any, width: Any = None, underscore: Any = None, anchor: Any = None,
+        cls,
+        value: Any,
+        width: Any = None,
+        underscore: Any = None,
+        anchor: Any = None,
     ) -> Any:
-        return ScalarInt.__new__(cls, value, width=width, underscore=underscore, anchor=anchor)
+        return ScalarInt.__new__(
+            cls, value, width=width, underscore=underscore, anchor=anchor
+        )
 
 
 class HexCapsInt(ScalarInt):
     """uses upper case (A-F)"""
 
     def __new__(
-        cls, value: Any, width: Any = None, underscore: Any = None, anchor: Any = None,
+        cls,
+        value: Any,
+        width: Any = None,
+        underscore: Any = None,
+        anchor: Any = None,
     ) -> Any:
-        return ScalarInt.__new__(cls, value, width=width, underscore=underscore, anchor=anchor)
+        return ScalarInt.__new__(
+            cls, value, width=width, underscore=underscore, anchor=anchor
+        )
 
 
 class DecimalInt(ScalarInt):
     """needed if anchor"""
 
     def __new__(
-        cls, value: Any, width: Any = None, underscore: Any = None, anchor: Any = None,
+        cls,
+        value: Any,
+        width: Any = None,
+        underscore: Any = None,
+        anchor: Any = None,
     ) -> Any:
-        return ScalarInt.__new__(cls, value, width=width, underscore=underscore, anchor=anchor)
-
+        return ScalarInt.__new__(
+            cls, value, width=width, underscore=underscore, anchor=anchor
+        )

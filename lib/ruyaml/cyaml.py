@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from _ruyaml import CEmitter, CParser  # type: ignore
@@ -7,9 +6,9 @@ from ruyaml.constructor import BaseConstructor, Constructor, SafeConstructor
 from ruyaml.representer import BaseRepresenter, Representer, SafeRepresenter
 from ruyaml.resolver import BaseResolver, Resolver
 
-
 if False:  # MYPY
-    from typing import Any, Union, Optional  # NOQA
+    from typing import Any, Optional, Union  # NOQA
+
     from ruyaml.compat import StreamTextType, StreamType, VersionType  # NOQA
 
 __all__ = [
@@ -157,7 +156,9 @@ class CSafeDumper(CEmitter, SafeRepresenter, Resolver):  # type: ignore
         )
         self._emitter = self._serializer = self._representer = self
         SafeRepresenter.__init__(
-            self, default_style=default_style, default_flow_style=default_flow_style,
+            self,
+            default_style=default_style,
+            default_flow_style=default_flow_style,
         )
         Resolver.__init__(self)
 
@@ -199,6 +200,8 @@ class CDumper(CEmitter, Representer, Resolver):  # type: ignore
         )
         self._emitter = self._serializer = self._representer = self
         Representer.__init__(
-            self, default_style=default_style, default_flow_style=default_flow_style,
+            self,
+            default_style=default_style,
+            default_flow_style=default_flow_style,
         )
         Resolver.__init__(self)

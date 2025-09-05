@@ -36,15 +36,15 @@ since at some point I might not be able to upload a new version to PyPI with upd
 `ruamel.yaml` was intentionally named as `yaml` in a namespace `ruamel`. The namespace allows the installation
 name to correspond unchanged to how the package is imported, reduces the number of links I have to create
 in site-packages of a Python install during development, as well as providing a recognisable set of packages
-my company releases to the public. 
+my company releases to the public.
 
 However, after uploading version 0.18.7, I got an email from PyPI, about having to change the project name
 to `ruamel_yaml` to comply with PEP 625, sometime in the future. The email doesn't say if namespace packages are
 no longer allowed, or how to deal with the very real clash with the pre-existing package `ruamel_yaml`.
 
 I might not be able to adapt `ruamel.yaml`, in
-a way that does not negatively affect the 0.5 million daily downloads (and my own usage of the package) in time. 
-My experience with other such service downgrades (Bitbucket, Readthedocs), has not been entirely positive. 
+a way that does not negatively affect the 0.5 million daily downloads (and my own usage of the package) in time.
+My experience with other such service downgrades (Bitbucket, Readthedocs), has not been entirely positive.
 
 -----
 
@@ -52,9 +52,9 @@ My experience with other such service downgrades (Bitbucket, Readthedocs), has n
 
 As announced, in 0.18.0, the old PyYAML functions have been deprecated.
 (`scan`, `parse`, `compose`, `load`, `emit`, `serialize`, `dump` and their variants
-(`_all`, `safe_`, `round_trip_`, etc)). If you only read this after your program has 
-stopped working: I am sorry to hear that, but that also means you, or the person 
-developing your program, has not tested with warnings on (which is the recommendation 
+(`_all`, `safe_`, `round_trip_`, etc)). If you only read this after your program has
+stopped working: I am sorry to hear that, but that also means you, or the person
+developing your program, has not tested with warnings on (which is the recommendation
 in PEP 565, and e.g. defaulting when using `pytest`). If you have troubles, explicitly use
 ```
 pip install "ruamel.yaml<0.18.0"
@@ -66,21 +66,21 @@ There will be at least one more potentially breaking change in the 0.18 series: 
 now has a pending deprecation warning and is going to be deprecated, probably before the end of 2023.
 If you only use it to dump, please use the new `YAML(typ='full')`, the result of that can be *safely*
 loaded with a default  instance `YAML()`, as that will get you inspectable, tagged, scalars, instead of
-executed Python functions/classes. (You should probably add constructors for what you actually need, 
+executed Python functions/classes. (You should probably add constructors for what you actually need,
 but I do consider adding a `ruamel.yaml.unsafe` package that will re-add the `typ='unsafe'` option.
 *Please adjust/pin your dependencies accordingly if necessary.*
 
 
-There seems to be a CVE on `ruamel.yaml`, stating that the `load()` function could be abused 
+There seems to be a CVE on `ruamel.yaml`, stating that the `load()` function could be abused
 because of unchecked input. `load()` was never the default function (that was `round_trip_load()`
 before the new API came into existence. So the creator of that CVE was ill informed and
 probably lazily assumed that since `ruamel.yaml` is a derivative of PyYAML (for which
-a similar CVE exists), the same problem would still exist, without checking. 
+a similar CVE exists), the same problem would still exist, without checking.
 So the CVE was always inappropriate,  now just more so, as the call
-to the function `load()` with any input will terminate your program with an error message. If you 
+to the function `load()` with any input will terminate your program with an error message. If you
 (have to) care about such things as this CVE, my recommendation is to stop using Python
-completely, as `pickle.load()` can be abused in the same way as `load()` (and like unlike `load()` 
-is only documented to be unsafe, without development-time warning. 
+completely, as `pickle.load()` can be abused in the same way as `load()` (and like unlike `load()`
+is only documented to be unsafe, without development-time warning.
 
 Version 0.18.9 was the last one tested to be working with Python 3.7
 Version 0.17.21 was the last one tested to be working on Python 3.5 and 3.6<BR>
@@ -185,9 +185,9 @@ NEXT:<br>
 - the **functions** `scan`, `parse`, `compose`, `load`, `emit`, `serialize`, `dump` and their variants (`_all`, `safe_`, `round_trip_`, etc) have been deprecated (the same named **methods** on `YAML()` instances are, of course, still there.
 - `YAML(typ='unsafe')` now issues a `PendingDeprecationWarning`. This will become deprecated in the 0.18 series
 (probably before the end of 2023).
-You can use `YAML(typ='full')` to dump unregistered Python classes/functions. 
+You can use `YAML(typ='full')` to dump unregistered Python classes/functions.
 For loading you'll have to register your classes/functions
-if you want the old, unsafe, functionality. You can still load any tag, like `!!python/name:posix.system', **safely** 
+if you want the old, unsafe, functionality. You can still load any tag, like `!!python/name:posix.system', **safely**
 with the (default) round-trip parser.
 - fix for `bytes-like object is required not 'str' while dumping binary streams`. This was reported, analysed and a fix provided by [Vit Zikmund](https://sourceforge.net/u/tlwhitec/profile/)
 
@@ -197,7 +197,7 @@ with the (default) round-trip parser.
 - potential workaround for issue 484: the long_description_content_type including the variant specification `CommonMark`
 can result in problems on Azure. If you can install from `.tar.gz` using
 `RUAMEL_NO_LONG_DESCRIPTION=1 pip install ruamel.yaml --no-binary :all:` then the long description, and its
-offending type, are nog included (in the METADATA). 
+offending type, are nog included (in the METADATA).
 (Reported by [Coury Ditch](https://sourceforge.net/u/cmditch/profile/))
 - links in documentation update (reported by [David Hoese](https://sourceforge.net/u/daveydave400/profile/))
 - Added some `__repr__` for internally used classes

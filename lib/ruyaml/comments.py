@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 """
@@ -12,17 +11,13 @@ import sys
 from collections.abc import Mapping, MutableSet, Set, Sized
 from typing import Any, Dict, Iterator, List, Optional, Union
 
-
-from ruyaml.compat import ordereddict
-from ruyaml.compat import MutableSliceableSequence, nprintf  # NOQA
-from ruyaml.scalarstring import ScalarString
 from ruyaml.anchor import Anchor
+from ruyaml.compat import MutableSliceableSequence, nprintf, ordereddict  # NOQA
+from ruyaml.scalarstring import ScalarString
 from ruyaml.tag import Tag
 
-from collections.abc import MutableSet, Sized, Set, Mapping
-
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List, Union, Iterator  # NOQA
+    from typing import Any, Dict, Iterator, List, Optional, Union  # NOQA
 
 # fmt: off
 __all__ = ['CommentedSeq', 'CommentedKeySeq',
@@ -290,7 +285,9 @@ class CommentedBase:
             self.ca.end = []
         self.ca.end.extend(comment)
 
-    def yaml_key_comment_extend(self, key: Any, comment: Any, clear: bool = False) -> None:
+    def yaml_key_comment_extend(
+        self, key: Any, comment: Any, clear: bool = False
+    ) -> None:
         r = self.ca._items.setdefault(key, [None, None, None, None])
         if clear or r[1] is None:
             if comment[1] is not None:
@@ -300,7 +297,9 @@ class CommentedBase:
             r[1].extend(comment[0])
         r[0] = comment[0]
 
-    def yaml_value_comment_extend(self, key: Any, comment: Any, clear: bool = False) -> None:
+    def yaml_value_comment_extend(
+        self, key: Any, comment: Any, clear: bool = False
+    ) -> None:
         r = self.ca._items.setdefault(key, [None, None, None, None])
         if clear or r[3] is None:
             if comment[1] is not None:
@@ -378,7 +377,10 @@ class CommentedBase:
         return getattr(self, Format.attrib)
 
     def yaml_add_eol_comment(
-        self, comment: Any, key: Optional[Any] = NotNone, column: Optional[Any] = None,
+        self,
+        comment: Any,
+        key: Optional[Any] = NotNone,
+        column: Optional[Any] = None,
     ) -> None:
         """
         there is a problem as eol comments should start with ' #'
@@ -579,7 +581,8 @@ class CommentedSeq(MutableSliceableSequence, list, CommentedBase):  # type: igno
             list.__init__(self, [x[0] for x in tmp_lst])
         else:
             tmp_lst = sorted(
-                zip(map(key, list.__iter__(self)), range(len(self))), reverse=reverse,
+                zip(map(key, list.__iter__(self)), range(len(self))),
+                reverse=reverse,
             )
             list.__init__(self, [list.__getitem__(self, x[1]) for x in tmp_lst])
         itm = self.ca.items
@@ -717,7 +720,10 @@ class CommentedMap(ordereddict, CommentedBase):
         ordereddict.__init__(self, *args, **kw)
 
     def _yaml_add_comment(
-        self, comment: Any, key: Optional[Any] = NotNone, value: Optional[Any] = NotNone,
+        self,
+        comment: Any,
+        key: Optional[Any] = NotNone,
+        value: Optional[Any] = NotNone,
     ) -> None:
         """values is set to key to indicate a value attachment of comment"""
         if key is not NotNone:
@@ -795,7 +801,9 @@ class CommentedMap(ordereddict, CommentedBase):
         if kw:
             self._ok.update(*kw.keys())  # type: ignore
 
-    def insert(self, pos: Any, key: Any, value: Any, comment: Optional[Any] = None) -> None:
+    def insert(
+        self, pos: Any, key: Any, value: Any, comment: Optional[Any] = None
+    ) -> None:
         """insert key value into given position, as defined by source YAML
         attach comment if provided
         """
@@ -1134,7 +1142,10 @@ class CommentedSet(MutableSet, CommentedBase):  # type: ignore  # NOQA
             self |= values
 
     def _yaml_add_comment(
-        self, comment: Any, key: Optional[Any] = NotNone, value: Optional[Any] = NotNone,
+        self,
+        comment: Any,
+        key: Optional[Any] = NotNone,
+        value: Optional[Any] = NotNone,
     ) -> None:
         """values is set to key to indicate a value attachment of comment"""
         if key is not NotNone:
@@ -1184,7 +1195,9 @@ class TaggedScalar(CommentedBase):
     def __str__(self) -> Any:
         return self.value
 
-    def count(self, s: str, start: Optional[int] = None, end: Optional[int] = None) -> Any:
+    def count(
+        self, s: str, start: Optional[int] = None, end: Optional[int] = None
+    ) -> Any:
         return self.value.count(s, start, end)
 
     def __getitem__(self, pos: int) -> Any:
@@ -1194,7 +1207,9 @@ class TaggedScalar(CommentedBase):
         return f'TaggedScalar(value={self.value!r}, style={self.style!r}, tag={self.tag!r})'
 
 
-def dump_comments(d: Any, name: str = "", sep: str = '.', out: Any = sys.stdout) -> None:
+def dump_comments(
+    d: Any, name: str = "", sep: str = '.', out: Any = sys.stdout
+) -> None:
     """
     recursively dump comments, all but the toplevel preceded by the path
     in dotted form x.0.a
@@ -1213,5 +1228,8 @@ def dump_comments(d: Any, name: str = "", sep: str = '.', out: Any = sys.stdout)
         out.write(f'{d.ca!r}\n')
         for idx, k in enumerate(d):
             dump_comments(
-                k, name=(name + sep + str(idx)) if name else str(idx), sep=sep, out=out,
+                k,
+                name=(name + sep + str(idx)) if name else str(idx),
+                sep=sep,
+                out=out,
             )

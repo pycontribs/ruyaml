@@ -1,5 +1,11 @@
-
 from __future__ import annotations
+
+import sys
+
+# fmt: off
+from ruyaml.compat import DBG_EVENT, check_anchorname_char, dbg, nprint, nprintf  # NOQA
+from ruyaml.error import YAMLError, YAMLStreamError
+from ruyaml.events import *  # NOQA
 
 # Emitter expects events obeying the following grammar:
 # stream ::= STREAM-START document* STREAM-END
@@ -8,18 +14,13 @@ from __future__ import annotations
 # sequence ::= SEQUENCE-START node* SEQUENCE-END
 # mapping ::= MAPPING-START (node node)* MAPPING-END
 
-import sys
-from ruyaml.error import YAMLError, YAMLStreamError
-from ruyaml.events import *  # NOQA
 
-# fmt: off
-from ruyaml.compat import nprint, dbg, DBG_EVENT, \
-    check_anchorname_char, nprintf  # NOQA
 # fmt: on
 
 
 if False:  # MYPY
-    from typing import Any, Dict, List, Union, Text, Tuple, Optional  # NOQA
+    from typing import Any, Dict, List, Optional, Text, Tuple, Union  # NOQA
+
     from ruyaml.compat import StreamType  # NOQA
 
 __all__ = ['Emitter', 'EmitterError']
@@ -82,7 +83,10 @@ class Indents:
             return False
 
     def seq_flow_align(
-        self, seq_indent: int, column: int, pre_comment: Optional[bool] = False,
+        self,
+        seq_indent: int,
+        column: int,
+        pre_comment: Optional[bool] = False,
     ) -> int:
         # extra spaces because of dash
         # nprint('seq_flow_align', self.values, pre_comment)
@@ -298,7 +302,10 @@ class Emitter:
         return len(self.events) < count + 1
 
     def increase_indent(
-        self, flow: bool = False, sequence: Optional[bool] = None, indentless: bool = False,
+        self,
+        flow: bool = False,
+        sequence: Optional[bool] = None,
+        indentless: bool = False,
     ) -> None:
         self.indents.append(self.indent, sequence)
         if self.indent is None:  # top level
@@ -476,7 +483,8 @@ class Emitter:
                     or self.check_empty_mapping()
                 ):
                     self.expect_flow_mapping(
-                        single=self.event.nr_items == 1, force_flow_indent=force_flow_indent,
+                        single=self.event.nr_items == 1,
+                        force_flow_indent=force_flow_indent,
                     )
                 else:
                     self.expect_block_mapping()
@@ -501,7 +509,9 @@ class Emitter:
         if force_flow_indent:
             self.increase_indent(flow=True, sequence=True)
         ind = self.indents.seq_flow_align(
-            self.best_sequence_indent, self.column, force_flow_indent,
+            self.best_sequence_indent,
+            self.column,
+            force_flow_indent,
         )
         self.write_indicator(' ' * ind + self.flow_seq_start, True, whitespace=True)
         if not force_flow_indent:
@@ -555,12 +565,16 @@ class Emitter:
     # Flow mapping handlers.
 
     def expect_flow_mapping(
-        self, single: Optional[bool] = False, force_flow_indent: Optional[bool] = False,
+        self,
+        single: Optional[bool] = False,
+        force_flow_indent: Optional[bool] = False,
     ) -> None:
         if force_flow_indent:
             self.increase_indent(flow=True, sequence=False)
         ind = self.indents.seq_flow_align(
-            self.best_sequence_indent, self.column, force_flow_indent,
+            self.best_sequence_indent,
+            self.column,
+            force_flow_indent,
         )
         map_init = self.flow_map_start
         if (
@@ -704,7 +718,8 @@ class Emitter:
             self.write_indent()
             if self.check_simple_key():
                 if not isinstance(
-                    self.event, (SequenceStartEvent, MappingStartEvent),
+                    self.event,
+                    (SequenceStartEvent, MappingStartEvent),
                 ):  # sequence keys
                     try:
                         if self.event.style == '?':
@@ -868,9 +883,9 @@ class Emitter:
             self.analysis = self.analyze_scalar(self.event.value)
         if self.event.style == '"' or self.canonical:
             return '"'
-        if (not self.event.style or self.event.style == '?' or self.event.style == '-') and (
-            self.event.implicit[0] or not self.event.implicit[2]
-        ):
+        if (
+            not self.event.style or self.event.style == '?' or self.event.style == '-'
+        ) and (self.event.implicit[0] or not self.event.implicit[2]):
             if not (
                 self.simple_key_context
                 and (self.analysis.empty or self.analysis.multiline)
@@ -966,8 +981,12 @@ class Emitter:
         if handle[0] != '!' or handle[-1] != '!':
             raise EmitterError(f"tag handle must start and end with '!': {handle!r}")
         for ch in handle[1:-1]:
-            if not ('0' <= ch <= '9' or 'A' <= ch <= 'Z' or 'a' <= ch <= 'z' or ch in '-_'):
-                raise EmitterError(f'invalid character {ch!r} in the tag handle: {handle!r}')
+            if not (
+                '0' <= ch <= '9' or 'A' <= ch <= 'Z' or 'a' <= ch <= 'z' or ch in '-_'
+            ):
+                raise EmitterError(
+                    f'invalid character {ch!r} in the tag handle: {handle!r}'
+                )
         return handle
 
     def prepare_tag_prefix(self, prefix: Any) -> Any:
@@ -1047,7 +1066,9 @@ class Emitter:
             raise EmitterError('anchor must not be empty')
         for ch in anchor:
             if not check_anchorname_char(ch):
-                raise EmitterError(f'invalid character {ch!r} in the anchor: {anchor!r}')
+                raise EmitterError(
+                    f'invalid character {ch!r} in the anchor: {anchor!r}'
+                )
         return anchor
 
     def analyze_scalar(self, scalar: Any) -> Any:
@@ -1466,7 +1487,7 @@ class Emitter:
                         except (ValueError, IndexError):
                             pass
                         # nprint('backslash?', space_pos, repr(text[:space_pos]), repr(text[space_pos:]), (text[space_pos] == '\n' and text[space_pos+1] == ' '))  # NOQA
-                        if (text[space_pos] == '\n' and text[space_pos + 1] != ' '):
+                        if text[space_pos] == '\n' and text[space_pos + 1] != ' ':
                             pass
                         elif (
                             '"' not in text[end:space_pos]

@@ -1,13 +1,16 @@
 # coding: utf-8
 
 import sys
+
 import pytest  # type:ignore  # NOQA
 
 last_to_warn = (0, 17, 40)
 
 
-@pytest.mark.skipif(sys.version_info < (3, 7) or sys.version_info >= (3, 9),  # type: ignore
-                    reason='collections not available?')
+@pytest.mark.skipif(
+    sys.version_info < (3, 7) or sys.version_info >= (3, 9),  # type: ignore
+    reason='collections not available?',
+)
 def test_collections_deprecation() -> None:
     with pytest.warns(DeprecationWarning):
         from collections import Hashable  # type: ignore  # NOQA
@@ -114,8 +117,9 @@ class TestYamlTyp:
             yaml.load('a: b')
 
     def test_full_rt(self) -> None:
-        import os
         import io
+        import os
+
         import ruyaml
 
         yaml = ruyaml.YAML(typ='full', pure=True)

@@ -1,11 +1,11 @@
-
 from __future__ import annotations
 
 import warnings
+
 # import textwrap
 
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List, Text  # NOQA
+    from typing import Any, Dict, List, Optional, Text  # NOQA
 
 
 __all__ = [
@@ -31,7 +31,9 @@ class StreamMark:
         self.column = column
 
     def __str__(self) -> Any:
-        where = f'  in "{self.name!s}", line {self.line + 1:d}, column {self.column + 1:d}'
+        where = (
+            f'  in "{self.name!s}", line {self.line + 1:d}, column {self.column + 1:d}'
+        )
         return where
 
     def __eq__(self, other: Any) -> bool:
@@ -53,7 +55,13 @@ class StringMark(StreamMark):
     __slots__ = 'name', 'index', 'line', 'column', 'buffer', 'pointer'
 
     def __init__(
-        self, name: Any, index: int, line: int, column: int, buffer: Any, pointer: Any,
+        self,
+        name: Any,
+        index: int,
+        line: int,
+        column: int,
+        buffer: Any,
+        pointer: Any,
     ) -> None:
         StreamMark.__init__(self, name, index, line, column)
         self.buffer = buffer
@@ -95,14 +103,18 @@ class StringMark(StreamMark):
 
     def __str__(self) -> Any:
         snippet = self.get_snippet()
-        where = f'  in "{self.name!s}", line {self.line + 1:d}, column {self.column + 1:d}'
+        where = (
+            f'  in "{self.name!s}", line {self.line + 1:d}, column {self.column + 1:d}'
+        )
         if snippet is not None:
             where += ':\n' + snippet
         return where
 
     def __repr__(self) -> Any:
         snippet = self.get_snippet()
-        where = f'  in "{self.name!s}", line {self.line + 1:d}, column {self.column + 1:d}'
+        where = (
+            f'  in "{self.name!s}", line {self.line + 1:d}, column {self.column + 1:d}'
+        )
         if snippet is not None:
             where += ':\n' + snippet
         return where

@@ -1,10 +1,14 @@
 # coding: utf-8
 
-import pytest  # type: ignore  # NOQA
-
-from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump  # type: ignore # NOQA
-
 from typing import Any
+
+import pytest  # type: ignore  # NOQA
+from roundtrip import (  # type: ignore # NOQA
+    dedent,
+    round_trip,
+    round_trip_dump,
+    round_trip_load,
+)
 
 
 def load(s: str) -> Any:
@@ -13,7 +17,8 @@ def load(s: str) -> Any:
 
 class TestLineCol:
     def test_item_00(self) -> None:
-        data = load("""
+        data = load(
+            """
             - a
             - e
             - [b, d]
@@ -24,7 +29,8 @@ class TestLineCol:
         assert data[2].lc.col == 2
 
     def test_item_01(self) -> None:
-        data = load("""
+        data = load(
+            """
             - a
             - e
             - {x: 3}
@@ -35,7 +41,8 @@ class TestLineCol:
         assert data[2].lc.col == 2
 
     def test_item_02(self) -> None:
-        data = load("""
+        data = load(
+            """
             - a
             - e
             - !!set {x, y}
@@ -46,7 +53,8 @@ class TestLineCol:
         assert data[2].lc.col == 2
 
     def test_item_03(self) -> None:
-        data = load("""
+        data = load(
+            """
             - a
             - e
             - !!omap
@@ -59,7 +67,8 @@ class TestLineCol:
         assert data[2].lc.col == 2
 
     def test_item_04(self) -> None:
-        data = load("""
+        data = load(
+            """
          # testing line and column based on SO
          # http://stackoverflow.com/questions/13319067/
          - key1: item 1
@@ -74,7 +83,8 @@ class TestLineCol:
         assert data[1].lc.col == 2
 
     def test_pos_mapping(self) -> None:
-        data = load("""
+        data = load(
+            """
         a: 1
         b: 2
         c: 3
@@ -87,7 +97,8 @@ class TestLineCol:
         assert data.lc.value('klm') == (4, 5)
 
     def test_pos_sequence(self) -> None:
-        data = load("""
+        data = load(
+            """
         - a
         - b
         - c

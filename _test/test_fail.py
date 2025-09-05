@@ -7,8 +7,12 @@
 # and remove remove the xyz_no_fail
 
 import pytest  # type: ignore
-
-from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump  # type: ignore
+from roundtrip import (  # type: ignore
+    dedent,
+    round_trip,
+    round_trip_dump,
+    round_trip_load,
+)
 
 
 class TestCommentFailures:
@@ -55,7 +59,8 @@ class TestCommentFailures:
 
     @pytest.mark.xfail(strict=True)  # type: ignore
     def test_comment_dash_line(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         - # abc
            a: 1
            b: 2
@@ -82,7 +87,8 @@ class TestCommentFailures:
 class TestIndentFailures:
     @pytest.mark.xfail(strict=True)  # type: ignore
     def test_indent_not_retained(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         verbosity: 1                  # 0 is minimal output, -1 none
         base_url: http://gopher.net
         special_indices: [1, 5, 8]
@@ -165,7 +171,8 @@ class TestIndentFailures:
 class TestTagFailures:
     @pytest.mark.xfail(strict=True)  # type: ignore
     def test_standard_short_tag(self) -> None:
-        round_trip("""\
+        round_trip(
+            """\
         !!map
         name: Anthon
         location: Germany

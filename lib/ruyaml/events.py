@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 # Abstract classes.
@@ -19,7 +18,10 @@ class Event:
     crepr = 'Unspecified Event'
 
     def __init__(
-        self, start_mark: Any = None, end_mark: Any = None, comment: Any = CommentCheck,
+        self,
+        start_mark: Any = None,
+        end_mark: Any = None,
+        comment: Any = CommentCheck,
     ) -> None:
         self.start_mark = start_mark
         self.end_mark = end_mark
@@ -54,7 +56,9 @@ class Event:
                 for key in ['anchor', 'tag', 'implicit', 'value', 'flow_style', 'style']
                 if hasattr(self, key)
             ]
-            arguments = ', '.join([f'{key!s}={getattr(self, key)!r}' for key in attributes])
+            arguments = ', '.join(
+                [f'{key!s}={getattr(self, key)!r}' for key in attributes]
+            )
             if self.comment not in [None, CommentCheck]:
                 arguments += f', comment={self.comment!r}'
         return f'{self.__class__.__name__!s}({arguments!s})'
@@ -67,7 +71,11 @@ class NodeEvent(Event):
     __slots__ = ('anchor',)
 
     def __init__(
-        self, anchor: Any, start_mark: Any = None, end_mark: Any = None, comment: Any = None,
+        self,
+        anchor: Any,
+        start_mark: Any = None,
+        end_mark: Any = None,
+        comment: Any = None,
     ) -> None:
         Event.__init__(self, start_mark, end_mark, comment)
         self.anchor = anchor

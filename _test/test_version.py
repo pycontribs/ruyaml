@@ -1,8 +1,8 @@
 # coding: utf-8
 
-import pytest  # type: ignore # NOQA
 from typing import Any, Optional
 
+import pytest  # type: ignore # NOQA
 from roundtrip import dedent, round_trip, round_trip_load  # type: ignore
 
 
@@ -16,7 +16,8 @@ def load(s: str, version: Optional[Any] = None) -> Any:
 
 class TestVersions:
     def test_explicit_1_2(self) -> None:
-        r = load("""\
+        r = load(
+            """\
         %YAML 1.2
         ---
         - 12:34:56
@@ -41,7 +42,8 @@ class TestVersions:
         assert r[8] is True
 
     def test_explicit_1_1(self) -> None:
-        r = load("""\
+        r = load(
+            """\
         %YAML 1.1
         ---
         - 12:34:56
@@ -66,7 +68,8 @@ class TestVersions:
         assert r[8] is True
 
     def test_implicit_1_2(self) -> None:
-        r = load("""\
+        r = load(
+            """\
         - 12:34:56
         - 12:34:56.78
         - 012

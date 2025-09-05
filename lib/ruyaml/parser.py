@@ -1,5 +1,17 @@
-
 from __future__ import annotations
+
+from ruyaml.comments import C_POST, C_PRE, C_SPLIT_ON_FIRST_BLANK
+from ruyaml.compat import nprint, nprintf  # NOQA
+from ruyaml.error import MarkedYAMLError
+from ruyaml.events import *  # NOQA
+from ruyaml.scanner import (  # NOQA
+    BlankLineComment,
+    RoundTripScanner,
+    Scanner,
+    ScannerError,
+)
+from ruyaml.tag import Tag
+from ruyaml.tokens import *  # NOQA
 
 # The following YAML grammar is LL(1) and is parsed by a recursive descent
 # parser.
@@ -75,17 +87,8 @@ from __future__ import annotations
 # and for Jython too
 
 
-from ruyaml.error import MarkedYAMLError
-from ruyaml.tokens import *  # NOQA
-from ruyaml.events import *  # NOQA
-from ruyaml.scanner import Scanner, RoundTripScanner, ScannerError  # NOQA
-from ruyaml.scanner import BlankLineComment
-from ruyaml.comments import C_PRE, C_POST, C_SPLIT_ON_FIRST_BLANK
-from ruyaml.compat import nprint, nprintf  # NOQA
-from ruyaml.tag import Tag
-
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List, Optional  # NOQA
+    from typing import Any, Dict, List, Optional  # NOQA
 
 __all__ = ['Parser', 'RoundTripParser', 'ParserError']
 
@@ -186,7 +189,9 @@ class Parser:
 
     def parse_implicit_document_start(self) -> Any:
         # Parse an implicit document.
-        if not self.scanner.check_token(DirectiveToken, DocumentStartToken, StreamEndToken):
+        if not self.scanner.check_token(
+            DirectiveToken, DocumentStartToken, StreamEndToken
+        ):
             # don't need copy, as an implicit tag doesn't add tag_handles
             self.tag_handles = self.DEFAULT_TAGS
             token = self.scanner.peek_token()
@@ -281,7 +286,10 @@ class Parser:
 
     def parse_document_content(self) -> Any:
         if self.scanner.check_token(
-            DirectiveToken, DocumentStartToken, DocumentEndToken, StreamEndToken,
+            DirectiveToken,
+            DocumentStartToken,
+            DocumentEndToken,
+            StreamEndToken,
         ):
             event = self.process_empty_scalar(self.scanner.peek_token().start_mark)
             self.state = self.states.pop()
@@ -297,7 +305,10 @@ class Parser:
             if token.name == 'YAML':
                 if yaml_version is not None:
                     raise ParserError(
-                        None, None, 'found duplicate YAML directive', token.start_mark,
+                        None,
+                        None,
+                        'found duplicate YAML directive',
+                        token.start_mark,
                     )
                 major, minor = token.value
                 if major != 1:
@@ -312,7 +323,10 @@ class Parser:
                 handle, prefix = token.value
                 if handle in self.tag_handles:
                     raise ParserError(
-                        None, None, f'duplicate tag handle {handle!r}', token.start_mark,
+                        None,
+                        None,
+                        f'duplicate tag handle {handle!r}',
+                        token.start_mark,
                     )
                 self.tag_handles[handle] = prefix
         if bool(self.tag_handles):
@@ -388,7 +402,9 @@ class Parser:
                 end_mark = token.end_mark
                 # tag = token.value
                 tag = Tag(
-                    handle=token.value[0], suffix=token.value[1], handles=self.tag_handles,
+                    handle=token.value[0],
+                    suffix=token.value[1],
+                    handles=self.tag_handles,
                 )
         elif self.scanner.check_token(TagToken):
             token = self.scanner.get_token()
@@ -399,7 +415,9 @@ class Parser:
             start_mark = tag_mark = token.start_mark
             end_mark = token.end_mark
             # tag = token.value
-            tag = Tag(handle=token.value[0], suffix=token.value[1], handles=self.tag_handles)
+            tag = Tag(
+                handle=token.value[0], suffix=token.value[1], handles=self.tag_handles
+            )
             if self.scanner.check_token(AnchorToken):
                 token = self.scanner.get_token()
                 start_mark = tag_mark = token.start_mark
@@ -433,7 +451,13 @@ class Parser:
                     comment = pt.comment
             end_mark = self.scanner.peek_token().end_mark
             event = SequenceStartEvent(
-                anchor, tag, implicit, start_mark, end_mark, flow_style=False, comment=comment,
+                anchor,
+                tag,
+                implicit,
+                start_mark,
+                end_mark,
+                flow_style=False,
+                comment=comment,
             )
             self.state = self.parse_indentless_sequence_entry
             return event
@@ -496,14 +520,26 @@ class Parser:
                 comment = pt.split_old_comment()
             # nprint('pt1', comment)
             event = SequenceStartEvent(
-                anchor, tag, implicit, start_mark, end_mark, flow_style=False, comment=comment,
+                anchor,
+                tag,
+                implicit,
+                start_mark,
+                end_mark,
+                flow_style=False,
+                comment=comment,
             )
             self.state = self.parse_block_sequence_first_entry
         elif block and self.scanner.check_token(BlockMappingStartToken):
             end_mark = self.scanner.peek_token().start_mark
             comment = self.scanner.peek_token().comment
             event = MappingStartEvent(
-                anchor, tag, implicit, start_mark, end_mark, flow_style=False, comment=comment,
+                anchor,
+                tag,
+                implicit,
+                start_mark,
+                end_mark,
+                flow_style=False,
+                comment=comment,
             )
             self.state = self.parse_block_mapping_first_key
         elif anchor is not None or tag is not None:
@@ -575,7 +611,10 @@ class Parser:
             token = self.scanner.get_token()
             self.move_token_comment(token)
             if not self.scanner.check_token(
-                BlockEntryToken, KeyToken, ValueToken, BlockEndToken,
+                BlockEntryToken,
+                KeyToken,
+                ValueToken,
+                BlockEndToken,
             ):
                 self.states.append(self.parse_indentless_sequence_entry)
                 return self.parse_block_node()
@@ -695,7 +734,12 @@ class Parser:
             if self.scanner.check_token(KeyToken):
                 token = self.scanner.peek_token()
                 event: Any = MappingStartEvent(
-                    None, None, True, token.start_mark, token.end_mark, flow_style=True,
+                    None,
+                    None,
+                    True,
+                    token.start_mark,
+                    token.end_mark,
+                    flow_style=True,
                 )
                 self.state = self.parse_flow_sequence_entry_mapping_key
                 return event
@@ -767,7 +811,9 @@ class Parser:
             if self.scanner.check_token(KeyToken):
                 token = self.scanner.get_token()
                 if not self.scanner.check_token(
-                    ValueToken, FlowEntryToken, FlowMappingEndToken,
+                    ValueToken,
+                    FlowEntryToken,
+                    FlowMappingEndToken,
                 ):
                     self.states.append(self.parse_flow_mapping_value)
                     return self.parse_flow_node()
@@ -810,7 +856,10 @@ class Parser:
         return ScalarEvent(None, None, (True, False), "", mark, mark, comment=comment)
 
     def move_token_comment(
-        self, token: Any, nt: Optional[Any] = None, empty: Optional[bool] = False,
+        self,
+        token: Any,
+        nt: Optional[Any] = None,
+        empty: Optional[bool] = False,
     ) -> Any:
         pass
 
@@ -824,9 +873,14 @@ class RoundTripParser(Parser):
         tag.select_transform(True)
 
     def move_token_comment(
-        self, token: Any, nt: Optional[Any] = None, empty: Optional[bool] = False,
+        self,
+        token: Any,
+        nt: Optional[Any] = None,
+        empty: Optional[bool] = False,
     ) -> Any:
-        token.move_old_comment(self.scanner.peek_token() if nt is None else nt, empty=empty)
+        token.move_old_comment(
+            self.scanner.peek_token() if nt is None else nt, empty=empty
+        )
 
 
 class RoundTripParserSC(RoundTripParser):
@@ -836,9 +890,14 @@ class RoundTripParserSC(RoundTripParser):
     # if self.loader.comment_handling is not None
 
     def move_token_comment(
-        self: Any, token: Any, nt: Any = None, empty: Optional[bool] = False,
+        self: Any,
+        token: Any,
+        nt: Any = None,
+        empty: Optional[bool] = False,
     ) -> None:
-        token.move_new_comment(self.scanner.peek_token() if nt is None else nt, empty=empty)
+        token.move_new_comment(
+            self.scanner.peek_token() if nt is None else nt, empty=empty
+        )
 
     def distribute_comment(self, comment: Any, line: Any) -> Any:
         # ToDo, look at indentation of the comment to determine attachment
