@@ -7,8 +7,8 @@ if False:  # MYPY
 
 _package_data = dict(
     full_package_name='ruyaml',
-    version_info=(0, 16, 7),
-    __version__='0.16.7',
+    version_info=(0, 18, 15),
+    __version__='0.18.15',
     author='ruyaml contributors',
     author_email='none.yet@github.org',
     description='ruyaml is a YAML parser/emitter that supports roundtrip preservation of comments, seq/map flow style, and map key order',  # NOQA
