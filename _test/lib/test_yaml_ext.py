@@ -123,7 +123,7 @@ def new_safe_dump(data, stream=None, **kwds):
     return old_dump(data, stream, ruyaml.CSafeDumper, **kwds)
 
 
-# old_safe_dump_all = ruyaml.safe_dump_all
+old_safe_dump_all = ruyaml.safe_dump_all
 
 
 def new_safe_dump_all(documents, stream=None, **kwds):
@@ -302,7 +302,7 @@ test_c_parser.unittest = ['.data', '.canonical']
 test_c_parser.skip = ['.skip-ext']
 
 
-def _compare_emitters(data, verbose):
+def _compare_emitters(py_data, verbose):
     yaml = ruyaml.YAML(typ='unsafe', pure=True)
     events = list(yaml.parse(py_data, Loader=ruyaml.PyLoader))
     c_data = yaml.emit(events, Dumper=ruyaml.CDumper)

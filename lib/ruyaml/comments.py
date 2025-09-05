@@ -19,8 +19,6 @@ from ruyaml.scalarstring import ScalarString
 from ruyaml.anchor import Anchor
 from ruyaml.tag import Tag
 
-from collections.abc import MutableSet, Sized, Set, Mapping
-
 if False:  # MYPY
     from typing import Any, Dict, Optional, List, Union, Iterator  # NOQA
 
@@ -110,7 +108,7 @@ class Comment:
             end = ',\n  end=' + str(self._post)
         else:
             end = ""
-        return f'Comment(comment={self.comment},\n  items={self._items}{end})'
+        return f'Comment(comment={self.comment},\n  items={self._items}{end})'  # noqa:E231
 
     def _old__repr__(self) -> str:
         if bool(self._post):
@@ -122,10 +120,10 @@ class Comment:
             ln = max([len(str(k)) for k in self._items]) + 1
         except ValueError:
             ln = ''  # type: ignore
-        it = '    '.join([f'{str(k) + ":":{ln}} {v}\n' for k, v in self._items.items()])
+        it = '    '.join([f'{str(k) + ":":{ln}} {v}\n' for k, v in self._items.items()])  # noqa:E231
         if it:
             it = '\n    ' + it + '  '
-        return f'Comment(\n  start={self.comment},\n  items={{{it}}}{end})'
+        return f'Comment(\n  start={self.comment},\n  items={{{it}}}{end})'  # noqa:E231
 
     def __repr__(self) -> str:
         if self._pre is None:
@@ -138,7 +136,7 @@ class Comment:
             ln = max([len(str(k)) for k in self._items]) + 1
         except ValueError:
             ln = ''  # type: ignore
-        it = '    '.join([f'{str(k) + ":":{ln}} {v}\n' for k, v in self._items.items()])
+        it = '    '.join([f'{str(k) + ":":{ln}} {v}\n' for k, v in self._items.items()])  # noqa:E231
         if it:
             it = '\n    ' + it + '  '
         return f'Comment(\n  pre={self.pre},\n  items={{{it}}}{end})'

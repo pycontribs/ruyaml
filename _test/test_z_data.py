@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import sys
 import os
 import pytest  # type: ignore  # NOQA
 import warnings  # NOQA
@@ -174,7 +175,7 @@ class TestYAMLData:
                 assert compact[0] in '+=-'
                 if compact[0] == '-':
                     indent -= 1
-                print(f'{" "*indent}{compact}', file=buf)
+                print(f'{" " * indent}{compact}', file=buf)
                 if compact[0] == '+':
                     indent += 1
 

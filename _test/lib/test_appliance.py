@@ -141,7 +141,7 @@ def display(results, verbose):
         sys.stdout.write('=' * 75 + '\n')
         sys.stdout.write('%s(%s): %s\n' % (name, ', '.join(filenames), kind))
         if kind == 'ERROR':
-            traceback.print_exception(file=sys.stdout, *info)
+            traceback.print_exception(*info)
         else:
             sys.stdout.write('Traceback (most recent call last):\n')
             traceback.print_tb(info[2], file=sys.stdout)

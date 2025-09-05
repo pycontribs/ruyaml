@@ -16,7 +16,7 @@ jobs:
         #   python-version: 3.8
         #   continue-on-error: true
         - name: packaging
-          python-version: 3.8
+          python-version: 3.13
         - name: py37
           python-version: 3.7
         - name: py38
@@ -27,6 +27,10 @@ jobs:
           python-version: "3.10"
         - name: py311
           python-version: "3.11"
+        - name: py312
+          python-version: "3.12"
+        - name: py313
+          python-version: "3.13"
     steps:
     - uses: actions/checkout@v2
       with:

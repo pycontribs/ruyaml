@@ -214,7 +214,7 @@ class Parser:
                     None,
                     None,
                     "expected '<document start>', "
-                    f'but found {self.scanner.peek_token().id,!r}',
+                    f'but found {self.scanner.peek_token().id !r}',
                     self.scanner.peek_token().start_mark,
                 )
             token = self.scanner.get_token()
@@ -260,7 +260,7 @@ class Parser:
                     None,
                     None,
                     'found non-comment content after document end marker, '
-                    f'{self.scanner.peek_token().id,!r}',
+                    f'{self.scanner.peek_token().id !r}',
                     self.scanner.peek_token().start_mark,
                 )
             end_mark = token.end_mark

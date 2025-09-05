@@ -1,34 +1,12 @@
 
 from __future__ import annotations
 
-import datetime
-from datetime import timedelta as TimeDelta
 import binascii
 import datetime
 import sys
 import types
 import warnings
 from collections.abc import Hashable, MutableMapping, MutableSequence  # type: ignore
-
-from ruyaml.comments import *  # NOQA
-from ruyaml.comments import (
-    C_KEY_EOL,
-    C_KEY_POST,
-    C_KEY_PRE,
-    C_VALUE_EOL,
-    C_VALUE_POST,
-    C_VALUE_PRE,
-    CommentedKeyMap,
-    CommentedKeySeq,
-    CommentedMap,
-    CommentedOrderedMap,
-    CommentedSeq,
-    CommentedSet,
-    TaggedScalar,
-)
-from ruyaml.compat import builtins_module  # NOQA
-from ruyaml.compat import ordereddict  # type: ignore
-from ruyaml.compat import nprintf
 
 # fmt: off
 from ruyaml.error import (MarkedYAMLError, MarkedYAMLFutureWarning,
@@ -1723,7 +1701,7 @@ class RoundTripConstructor(SafeConstructor):
             minutes = values['tz_minute']
             tz_minute = int(minutes) if minutes else 0
             # ToDo: double work, replace with extraction from dd.tzinfo
-            delta = TimeDelta(hours=tz_hour, minutes=tz_minute)
+            delta = datetime.timedelta(hours=tz_hour, minutes=tz_minute)
             if values['tz_sign'] == '-':
                 delta = -delta
         if isinstance(dd, datetime.datetime):
