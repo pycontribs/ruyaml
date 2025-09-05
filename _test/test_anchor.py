@@ -4,8 +4,8 @@
 testing of anchors and the aliases referring to them
 """
 
+import pytest  # type: ignore  # NOQA
 import platform
-from textwrap import dedent
 
 from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump, YAML # type: ignore # NOQA
 from typing import Any
@@ -570,7 +570,7 @@ class TestDuplicateKeyThroughAnchor:
 
 class TestFullCharSetAnchors:
     def test_master_of_orion(self) -> None:
-        # https://bitbucket.org/ruamel/yaml/issues/72/not-allowed-in-anchor-names
+        # https://bitbucket.org/ruyaml/issues/72/not-allowed-in-anchor-names
         # submitted by Shalon Wood
         yaml_str = """
         - collection: &Backend.Civilizations.RacialPerk

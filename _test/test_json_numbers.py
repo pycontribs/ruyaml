@@ -8,7 +8,7 @@ from typing import Any
 
 
 def load(s: str, typ: Any = float) -> float:
-    import ruamel.yaml
+    import ruyaml
 
     yaml = ruyaml.YAML()
     x = '{"low": %s }' % (s)

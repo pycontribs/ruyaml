@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os
+import sys
 import pytest  # type: ignore  # NOQA
 
 sys.path.insert(0, os.path.dirname(__file__) + '/lib')
@@ -23,7 +24,7 @@ def test_data() -> None:
     test_appliance.run(collections, args)
 
 
-# @pytest.mark.skipif(not ruamel.yaml.__with_libyaml__,
+# @pytest.mark.skipif(not ruyaml.__with_libyaml__,
 #                     reason="no libyaml")
 
 
@@ -35,7 +36,7 @@ def test_data_ext() -> None:
 
     warnings.simplefilter('ignore', ruyaml.error.UnsafeLoaderWarning)
     warnings.simplefilter('ignore', PendingDeprecationWarning)
-    if ruamel.yaml.__with_libyaml__:
+    if ruyaml.__with_libyaml__:
         import test_yaml_ext  # type: ignore
 
         collections.append(test_yaml_ext)

@@ -7,7 +7,7 @@ from roundtrip import dedent, round_trip, round_trip_load  # type: ignore
 
 
 def load(s: str, version: Optional[Any] = None) -> Any:
-    import ruamel.yaml  # NOQA
+    import ruyaml  # NOQA
 
     yaml = ruyaml.YAML()
     yaml.version = version
@@ -119,7 +119,7 @@ class TestVersions:
 class TestIssue62:
     # bitbucket issue 62, issue_62
     def test_00(self) -> None:
-        import ruamel.yaml  # NOQA
+        import ruyaml  # NOQA
 
         s = dedent(
             """\
@@ -138,7 +138,7 @@ class TestIssue62:
         round_trip(s.format(""), preserve_quotes=True)
 
     def test_00_single_comment(self) -> None:
-        import ruamel.yaml  # NOQA
+        import ruyaml  # NOQA
 
         s = dedent(
             """\
@@ -157,7 +157,7 @@ class TestIssue62:
         # round_trip(s.format('%YAML 1.2\n---\n'), preserve_quotes=True, version=(1, 2))
 
     def test_01(self) -> None:
-        import ruamel.yaml  # NOQA
+        import ruyaml  # NOQA
 
         s = dedent(
             """\
@@ -177,7 +177,7 @@ class TestIssue62:
 
 class TestVersionComparison:
     def test_vc(self) -> None:
-        from ruamel.yaml.docinfo import Version
+        from ruyaml.docinfo import Version
 
         assert Version(1, 1) <= Version(2, 0)
         assert Version(1, 1) <= Version(1, 2)

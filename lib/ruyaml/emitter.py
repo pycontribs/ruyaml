@@ -9,6 +9,8 @@ from __future__ import annotations
 # mapping ::= MAPPING-START (node node)* MAPPING-END
 
 import sys
+from ruyaml.error import YAMLError, YAMLStreamError
+from ruyaml.events import *  # NOQA
 
 # fmt: off
 from ruyaml.compat import nprint, dbg, DBG_EVENT, \

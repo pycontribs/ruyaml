@@ -335,27 +335,27 @@ class Test_RoundTripLiteral:
         yaml.dump(d, compare=ys)
 
     def test_regular_spaces(self) -> None:
-        import ruamel.yaml
+        import ruyaml
 
-        yaml = ruamel.yaml.YAML()
+        yaml = ruyaml.YAML()
         ys = "key: |\n\n\n   content\n"
         d = yaml.load(ys)
         assert d['key'] == '\n\ncontent\n'
 
     def test_irregular_spaces_content(self) -> None:
-        import ruamel.yaml
+        import ruyaml
 
-        yaml = ruamel.yaml.YAML()
+        yaml = ruyaml.YAML()
         ys = "key: |\n  \n   \n  irregular content\n"
-        with pytest.raises(ruamel.yaml.scanner.ScannerError):
+        with pytest.raises(ruyaml.scanner.ScannerError):
             d = yaml.load(ys)
             print(d)
 
     def test_irregular_spaces_comment(self) -> None:
-        import ruamel.yaml
+        import ruyaml
 
-        yaml = ruamel.yaml.YAML()
+        yaml = ruyaml.YAML()
         ys = "key: |\n  \n   \n  # comment\n"
-        with pytest.raises(ruamel.yaml.scanner.ScannerError):
+        with pytest.raises(ruyaml.scanner.ScannerError):
             d = yaml.load(ys)
             print(d)

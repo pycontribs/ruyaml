@@ -25,8 +25,8 @@ def test_monster(tmpdir: Any) -> None:
             return "%s(name=%r, hp=%r, ac=%r, attacks=%r)" % (
                 self.__class__.__name__, self.name, self.hp, self.ac, self.attacks)
 
-    yaml = ruamel.yaml.YAML(typ='safe', pure='True')
-    yaml = ruamel.yaml.YAML()
+    yaml = ruyaml.YAML(typ='safe', pure='True')
+    yaml = ruyaml.YAML()
     data = yaml.load(dedent("""\\
         --- !Monster
         name: Cave spider

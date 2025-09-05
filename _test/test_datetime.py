@@ -145,13 +145,13 @@ class TestDateTime:
         )
 
     def test_issue_366(self) -> None:
-        import ruamel.yaml
+        import ruyaml
         import io
 
         round_trip("""
         [2021-02-01 22:34:48.696868-03:00]
         """)
-        yaml = ruamel.yaml.YAML()
+        yaml = ruyaml.YAML()
         dd = DateTime(2021, 2, 1, 22, 34, 48, 696868, TimeZone(TimeDelta(hours=-3), name=''))
         buf = io.StringIO()
         yaml.dump(dd, buf)
@@ -171,7 +171,7 @@ class TestDateTime:
 
     def test_fraction_overflow(self) -> None:
         # reported (indirectly) by Luís Ferreira
-        # https://sourceforge.net/p/ruamel-yaml/tickets/414/
+        # https://sourceforge.net/p/ruyaml/tickets/414/
         inp = dedent("""\
         - 2022-01-02T12:34:59.9999994
         - 2022-01-02T12:34:59.9999995
@@ -183,9 +183,9 @@ class TestDateTime:
         round_trip(inp, exp)
 
     def Xtest_tzinfo(self) -> None:
-        import ruamel.yaml
+        import ruyaml
 
-        yaml = ruamel.yaml.YAML()
+        yaml = ruyaml.YAML()
         dts = '2011-10-02T16:45:00.930619+01:00'
         d = yaml.load(dts)
         print('d', repr(d), d._yaml)

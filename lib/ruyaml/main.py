@@ -13,19 +13,27 @@ from io import BytesIO, StringIO
 from typing import TYPE_CHECKING, Any, List, Optional, Text, Union
 
 import ruyaml
-from ruyaml.comments import C_PRE, CommentedMap, CommentedSeq
-from ruyaml.compat import (  # NOQA
-    StreamTextType,
-    StreamType,
-    VersionType,
-    nprint,
-    nprintf,
+from ruyaml.error import UnsafeLoaderWarning, YAMLError  # NOQA
+
+from ruyaml.tokens import *  # NOQA
+from ruyaml.events import *  # NOQA
+from ruyaml.nodes import *  # NOQA
+
+from ruyaml.loader import BaseLoader, SafeLoader, Loader, RoundTripLoader  # NOQA
+from ruyaml.dumper import BaseDumper, SafeDumper, Dumper, RoundTripDumper  # NOQA
+from ruyaml.compat import StringIO, BytesIO, with_metaclass, nprint, nprintf  # NOQA
+from ruyaml.resolver import VersionedResolver, Resolver  # NOQA
+from ruyaml.representer import (
+    BaseRepresenter,
+    SafeRepresenter,
+    Representer,
+    RoundTripRepresenter,
 )
 from ruyaml.constructor import (
     BaseConstructor,
+    SafeConstructor,
     Constructor,
     RoundTripConstructor,
-    SafeConstructor,
 )
 from ruyaml.loader import Loader as UnsafeLoader  # NOQA
 from ruyaml.comments import CommentedMap, CommentedSeq, C_PRE
@@ -37,13 +45,10 @@ if False:  # MYPY
     from types import TracebackType
     from pathlib import Path
 
-try:
-    from _ruyaml import CEmitter, CParser  # type: ignore
-except:  # NOQA
-    CParser = CEmitter = None
-
 # import io
 
+CParser = None
+CEmitter = None
 
 # YAML is an acronym, i.e. spoken: rhymes with "camel". And thus a
 # subset of abbreviations, which should be all caps according to PEP8

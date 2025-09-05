@@ -42,7 +42,7 @@ class TestIssues:
 
     #    def test_issue_82(self, tmpdir):
     #        program_src = r'''
-    #        from ruamel import yaml
+    #        import ruyaml as yaml
     #        import re
     #
     #        class SINumber(yaml.YAMLObject):
@@ -653,7 +653,7 @@ class TestIssues:
         # update from list of tuples caused AttributeError
         import ruyaml
 
-        yaml_data = ruamel.yaml.comments.CommentedMap([('a', 'apple'), ('b', 'banana')])
+        yaml_data = ruyaml.comments.CommentedMap([('a', 'apple'), ('b', 'banana')])
         yaml_data.update([('c', 'cantaloupe')])
         yaml_data.update({'d': 'date', 'k': 'kiwi'})
         assert 'c' in yaml_data.keys()
@@ -670,7 +670,7 @@ class TestIssues:
         - entry
         """,
         )
-        yaml = ruamel.yaml.YAML(typ='rt')
+        yaml = ruyaml.YAML(typ='rt')
         yaml.version = (1, 2)
         d = yaml.load(inp)
         assert d[None] is None
@@ -914,7 +914,7 @@ class TestIssues:
         )
         yaml = YAML()
         with pytest.raises(
-            ruamel.yaml.scanner.ScannerError, match='while scanning a directive',
+            ruyaml.scanner.ScannerError, match='while scanning a directive',
         ):
             yaml.load(inp)
 
@@ -965,7 +965,7 @@ class TestIssues:
         assert buf.getvalue() == '%YAML 1.1\n---\nquote: I have seen things\n'
 
     def test_issue_447(self) -> None:
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         YAML().load('{\n\t"FOO": "BAR"\n}')
 
@@ -991,7 +991,7 @@ class TestIssues:
 
     def test_issue_453(self) -> None:
         from io import StringIO
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         inp = dedent(
             """
@@ -1056,7 +1056,7 @@ class TestIssues:
 
     def test_issue_459(self) -> None:
         from io import StringIO
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         MYOBJ = {
             'data': dedent(
@@ -1099,7 +1099,7 @@ class TestIssues:
         assert data[0]['data'] == MYOBJ['data']
 
     def test_issue_461(self) -> None:
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         yaml = YAML()
 
@@ -1118,8 +1118,8 @@ class TestIssues:
 
     def test_issue_463(self) -> None:
         import sys
-        from ruamel.yaml.compat import StringIO
-        from ruamel.yaml import YAML
+        from ruyaml.compat import StringIO
+        from ruyaml import YAML
 
         yaml = YAML()
 
@@ -1144,16 +1144,16 @@ class TestIssues:
 
     def test_issue_464(self) -> None:
         # document end marker without newline threw error in 0.17.27
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         yaml = YAML()
         yaml.load('---\na: True\n...')
 
     def test_issue_467(self) -> None:
         # cannot change the default constructor, following test will fail
-        import ruamel.yaml
+        import ruyaml
 
-        yaml = ruamel.yaml.YAML()
+        yaml = ruyaml.YAML()
         old_constructor = yaml.constructor.add_constructor(
             yaml.resolver.DEFAULT_MAPPING_TAG,
             lambda x, y: None,
@@ -1165,16 +1165,16 @@ class TestIssues:
                 old_constructor,
             )
 
-        yaml = ruamel.yaml.YAML()
+        yaml = ruyaml.YAML()
         # for k, v in yaml.constructor.yaml_constructors.items():
         #     print(k, v)
         assert yaml.load('a: b') is not None
 
     def test_issue_480(self) -> None:
         import sys
-        import ruamel.yaml
+        import ruyaml
 
-        yaml = ruamel.yaml.YAML()
+        yaml = ruyaml.YAML()
         data = yaml.load(
             dedent("""
             # hi
@@ -1184,7 +1184,7 @@ class TestIssues:
         yaml.dump(data, sys.stdout)
 
     def test_issue_482(self) -> None:
-        import ruamel.yaml
+        import ruyaml
         from collections import OrderedDict
 
         def _ordered_constructor(loader: Any, node: Any) -> Any:
@@ -1193,7 +1193,7 @@ class TestIssues:
 
         content = 'foo: bar'
 
-        yaml = ruamel.yaml.YAML(typ='safe', pure=True)
+        yaml = ruyaml.YAML(typ='safe', pure=True)
         old_constructor = yaml.constructor.add_constructor(
             yaml.Resolver.DEFAULT_MAPPING_TAG,
             _ordered_constructor,

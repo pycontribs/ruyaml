@@ -261,8 +261,8 @@ class TestGuessIndent:
         assert guess(inp) == (3, None)
 
     def test_guess_with_preserve_quotes(self) -> None:
-        from ruamel.yaml.util import load_yaml_guess_indent
-        from ruamel.yaml.scalarstring import DoubleQuotedScalarString
+        from ruyaml.util import load_yaml_guess_indent
+        from ruyaml.scalarstring import DoubleQuotedScalarString
 
         inp = """\
         b:

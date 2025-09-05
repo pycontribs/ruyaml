@@ -95,9 +95,9 @@ def test_emitter_styles(data_filename, canonical_filename, verbose=False):
 test_emitter_styles.unittest = ['.data', '.canonical']
 
 
-class EventsLoader(ruamel.yaml.Loader):
+class EventsLoader(yaml.Loader):
     def construct_event(self, node):
-        if isinstance(node, ruamel.yaml.ScalarNode):
+        if isinstance(node, yaml.ScalarNode):
             mapping = {}
         else:
             mapping = self.construct_mapping(node)

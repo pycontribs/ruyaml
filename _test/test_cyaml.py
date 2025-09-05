@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import sys
 import platform
 import pytest  # type: ignore  # NOQA
 from textwrap import dedent
@@ -29,7 +30,7 @@ def test_load_cyaml() -> None:
                     or platform.python_implementation() in ['Jython', 'PyPy'],
                     reason='no _PyGC_FINALIZED')
 def test_dump_cyaml() -> None:
-    import ruamel.yaml
+    import ruyaml
 
     if sys.version_info >= NO_CLIB_VER:
         return

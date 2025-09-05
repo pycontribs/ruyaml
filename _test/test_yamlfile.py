@@ -4,6 +4,7 @@
 various test cases for YAML files
 """
 
+import sys
 import io
 import pytest  # type: ignore # NOQA
 import platform

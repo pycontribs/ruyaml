@@ -9,7 +9,7 @@ from typing import ClassVar, Union
 
 class TestDataClasses:
     def test_1(self) -> None:
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         yaml = YAML()
 
@@ -35,7 +35,7 @@ class TestDataClasses:
         assert dc2.xyz == 50
 
     def test_yamltag(self) -> None:
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         yaml = YAML()
 
@@ -60,7 +60,7 @@ class TestDataClasses:
         assert dc2.klm == dc.klm
 
     def test_initvar(self) -> None:
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         yaml = YAML()
 
@@ -99,7 +99,7 @@ class TestDataClasses:
         assert dc2.klm == 55 + len('some string')
 
     def test_initvar_not_in_yaml(self) -> None:
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
 
         yaml = YAML()
 
@@ -137,7 +137,7 @@ class TestDataClasses:
 
     def test_collection_field(self) -> None:
         # https://stackoverflow.com/a/77485786/1307905
-        import ruamel.yaml
+        import ruyaml
         from dataclasses import dataclass
 
         @dataclass
@@ -161,7 +161,7 @@ class TestDataClasses:
             size: int
             index: int = -1
 
-        yaml = ruamel.yaml.YAML()
+        yaml = ruyaml.YAML()
         yaml.register_class(Msg)
         yaml.register_class(Field)
 

@@ -61,7 +61,7 @@ class TestDocument:
         assert docs == [['a'], ['b']]
 
     def test_single_scalar_comment(self) -> None:
-        from ruamel import yaml
+        import ruyaml as yaml
 
         inp = """\
         one # comment
@@ -71,7 +71,7 @@ class TestDocument:
             d = list(round_trip_load_all(inp, version=(1, 2)))  # NOQA
 
     def test_scalar_after_seq_document(self) -> None:
-        from ruamel import yaml
+        import ruyaml as yaml
 
         inp = """\
         [ 42 ]
@@ -81,7 +81,7 @@ class TestDocument:
             d = list(round_trip_load_all(inp, version=(1, 2)))  # NOQA
 
     def test_yunk_after_explicit_document_end(self) -> None:
-        from ruamel import yaml
+        import ruyaml as yaml
 
         inp = """\
         hello: world
@@ -91,10 +91,10 @@ class TestDocument:
             d = list(round_trip_load_all(inp, version=(1, 2)))  # NOQA
 
     def test_multi_doc_ends_only_1_1(self) -> None:
-        from ruamel import yaml
+        import ruyaml as yaml
 
         # this is not ok in 1.1
-        with pytest.raises(ruyaml.parser.ParserError):
+        with pytest.raises(yaml.parser.ParserError):
             inp = """\
             - a
             ...

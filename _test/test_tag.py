@@ -7,7 +7,7 @@ from roundtrip import round_trip, round_trip_load, YAML  # type: ignore
 
 
 def register_xxx(**kw: Any) -> None:
-    from ruamel import yaml
+    import ruyaml as yaml
 
     class XXX(yaml.comments.CommentedMap):
         @staticmethod
@@ -77,7 +77,7 @@ class TestIndentFailures:
 
     # @pytest.mark.xfail(strict=True)  # type: ignore
     def test_spec_6_26_tag_shorthands(self) -> None:
-        from ruamel.yaml import YAML
+        from ruyaml import YAML
         from io import StringIO
         from textwrap import dedent
 
@@ -100,7 +100,7 @@ class TestIndentFailures:
 
 class TestTagGeneral:
     def test_unknow_handle(self) -> None:
-        from ruamel.yaml.parser import ParserError
+        from ruyaml.parser import ParserError
 
         with pytest.raises(ParserError):
             round_trip(

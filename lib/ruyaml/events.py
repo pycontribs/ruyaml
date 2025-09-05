@@ -5,7 +5,7 @@ from __future__ import annotations
 
 if False:  # MYPY
     from typing import Any, Dict, Optional, List  # NOQA
-from ruamel.yaml.tag import Tag
+from ruyaml.tag import Tag
 
 SHOW_LINES = False
 

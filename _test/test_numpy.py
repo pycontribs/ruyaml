@@ -7,7 +7,7 @@
 
 
 #  def Xtest_numpy() -> None:
-#      import ruamel.yaml
+#      import ruyaml
 #
 #      if numpy is None:
 #          return
@@ -15,9 +15,9 @@
 #      print('data', type(data), data)
 #
 #      buf = io.BytesIO()
-#      ruamel.yaml.dump(data)  # needs updating to use buffer
+#      ruyaml.dump(data)  # needs updating to use buffer
 #      yaml_str = buf.getvalue().decode('utf-8')
-#      datb = ruamel.yaml.load(yaml_str)
+#      datb = ruyaml.load(yaml_str)
 #      print('datb', type(datb), datb)
 #
 #      print('\nYAML', yaml_str)

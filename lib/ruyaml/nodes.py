@@ -5,7 +5,7 @@ import sys
 
 if False:  # MYPY
     from typing import Dict, Any, Text, Optional  # NOQA
-from ruamel.yaml.tag import Tag
+from ruyaml.tag import Tag
 
 
 class Node:

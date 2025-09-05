@@ -6,7 +6,7 @@ import warnings  # NOQA
 from typing import Any, Optional, List, Tuple
 from pathlib import Path
 
-base_path = Path('data')  # that is ruamel.yaml.data
+base_path = Path('data')  # that is ruyaml.data
 
 
 class YAMLData:
@@ -163,7 +163,7 @@ class TestYAMLData:
     def gen_events(
         self, input: Any, output: Any, yaml_version: Optional[Any] = None,
     ) -> None:
-        from ruamel.yaml.compat import StringIO
+        from ruyaml.compat import StringIO
 
         buf = StringIO()
         yaml = self.yaml(yaml_version=yaml_version)
@@ -189,8 +189,8 @@ class TestYAMLData:
         self, input: Any, output: Any, yaml_version: Optional[Any] = None,
     ) -> None:
         import json
-        from ruamel.yaml.compat import StringIO
-        from ruamel.yaml.comments import CommentedMap, TaggedScalar
+        from ruyaml.compat import StringIO
+        from ruyaml.comments import CommentedMap, TaggedScalar
 
         def serialize_obj(obj: Any) -> Any:
             if isinstance(obj, CommentedMap):
@@ -215,7 +215,7 @@ class TestYAMLData:
     def load_compare_emit(
         self, input: Any, output: Any, yaml_version: Optional[Any] = None,
     ) -> None:
-        from ruamel.yaml.compat import StringIO
+        from ruyaml.compat import StringIO
 
         buf = StringIO()
         yaml = self.yaml(yaml_version=yaml_version)

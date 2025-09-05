@@ -28,7 +28,7 @@ from ruyaml.comments import (
 )
 from ruyaml.compat import builtins_module  # NOQA
 from ruyaml.compat import ordereddict  # type: ignore
-from ruyaml.compat import _F, nprintf
+from ruyaml.compat import nprintf
 
 # fmt: off
 from ruyaml.error import (MarkedYAMLError, MarkedYAMLFutureWarning,
@@ -73,7 +73,7 @@ class DuplicateKeyFutureWarning(MarkedYAMLFutureWarning):
     pass
 
 
-DUPKEY_URL = 'https://yaml.dev/doc/ruamel.yaml/api/#Duplicate_keys'
+DUPKEY_URL = 'https://yaml.dev/doc/ruyaml/api/#Duplicate_keys'
 
 
 class DuplicateKeyError(MarkedYAMLError):
@@ -1260,7 +1260,7 @@ class RoundTripConstructor(SafeConstructor):
         This implements the merge key feature http://yaml.org/type/merge.html
         by referencing the merge dict/list of dicts
         """
-        from ruamel.yaml.mergevalue import MergeValue
+        from ruyaml.mergevalue import MergeValue
 
         def constructed(value_node: Any) -> Any:
             # If the contents of a merge are defined within the

@@ -13,8 +13,8 @@ and the chomping modifiers:
 
 """
 
-import pytest  # type: ignore
 import platform
+import ruyaml
 
 import pytest
 
@@ -144,8 +144,6 @@ class TestReplace:
     """inspired by issue 110 from sandres23"""
 
     def test_replace_preserved_scalar_string(self) -> None:
-        import ruamel
-
         s = dedent(
             """\
         foo: |
@@ -168,8 +166,6 @@ class TestReplace:
         )
 
     def test_replace_double_quoted_scalar_string(self) -> None:
-        import ruamel
-
         s = dedent(
             """\
         foo: "foo foo bar foo"

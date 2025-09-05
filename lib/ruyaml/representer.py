@@ -13,6 +13,8 @@ from ruyaml.scalarstring import (
     PlainScalarString,
 )
 from ruyaml.comments import (
+    CommentedKeyMap,
+    CommentedKeySeq,
     CommentedMap,
     CommentedOrderedMap,
     CommentedSeq,

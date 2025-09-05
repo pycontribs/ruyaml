@@ -285,7 +285,7 @@ class TestComments:
         )
 
     def test_dump_utf8(self) -> None:
-        import ruamel.yaml  # NOQA
+        import ruyaml  # NOQA
 
         x = dedent(
             """\
@@ -302,7 +302,7 @@ class TestComments:
             assert y == x
 
     def test_dump_unicode_utf8(self) -> None:
-        import ruamel.yaml  # NOQA
+        import ruyaml  # NOQA
 
         x = dedent(
             """\
@@ -911,7 +911,7 @@ a: |
 class TestBlockScalarWithComments:
     # issue 99 reported by Colm O'Connor
     def test_scalar_with_comments(self) -> None:
-        import ruamel.yaml  # NOQA
+        import ruyaml  # NOQA
 
         for x in [
             "",
