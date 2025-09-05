@@ -659,7 +659,7 @@ class TestCommentsManipulation:
         compare(data, exp)
 
     # issue 33
-    @pytest.mark.xfail(reason="open issue", raises=AttributeError)
+    @pytest.mark.xfail(reason="open issue", raises=AssertionError)
     def test_yaml_set_start_comment_issue_33(self):
         data = load(
             """
