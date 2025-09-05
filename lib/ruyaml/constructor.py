@@ -1280,7 +1280,9 @@ class RoundTripConstructor(SafeConstructor):
         while index < len(node.value):
             key_node, value_node = node.value[index]
             if key_node.tag == 'tag:yaml.org,2002:merge':
-                if len(merge_map_list):  # double << key
+                if not self.allow_duplicate_keys and len(merge_map_list):  # double << key
+                    # sorry but this works, so I fail to see why it should
+                    # stop working just because "not allowed".
                     args = [
                         'while constructing a mapping',
                         node.start_mark,
