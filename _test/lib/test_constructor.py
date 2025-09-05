@@ -276,15 +276,12 @@ def _make_objects():
     today = datetime.date.today()
 
 
-try:
-    from ruamel.ordereddict import ordereddict
-except ImportError:
-    from collections import OrderedDict
+from collections import OrderedDict
 
-    # to get the right name import ... as ordereddict doesn't do that
+# to get the right name import ... as ordereddict doesn't do that
 
-    class ordereddict(OrderedDict):
-        pass
+class ordereddict(OrderedDict):
+    pass
 
 
 def _load_code(expression):

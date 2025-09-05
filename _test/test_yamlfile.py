@@ -63,8 +63,8 @@ class TestYAML:
         sys.version_info >= (3, 0) or platform.python_implementation() != 'CPython',
         reason='ruyaml not available',
     )
-    def test_dump_ruamel_ordereddict(self) -> None:
-        from ruamel.ordereddict import ordereddict
+    def test_dump_ruyaml_ordereddict(self) -> None:
+        from ruyaml.compat import ordereddict
         import ruyaml  # NOQA
 
         # OrderedDict mapped to !!omap
