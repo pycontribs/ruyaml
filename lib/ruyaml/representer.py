@@ -346,7 +346,7 @@ class SafeRepresenter(BaseRepresenter):
 
     def represent_undefined(self, data):
         # type: (Any) -> None
-        raise RepresenterError(_F('cannot represent an object: {data!s}', data=data))
+        raise RepresenterError(_F('cannot represent {data.__class__.__name__!r}: {data!s}', data=data))
 
 
 SafeRepresenter.add_representer(type(None), SafeRepresenter.represent_none)
