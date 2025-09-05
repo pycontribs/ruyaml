@@ -2,7 +2,6 @@
 # comes from, nor where all those fixtures originate
 import pytest
 
-pytestmark = pytest.mark.skip
 # import canonical  # NOQA
 
 import ruyaml
