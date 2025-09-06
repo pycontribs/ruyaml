@@ -1,7 +1,4 @@
-
 from __future__ import annotations
-
-# partially from package six by Benjamin Peterson
 
 import collections.abc
 import io
@@ -10,15 +7,21 @@ import sys
 from abc import abstractmethod
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+from ruyaml.docinfo import Version  # NOQA
+
 # partially from package six by Benjamin Peterson
 
-from ruamel.yaml.docinfo import Version  # NOQA
+
+# partially from package six by Benjamin Peterson
+
 # fmt: off
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List, Union, BinaryIO, IO, Text, Tuple  # NOQA
     from typing import Optional  # NOQA
+    from typing import IO, Any, BinaryIO, Dict, List, Text, Tuple, Union  # NOQA
     try:
-        from typing import SupportsIndex as SupportsIndex  # in order to reexport for mypy
+        from typing import (
+            SupportsIndex as SupportsIndex,  # in order to reexport for mypy
+        )
     except ImportError:
         SupportsIndex = int  # type: ignore
 

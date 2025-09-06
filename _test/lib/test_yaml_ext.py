@@ -123,13 +123,6 @@ def new_safe_dump(data, stream=None, **kwds):
     return old_dump(data, stream, ruyaml.CSafeDumper, **kwds)
 
 
-old_safe_dump_all = ruyaml.safe_dump_all
-
-
-def new_safe_dump_all(documents, stream=None, **kwds):
-    return old_dump_all(documents, stream, ruyaml.CSafeDumper, **kwds)
-
-
 def _set_up():
     ruyaml.BaseLoader = ruyaml.CBaseLoader
     ruyaml.SafeLoader = ruyaml.CSafeLoader
@@ -151,7 +144,6 @@ def _set_up():
     ruyaml.dump = new_dump
     ruyaml.dump_all = new_dump_all
     ruyaml.safe_dump = new_safe_dump
-    ruyaml.safe_dump_all = new_safe_dump_all
 
 
 def _tear_down():
@@ -175,7 +167,6 @@ def _tear_down():
     ruyaml.dump = old_dump
     ruyaml.dump_all = old_dump_all
     ruyaml.safe_dump = old_safe_dump
-    ruyaml.safe_dump_all = old_safe_dump_all
 
 
 def test_c_version(verbose=False):

@@ -70,4 +70,3 @@ Starting with 0.15 the API for using `ruyaml` has diverged allowing
 easier addition of new features.
 --- !inc-raw
 - links.rydinc
-

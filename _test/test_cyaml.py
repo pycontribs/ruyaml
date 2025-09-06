@@ -1,10 +1,10 @@
 # coding: utf-8
 
-import sys
 import platform
+import sys
 from textwrap import dedent
 
-import pytest
+import pytest  # type: ignore  # NOQA
 
 NO_CLIB_VER = (3, 12)
 
@@ -25,9 +25,11 @@ def test_load_cyaml() -> None:
     yaml.load('abc: 1')
 
 
-@pytest.mark.skipif(sys.version_info >= NO_CLIB_VER  # type: ignore
-                    or platform.python_implementation() in ['Jython', 'PyPy'],
-                    reason='no _PyGC_FINALIZED')
+@pytest.mark.skipif(
+    sys.version_info >= NO_CLIB_VER  # type: ignore
+    or platform.python_implementation() in ['Jython', 'PyPy'],
+    reason='no _PyGC_FINALIZED',
+)
 def test_dump_cyaml() -> None:
     import ruyaml
 
@@ -43,7 +45,8 @@ def test_dump_cyaml() -> None:
 
 
 @pytest.mark.skipif(  # type: ignore
-    platform.python_implementation() in ['Jython', 'PyPy'], reason='not avialable',
+    platform.python_implementation() in ['Jython', 'PyPy'],
+    reason='not avialable',
 )
 def test_load_cyaml_1_2() -> None:
     # issue 155
@@ -64,7 +67,8 @@ def test_load_cyaml_1_2() -> None:
 
 
 @pytest.mark.skipif(  # type: ignore
-    platform.python_implementation() in ['Jython', 'PyPy'], reason='not available',
+    platform.python_implementation() in ['Jython', 'PyPy'],
+    reason='not available',
 )
 def test_dump_cyaml_1_2() -> None:
     # issue 155

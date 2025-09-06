@@ -4,11 +4,12 @@
 testing of YAML.register_class and @yaml_object
 """
 
-import pytest  # type: ignore  # NOQA  
 from typing import Any
-from ruyaml.comments import TaggedScalar, CommentedMap  # NOQA
 
+import pytest  # type: ignore  # NOQA
 from roundtrip import YAML  # type: ignore
+
+from ruyaml.comments import CommentedMap, TaggedScalar  # NOQA
 
 
 class User0:
@@ -26,7 +27,9 @@ class User1:
 
     @classmethod
     def to_yaml(cls, representer: Any, node: Any) -> Any:
-        return representer.represent_scalar(cls.yaml_tag, '{.name}-{.age}'.format(node, node))
+        return representer.represent_scalar(
+            cls.yaml_tag, '{.name}-{.age}'.format(node, node)
+        )
 
     @classmethod
     def from_yaml(cls, constructor: Any, node: Any) -> Any:
@@ -131,7 +134,8 @@ class TestDecorator:
             @classmethod
             def to_yaml(cls, representer: Any, node: Any) -> Any:
                 return representer.represent_scalar(
-                    cls.yaml_tag, '{.name}-{.age}'.format(node, node),
+                    cls.yaml_tag,
+                    '{.name}-{.age}'.format(node, node),
                 )
 
             @classmethod

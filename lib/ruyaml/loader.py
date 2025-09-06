@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from ruyaml.composer import Composer
@@ -14,7 +13,8 @@ from ruyaml.resolver import VersionedResolver
 from ruyaml.scanner import RoundTripScanner, Scanner
 
 if False:  # MYPY
-    from typing import Any, Dict, List, Union, Optional  # NOQA
+    from typing import Any, Dict, List, Optional, Union  # NOQA
+
     from ruyaml.compat import StreamTextType, VersionType  # NOQA
 
 __all__ = ['BaseLoader', 'SafeLoader', 'Loader', 'RoundTripLoader']

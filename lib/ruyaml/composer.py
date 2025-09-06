@@ -1,26 +1,24 @@
-
 from __future__ import annotations
 
 import warnings
 from typing import Any, Dict
 
-from ruyaml.error import MarkedYAMLError, ReusedAnchorWarning
 from ruyaml.compat import nprint, nprintf  # NOQA
-
+from ruyaml.error import MarkedYAMLError, ReusedAnchorWarning
 from ruyaml.events import (
-    StreamStartEvent,
-    StreamEndEvent,
+    AliasEvent,
     MappingStartEvent,
     MappingEndEvent,
+    ScalarEvent,
     SequenceStartEvent,
     SequenceEndEvent,
-    AliasEvent,
-    ScalarEvent,
+    StreamStartEvent,
+    StreamEndEvent,
 )
 from ruyaml.nodes import MappingNode, ScalarNode, SequenceNode
 
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List  # NOQA
+    from typing import Any, Dict, List, Optional  # NOQA
 
 __all__ = ['Composer', 'ComposerError']
 
@@ -109,7 +107,10 @@ class Composer:
             alias = event.anchor
             if alias not in self.anchors:
                 raise ComposerError(
-                    None, None, f'found undefined alias {alias!r}', event.start_mark,
+                    None,
+                    None,
+                    f'found undefined alias {alias!r}',
+                    event.start_mark,
                 )
             return self.return_alias(self.anchors[alias])
         event = self.parser.peek_event()

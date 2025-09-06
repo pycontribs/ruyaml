@@ -4,7 +4,7 @@ pdf: false
 # code_directory: ../_example
 --- |
 # Working with Python classes
- 
+
 ## Dumping Python classes
 
 Only `yaml = YAML(typ='unsafe')` loads and dumps Python objects
@@ -158,7 +158,7 @@ class Person:
         self.name = name
         self.siblings = [] if siblings is None else siblings
 
-arya = Person('Arya')   
+arya = Person('Arya')
 sansa = Person('Sansa')
 arya.siblings.append(sansa)  # there are better ways to represent this
 sansa.siblings.append(arya)

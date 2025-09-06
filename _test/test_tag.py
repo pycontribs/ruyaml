@@ -1,9 +1,9 @@
 # coding: utf-8
 
-import pytest  # type: ignore # NOQA
 from typing import Any
 
-from roundtrip import round_trip, round_trip_load, YAML  # type: ignore
+import pytest  # type: ignore # NOQA
+from roundtrip import YAML, round_trip, round_trip_load  # type: ignore
 
 
 def register_xxx(**kw: Any) -> None:
@@ -77,9 +77,10 @@ class TestIndentFailures:
 
     # @pytest.mark.xfail(strict=True)  # type: ignore
     def test_spec_6_26_tag_shorthands(self) -> None:
-        from ruyaml import YAML
         from io import StringIO
         from textwrap import dedent
+
+        from ruyaml import YAML
 
         inp = dedent(
             """\

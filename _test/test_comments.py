@@ -10,10 +10,15 @@ roundtrip changes
 
 """
 
-import pytest  # type: ignore  # NOQA
 import sys
 
-from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump  # type: ignore
+import pytest  # type: ignore  # NOQA
+from roundtrip import (  # type: ignore
+    dedent,
+    round_trip,
+    round_trip_dump,
+    round_trip_load,
+)
 
 
 class TestComments:
@@ -27,7 +32,8 @@ class TestComments:
             round_trip(x, extra='a\n')
 
     def test_no_comments(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         - europe: 10
         - usa:
           - ohio: 2
@@ -36,7 +42,8 @@ class TestComments:
         )
 
     def test_round_trip_ordering(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         a: 1
         b: 2
         c: 3
@@ -49,7 +56,8 @@ class TestComments:
         )
 
     def test_complex(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         - europe: 10 # top
         - usa:
           - ohio: 2
@@ -66,7 +74,8 @@ class TestComments:
         round_trip(s, 'scalar\n...\n')
 
     def test_main_mapping_begin_end(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         # C start a
         # C start b
         abc: 1
@@ -94,7 +103,8 @@ class TestComments:
         )
 
     def test_main_mapping_begin_end_items_post(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         # C start a
         # C start b
         abc: 1      # abc comment
@@ -106,7 +116,8 @@ class TestComments:
         )
 
     def test_main_sequence_begin_end(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         # C start a
         # C start b
         - abc
@@ -118,7 +129,8 @@ class TestComments:
         )
 
     def test_main_sequence_begin_end_items_post(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         # C start a
         # C start b
         - abc      # abc comment
@@ -130,7 +142,8 @@ class TestComments:
         )
 
     def test_main_mapping_begin_end_complex(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         # C start a
         # C start b
         abc: 1
@@ -156,7 +169,8 @@ class TestComments:
         round_trip(s, indent=4, block_seq_indent=2)
 
     def test_09a(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         hr: # 1998 hr ranking
         - Mark McGwire
         - Sammy Sosa
@@ -168,7 +182,8 @@ class TestComments:
         )
 
     def test_simple_map_middle_comment(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         abc: 1
         # C 3a
         # C 3b
@@ -177,7 +192,8 @@ class TestComments:
         )
 
     def test_map_in_map_0(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         map1: # comment 1
           # comment 2
           map2:
@@ -229,7 +245,8 @@ class TestComments:
         assert round_trip_dump(data) == dedent(x)
 
     def test_set_comment(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         !!set
         # the beginning
         ? a
@@ -241,7 +258,8 @@ class TestComments:
         )
 
     def test_omap_comment_roundtrip(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         !!omap
         - a: 1
         - b: 2  # two
@@ -251,7 +269,8 @@ class TestComments:
         )
 
     def test_omap_comment_roundtrip_pre_comment(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         !!omap
         - a: 1
         - b: 2  # two
@@ -262,7 +281,8 @@ class TestComments:
         )
 
     def test_non_ascii(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         verbosity: 1                  # 0 is minimal output, -1 none
         base_url: http://gopher.net
         special_indices: [1, 5, 8]
@@ -297,7 +317,9 @@ class TestComments:
         data = round_trip_load(x)
         for utf in [True, False]:
             y = round_trip_dump(
-                data, default_flow_style=False, allow_unicode=utf,
+                data,
+                default_flow_style=False,
+                allow_unicode=utf,
             )
             assert y == x
 
@@ -314,7 +336,9 @@ class TestComments:
         data = round_trip_load(x)
         for utf in [True, False]:
             y = round_trip_dump(
-                data, default_flow_style=False, allow_unicode=utf,
+                data,
+                default_flow_style=False,
+                allow_unicode=utf,
             )
             assert y == x
 
@@ -538,7 +562,8 @@ class TestInsertInMapping:
 
 class TestCommentedMapMerge:
     def test_in_operator(self) -> None:
-        data = round_trip_load("""
+        data = round_trip_load(
+            """
         x: &base
           a: 1
           b: 2
@@ -555,7 +580,8 @@ class TestCommentedMapMerge:
         assert 'a' in data['y']
 
     def test_issue_60(self) -> None:
-        data = round_trip_load("""
+        data = round_trip_load(
+            """
         x: &base
           a: 1
         y:
@@ -567,7 +593,8 @@ class TestCommentedMapMerge:
         assert str(data['y']) == """{'a': 1}"""
 
     def test_issue_60_1(self) -> None:
-        data = round_trip_load("""
+        data = round_trip_load(
+            """
         x: &base
           a: 1
         y:
@@ -583,7 +610,8 @@ class TestCommentedMapMerge:
 class TestEmptyLines:
     # prompted by issue 46 from Alex Harvey
     def test_issue_46(self) -> None:
-        yaml_str = dedent("""\
+        yaml_str = dedent(
+            """\
         ---
         # Please add key/value pairs in alphabetical order
 
@@ -599,7 +627,8 @@ class TestEmptyLines:
         assert yaml_str == y
 
     def test_multispace_map(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         a: 1x
 
         b: 2x
@@ -616,7 +645,8 @@ class TestEmptyLines:
 
     @pytest.mark.xfail(strict=True)  # type: ignore
     def test_multispace_map_initial(self) -> None:
-        round_trip("""
+        round_trip(
+            """
 
         a: 1x
 
@@ -633,7 +663,8 @@ class TestEmptyLines:
         )
 
     def test_embedded_map(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         - a: 1y
           b: 2y
 
@@ -642,7 +673,8 @@ class TestEmptyLines:
         )
 
     def test_toplevel_seq(self) -> None:
-        round_trip("""\
+        round_trip(
+            """\
         - 1
 
         - 2
@@ -652,7 +684,8 @@ class TestEmptyLines:
         )
 
     def test_embedded_seq(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         a:
           b:
           - 1
@@ -687,7 +720,8 @@ class TestEmptyLines:
         assert stripped == y
 
     def test_issue_54_not_ok(self) -> None:
-        yaml_str = dedent("""\
+        yaml_str = dedent(
+            """\
         toplevel:
 
             # some comment
@@ -702,7 +736,8 @@ class TestEmptyLines:
         assert yaml_str == y
 
     def test_issue_54_ok(self) -> None:
-        yaml_str = dedent("""\
+        yaml_str = dedent(
+            """\
         toplevel:
             # some comment
             sublevel: 300
@@ -713,7 +748,8 @@ class TestEmptyLines:
         assert yaml_str == y
 
     def test_issue_93(self) -> None:
-        round_trip("""\
+        round_trip(
+            """\
         a:
           b:
           - c1: cat  # a1
@@ -723,7 +759,8 @@ class TestEmptyLines:
         )
 
     def test_issue_93_00(self) -> None:
-        round_trip("""\
+        round_trip(
+            """\
         a:
         - - c1: cat   # a1
           # my comment on catfish
@@ -732,7 +769,8 @@ class TestEmptyLines:
         )
 
     def test_issue_93_01(self) -> None:
-        round_trip("""\
+        round_trip(
+            """\
         - - c1: cat   # a1
           # my comment on catfish
           - c2: catfish  # a2
@@ -767,7 +805,8 @@ class TestEmptyLines:
 class TestUnicodeComments:
     @pytest.mark.skipif(sys.version_info < (2, 7), reason='wide unicode')  # type: ignore
     def test_issue_55(self) -> None:  # reported by Haraguroicha Hsu
-        round_trip("""\
+        round_trip(
+            """\
         name: TEST
         description: test using
         author: Harguroicha
@@ -788,7 +827,8 @@ class TestUnicodeComments:
 
 class TestEmptyValueBeforeComments:
     def test_issue_25a(self) -> None:
-        round_trip("""\
+        round_trip(
+            """\
         - a: b
           c: d
           d:  # foo
@@ -797,7 +837,8 @@ class TestEmptyValueBeforeComments:
         )
 
     def test_issue_25a1(self) -> None:
-        round_trip("""\
+        round_trip(
+            """\
         - a: b
           c: d
           d:  # foo
@@ -806,14 +847,16 @@ class TestEmptyValueBeforeComments:
         )
 
     def test_issue_25b(self) -> None:
-        round_trip("""\
+        round_trip(
+            """\
         var1: #empty
         var2: something #notempty
         """
         )
 
     def test_issue_25c(self) -> None:
-        round_trip("""\
+        round_trip(
+            """\
         params:
           a: 1 # comment a
           b:   # comment b
@@ -822,7 +865,8 @@ class TestEmptyValueBeforeComments:
         )
 
     def test_issue_25c1(self) -> None:
-        round_trip("""\
+        round_trip(
+            """\
         params:
           a: 1 # comment a
           b:   # comment b
@@ -832,7 +876,8 @@ class TestEmptyValueBeforeComments:
         )
 
     def test_issue_25_00(self) -> None:
-        round_trip("""\
+        round_trip(
+            """\
         params:
           a: 1 # comment a
           b:   # comment b
@@ -840,7 +885,8 @@ class TestEmptyValueBeforeComments:
         )
 
     def test_issue_25_01(self) -> None:
-        round_trip("""\
+        round_trip(
+            """\
         a:        # comment 1
                   #  comment 2
         - b:      #   comment 3
@@ -849,7 +895,8 @@ class TestEmptyValueBeforeComments:
         )
 
     def test_issue_25_02(self) -> None:
-        round_trip("""\
+        round_trip(
+            """\
         a:        # comment 1
                   #  comment 2
         - b: 2    #   comment 3
@@ -865,7 +912,8 @@ class TestEmptyValueBeforeComments:
         round_trip(s, indent=4, block_seq_indent=2)
 
     def test_issue_25_04(self) -> None:
-        round_trip("""\
+        round_trip(
+            """\
         a:        # comment 1
                   #  comment 2
           b: 1    #   comment 3
@@ -873,7 +921,8 @@ class TestEmptyValueBeforeComments:
         )
 
     def test_flow_seq_within_seq(self) -> None:
-        round_trip("""\
+        round_trip(
+            """\
         # comment 1
         - a
         - b
@@ -889,7 +938,8 @@ class TestEmptyValueBeforeComments:
         )
 
     def test_comment_after_block_scalar_indicator(self) -> None:
-        round_trip("""\
+        round_trip(
+            """\
         a: | # abc
           test 1
           test 2

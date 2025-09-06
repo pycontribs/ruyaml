@@ -1,8 +1,11 @@
 # coding: utf-8
 
 import pytest  # type: ignore  # NOQA
-
-from roundtrip import round_trip, round_trip_load_all, round_trip_dump_all  # type: ignore
+from roundtrip import (  # type: ignore
+    round_trip,
+    round_trip_dump_all,
+    round_trip_load_all,
+)
 
 
 class TestDocument:

@@ -1,9 +1,8 @@
-
 from __future__ import annotations
 
-from dataclasses import dataclass, fields, InitVar   # NOQA
-from textwrap import dedent
+from dataclasses import InitVar, dataclass, fields  # NOQA
 from io import BytesIO
+from textwrap import dedent
 from typing import ClassVar, Union
 
 
@@ -26,11 +25,13 @@ class TestDataClasses:
         dc = DC(abc=5, klm=42)
         assert dc.xyz == 47
 
-        yaml_str = dedent("""\
+        yaml_str = dedent(
+            """\
         !DC
         abc: 13
         klm: 37
-        """)
+        """
+        )
         dc2 = yaml.load(yaml_str)
         assert dc2.xyz == 50
 
@@ -49,11 +50,16 @@ class TestDataClasses:
         dc = DC(abc=5, klm=42)
         buf = BytesIO()
         yaml.dump(dc, buf)
-        assert buf.getvalue() == dedent("""\
+        assert (
+            buf.getvalue()
+            == dedent(
+                """\
         !dc_example
         abc: 5
         klm: 42
-        """).encode('utf-8')
+        """
+            ).encode('utf-8')
+        )
         dc2 = yaml.load(buf.getvalue())
         assert len(fields(dc2)) == 2  # class var is not a field
         assert dc2.abc == dc.abc
@@ -82,18 +88,25 @@ class TestDataClasses:
         assert dc.xyz is None  # type: ignore
         buf = BytesIO()
         yaml.dump(dc, buf)
-        assert buf.getvalue() == dedent("""\
+        assert (
+            buf.getvalue()
+            == dedent(
+                """\
         !DC
         abc: 5
         klm: 50
-        """).encode('utf-8')
+        """
+            ).encode('utf-8')
+        )
 
-        yaml_str = dedent("""\
+        yaml_str = dedent(
+            """\
         !DC
         abc: 18
         klm: 55
         xyz: some string
-        """)
+        """
+        )
         dc2 = yaml.load(yaml_str)
         assert dc2.xyz is None
         assert dc2.klm == 55 + len('some string')
@@ -120,29 +133,36 @@ class TestDataClasses:
         assert dc.xyz == 'hello'  # type: ignore
         buf = BytesIO()
         yaml.dump(dc, buf)
-        assert buf.getvalue() == dedent("""\
+        assert (
+            buf.getvalue()
+            == dedent(
+                """\
         !DC
         abc: 5
         klm: 50
-        """).encode('utf-8')
+        """
+            ).encode('utf-8')
+        )
 
-        yaml_str = dedent("""\
+        yaml_str = dedent(
+            """\
         !DC
         abc: 18
         klm: 55
-        """)
+        """
+        )
         dc2 = yaml.load(yaml_str)
         assert dc2.xyz == 'hello'
         assert dc2.klm == 55 + len('hello')
 
     def test_collection_field(self) -> None:
         # https://stackoverflow.com/a/77485786/1307905
-        import ruyaml
         from dataclasses import dataclass
+
+        import ruyaml
 
         @dataclass
         class Msg:
-
             id: int
             desc: str
             fields: list[Field]
@@ -165,7 +185,8 @@ class TestDataClasses:
         yaml.register_class(Msg)
         yaml.register_class(Field)
 
-        msg: Msg = yaml.load("""\
+        msg: Msg = yaml.load(
+            """\
         !Msg
         id: 1
         desc: status
@@ -175,6 +196,7 @@ class TestDataClasses:
             name: Temp
             units: degC
             size: 2
-        """)
+        """
+        )
 
         assert msg.fields[0].index != -1

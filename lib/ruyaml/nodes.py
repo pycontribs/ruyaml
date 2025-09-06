@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import sys
@@ -102,7 +101,9 @@ class ScalarNode(Node):
         comment: Any = None,
         anchor: Any = None,
     ) -> None:
-        Node.__init__(self, tag, value, start_mark, end_mark, comment=comment, anchor=anchor)
+        Node.__init__(
+            self, tag, value, start_mark, end_mark, comment=comment, anchor=anchor
+        )
         self.style = style
 
 
@@ -144,6 +145,13 @@ class MappingNode(CollectionNode):
         anchor: Any = None,
     ) -> None:
         CollectionNode.__init__(
-            self, tag, value, start_mark, end_mark, flow_style, comment, anchor,
+            self,
+            tag,
+            value,
+            start_mark,
+            end_mark,
+            flow_style,
+            comment,
+            anchor,
         )
         self.merge = None

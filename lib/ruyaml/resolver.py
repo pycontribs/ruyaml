@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import re
@@ -8,10 +7,10 @@ if False:  # MYPY
     from typing import Any, Dict, List, Union, Text, Optional  # NOQA
     from ruyaml.compat import VersionType  # NOQA
 
-from ruyaml.tag import Tag
 from ruyaml.compat import _DEFAULT_YAML_VERSION  # NOQA
 from ruyaml.error import *  # NOQA
 from ruyaml.nodes import MappingNode, ScalarNode, SequenceNode  # NOQA
+from ruyaml.tag import Tag
 from ruyaml.util import RegExp  # NOQA
 
 __all__ = ['BaseResolver', 'Resolver', 'VersionedResolver']
@@ -105,7 +104,6 @@ class ResolverError(YAMLError):
 
 
 class BaseResolver:
-
     DEFAULT_SCALAR_TAG = Tag(suffix='tag:yaml.org,2002:str')
     DEFAULT_SEQUENCE_TAG = Tag(suffix='tag:yaml.org,2002:seq')
     DEFAULT_MAPPING_TAG = Tag(suffix='tag:yaml.org,2002:map')
@@ -137,7 +135,8 @@ class BaseResolver:
         if 'yaml_implicit_resolvers' not in cls.__dict__:
             # deepcopy doesn't work here
             cls.yaml_implicit_resolvers = {
-                k: cls.yaml_implicit_resolvers[k][:] for k in cls.yaml_implicit_resolvers
+                k: cls.yaml_implicit_resolvers[k][:]
+                for k in cls.yaml_implicit_resolvers
             }
         if first is None:
             first = [None]
@@ -149,7 +148,8 @@ class BaseResolver:
         if 'yaml_implicit_resolvers' not in cls.__dict__:
             # deepcopy doesn't work here
             cls.yaml_implicit_resolvers = {
-                k: cls.yaml_implicit_resolvers[k][:] for k in cls.yaml_implicit_resolvers
+                k: cls.yaml_implicit_resolvers[k][:]
+                for k in cls.yaml_implicit_resolvers
             }
         if first is None:
             first = [None]
@@ -245,7 +245,12 @@ class BaseResolver:
         self.resolver_prefix_paths.pop()
 
     def check_resolver_prefix(
-        self, depth: int, path: Any, kind: Any, current_node: Any, current_index: Any,
+        self,
+        depth: int,
+        path: Any,
+        kind: Any,
+        current_node: Any,
+        current_index: Any,
     ) -> bool:
         node_check, index_check = path[depth - 1]
         if isinstance(node_check, str):
@@ -320,7 +325,10 @@ class VersionedResolver(BaseResolver):
     """
 
     def __init__(
-        self, version: Optional[VersionType] = None, loader: Any = None, loadumper: Any = None,
+        self,
+        version: Optional[VersionType] = None,
+        loader: Any = None,
+        loadumper: Any = None,
     ) -> None:
         if loader is None and loadumper is not None:
             loader = loadumper
@@ -329,7 +337,11 @@ class VersionedResolver(BaseResolver):
         self._version_implicit_resolver: Dict[Any, Any] = {}
 
     def add_version_implicit_resolver(
-        self, version: VersionType, tag: Any, regexp: Any, first: Any,
+        self,
+        version: VersionType,
+        tag: Any,
+        regexp: Any,
+        first: Any,
     ) -> None:
         if first is None:
             first = [None]

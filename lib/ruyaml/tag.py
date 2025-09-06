@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 """
@@ -12,7 +11,7 @@ only.
 """
 
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List, Union, Iterator  # NOQA
+    from typing import Any, Dict, Iterator, List, Optional, Union  # NOQA
 
 tag_attrib = '_yaml_tag'
 
@@ -22,7 +21,9 @@ class Tag:
 
     attrib = tag_attrib
 
-    def __init__(self, handle: Any = None, suffix: Any = None, handles: Any = None) -> None:
+    def __init__(
+        self, handle: Any = None, suffix: Any = None, handles: Any = None
+    ) -> None:
         self.handle = handle
         self.suffix = suffix
         self.handles = handles

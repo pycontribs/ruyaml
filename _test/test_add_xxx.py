@@ -1,10 +1,10 @@
 # coding: utf-8
 
 import re
-import pytest  # type: ignore  # NOQA
-
-from roundtrip import dedent, round_trip_dump  # type: ignore  # NOQA
 from typing import Any
+
+import pytest  # type: ignore  # NOQA
+from roundtrip import dedent, round_trip_dump  # type: ignore  # NOQA
 
 
 # from PyYAML docs
@@ -128,7 +128,9 @@ def test_yaml_obj_with_loader_and_dumper() -> None:
         yaml = ruyaml.YAML(typ='unsafe', pure=True)
     ruyaml.add_representer(Obj1, YAMLObj1.to_yaml, Dumper=ruyaml.Dumper)
     ruyaml.add_multi_constructor(
-        YAMLObj1.yaml_tag, YAMLObj1.from_yaml, Loader=ruyaml.Loader,
+        YAMLObj1.yaml_tag,
+        YAMLObj1.from_yaml,
+        Loader=ruyaml.Loader,
     )
     x = yaml.load('!obj:x.2\na: 1')
     # x = ruyaml.load('!obj:x.2\na: 1')

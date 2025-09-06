@@ -4,14 +4,13 @@ from typing import Any
 
 import pytest  # type: ignore  # NOQA
 
-
 # cannot do "from .roundtrip" because of pytest, so mypy cannot find this
 from roundtrip import (  # type: ignore
-    round_trip,
-    na_round_trip,
-    round_trip_load,
-    round_trip_dump,
     dedent,
+    na_round_trip,
+    round_trip,
+    round_trip_dump,
+    round_trip_load,
     save_and_run,
     YAML,
 )
@@ -429,8 +428,8 @@ class TestIssues:
         assert buf.getvalue() == exp
 
     def test_issue_222(self) -> None:
-        from ruyaml.compat import StringIO
         import ruyaml
+        from ruyaml.compat import StringIO
 
         yaml = ruyaml.YAML(typ='safe')
         buf = StringIO()
@@ -454,7 +453,6 @@ class TestIssues:
             yaml.load('{]')
 
     def test_issue_233(self) -> None:
-        from ruyaml import YAML
         import json
 
         yaml = YAML()
@@ -462,7 +460,6 @@ class TestIssues:
         json_str = json.dumps(data)  # NOQA
 
     def test_issue_233a(self) -> None:
-        from ruyaml import YAML
         import json
 
         yaml = YAML()
@@ -628,10 +625,11 @@ class TestIssues:
         assert buf.getvalue() == inp
 
     def test_issue_280(self) -> None:
-        from ruyaml import YAML
-        from ruyaml.representer import RepresenterError
         from collections import namedtuple
         from sys import stdout
+
+        from ruyaml import YAML
+        from ruyaml.representer import RepresenterError
 
         T = namedtuple('T', ('a', 'b'))
         t = T(1, 2)
@@ -710,8 +708,9 @@ class TestIssues:
 
     def test_issue_288(self) -> None:
         import sys
-        from ruyaml.compat import StringIO
+
         from ruyaml import YAML
+        from ruyaml.compat import StringIO
 
         yamldoc = dedent(
             """\
@@ -743,8 +742,9 @@ class TestIssues:
 
     def test_issue_288a(self) -> None:
         import sys
-        from ruyaml.compat import StringIO
+
         from ruyaml import YAML
+        from ruyaml.compat import StringIO
 
         yamldoc = dedent(
             """\
@@ -776,8 +776,9 @@ class TestIssues:
 
     def test_issue_290(self) -> None:
         import sys
-        from ruyaml.compat import StringIO
+
         from ruyaml import YAML
+        from ruyaml.compat import StringIO
 
         yamldoc = dedent(
             """\
@@ -814,8 +815,9 @@ class TestIssues:
 
     def test_issue_290a(self) -> None:
         import sys
-        from ruyaml.compat import StringIO
+
         from ruyaml import YAML
+        from ruyaml.compat import StringIO
 
         yamldoc = dedent(
             """\
@@ -904,7 +906,8 @@ class TestIssues:
         )
         yaml = YAML()
         with pytest.raises(
-            ruyaml.scanner.ScannerError, match='while scanning a directive',
+            ruyaml.scanner.ScannerError,
+            match='while scanning a directive',
         ):
             yaml.load(inp)
 
@@ -981,6 +984,7 @@ class TestIssues:
 
     def test_issue_453(self) -> None:
         from io import StringIO
+
         from ruyaml import YAML
 
         inp = dedent(
@@ -1035,6 +1039,7 @@ class TestIssues:
 
     def test_issue_458(self) -> None:
         from io import StringIO
+
         from ruyaml import YAML
 
         yaml = YAML()
@@ -1046,6 +1051,7 @@ class TestIssues:
 
     def test_issue_459(self) -> None:
         from io import StringIO
+
         from ruyaml import YAML
 
         MYOBJ = {
@@ -1108,8 +1114,9 @@ class TestIssues:
 
     def test_issue_463(self) -> None:
         import sys
-        from ruyaml.compat import StringIO
+
         from ruyaml import YAML
+        from ruyaml.compat import StringIO
 
         yaml = YAML()
 
@@ -1162,20 +1169,24 @@ class TestIssues:
 
     def test_issue_480(self) -> None:
         import sys
+
         import ruyaml
 
         yaml = ruyaml.YAML()
         data = yaml.load(
-            dedent("""
+            dedent(
+                """
             # hi
             {}
-            """),
+            """
+            ),
         )
         yaml.dump(data, sys.stdout)
 
     def test_issue_482(self) -> None:
-        import ruyaml
         from collections import OrderedDict
+
+        import ruyaml
 
         def _ordered_constructor(loader: Any, node: Any) -> Any:
             loader.flatten_mapping(node)
@@ -1197,6 +1208,7 @@ class TestIssues:
                 yaml.resolver.DEFAULT_MAPPING_TAG,
                 old_constructor,
             )
+
 
 #    @pytest.mark.xfail(strict=True, reason='bla bla', raises=AssertionError)
 #    def test_issue_ xxx(self) -> None:

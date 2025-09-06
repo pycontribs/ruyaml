@@ -2,13 +2,13 @@
 
 import os
 import sys
+
 import pytest  # type: ignore  # NOQA
 
 sys.path.insert(0, os.path.dirname(__file__) + '/lib')
 
 import warnings  # NOQA
-
-from typing import List, Any  # NOQA
+from typing import Any, List  # NOQA
 
 args: List[Any] = []
 

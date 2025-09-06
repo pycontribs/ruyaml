@@ -4,11 +4,17 @@
 testing of anchors and the aliases referring to them
 """
 
-import pytest  # type: ignore  # NOQA
 import platform
-
-from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump, YAML # type: ignore # NOQA
 from typing import Any
+
+import pytest  # type: ignore  # NOQA
+from roundtrip import (  # type: ignore # NOQA
+    YAML,
+    dedent,
+    round_trip,
+    round_trip_dump,
+    round_trip_load,
+)
 
 
 def load(s: str) -> Any:
@@ -24,7 +30,8 @@ class TestAnchorsAliases:
         from ruyaml.serializer import Serializer
 
         assert Serializer.ANCHOR_TEMPLATE == 'id{:03d}'
-        data = load("""
+        data = load(
+            """
         a: &id002
           b: 1
           c: 2
@@ -84,7 +91,8 @@ class TestAnchorsAliases:
         assert e.yaml_anchor().always_dump is False
 
     def test_anchor_id_retained(self) -> None:
-        data = load("""
+        data = load(
+            """
         a: &id002
           b: 1
           c: 2
@@ -110,7 +118,8 @@ class TestAnchorsAliases:
         )
 
     @pytest.mark.skipif(  # type: ignore
-        platform.python_implementation() == 'Jython', reason='Jython throws RepresenterError',
+        platform.python_implementation() == 'Jython',
+        reason='Jython throws RepresenterError',
     )
     def test_alias_before_anchor(self) -> None:
         from ruyaml.composer import ComposerError
@@ -520,9 +529,8 @@ class TestMergeKeysValues:
 
 class TestDuplicateKeyThroughAnchor:
     def test_duplicate_key_00(self) -> None:
-        from ruyaml import version_info
-        from ruyaml import YAML
-        from ruyaml.constructor import DuplicateKeyFutureWarning, DuplicateKeyError
+        from ruyaml import YAML, version_info
+        from ruyaml.constructor import DuplicateKeyError, DuplicateKeyFutureWarning
 
         s = dedent(
             """\

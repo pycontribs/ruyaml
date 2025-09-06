@@ -1,5 +1,3 @@
-
-
 """
 some helper functions that might be generally useful
 """
@@ -12,7 +10,8 @@ from functools import partial
 from typing import Any
 
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List, Text, Callable, Union  # NOQA
+    from typing import Any, Callable, Dict, List, Optional, Text, Union  # NOQA
+
     from .compat import StreamTextType  # NOQA
 
 
@@ -106,7 +105,8 @@ def create_timestamp(
         tz_hour = int(tz_hour)
         tz_minute = int(tz_minute) if tz_minute else 0
         td = datetime.timedelta(
-            hours=tz_hour, minutes=tz_minute,
+            hours=tz_hour,
+            minutes=tz_minute,
         )
         if tz_sign == '-':
             td = -td

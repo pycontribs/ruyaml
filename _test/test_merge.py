@@ -1,12 +1,17 @@
-
 """
 testing of anchors and the aliases referring to them
 """
 
-import pytest  # type: ignore  # NOQA
-
-from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump, YAML # type: ignore # NOQA
 from typing import Any
+
+import pytest  # type: ignore  # NOQA
+from roundtrip import (  # type: ignore # NOQA
+    YAML,
+    dedent,
+    round_trip,
+    round_trip_dump,
+    round_trip_load,
+)
 
 
 def load(s: str) -> Any:
@@ -19,7 +24,8 @@ def compare(d: Any, s: str) -> None:
 
 class TestMerge:
     def test_remove_key_before_merge(self) -> None:
-        data = load("""
+        data = load(
+            """
         a: &aa
           b: 1
           c: 2
@@ -29,7 +35,8 @@ class TestMerge:
           <<: *aa
           g: 5
           h: 6
-        """)
+        """
+        )
         del data['d']['f']
         compare(
             data,
@@ -46,7 +53,8 @@ class TestMerge:
         )
 
     def test_remove_key_after_merge(self) -> None:
-        data = load("""
+        data = load(
+            """
         a: &aa
           b: 1
           c: 2
@@ -56,7 +64,8 @@ class TestMerge:
           <<: *aa
           g: 5
           h: 6
-        """)
+        """
+        )
         del data['d']['g']
         compare(
             data,

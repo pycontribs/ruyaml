@@ -4,17 +4,23 @@
 various test cases for YAML files
 """
 
-import sys
 import io
-import pytest  # type: ignore # NOQA
 import platform
+import sys
 
-from roundtrip import round_trip, dedent, round_trip_load, round_trip_dump  # type: ignore # NOQA
+import pytest  # type: ignore # NOQA
+from roundtrip import (  # type: ignore # NOQA
+    dedent,
+    round_trip,
+    round_trip_dump,
+    round_trip_load,
+)
 
 
 class TestYAML:
     def test_backslash(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         handlers:
           static_files: applications/\\1/static/\\2
         """
@@ -36,7 +42,8 @@ class TestYAML:
         )
 
     def test_omap_roundtrip(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         !!omap
         - a: 1
         - b: 2
@@ -65,17 +72,19 @@ class TestYAML:
         reason='ruyaml not available',
     )
     def test_dump_ruyaml_ordereddict(self) -> None:
-        from ruyaml.compat import ordereddict
         import ruyaml  # NOQA
+        from ruyaml.compat import ordereddict
 
         # OrderedDict mapped to !!omap
         x = ordereddict([('a', 1), ('b', 2)])
         res = round_trip_dump(x, default_flow_style=False)
-        assert res == dedent("""
+        assert res == dedent(
+            """
         !!omap
         - a: 1
         - b: 2
-        """)
+        """
+        )
 
     def test_CommentedSet(self) -> None:
         from ruyaml.constructor import CommentedSet
@@ -123,12 +132,15 @@ class TestYAML:
 
     def test_set_compact_flow(self) -> None:
         # this format is read and also should be written by default
-        round_trip("""
+        round_trip(
+            """
         !!set {a, b, c}
-        """)
+        """
+        )
 
     def test_blank_line_after_comment(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         # Comment with spaces after it.
 
 
@@ -137,7 +149,8 @@ class TestYAML:
         )
 
     def test_blank_line_between_seq_items(self) -> None:
-        round_trip("""
+        round_trip(
+            """
         # Seq with empty lines in between items.
         b:
         - bar
@@ -148,7 +161,8 @@ class TestYAML:
         )
 
     @pytest.mark.skipif(  # type: ignore
-        platform.python_implementation() == 'Jython', reason='Jython throws RepresenterError',
+        platform.python_implementation() == 'Jython',
+        reason='Jython throws RepresenterError',
     )
     def test_blank_line_after_literal_chip(self) -> None:
         s = """
@@ -172,10 +186,11 @@ class TestYAML:
         assert d['c'][1].split('line.')[1] == '\n'
 
     @pytest.mark.skipif(  # type: ignore
-        platform.python_implementation() == 'Jython', reason='Jython throws RepresenterError',
+        platform.python_implementation() == 'Jython',
+        reason='Jython throws RepresenterError',
     )
     def test_blank_line_after_literal_keep(self) -> None:
-        """ have to insert an eof marker in YAML to test this"""
+        """have to insert an eof marker in YAML to test this"""
         s = """
         c:
         - |+
@@ -198,7 +213,8 @@ class TestYAML:
         assert d['c'][1].split('line.')[1] == '\n\n\n'
 
     @pytest.mark.skipif(  # type: ignore
-        platform.python_implementation() == 'Jython', reason='Jython throws RepresenterError',
+        platform.python_implementation() == 'Jython',
+        reason='Jython throws RepresenterError',
     )
     def test_blank_line_after_literal_strip(self) -> None:
         s = """

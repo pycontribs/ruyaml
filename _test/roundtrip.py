@@ -7,10 +7,9 @@ import io
 import sys
 import textwrap
 from pathlib import Path
+from typing import Any, Optional, Union
 
 import ruyaml
-
-from typing import Any, Optional, Union
 
 unset = object()
 
@@ -29,7 +28,9 @@ def dedent(data: str) -> str:
 
 
 def round_trip_load(
-    inp: Any, preserve_quotes: Optional[bool] = None, version: Optional[Any] = None,
+    inp: Any,
+    preserve_quotes: Optional[bool] = None,
+    version: Optional[Any] = None,
 ) -> Any:
     import ruyaml  # NOQA
 
@@ -41,7 +42,9 @@ def round_trip_load(
 
 
 def round_trip_load_all(
-    inp: Any, preserve_quotes: Optional[bool] = None, version: Optional[Any] = None,
+    inp: Any,
+    preserve_quotes: Optional[bool] = None,
+    version: Optional[Any] = None,
 ) -> Any:
     import ruyaml  # NOQA
 
@@ -261,7 +264,7 @@ def YAML(**kw: Any) -> Any:
                 yield d
 
         def dump(self, data: Any, **kw: Any) -> Any:  # type: ignore
-            from ruyaml.compat import StringIO, BytesIO  # NOQA
+            from ruyaml.compat import BytesIO, StringIO  # NOQA
 
             assert ('stream' in kw) ^ ('compare' in kw)
             if 'stream' in kw:
@@ -281,7 +284,7 @@ def YAML(**kw: Any) -> Any:
             assert res == expected
 
         def round_trip(self, stream: Any, **kw: Any) -> None:
-            from ruyaml.compat import StringIO, BytesIO  # NOQA
+            from ruyaml.compat import BytesIO, StringIO  # NOQA
 
             assert isinstance(stream, str)
             lkw = kw.copy()
@@ -298,7 +301,7 @@ def YAML(**kw: Any) -> Any:
             assert res == outp
 
         def round_trip_all(self, stream: Any, **kw: Any) -> None:
-            from ruyaml.compat import StringIO, BytesIO  # NOQA
+            from ruyaml.compat import BytesIO, StringIO  # NOQA
 
             assert isinstance(stream, str)
             lkw = kw.copy()

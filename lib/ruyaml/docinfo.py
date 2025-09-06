@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 """
@@ -16,7 +15,7 @@ DocInfo can be used by a yaml dumper to dump a class
 """
 
 if False:  # MYPY
-    from typing import Optional, Tuple, Any
+    from typing import Any, Optional, Tuple
 
 # from dataclasses import dataclass, field, MISSING  # NOQA
 
@@ -116,6 +115,7 @@ class DocInfo:
     doc_version: from %YAML directive
     tags: from %TAG directives in scanned order
     """
+
     # requested_version: Optional[Version] = None
     # doc_version: Optional[Version] = None
     # tags: list[Tag] = field(default_factory=list)

@@ -1,7 +1,7 @@
 # coding: utf-8
 
-from roundtrip import YAML  # type: ignore
 import pytest  # type: ignore  # NOQA
+from roundtrip import YAML  # type: ignore
 
 
 def test_example_2_1() -> None:
@@ -265,7 +265,8 @@ def test_example_2_16() -> None:
 
 
 @pytest.mark.xfail(  # type: ignore
-    strict=True, reason='cannot YAML dump escape sequences (\n) as hex and normal',
+    strict=True,
+    reason='cannot YAML dump escape sequences (\n) as hex and normal',
 )
 def test_example_2_17() -> None:
     yaml = YAML()
@@ -284,8 +285,10 @@ def test_example_2_17() -> None:
     )
 
 
-@pytest.mark.xfail(strict=True,  # type: ignore # NOQA
-                   reason='non-literal/folding multiline scalars not supported')
+@pytest.mark.xfail(
+    strict=True,  # type: ignore # NOQA
+    reason='non-literal/folding multiline scalars not supported',
+)
 def test_example_2_18() -> None:
     yaml = YAML()
     yaml.round_trip(

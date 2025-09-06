@@ -33,13 +33,17 @@ class TestDedent:
         assert x == '123\n  456\n'
 
     def test_preserve_no_newline_at_end(self) -> None:
-        x = dedent("""
-        123""")
+        x = dedent(
+            """
+        123"""
+        )
         assert x == '123'
 
     def test_preserve_no_newline_at_all(self) -> None:
-        x = dedent("""\
-        123""")
+        x = dedent(
+            """\
+        123"""
+        )
         assert x == '123'
 
     def test_multiple_dedent(self) -> None:
@@ -47,6 +51,7 @@ class TestDedent:
             dedent(
                 """
         123
-        """),
+        """
+            ),
         )
         assert x == '123\n'

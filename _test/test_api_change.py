@@ -6,10 +6,10 @@ testing of anchors and the aliases referring to them
 
 import sys
 import textwrap
-import pytest  # type: ignore
 from pathlib import Path
-
 from typing import Any
+
+import pytest  # type: ignore
 
 
 class TestNewAPI:
@@ -165,7 +165,8 @@ class TestLoadAll:
             ---
             - b
             ...
-            """),
+            """
+            ),
         )
         yaml = YAML()
         assert list(yaml.load_all(fn)) == [['a'], ['b']]
@@ -187,7 +188,8 @@ class TestDuplSet:
                 ? b
                 ? c
                 ? a
-                """),
+                """
+                ),
             )
 
 
