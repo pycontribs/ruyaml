@@ -122,4 +122,3 @@ class DecimalInt(ScalarInt):
         cls, value: Any, width: Any = None, underscore: Any = None, anchor: Any = None,
     ) -> Any:
         return ScalarInt.__new__(cls, value, width=width, underscore=underscore, anchor=anchor)
-

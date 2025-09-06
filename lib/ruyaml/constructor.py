@@ -10,11 +10,11 @@ from collections.abc import Hashable, MutableMapping, MutableSequence  # type: i
 
 # fmt: off
 from ruyaml.error import (MarkedYAMLError, MarkedYAMLFutureWarning,
-                               MantissaNoDotYAML1_1Warning)
+                          MantissaNoDotYAML1_1Warning)
 from ruyaml.nodes import *                               # NOQA
 from ruyaml.nodes import (SequenceNode, MappingNode, ScalarNode)
 from ruyaml.compat import (builtins_module, # NOQA
-                                nprint, nprintf, version_tnf)
+                           nprint, nprintf, version_tnf)
 from ruyaml.compat import ordereddict
 
 from ruyaml.tag import Tag

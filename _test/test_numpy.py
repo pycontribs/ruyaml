@@ -22,4 +22,3 @@
 #
 #      print('\nYAML', yaml_str)
 #      assert data == datb
-

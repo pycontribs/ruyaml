@@ -14,12 +14,6 @@ from roundtrip import (  # type: ignore
     dedent,
     save_and_run,
     YAML,
-    dedent,
-    na_round_trip,
-    round_trip,
-    round_trip_dump,
-    round_trip_load,
-    save_and_run,
 )
 
 
@@ -463,8 +457,6 @@ class TestIssues:
         from ruyaml import YAML
         import json
 
-        from ruyaml import YAML
-
         yaml = YAML()
         data = yaml.load('{}')
         json_str = json.dumps(data)  # NOQA
@@ -472,8 +464,6 @@ class TestIssues:
     def test_issue_233a(self) -> None:
         from ruyaml import YAML
         import json
-
-        from ruyaml import YAML
 
         yaml = YAML()
         data = yaml.load('[]')

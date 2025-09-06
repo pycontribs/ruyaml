@@ -239,4 +239,3 @@ class TestOldAPI:
 
         with pytest.raises(DuplicateKeyError):
             safe_load('type: Doméstica\ntype: International')
-

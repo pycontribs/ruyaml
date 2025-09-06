@@ -2,7 +2,6 @@
 
 import sys
 import platform
-import pytest  # type: ignore  # NOQA
 from textwrap import dedent
 
 import pytest

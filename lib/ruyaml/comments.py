@@ -108,7 +108,7 @@ class Comment:
             end = ',\n  end=' + str(self._post)
         else:
             end = ""
-        return f'Comment(comment={self.comment},\n  items={self._items}{end})'  # noqa:E231
+        return f'Comment(comment={self.comment},\n  items={self._items}{end})'
 
     def _old__repr__(self) -> str:
         if bool(self._post):
@@ -120,10 +120,10 @@ class Comment:
             ln = max([len(str(k)) for k in self._items]) + 1
         except ValueError:
             ln = ''  # type: ignore
-        it = '    '.join([f'{str(k) + ":":{ln}} {v}\n' for k, v in self._items.items()])  # noqa:E231
+        it = '    '.join([f'{str(k) + ":":{ln}} {v}\n' for k, v in self._items.items()])
         if it:
             it = '\n    ' + it + '  '
-        return f'Comment(\n  start={self.comment},\n  items={{{it}}}{end})'  # noqa:E231
+        return f'Comment(\n  start={self.comment},\n  items={{{it}}}{end})'
 
     def __repr__(self) -> str:
         if self._pre is None:
@@ -136,7 +136,8 @@ class Comment:
             ln = max([len(str(k)) for k in self._items]) + 1
         except ValueError:
             ln = ''  # type: ignore
-        it = '    '.join([f'{str(k) + ":":{ln}} {v}\n' for k, v in self._items.items()])  # noqa:E231
+        # noqa:E231
+        it = '    '.join([f'{str(k) + ":":{ln}} {v}\n' for k, v in self._items.items()])
         if it:
             it = '\n    ' + it + '  '
         return f'Comment(\n  pre={self.pre},\n  items={{{it}}}{end})'
