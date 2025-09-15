@@ -159,13 +159,13 @@ nprintf = Nprint('/var/tmp/ruyaml.log')
 
 
 def check_namespace_char(ch: Any) -> bool:
-    if '\x21' <= ch <= '\x7E':  # ! to ~
+    if '\x21' <= ch <= '\x7e':  # ! to ~
         return True
-    if '\xA0' <= ch <= '\uD7FF':
+    if '\xa0' <= ch <= '\ud7ff':
         return True
-    if ('\uE000' <= ch <= '\uFFFD') and ch != '\uFEFF':  # excl. byte order mark
+    if ('\ue000' <= ch <= '\ufffd') and ch != '\ufeff':  # excl. byte order mark
         return True
-    if '\U00010000' <= ch <= '\U0010FFFF':
+    if '\U00010000' <= ch <= '\U0010ffff':
         return True
     return False
 

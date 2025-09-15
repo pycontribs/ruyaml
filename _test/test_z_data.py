@@ -1,7 +1,7 @@
 # coding: utf-8
 
-import sys
 import os
+import sys
 import warnings  # NOQA
 from pathlib import Path
 from typing import Any, List, Optional, Tuple
