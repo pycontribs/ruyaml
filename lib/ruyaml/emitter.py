@@ -596,7 +596,7 @@ class Emitter:
         if isinstance(self.event, MappingEndEvent):
             self.indent = self.indents.pop()
             popped = self.flow_context.pop()
-            assert popped == '{'  # empty flow mapping
+            assert popped == self.flow_map_start  # empty flow mapping
             self.write_indicator(self.flow_map_end, False)
             if self.event.comment and self.event.comment[0]:
                 # eol comment on empty mapping
@@ -621,7 +621,7 @@ class Emitter:
             #     self.write_pre_comment(self.event)
             self.indent = self.indents.pop()
             popped = self.flow_context.pop()
-            assert popped in ['{', '']
+            assert popped in [self.flow_map_start, '']
             if self.canonical:
                 self.write_indicator(self.flow_map_separator, False)
                 self.write_indent()
