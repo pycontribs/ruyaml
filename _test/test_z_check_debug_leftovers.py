@@ -5,6 +5,7 @@ from typing import Any
 
 import pytest  # type: ignore # NOQA
 from roundtrip import dedent, round_trip_dump, round_trip_load  # type: ignore
+
 from ruyaml.emitter import Emitter
 
 
@@ -48,7 +49,8 @@ class TestLeftOverDebug:
         - {  }
         - [ 3.14 , 42 ]
         - [  ]
-        """)
+        """
+        )
         d = round_trip_load(s)
 
         current_map_start = Emitter.flow_map_start
