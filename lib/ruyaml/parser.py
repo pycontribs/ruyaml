@@ -573,6 +573,29 @@ class Parser:
         self.marks.append(token.start_mark)
         return self.parse_block_sequence_entry()
 
+    def pop_eol_comment_for_empty_entry(self, token: Any) -> Any:
+        # An empty (null) block sequence entry has no value token for an
+        # end-of-line comment to attach to, so the scanner records that
+        # comment as one preceding the next token.  A comment that sits on
+        # the same line as the entry's '-' indicator is the eol comment of
+        # this (empty) entry and must stay attached to it; otherwise it
+        # drifts onto the block end and a second round-trip no longer
+        # reproduces the first (and, with several empty entries, the
+        # comments get reassigned to the wrong items).
+        if self.loader is None or self.loader.comment_handling is not None:
+            return None
+        nt = self.scanner.peek_token()
+        pre = nt.comment[1] if nt.comment else None
+        if not pre:
+            return None
+        for idx, ct in enumerate(pre):
+            if ct is not None and ct.start_mark.line == token.start_mark.line:
+                eol = pre.pop(idx)
+                if not pre:
+                    nt.comment[1] = None
+                return [eol, None]
+        return None
+
     def parse_block_sequence_entry(self) -> Any:
         if self.scanner.check_token(BlockEntryToken):
             token = self.scanner.get_token()
@@ -582,7 +605,8 @@ class Parser:
                 return self.parse_block_node()
             else:
                 self.state = self.parse_block_sequence_entry
-                return self.process_empty_scalar(token.end_mark)
+                comment = self.pop_eol_comment_for_empty_entry(token)
+                return self.process_empty_scalar(token.end_mark, comment=comment)
         if not self.scanner.check_token(BlockEndToken):
             token = self.scanner.peek_token()
             raise ParserError(
@@ -620,7 +644,10 @@ class Parser:
                 return self.parse_block_node()
             else:
                 self.state = self.parse_indentless_sequence_entry
-                return self.process_empty_scalar(token.end_mark)
+                # see parse_block_sequence_entry: keep an eol comment that
+                # sits on the same line as the '-' with this empty entry
+                comment = self.pop_eol_comment_for_empty_entry(token)
+                return self.process_empty_scalar(token.end_mark, comment=comment)
         token = self.scanner.peek_token()
         c = None
         if self.loader and self.loader.comment_handling is None:

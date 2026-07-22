@@ -947,6 +947,27 @@ class TestEmptyValueBeforeComments:
         """
         )
 
+    def test_empty_seq_entry_eol_comment_roundtrip(self) -> None:
+        # an empty (null) block sequence entry that carries an end-of-line
+        # comment must keep that comment attached to the entry itself, the
+        # same way an empty mapping value does (test_issue_25_00 above).
+        # Otherwise the comment lands on the sequence end and a second
+        # round-trip drifts it onto its own line, so dump(load(...)) is not
+        # idempotent.
+        first = round_trip_dump(round_trip_load('- null  # comment\n'))
+        second = round_trip_dump(round_trip_load(first))
+        assert first == second
+
+    def test_empty_seq_entries_keep_their_own_comments(self) -> None:
+        # with several empty entries each end-of-line comment must stay with
+        # its own entry rather than being collected at the end of the block.
+        data = round_trip_load('- null  # a\n- null  # b\n')
+        assert 0 in data.ca.items
+        assert 1 in data.ca.items
+        first = round_trip_dump(data)
+        second = round_trip_dump(round_trip_load(first))
+        assert first == second
+
 
 test_block_scalar_commented_line_template = """\
 y: p
