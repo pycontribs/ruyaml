@@ -169,8 +169,7 @@ def test_issue_127() -> None:
                 style = None
             return dumper.represent_scalar(cls.yaml_tag, data.logical_id, style=style)
 
-    document = dedent(
-        """\
+    document = dedent("""\
     AList:
       - !Ref One
       - !Ref 'Two'
@@ -180,8 +179,7 @@ def test_issue_127() -> None:
     CList:
       - Five Six
       - 'Seven Eight'
-    """
-    )
+    """)
     yaml = ruyaml.YAML()
     yaml.preserve_quotes = True
     yaml.default_flow_style = None

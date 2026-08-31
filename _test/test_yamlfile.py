@@ -19,12 +19,10 @@ from roundtrip import (  # type: ignore # NOQA
 
 class TestYAML:
     def test_backslash(self) -> None:
-        round_trip(
-            """
+        round_trip("""
         handlers:
           static_files: applications/\\1/static/\\2
-        """
-        )
+        """)
 
     def test_omap_out(self) -> None:
         # ordereddict mapped to !!omap
@@ -33,24 +31,20 @@ class TestYAML:
 
         x = ordereddict([('a', 1), ('b', 2)])
         res = round_trip_dump(x, default_flow_style=False)
-        assert res == dedent(
-            """
+        assert res == dedent("""
         !!omap
         - a: 1
         - b: 2
-        """
-        )
+        """)
 
     def test_omap_roundtrip(self) -> None:
-        round_trip(
-            """
+        round_trip("""
         !!omap
         - a: 1
         - b: 2
         - c: 3
         - d: 4
-        """
-        )
+        """)
 
     # @pytest.mark.skipif(sys.version_info < (2, 7),
     #                     reason='collections not available')
@@ -78,13 +72,11 @@ class TestYAML:
         # OrderedDict mapped to !!omap
         x = ordereddict([('a', 1), ('b', 2)])
         res = round_trip_dump(x, default_flow_style=False)
-        assert res == dedent(
-            """
+        assert res == dedent("""
         !!omap
         - a: 1
         - b: 2
-        """
-        )
+        """)
 
     def test_CommentedSet(self) -> None:
         from ruyaml.constructor import CommentedSet
@@ -109,56 +101,46 @@ class TestYAML:
             yaml = ruyaml.YAML(typ='unsafe', pure=True)
         yaml.default_flow_style = False
         yaml.dump(x, buf)
-        assert buf.getvalue() == dedent(
-            """
+        assert buf.getvalue() == dedent("""
         !!set
         a: null
         b: null
         c: null
-        """
-        )
+        """)
 
     # ordering is not preserved in a set
     def test_set_compact(self) -> None:
         # this format is read and also should be written by default
-        round_trip(
-            """
+        round_trip("""
         !!set
         ? a
         ? b
         ? c
-        """
-        )
+        """)
 
     def test_set_compact_flow(self) -> None:
         # this format is read and also should be written by default
-        round_trip(
-            """
+        round_trip("""
         !!set {a, b, c}
-        """
-        )
+        """)
 
     def test_blank_line_after_comment(self) -> None:
-        round_trip(
-            """
+        round_trip("""
         # Comment with spaces after it.
 
 
         a: 1
-        """
-        )
+        """)
 
     def test_blank_line_between_seq_items(self) -> None:
-        round_trip(
-            """
+        round_trip("""
         # Seq with empty lines in between items.
         b:
         - bar
 
 
         - baz
-        """
-        )
+        """)
 
     @pytest.mark.skipif(  # type: ignore
         platform.python_implementation() == 'Jython',
@@ -242,13 +224,11 @@ class TestYAML:
 
         yaml = ruyaml.YAML()
         yaml.preserve_quotes = True
-        s = dedent(
-            """\
+        s = dedent("""\
         a: 'hello'
         ---
         b: "goodbye"
-        """
-        )
+        """)
         data = []
         for x in yaml.load_all(s):
             data.append(x)
