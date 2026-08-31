@@ -25,48 +25,40 @@ class TestIndent:
         assert s == output
 
     def test_roundtrip_mapping_of_inline_lists(self) -> None:
-        s = dedent(
-            """\
+        s = dedent("""\
         a: [a, b, c]
         j: [k, l, m]
-        """
-        )
+        """)
         output = rt(s)
         assert s == output
 
     def test_roundtrip_mapping_of_inline_lists_comments(self) -> None:
-        s = dedent(
-            """\
+        s = dedent("""\
         # comment A
         a: [a, b, c]
         # comment B
         j: [k, l, m]
-        """
-        )
+        """)
         output = rt(s)
         assert s == output
 
     def test_roundtrip_mapping_of_inline_sequence_eol_comments(self) -> None:
-        s = dedent(
-            """\
+        s = dedent("""\
         # comment A
         a: [a, b, c]  # comment B
         j: [k, l, m]  # comment C
-        """
-        )
+        """)
         output = rt(s)
         assert s == output
 
     # first test by explicitly setting flow style
     def test_added_inline_list(self) -> None:
-        s1 = dedent(
-            """
+        s1 = dedent("""
         a:
         - b
         - c
         - d
-        """
-        )
+        """)
         s = 'a: [b, c, d]\n'
         data = round_trip_load(s1)
         val = data['a']
@@ -78,24 +70,20 @@ class TestIndent:
     # ############ flow mappings
 
     def test_roundtrip_flow_mapping(self) -> None:
-        s = dedent(
-            """\
+        s = dedent("""\
         - {a: 1, b: hallo}
         - {j: fka, k: 42}
-        """
-        )
+        """)
         data = round_trip_load(s)
         output = round_trip_dump(data)
         assert s == output
 
     def test_roundtrip_sequence_of_inline_mappings_eol_comments(self) -> None:
-        s = dedent(
-            """\
+        s = dedent("""\
         # comment A
         - {a: 1, b: hallo}  # comment B
         - {j: fka, k: 42}  # comment C
-        """
-        )
+        """)
         output = rt(s)
         assert s == output
 
@@ -356,8 +344,7 @@ class TestSeparateMapSeqIndents:
         # yaml.map_indent = 2 # the default
         yaml.indent(sequence=4, offset=2)
         yaml.preserve_quotes = True
-        yaml.round_trip(
-            """
+        yaml.round_trip("""
         role::startup::author::rsyslog_inputs:
           imfile:
             - ruleset: 'AEM-slinglog'
@@ -368,8 +355,7 @@ class TestSeparateMapSeqIndents:
               File: '/opt/aem/author/crx-quickstart/logs/stdout.log'
               startmsg.regex: '^[-+T.:[:digit:]]*'
               tag: 'stdout'
-        """
-        )
+        """)
 
 
 # ############ indentation

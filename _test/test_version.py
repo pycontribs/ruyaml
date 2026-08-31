@@ -16,8 +16,7 @@ def load(s: str, version: Optional[Any] = None) -> Any:
 
 class TestVersions:
     def test_explicit_1_2(self) -> None:
-        r = load(
-            """\
+        r = load("""\
         %YAML 1.2
         ---
         - 12:34:56
@@ -29,8 +28,7 @@ class TestVersions:
         - yes
         - no
         - true
-        """
-        )
+        """)
         assert r[0] == '12:34:56'
         assert r[1] == 12
         assert r[2] == 12345678
@@ -42,8 +40,7 @@ class TestVersions:
         assert r[8] is True
 
     def test_explicit_1_1(self) -> None:
-        r = load(
-            """\
+        r = load("""\
         %YAML 1.1
         ---
         - 12:34:56
@@ -55,8 +52,7 @@ class TestVersions:
         - yes
         - no
         - true
-        """
-        )
+        """)
         assert r[0] == 45296
         assert r[1] == 10
         assert r[2] == '012345678'
@@ -68,8 +64,7 @@ class TestVersions:
         assert r[8] is True
 
     def test_implicit_1_2(self) -> None:
-        r = load(
-            """\
+        r = load("""\
         - 12:34:56
         - 12:34:56.78
         - 012
@@ -80,8 +75,7 @@ class TestVersions:
         - yes
         - no
         - true
-        """
-        )
+        """)
         assert r[0] == '12:34:56'
         assert r[1] == '12:34:56.78'
         assert r[2] == 12
@@ -124,8 +118,7 @@ class TestIssue62:
     def test_00(self) -> None:
         import ruyaml  # NOQA
 
-        s = dedent(
-            """\
+        s = dedent("""\
         {}# Outside flow collection:
         - ::vector
         - ": - ()"
@@ -134,8 +127,7 @@ class TestIssue62:
         - http://example.com/foo#bar
         # Inside flow collection:
         - [::vector, ": - ()", "Down, down and away!", -456, http://example.com/foo#bar]
-        """
-        )
+        """)
         with pytest.raises(ruyaml.parser.ParserError):
             round_trip(s.format('%YAML 1.1\n---\n'), preserve_quotes=True)
         round_trip(s.format(""), preserve_quotes=True)
@@ -143,8 +135,7 @@ class TestIssue62:
     def test_00_single_comment(self) -> None:
         import ruyaml  # NOQA
 
-        s = dedent(
-            """\
+        s = dedent("""\
         {}# Outside flow collection:
         - ::vector
         - ": - ()"
@@ -152,8 +143,7 @@ class TestIssue62:
         - -123
         - http://example.com/foo#bar
         - [::vector, ": - ()", "Down, down and away!", -456, http://example.com/foo#bar]
-        """
-        )
+        """)
         with pytest.raises(ruyaml.parser.ParserError):
             round_trip(s.format('%YAML 1.1\n---\n'), preserve_quotes=True)
         round_trip(s.format(""), preserve_quotes=True)
@@ -162,11 +152,9 @@ class TestIssue62:
     def test_01(self) -> None:
         import ruyaml  # NOQA
 
-        s = dedent(
-            """\
+        s = dedent("""\
         {}[random plain value that contains a ? character]
-        """
-        )
+        """)
         with pytest.raises(ruyaml.parser.ParserError):
             round_trip(s.format('%YAML 1.1\n---\n'), preserve_quotes=True)
         round_trip(s.format(""), preserve_quotes=True)
