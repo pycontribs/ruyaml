@@ -158,15 +158,13 @@ class TestLoadAll:
 
         fn = Path(str(tmpdir)) / 'test.yaml'
         fn.write_text(
-            textwrap.dedent(
-                """\
+            textwrap.dedent("""\
             ---
             - a
             ---
             - b
             ...
-            """
-            ),
+            """),
         )
         yaml = YAML()
         assert list(yaml.load_all(fn)) == [['a'], ['b']]
@@ -181,15 +179,13 @@ class TestDuplSet:
         yaml = YAML()
         with pytest.raises(DuplicateKeyError):
             yaml.load(
-                textwrap.dedent(
-                    """\
+                textwrap.dedent("""\
                 !!set
                 ? a
                 ? b
                 ? c
                 ? a
-                """
-                ),
+                """),
             )
 
 
