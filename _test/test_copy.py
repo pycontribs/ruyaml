@@ -12,11 +12,9 @@ from roundtrip import dedent, round_trip_dump, round_trip_load  # type: ignore
 
 class TestDeepCopy:
     def test_preserve_flow_style_simple(self) -> None:
-        x = dedent(
-            """\
+        x = dedent("""\
         {foo: bar, baz: quux}
-        """
-        )
+        """)
         data = round_trip_load(x)
         data_copy = copy.deepcopy(data)
         y = round_trip_dump(data_copy)
@@ -26,11 +24,9 @@ class TestDeepCopy:
         assert data.fa.flow_style() == data_copy.fa.flow_style()
 
     def test_deepcopy_flow_style_nested_dict(self) -> None:
-        x = dedent(
-            """\
+        x = dedent("""\
         a: {foo: bar, baz: quux}
-        """
-        )
+        """)
         data = round_trip_load(x)
         assert data['a'].fa.flow_style() is True
         data_copy = copy.deepcopy(data)
@@ -43,20 +39,16 @@ class TestDeepCopy:
 
         print('x [{}]'.format(x))
         print('y [{}]'.format(y))
-        assert y == dedent(
-            """\
+        assert y == dedent("""\
         a:
           foo: bar
           baz: quux
-        """
-        )
+        """)
 
     def test_deepcopy_flow_style_nested_list(self) -> None:
-        x = dedent(
-            """\
+        x = dedent("""\
         a: [1, 2, 3]
-        """
-        )
+        """)
         data = round_trip_load(x)
         assert data['a'].fa.flow_style() is True
         data_copy = copy.deepcopy(data)
@@ -69,23 +61,19 @@ class TestDeepCopy:
 
         print('x [{}]'.format(x))
         print('y [{}]'.format(y))
-        assert y == dedent(
-            """\
+        assert y == dedent("""\
         a:
         - 1
         - 2
         - 3
-        """
-        )
+        """)
 
 
 class TestCopy:
     def test_copy_flow_style_nested_dict(self) -> None:
-        x = dedent(
-            """\
+        x = dedent("""\
         a: {foo: bar, baz: quux}
-        """
-        )
+        """)
         data = round_trip_load(x)
         assert data['a'].fa.flow_style() is True
         data_copy = copy.copy(data)
@@ -98,20 +86,16 @@ class TestCopy:
         z = round_trip_dump(data)
         assert y == z
 
-        assert y == dedent(
-            """\
+        assert y == dedent("""\
         a:
           foo: bar
           baz: quux
-        """
-        )
+        """)
 
     def test_copy_flow_style_nested_list(self) -> None:
-        x = dedent(
-            """\
+        x = dedent("""\
         a: [1, 2, 3]
-        """
-        )
+        """)
         data = round_trip_load(x)
         assert data['a'].fa.flow_style() is True
         data_copy = copy.copy(data)
@@ -124,11 +108,9 @@ class TestCopy:
 
         print('x [{}]'.format(x))
         print('y [{}]'.format(y))
-        assert y == dedent(
-            """\
+        assert y == dedent("""\
         a:
         - 1
         - 2
         - 3
-        """
-        )
+        """)
