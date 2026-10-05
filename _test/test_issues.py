@@ -6,13 +6,13 @@ import pytest  # type: ignore  # NOQA
 
 # cannot do "from .roundtrip" because of pytest, so mypy cannot find this
 from roundtrip import (  # type: ignore
+    YAML,
     dedent,
     na_round_trip,
     round_trip,
     round_trip_dump,
     round_trip_load,
     save_and_run,
-    YAML,
 )
 
 
@@ -1174,12 +1174,10 @@ class TestIssues:
 
         yaml = ruyaml.YAML()
         data = yaml.load(
-            dedent(
-                """
+            dedent("""
             # hi
             {}
-            """
-            ),
+            """),
         )
         yaml.dump(data, sys.stdout)
 
