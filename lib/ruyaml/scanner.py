@@ -837,7 +837,7 @@ class Scanner:
         # Scanners for block, flow, and plain scalars need to be modified.
         srp = self.reader.peek
         srf = self.reader.forward
-        if self.reader.index == 0 and srp() == '\uFEFF':
+        if self.reader.index == 0 and srp() == '\ufeff':
             srf()
         found = False
         _the_end = _THE_END
@@ -1388,17 +1388,17 @@ class Scanner:
         'b': '\x08',
         't': '\x09',
         '\t': '\x09',
-        'n': '\x0A',
-        'v': '\x0B',
-        'f': '\x0C',
-        'r': '\x0D',
-        'e': '\x1B',
+        'n': '\x0a',
+        'v': '\x0b',
+        'f': '\x0c',
+        'r': '\x0d',
+        'e': '\x1b',
         ' ': '\x20',
         '"': '"',
         '/': '/',  # as per http://www.json.org/
         '\\': '\\',
         'N': '\x85',
-        '_': '\xA0',
+        '_': '\xa0',
         'L': '\u2028',
         'P': '\u2029',
     }
@@ -1893,7 +1893,7 @@ class RoundTripScanner(Scanner):
         # Scanners for block, flow, and plain scalars need to be modified.
         srp = self.reader.peek
         srf = self.reader.forward
-        if self.reader.index == 0 and srp() == '\uFEFF':
+        if self.reader.index == 0 and srp() == '\ufeff':
             srf()
         found = False
         white_space = ' \t' if self.flow_level > 0 else ' '
@@ -2319,7 +2319,7 @@ class RoundTripScannerSC(Scanner):  # RoundTripScanner Split Comments
     def scan_to_next_token(self) -> None:
         srp = self.reader.peek
         srf = self.reader.forward
-        if self.reader.index == 0 and srp() == '\uFEFF':
+        if self.reader.index == 0 and srp() == '\ufeff':
             srf()
         start_mark = self.reader.get_mark()
         # xprintf('current_mark', start_mark.line, start_mark.column)
