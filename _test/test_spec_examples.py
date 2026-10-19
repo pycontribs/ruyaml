@@ -6,33 +6,28 @@ from roundtrip import YAML  # type: ignore
 
 def test_example_2_1() -> None:
     yaml = YAML()
-    yaml.round_trip(
-        """
+    yaml.round_trip("""
     - Mark McGwire
     - Sammy Sosa
     - Ken Griffey
-    """
-    )
+    """)
 
 
 @pytest.mark.xfail(strict=True)  # type: ignore
 def test_example_2_2() -> None:
     yaml = YAML()
     yaml.mapping_value_align = True
-    yaml.round_trip(
-        """
+    yaml.round_trip("""
     hr:  65    # Home runs
     avg: 0.278 # Batting average
     rbi: 147   # Runs Batted In
-    """
-    )
+    """)
 
 
 def test_example_2_3() -> None:
     yaml = YAML()
     yaml.indent(sequence=4, offset=2)
-    yaml.round_trip(
-        """
+    yaml.round_trip("""
     american:
       - Boston Red Sox
       - Detroit Tigers
@@ -41,16 +36,14 @@ def test_example_2_3() -> None:
       - New York Mets
       - Chicago Cubs
       - Atlanta Braves
-    """
-    )
+    """)
 
 
 @pytest.mark.xfail(strict=True)  # type: ignore
 def test_example_2_4() -> None:
     yaml = YAML()
     yaml.mapping_value_align = True
-    yaml.round_trip(
-        """
+    yaml.round_trip("""
     -
       name: Mark McGwire
       hr:   65
@@ -59,21 +52,18 @@ def test_example_2_4() -> None:
       name: Sammy Sosa
       hr:   63
       avg:  0.288
-    """
-    )
+    """)
 
 
 @pytest.mark.xfail(strict=True)  # type: ignore
 def test_example_2_5() -> None:
     yaml = YAML()
     yaml.flow_sequence_element_align = True
-    yaml.round_trip(
-        """
+    yaml.round_trip("""
     - [name        , hr, avg  ]
     - [Mark McGwire, 65, 0.278]
     - [Sammy Sosa  , 63, 0.288]
-    """
-    )
+    """)
 
 
 @pytest.mark.xfail(strict=True)  # type: ignore
@@ -81,22 +71,19 @@ def test_example_2_6() -> None:
     yaml = YAML()
     # yaml.flow_mapping_final_comma = False
     yaml.flow_mapping_one_element_per_line = True
-    yaml.round_trip(
-        """
+    yaml.round_trip("""
     Mark McGwire: {hr: 65, avg: 0.278}
     Sammy Sosa: {
         hr: 63,
         avg: 0.288
       }
-    """
-    )
+    """)
 
 
 @pytest.mark.xfail(strict=True)  # type: ignore
 def test_example_2_7() -> None:
     yaml = YAML()
-    yaml.round_trip_all(
-        """
+    yaml.round_trip_all("""
     # Ranking of 1998 home runs
     ---
     - Mark McGwire
@@ -107,16 +94,14 @@ def test_example_2_7() -> None:
     ---
     - Chicago Cubs
     - St Louis Cardinals
-    """
-    )
+    """)
 
 
 def test_example_2_8() -> None:
     yaml = YAML()
     yaml.explicit_start = True
     yaml.explicit_end = True
-    yaml.round_trip_all(
-        """
+    yaml.round_trip_all("""
     ---
     time: 20:03:20
     player: Sammy Sosa
@@ -127,16 +112,14 @@ def test_example_2_8() -> None:
     player: Sammy Sosa
     action: grand slam
     ...
-    """
-    )
+    """)
 
 
 def test_example_2_9() -> None:
     yaml = YAML()
     yaml.explicit_start = True
     yaml.indent(sequence=4, offset=2)
-    yaml.round_trip(
-        """
+    yaml.round_trip("""
     ---
     hr: # 1998 hr ranking
       - Mark McGwire
@@ -145,8 +128,7 @@ def test_example_2_9() -> None:
       # 1998 rbi ranking
       - Sammy Sosa
       - Ken Griffey
-    """
-    )
+    """)
 
 
 @pytest.mark.xfail(strict=True)  # type: ignore
@@ -154,8 +136,7 @@ def test_example_2_10() -> None:
     yaml = YAML()
     yaml.explicit_start = True
     yaml.indent(sequence=4, offset=2)
-    yaml.round_trip(
-        """
+    yaml.round_trip("""
     ---
     hr:
       - Mark McGwire
@@ -164,15 +145,13 @@ def test_example_2_10() -> None:
     rbi:
       - *SS # Subsequent occurrence
       - Ken Griffey
-    """
-    )
+    """)
 
 
 @pytest.mark.xfail(strict=True)  # type: ignore
 def test_example_2_11() -> None:
     yaml = YAML()
-    yaml.round_trip(
-        """
+    yaml.round_trip("""
     ? - Detroit Tigers
       - Chicago cubs
     :
@@ -182,16 +161,14 @@ def test_example_2_11() -> None:
         Atlanta Braves ]
     : [ 2001-07-02, 2001-08-12,
         2001-08-14 ]
-    """
-    )
+    """)
 
 
 @pytest.mark.xfail(strict=True)  # type: ignore
 def test_example_2_12() -> None:
     yaml = YAML()
     yaml.explicit_start = True
-    yaml.round_trip(
-        """
+    yaml.round_trip("""
     ---
     # Products purchased
     - item    : Super Hoop
@@ -200,21 +177,18 @@ def test_example_2_12() -> None:
       quantity: 4
     - item    : Big Shoes
       quantity: 1
-    """
-    )
+    """)
 
 
 @pytest.mark.xfail(strict=True)  # type: ignore
 def test_example_2_13() -> None:
     yaml = YAML()
-    yaml.round_trip(
-        r"""
+    yaml.round_trip(r"""
     # ASCII Art
     --- |
       \//||\/||
       // ||  ||__
-    """
-    )
+    """)
 
 
 @pytest.mark.xfail(strict=True)  # type: ignore
@@ -222,21 +196,18 @@ def test_example_2_14() -> None:
     yaml = YAML()
     yaml.explicit_start = True
     yaml.indent(root_scalar=2)  # needs to be added
-    yaml.round_trip(
-        """
+    yaml.round_trip("""
     --- >
       Mark McGwire's
       year was crippled
       by a knee injury.
-    """
-    )
+    """)
 
 
 @pytest.mark.xfail(strict=True)  # type: ignore
 def test_example_2_15() -> None:
     yaml = YAML()
-    yaml.round_trip(
-        """
+    yaml.round_trip("""
     >
      Sammy Sosa completed another
      fine season with great stats.
@@ -245,14 +216,12 @@ def test_example_2_15() -> None:
        0.288 Batting Average
 
      What a year!
-    """
-    )
+    """)
 
 
 def test_example_2_16() -> None:
     yaml = YAML()
-    yaml.round_trip(
-        """
+    yaml.round_trip("""
     name: Mark McGwire
     accomplishment: >
       Mark set a major league
@@ -260,8 +229,7 @@ def test_example_2_16() -> None:
     stats: |
       65 Home Runs
       0.278 Batting Average
-    """
-    )
+    """)
 
 
 @pytest.mark.xfail(  # type: ignore
@@ -272,8 +240,7 @@ def test_example_2_17() -> None:
     yaml = YAML()
     yaml.allow_unicode = False
     yaml.preserve_quotes = True
-    yaml.round_trip(
-        r"""
+    yaml.round_trip(r"""
     unicode: "Sosa did fine.\u263A"
     control: "\b1998\t1999\t2000\n"
     hex esc: "\x0d\x0a is \r\n"
@@ -281,8 +248,7 @@ def test_example_2_17() -> None:
     single: '"Howdy!" he cried.'
     quoted: ' # Not a ''comment''.'
     tie-fighter: '|\-*-/|'
-    """
-    )
+    """)
 
 
 @pytest.mark.xfail(
@@ -291,48 +257,40 @@ def test_example_2_17() -> None:
 )
 def test_example_2_18() -> None:
     yaml = YAML()
-    yaml.round_trip(
-        """
+    yaml.round_trip("""
     plain:
       This unquoted scalar
       spans many lines.
 
     quoted: "So does this
       quoted scalar.\n"
-    """
-    )
+    """)
 
 
 @pytest.mark.xfail(strict=True, reason='leading + on decimal dropped')  # type: ignore
 def test_example_2_19() -> None:
     yaml = YAML()
-    yaml.round_trip(
-        """
+    yaml.round_trip("""
     canonical: 12345
     decimal: +12345
     octal: 0o14
     hexadecimal: 0xC
-    """
-    )
+    """)
 
 
 @pytest.mark.xfail(strict=True, reason='case of NaN not preserved')  # type: ignore
 def test_example_2_20() -> None:
     yaml = YAML()
-    yaml.round_trip(
-        """
+    yaml.round_trip("""
     canonical: 1.23015e+3
     exponential: 12.3015e+02
     fixed: 1230.15
     negative infinity: -.inf
     not a number: .NaN
-    """
-    )
+    """)
 
 
 def Xtest_example_2_X() -> None:
     yaml = YAML()
-    yaml.round_trip(
-        """
-    """
-    )
+    yaml.round_trip("""
+    """)
