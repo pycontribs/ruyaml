@@ -3,7 +3,8 @@ from __future__ import annotations
 # Abstract classes.
 
 if False:  # MYPY
-    from typing import Any, Dict, Optional, List  # NOQA
+    from typing import Any, Dict, List, Optional  # NOQA
+
 from ruyaml.tag import Tag
 
 SHOW_LINES = False

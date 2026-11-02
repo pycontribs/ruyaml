@@ -24,8 +24,7 @@ def compare(d: Any, s: str) -> None:
 
 class TestMerge:
     def test_remove_key_before_merge(self) -> None:
-        data = load(
-            """
+        data = load("""
         a: &aa
           b: 1
           c: 2
@@ -35,8 +34,7 @@ class TestMerge:
           <<: *aa
           g: 5
           h: 6
-        """
-        )
+        """)
         del data['d']['f']
         compare(
             data,
@@ -53,8 +51,7 @@ class TestMerge:
         )
 
     def test_remove_key_after_merge(self) -> None:
-        data = load(
-            """
+        data = load("""
         a: &aa
           b: 1
           c: 2
@@ -64,8 +61,7 @@ class TestMerge:
           <<: *aa
           g: 5
           h: 6
-        """
-        )
+        """)
         del data['d']['g']
         compare(
             data,

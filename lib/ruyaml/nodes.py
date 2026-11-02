@@ -3,7 +3,8 @@ from __future__ import annotations
 import sys
 
 if False:  # MYPY
-    from typing import Dict, Any, Text, Optional  # NOQA
+    from typing import Any, Dict, Optional, Text  # NOQA
+
 from ruyaml.tag import Tag
 
 

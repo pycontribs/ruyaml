@@ -4,7 +4,8 @@ import re
 from typing import Any, Dict, List, Optional, Text, Union  # NOQA
 
 if False:  # MYPY
-    from typing import Any, Dict, List, Union, Text, Optional  # NOQA
+    from typing import Any, Dict, List, Optional, Text, Union  # NOQA
+
     from ruyaml.compat import VersionType  # NOQA
 
 from ruyaml.compat import _DEFAULT_YAML_VERSION  # NOQA

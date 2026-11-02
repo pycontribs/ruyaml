@@ -3,7 +3,8 @@ from __future__ import annotations
 from ruyaml.compat import nprintf  # NOQA
 
 if False:  # MYPY
-    from typing import Text, Any, Dict, Optional, List  # NOQA
+    from typing import Any, Dict, List, Optional, Text  # NOQA
+
 from .error import StreamMark  # NOQA
 
 SHOW_LINES = True
