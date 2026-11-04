@@ -54,6 +54,7 @@ if False:  # MYPY
 
 CParser = None
 CEmitter = None
+UnsafeLoader = Loader
 
 # YAML is an acronym, i.e. spoken: rhymes with "camel". And thus a
 # subset of abbreviations, which should be all caps according to PEP8

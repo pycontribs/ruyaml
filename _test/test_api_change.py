@@ -13,6 +13,12 @@ import pytest  # type: ignore
 
 
 class TestNewAPI:
+    def test_unsafe_loader_alias(self) -> None:
+        from ruyaml import UnsafeLoader
+        from ruyaml.loader import Loader
+
+        assert UnsafeLoader is Loader
+
     def test_duplicate_keys_00(self) -> None:
         from ruyaml import YAML
         from ruyaml.constructor import DuplicateKeyError
