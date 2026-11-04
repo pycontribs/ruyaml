@@ -393,7 +393,9 @@ class CommentedBase:
 
         if column is None:
             try:
-                column = self._yaml_get_column(key)
+                # Column zero on a newly added comment is a spacing fallback,
+                # not an alignment column to inherit from a neighbouring item.
+                column = self._yaml_get_column(key) or None
             except AttributeError:
                 column = 0
         if comment[0] != '#':
