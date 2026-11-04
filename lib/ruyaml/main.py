@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import glob
+import warnings
 from importlib import import_module
 from io import BytesIO, StringIO
 from typing import TYPE_CHECKING, Any, List, Optional, Text, Union
-import warnings
 
 import ruyaml
 from ruyaml.comments import C_PRE, CommentedMap, CommentedSeq
@@ -21,7 +21,6 @@ from ruyaml.error import UnsafeLoaderWarning, YAMLError  # NOQA
 from ruyaml.events import *  # NOQA
 from ruyaml.loader import BaseLoader  # NOQA
 from ruyaml.loader import Loader  # NOQA
-from ruyaml.loader import Loader as UnsafeLoader
 from ruyaml.loader import RoundTripLoader, SafeLoader  # NOQA
 from ruyaml.nodes import *  # NOQA
 from ruyaml.representer import (
@@ -55,6 +54,7 @@ if False:  # MYPY
 
 CParser = None
 CEmitter = None
+UnsafeLoader = Loader
 
 # YAML is an acronym, i.e. spoken: rhymes with "camel". And thus a
 # subset of abbreviations, which should be all caps according to PEP8
