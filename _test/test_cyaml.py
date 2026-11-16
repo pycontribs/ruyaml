@@ -55,13 +55,11 @@ def test_load_cyaml_1_2() -> None:
     if sys.version_info >= NO_CLIB_VER:
         return
     assert ruyaml.__with_libyaml__
-    inp = dedent(
-        """\
+    inp = dedent("""\
     %YAML 1.2
     ---
     num_epochs: 70000
-    """
-    )
+    """)
     yaml = ruyaml.YAML(typ='safe')
     yaml.load(inp)
 
@@ -83,14 +81,12 @@ def test_dump_cyaml_1_2() -> None:
     yaml.version = (1, 2)
     yaml.default_flow_style = False
     data = {'a': 1, 'b': 2}
-    exp = dedent(
-        """\
+    exp = dedent("""\
     %YAML 1.2
     ---
     a: 1
     b: 2
-    """
-    )
+    """)
     buf = StringIO()
     yaml.dump(data, buf)
     assert buf.getvalue() == exp

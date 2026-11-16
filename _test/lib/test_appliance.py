@@ -38,16 +38,14 @@ def find_test_filenames(directory):
 
 def parse_arguments(args):
     """"""
-    parser = argparse.ArgumentParser(
-        usage=""" run the yaml tests. By default
+    parser = argparse.ArgumentParser(usage=""" run the yaml tests. By default
     all functions on all appropriate test_files are run. Functions have
     unittest attributes that determine the required extensions to filenames
     that need to be available in order to run that test. E.g.\n\n
     python test_yaml.py test_constructor_types\n
     python test_yaml.py --verbose test_tokens spec-02-05\n\n
     The presence of an extension in the .skip attribute of a function
-    disables the test for that function."""
-    )
+    disables the test for that function.""")
     # ToDo: make into int and test > 0 in functions
     parser.add_argument(
         '--verbose',

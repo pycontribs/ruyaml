@@ -89,14 +89,12 @@ class TestDateTime:
         round_trip(inp, exp)
 
     def test_normal_timezone(self) -> None:
-        round_trip(
-            """
+        round_trip("""
         - 2011-10-02T11:45:00-5
         - 2011-10-02 11:45:00-5
         - 2011-10-02T11:45:00-05:00
         - 2011-10-02 11:45:00-05:00
-        """
-        )
+        """)
 
     def test_no_timezone(self) -> None:
         inp = """
@@ -135,36 +133,28 @@ class TestDateTime:
         round_trip(inp, exp)
 
     def test_iso(self) -> None:
-        round_trip(
-            """
+        round_trip("""
         - 2011-10-02T15:45:00+01:00
-        """
-        )
+        """)
 
     def test_zero_tz(self) -> None:
-        round_trip(
-            """
+        round_trip("""
         - 2011-10-02T15:45:00+0
-        """
-        )
+        """)
 
     def test_issue_45(self) -> None:
-        round_trip(
-            """
+        round_trip("""
         dt: 2016-08-19T22:45:47Z
-        """
-        )
+        """)
 
     def test_issue_366(self) -> None:
         import io
 
         import ruyaml
 
-        round_trip(
-            """
+        round_trip("""
         [2021-02-01 22:34:48.696868-03:00]
-        """
-        )
+        """)
         yaml = ruyaml.YAML()
         dd = DateTime(
             2021, 2, 1, 22, 34, 48, 696868, TimeZone(TimeDelta(hours=-3), name='')
@@ -177,29 +167,23 @@ class TestDateTime:
 
     def test_deepcopy_datestring(self) -> None:
         # reported by Quuxplusone, http://stackoverflow.com/a/41577841/1307905
-        x = dedent(
-            """\
+        x = dedent("""\
         foo: 2016-10-12T12:34:56
-        """
-        )
+        """)
         data = copy.deepcopy(round_trip_load(x))
         assert round_trip_dump(data) == x
 
     def test_fraction_overflow(self) -> None:
         # reported (indirectly) by Luís Ferreira
         # https://sourceforge.net/p/ruyaml/tickets/414/
-        inp = dedent(
-            """\
+        inp = dedent("""\
         - 2022-01-02T12:34:59.9999994
         - 2022-01-02T12:34:59.9999995
-        """
-        )
-        exp = dedent(
-            """\
+        """)
+        exp = dedent("""\
         - 2022-01-02T12:34:59.999999
         - 2022-01-02T12:35:00
-        """
-        )
+        """)
         round_trip(inp, exp)
 
     def Xtest_tzinfo(self) -> None:

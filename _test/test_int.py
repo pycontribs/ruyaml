@@ -9,15 +9,13 @@ from roundtrip import dedent, round_trip_dump, round_trip_load  # type: ignore
 class TestBinHexOct:
     def test_calculate(self) -> None:
         # make sure type, leading zero(s) and underscore are preserved
-        s = dedent(
-            """\
+        s = dedent("""\
         - 42
         - 0b101010
         - 0x_2a
         - 0x2A
         - 0o00_52
-        """
-        )
+        """)
         d = round_trip_load(s)
         for idx, elem in enumerate(d):
             elem -= 21
