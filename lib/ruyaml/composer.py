@@ -7,13 +7,13 @@ from ruyaml.compat import nprint, nprintf  # NOQA
 from ruyaml.error import MarkedYAMLError, ReusedAnchorWarning
 from ruyaml.events import (
     AliasEvent,
-    MappingStartEvent,
     MappingEndEvent,
+    MappingStartEvent,
     ScalarEvent,
-    SequenceStartEvent,
     SequenceEndEvent,
-    StreamStartEvent,
+    SequenceStartEvent,
     StreamEndEvent,
+    StreamStartEvent,
 )
 from ruyaml.nodes import MappingNode, ScalarNode, SequenceNode
 

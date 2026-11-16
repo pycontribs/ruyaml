@@ -30,18 +30,14 @@ import ruyaml
 
 class TestLiteralScalarString:
     def test_basic_string(self) -> None:
-        round_trip(
-            """
+        round_trip("""
         a: abcdefg
-        """
-        )
+        """)
 
     def test_quoted_integer_string(self) -> None:
-        round_trip(
-            """
+        round_trip("""
         a: '12345'
-        """
-        )
+        """)
 
     @pytest.mark.skipif(  # type: ignore
         platform.python_implementation() == 'Jython',
@@ -156,33 +152,27 @@ class TestReplace:
     """inspired by issue 110 from sandres23"""
 
     def test_replace_preserved_scalar_string(self) -> None:
-        s = dedent(
-            """\
+        s = dedent("""\
         foo: |
           foo
           foo
           bar
           foo
-        """
-        )
+        """)
         data = round_trip_load(s, preserve_quotes=True)
         so = data['foo'].replace('foo', 'bar', 2)
         assert isinstance(so, ruyaml.scalarstring.LiteralScalarString)
-        assert so == dedent(
-            """
+        assert so == dedent("""
         bar
         bar
         bar
         foo
-        """
-        )
+        """)
 
     def test_replace_double_quoted_scalar_string(self) -> None:
-        s = dedent(
-            """\
+        s = dedent("""\
         foo: "foo foo bar foo"
-        """
-        )
+        """)
         data = round_trip_load(s, preserve_quotes=True)
         so = data['foo'].replace('foo', 'bar', 2)
         assert isinstance(so, ruyaml.scalarstring.DoubleQuotedScalarString)

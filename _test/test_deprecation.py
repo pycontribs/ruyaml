@@ -2,7 +2,7 @@
 
 import sys
 
-import pytest  # type:ignore  # NOQA
+import pytest  # type: ignore  # NOQA
 
 last_to_warn = (0, 17, 40)
 
