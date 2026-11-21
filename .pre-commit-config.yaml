@@ -29,15 +29,17 @@ repos:
     rev: 6.0.0
     hooks:
       - id: flake8
+        # Match tox's supported lint interpreter; these pins predate Python 3.14.
+        language_version: python3.11
         additional_dependencies:
           - pydocstyle>=5.1.1
           # - flake8-black>=0.1.1
           - flake8-bugbear>=20.11.1
-        language_version: python3
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.1.1
     hooks:
       - id: mypy
+        language_version: python3.11
         # empty args needed in order to match mypy cli behavior
         args: ['--allow-redefinition']
         entry: mypy lib/
