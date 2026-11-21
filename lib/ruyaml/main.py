@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import glob
+import os
 import warnings
 from importlib import import_module
 from io import BytesIO, StringIO
@@ -795,7 +796,7 @@ class YAML:
             bd = os.path.dirname(__file__)
         except NameError:
             return []
-        gpbd = os.path.dirname(os.path.dirname(bd))
+        gpbd = os.path.dirname(bd)
         res = [x.replace(gpbd, "")[1:-3] for x in glob.glob(bd + '/*/__plug_in__.py')]
         return res
 
