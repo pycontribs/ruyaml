@@ -5,13 +5,14 @@ on:
 jobs:
   gh:
     name: ${{ matrix.name }}
-    runs-on: ubuntu-20.04
+    # Official Python 3.7 builds require Ubuntu 22.04; retain that legacy lane.
+    runs-on: ${{ matrix.name == 'py37' && 'ubuntu-22.04' || 'ubuntu-24.04' }}
     strategy:
       fail-fast: false
       matrix:
         include:
         - name: linters
-          python-version: 3.8
+          python-version: "3.11"
         # - name: docs
         #   python-version: 3.8
         #   continue-on-error: true
@@ -32,11 +33,11 @@ jobs:
         - name: py313
           python-version: "3.13"
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v7
       with:
         fetch-depth: 0  # needed by setuptools-scm
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v7
       with:
         python-version: ${{ matrix.python-version }}
     - name: >-
@@ -46,7 +47,7 @@ jobs:
         python --version --version
         which python
     - name: Pip cache
-      uses: actions/cache@v2
+      uses: actions/cache@v5
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-${{ env.PY_SHA256 }}-${{ hashFiles('setup.cfg', 'tox.ini', 'pyproject.toml', '.pre-commit-config.yaml', 'pytest.ini') }}
@@ -65,16 +66,20 @@ jobs:
       env:
         TOXENV: ${{ matrix.name }}
     - name: Archive logs
-      uses: actions/upload-artifact@v2
+      if: always()
+      uses: actions/upload-artifact@v5
       with:
-        name: logs.zip
+        name: logs-${{ matrix.name }}
         path: .tox/**/log/
+        include-hidden-files: true
   check:
+    if: always()
     needs:
       - gh
     runs-on: ubuntu-latest
     steps:
-      - name: Report success of the test matrix
-        run: >-
-          print("All's good")
-        shell: python
+      - name: Require a successful test matrix
+        env:
+          MATRIX_RESULT: ${{ needs.gh.result }}
+        run: test "$MATRIX_RESULT" = success
+        shell: bash
