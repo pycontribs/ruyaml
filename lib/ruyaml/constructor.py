@@ -8,29 +8,45 @@ import warnings
 from collections.abc import Hashable, MutableMapping, MutableSequence  # type: ignore
 from datetime import timedelta as TimeDelta
 
-# fmt: off
-from ruyaml.error import (MarkedYAMLError, MarkedYAMLFutureWarning,
-                          MantissaNoDotYAML1_1Warning)
-from ruyaml.nodes import *                               # NOQA
-from ruyaml.nodes import (SequenceNode, MappingNode, ScalarNode)
-from ruyaml.compat import (builtins_module, # NOQA
-                           nprint, nprintf, version_tnf)
-from ruyaml.compat import ordereddict
+from ruyaml.comments import *  # NOQA
+from ruyaml.comments import (
+    C_KEY_EOL,
+    C_KEY_POST,
+    C_KEY_PRE,
+    C_VALUE_EOL,
+    C_VALUE_POST,
+    C_VALUE_PRE,
+    CommentedKeyMap,
+    CommentedKeySeq,
+    CommentedMap,
+    CommentedOrderedMap,
+    CommentedSeq,
+    CommentedSet,
+    TaggedScalar,
+)
+from ruyaml.compat import builtins_module  # NOQA
+from ruyaml.compat import nprint, nprintf, ordereddict, version_tnf
 
-from ruyaml.tag import Tag
-from ruyaml.comments import *                               # NOQA
-from ruyaml.comments import (CommentedMap, CommentedOrderedMap, CommentedSet,
-                             CommentedKeySeq, CommentedSeq, TaggedScalar,
-                             CommentedKeyMap,
-                             C_KEY_PRE, C_KEY_EOL, C_KEY_POST,
-                             C_VALUE_PRE, C_VALUE_EOL, C_VALUE_POST,
-                             )
-from ruyaml.scalarstring import (SingleQuotedScalarString, DoubleQuotedScalarString,
-                                 LiteralScalarString, FoldedScalarString,
-                                 PlainScalarString, ScalarString)
-from ruyaml.scalarint import ScalarInt, BinaryInt, OctalInt, HexInt, HexCapsInt
-from ruyaml.scalarfloat import ScalarFloat
+# fmt: off
+from ruyaml.error import (
+    MantissaNoDotYAML1_1Warning,
+    MarkedYAMLError,
+    MarkedYAMLFutureWarning,
+)
+from ruyaml.nodes import *  # NOQA
+from ruyaml.nodes import MappingNode, ScalarNode, SequenceNode
 from ruyaml.scalarbool import ScalarBoolean
+from ruyaml.scalarfloat import ScalarFloat
+from ruyaml.scalarint import BinaryInt, HexCapsInt, HexInt, OctalInt, ScalarInt
+from ruyaml.scalarstring import (
+    DoubleQuotedScalarString,
+    FoldedScalarString,
+    LiteralScalarString,
+    PlainScalarString,
+    ScalarString,
+    SingleQuotedScalarString,
+)
+from ruyaml.tag import Tag
 from ruyaml.timestamp import TimeStamp
 from ruyaml.util import create_timestamp, timestamp_regexp
 

@@ -26,6 +26,25 @@ def compare_eol(data: Any, s: str) -> None:
 
 
 class TestCommentsManipulation:
+    @pytest.mark.parametrize('reverse', [False, True])
+    @pytest.mark.parametrize('sequence', [False, True])
+    def test_new_eol_comments_keep_default_spacing(self, reverse, sequence) -> None:
+        if sequence:
+            data = load('parent:\n  - value1\n  - value2\n  - value3\n')
+            keys = list(range(3))
+        else:
+            data = load(
+                'parent:\n  child1: value1\n  child2: value2\n  child3: value3\n'
+            )
+            keys = ['child1', 'child2', 'child3']
+        for key in reversed(keys) if reverse else keys:
+            data['parent'].yaml_add_eol_comment('new comment', key=key)
+
+        output = round_trip_dump(data)
+        for value in ('value1', 'value2', 'value3'):
+            assert value + '  # new comment\n' in output
+        assert load(output) == data
+
     # list
     def test_seq_set_comment_on_existing_explicit_column(self) -> None:
         data = load(

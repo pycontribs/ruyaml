@@ -68,7 +68,7 @@ def test_qualified_name00(tmpdir: Any) -> None:
     res = buf.getvalue()
     print('res', repr(res))
     assert res == "!!python/name:__main__.A.f ''\\n...\\n"
-    x = ruyaml.load(res)
+    x = yaml.load(res)
     assert x == A.f
     """
     assert save_and_run(program_src, tmpdir) == 0
